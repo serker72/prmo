@@ -1,0 +1,300 @@
+<br>
+
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+<div id="dialog_%{$word}%" title="%{$named}%" style="display:none;">
+
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_form_id">Вид:</label><br>
+
+   <select id="%{$word}%_form_id" style="width:100px;">
+   %{html_options values=$fa_ids output=$fas}%
+   </select>
+   </div>
+   
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_post_index">Почтовый индекс:</label><br>
+
+   <input id="%{$word}%_post_index" type="text" value="" size="10" maxlength="10" />
+   </div>
+   
+   <br clear="all" />
+   <p />
+   
+   
+   <div style="float:left; margin-right:10px;">
+   
+   %{include file="suppliers/fa_cities.html"}%
+   
+  
+   
+   </div>
+   
+   
+   <br clear="all" />
+   <p />
+   
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_street">Улица:</label><br>
+
+    <input id="%{$word}%_street" type="text" value="" size="50" maxlength="255" />
+   </div>
+   
+    <br clear="all" />
+   <p />
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_house">Дом:</label><br>
+
+   <input id="%{$word}%_house" type="text" value="" size="5" maxlength="20" />
+	</div>
+
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_korp">Корпус:</label><br>
+
+   <input id="%{$word}%_korp" type="text" value="" size="5" maxlength="20" />
+   </div>
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_str">Строение:</label><br>
+
+   <input id="%{$word}%_str" type="text" value="" size="5" maxlength="20" />
+   </div>
+   
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_office">Офис:</label><br>
+
+   <input id="%{$word}%_office" type="text" value="" size="5" maxlength="20" />
+   </div>
+   
+   <div style="float:left; margin-right:10px;">
+   <label for="%{$word}%_flat">Квартира:</label><br>
+
+   <input id="%{$word}%_flat" type="text" value="" size="5" maxlength="20" />
+   </div>
+   
+   
+   <br clear="all" />
+   <p />
+    
+    <label for="%{$word}%_address">Прочее:</label><br />
+	<textarea cols="60" rows="5" id="%{$word}%_address"></textarea> 
+    
+    
+
+</div>
+
+
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 440,
+    height: 430,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 
+		 
+		 $("#%{$word}%_address").val("");	
+		 $("#%{$word}%_form_id").val("");
+		 $("#%{$word}%_post_index").val("");
+		$("#%{$word}%_city_id").val("");
+		$("#%{$word}%_city_string").val("");
+		$("#%{$word}%_street").val("");
+		$("#%{$word}%_house").val("");
+		 $("#%{$word}%_korp").val("");
+		 $("#%{$word}%_str").val("");
+		$("#%{$word}%_office").val("");
+		 $("#%{$word}%_flat").val("");	 		 		 
+		 
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					
+					res=true;
+					var error_fields=new Array();
+					
+					
+					//валидация формы
+					if(($("#%{$word}%_form_id").val()=="")||($("#%{$word}%_form_id").val()==0)){
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_form_id",
+							"name":"Вид",
+							"error":"Укажите вид!"
+						});						 
+					}
+					
+					if(($("#%{$word}%_city_id").val()=="")||($("#%{$word}%_city_id").val()==0)){
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_city_string",
+							"name":"Город",
+							"error":"Укажите город!"
+						});						 
+					}
+					
+					if($("#%{$word}%_post_index").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3){
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_post_index",
+							"name":"Почтовый индекс",
+							"error":"Укажите почтовый индекс!"
+						});						 
+					}
+					
+					if($("#%{$word}%_street").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3){
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_street",
+							"name":"Улица",
+							"error":"Заполните поле Улица!"
+						});						 
+					}
+					
+					
+					
+					if($("#%{$word}%_house").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<1){
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_house",
+							"name":"Дом",
+							"error":"Заполните поле Дом!"
+						});						 
+					}
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					$(".blue").removeClass("blue");
+					
+					if(res){
+						//код добавки
+						$.ajax({
+							async: true,
+							url: "/js/supplier.php",
+							type: "POST",
+							data:{
+								"action":"add_%{$word}%",
+								"form_id": $("#%{$word}%_form_id").val(),
+								"post_index": $("#%{$word}%_post_index").val(),
+								"city_id": $("#%{$word}%_city_id").val(),
+								"street": $("#%{$word}%_street").val(),
+								"house": $("#%{$word}%_house").val(),
+								"korp": $("#%{$word}%_korp").val(),
+								"str": $("#%{$word}%_str").val(),
+								"office": $("#%{$word}%_office").val(),
+								"flat": $("#%{$word}%_flat").val(),
+								 
+								"address": $("#%{$word}%_address").val(),
+								
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							   alert("%{$named}% добавлены!"); 
+							   $.ajax({
+								  async: true,
+								  url: "/js/supplier.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":"%{$user_id}%"
+								  },
+								  beforeSend: function(){
+										
+								  },
+								  success: function(data){
+									  $("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							  
+							},
+							error: function(xhr, status, m){
+								alert("Ошибка добавления %{$named}%.");	
+							}	 
+						});
+					 
+						
+						$(this).dialog("close");
+					}else{
+						
+						var tt='<ul>';
+						$.each(error_fields,function(k,v){
+							tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+							
+							$("#"+v.id).addClass("blue");
+						});
+						
+						tt+='</ul>';
+						
+						$("#error_window_text").empty();
+						$("#error_window_text").html(tt);
+						
+						$("#error_window_dialog").dialog("open");
+						
+						 max_height=700; min_height=140;
+						 
+							 
+						 our_height=parseInt($("#error_window_text").height());
+						  
+						  
+						  
+						 if(our_height>max_height) our_height=max_height;
+						 if(our_height<min_height) our_height=min_height;
+						 
+						 
+						 
+						 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+						
+						
+						
+			
+					}
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$(".blue").removeClass("blue");
+		$("#dialog_%{$word}%").dialog("open");
+	});
+	
+});
+</script>

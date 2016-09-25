@@ -1,0 +1,49 @@
+<h1>Заполняемость данными контрагентов</h1>
+
+
+
+Вы выбрали поля:<br />
+
+%{section name=rowsec1 loop=$qsts}%
+
+%{if $smarty.section.rowsec1.index is div by $per_page}%
+<ul style="float:left; margin-right:20px;">
+%{/if}%
+
+%{if $qsts[rowsec1].is_checked}%<li><strong>%{$qsts[rowsec1].caption}%</strong></li>%{/if}% 
+
+
+
+%{if $smarty.section.rowsec1.index_next is div by $per_page or $smarty.section.rowsec1.last}%
+</ul>
+%{/if}%
+
+%{/section}%
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+%{if $quests_fill_only==1 or $quests_unfill_only==1}%
+Вы выбрали:<br />
+<br />
+%{if $quests_fill_only==1  }%
+<strong>Показать заполненные данные<br /></strong>
+%{/if}%
+
+<!--%{if   $quests_unfill_only==1}%
+<strong>Только незаполненные<br /></strong>
+%{/if}%-->
+
+%{/if}%
+
+
+
+%{if $do_it}%
+%{include file="an_fill/an_fill_table.html"}%
+%{/if}%
+

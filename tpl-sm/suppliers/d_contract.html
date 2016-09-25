@@ -1,0 +1,309 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+     %{if $can_edit}%
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" class="reestr_delete16 reestr_button16" data-comment="удалить %{$named}%" style="float:right;"></a>  
+	%{/if}%
+
+    %{if $can_add_contract}%  
+    <a href="#" id="edit_%{$word}%_%{$items[rowsec].id}%" class="reestr_edit16 reestr_button16" data-comment="редактировать %{$named}%" style="float:right;"></a>
+    %{/if}%
+    
+    
+      %{if $items[rowsec].is_basic==1}%
+    <span style="color:red; font-size:12px;"><strong>Основной договор:</strong></span>
+    <br />
+    %{/if}%
+     <input id="is_basic_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].is_basic}%" type="hidden" />
+    
+    
+    
+    
+    
+    <div style="float:left; margin-right:10px;">
+   <span style="font-size:12px;"> 
+   %{if $items[rowsec].is_incoming==1}%  
+   <strong>Входящий дог-р</strong>
+   %{else}%
+   <strong>Исходящий дог-р</strong>
+   %{/if}%
+   </span>
+    <input id="is_incoming_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].is_incoming}%" type="hidden" />
+    
+    &nbsp;
+    
+    
+    
+   <span style="font-size:12px;"> № дог-ра:</span> 
+   <strong>%{$items[rowsec].contract_no}%</strong>
+    <input id="contract_no_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_no}%" type="hidden" />
+    &nbsp;
+    
+    
+   <span style="font-size:12px;">отсрочка по дог-ру, дней: </span>
+   <strong>%{$items[rowsec].contract_prolongation}%</strong>
+    <input id="contract_prolongation_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_prolongation}%" type="hidden" />
+    &nbsp;
+    
+    <span style="font-size:12px;"> дни: </span>
+    <strong>%{if $items[rowsec].contract_prolongation_mode==0}%банковские%{else}%календарные%{/if}%</strong>
+    <input id="contract_prolongation_mode_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_prolongation_mode}%" type="hidden" />
+   &nbsp;
+    
+    <span style="font-size:12px;"> дата дог-ра:</span>
+     <strong>%{$items[rowsec].contract_pdate}%</strong>
+    <input id="contract_pdate_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_pdate}%" type="hidden" />
+   	</div>
+    
+   
+    <br clear="all" />
+    	<input type="checkbox" value="1" id="has_dog_%{$word}%_%{$items[rowsec].id}%" %{if $items[rowsec].has_dog==1}%checked="checked"%{/if}% %{if !$can_has_dog}%disabled="disabled"%{/if}% /><label for="has_dog_%{$word}%_%{$items[rowsec].id}%">наличие оригинала договора</label>
+
+        <a href="#" id="has_dog_make_%{$word}%_%{$items[rowsec].id}%"  class=" reestr_save %{if !$can_has_dog}% reestr_inactive%{/if}% reestr_button24" data-comment="Сохранить"></a>
+        
+         <span id="user_has_dog_state_%{$word}%_%{$items[rowsec].id}%"></span>
+        
+        <span id="user_has_dog_%{$word}%_%{$items[rowsec].id}%" style="font-size:9px;">%{$items[rowsec].user_has_dog}%</span>
+        
+        <script type="text/javascript">
+        $(function(){
+            
+            $("#has_dog_%{$word}%_%{$items[rowsec].id}%").bind("change",function(){
+              if($("#has_dog_%{$word}%_%{$items[rowsec].id}%").prop("checked")) state=1;
+              else state=0;
+              
+              
+              $.ajax({
+                        async: true,
+                        url: "/js/bill.php",
+                        type: "POST",
+                        data:{
+                            "action":"redraw_is_in_buh_confirmer",
+                            state: state
+                        },
+                        beforeSend: function(){
+                         $("#user_has_dog_%{$word}%_%{$items[rowsec].id}%").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+                        },
+                        success: function(data){
+                        // alert(data);
+                          $("#user_has_dog_%{$word}%_%{$items[rowsec].id}%").html(data);
+                          
+                        },
+                        error: function(xhr, status){
+                            //alert("Ошибка добавления вопроса.");	
+                        }	 
+                    });
+                    
+            });
+            
+            $("#has_dog_make_%{$word}%_%{$items[rowsec].id}%").bind("click", function(){
+                
+                %{if !$can_has_dog}%
+                alert("Невозможно внести изменения. Причина: %{$cannot_is_in_buh_reason}%.");
+                
+                %{else}%
+                
+                if($("#has_dog_%{$word}%_%{$items[rowsec].id}%").prop("checked")) state=1;
+                else state=0;
+                
+                $.ajax({
+                      async: true,
+                      url: "/js/supplier.php",
+                      type: "POST",
+                     data:{
+                          "action":"has_dog_save",
+                          "supplier_id":"%{$user.id}%",
+						  "contract_id":"%{$items[rowsec].id}%",
+                          state: state
+                      },
+                      beforeSend: function(){
+                          $("#user_has_dog_state_%{$word}%_%{$items[rowsec].id}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+                      },
+                      success: function(data){
+                       // alert(data);
+                         $("#user_has_dog_state_%{$word}%_%{$items[rowsec].id}%").html(data);
+                        
+                      },
+                      error: function(xhr, status){
+                         // alert("Ошибка добавления вопроса.");	
+                      }	 
+                  });
+                
+                
+                %{/if}%
+                
+                return false;
+            });
+        });
+        </script>
+   	
+    </div>
+     %{if $can_add_contract}%  
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			
+			%{if $items[rowsec].can_delete}%
+			
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")
+			%{if $items[rowsec].is_basic==1}%
+			&&window.confirm("Данный договор являются основным договором. Вы действительно хотите удалить договор?")
+			%{/if}%
+			){
+				$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":%{$user_id}%
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":%{$user_id}%
+						  },
+						  beforeSend: function(){
+							$("#%{$word}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  	
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			
+			%{else}%
+			alert("%{$named}%: Невозможно удалить договор, причина: %{$items[rowsec].cannot_del_reason}%.");	
+			%{/if}%
+			
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			
+			 $("#%{$word}%_is_incoming_1").prop("disabled", !$("#is_supplier").prop("checked"));
+		 	 $("#%{$word}%_is_incoming_0").prop("disabled", !$("#is_customer").prop("checked"));
+		 
+			
+			 $("#%{$word}%_contract_no").val($("#contract_no_%{$word}%_%{$items[rowsec].id}%").val());
+			 
+			 $("#%{$word}%_contract_prolongation").val($("#contract_prolongation_%{$word}%_%{$items[rowsec].id}%").val());
+			 $("#%{$word}%_contract_prolongation_mode").val($("#contract_prolongation_mode_%{$word}%_%{$items[rowsec].id}%").val());
+			 $("#%{$word}%_contract_pdate").val($("#contract_pdate_%{$word}%_%{$items[rowsec].id}%").val());
+			 
+			 $("#%{$word}%_is_incoming_"+$("#is_incoming_%{$word}%_%{$items[rowsec].id}%").val()).prop("checked",true);
+			 
+			
+			 %{if $items[rowsec].is_basic==1}%
+			 $("#%{$word}%_is_basic").attr("checked",true);
+			 %{else}%
+			 $("#%{$word}%_is_basic").attr("checked",false);
+			 %{/if}%
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						if($("#%{$word}%_is_basic").prop("checked")) is_basic=1;
+						else is_basic=0;
+						
+						
+						res=true;
+						if($("#%{$word}%_contract_no").val().length==0){
+							alert('Заполните поле № договора!');
+							$("#%{$word}%_contract_no").focus();
+							res=res&&false;	
+						}
+						if(res&&($("#%{$word}%_contract_prolongation").val().length==0)){
+							alert('Заполните поле Отсрочка по договору, дней!');
+							$("#%{$word}%_contract_prolongation").focus();
+							res=res&&false;	
+						}
+						
+						if(res&&($("#%{$word}%_contract_pdate").val().length==0)){
+							alert('Заполните поле Дата договора!');
+							$("#%{$word}%_contract_pdate").focus();
+							res=res&&false;	
+						}
+						
+						if(res){
+						  $.ajax({
+							  async: true,
+							  url: "/js/supplier.php",
+							  type: "POST",
+							  data:{
+								  "action":"edit_%{$word}%",
+								  "contract_no": $("#%{$word}%_contract_no").val(),
+								  "contract_prolongation": $("#%{$word}%_contract_prolongation").val(),
+								  "contract_prolongation_mode": $("#%{$word}%_contract_prolongation_mode").val(),
+								  "contract_pdate": $("#%{$word}%_contract_pdate").val(),
+								  "is_incoming": $("input[id^=%{$word}%_is_incoming_]:checked").val(),
+								  "id":"%{$items[rowsec].id}%",
+								  "is_basic": is_basic,
+								  "user_id":"%{$user_id}%"
+							  },
+							  beforeSend: function(){
+								   $("#%{$word}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');   
+							  },
+							  success: function(data){
+								$.ajax({
+									async: true,
+									url: "/js/supplier.php",
+									type: "POST",
+									data:{
+										"action":"redraw_%{$word}%",
+										"user_id":"%{$user_id}%"
+									},
+									beforeSend: function(){
+										  
+									},
+									success: function(data){
+									  $("#%{$word}%").html(data);
+									  
+									},
+									error: function(xhr, status){
+										
+									}	 
+								});
+							  },
+							  error: function(xhr, status){
+								  alert("%{$named}%: Ошибка редактирования.");	
+							  }	 
+						  });
+						  
+						  $(this).dialog("close");
+						}
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

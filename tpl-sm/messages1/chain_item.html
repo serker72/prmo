@@ -1,0 +1,132 @@
+%{section name=ansec loop=$answers}%
+<div class="answer_item">
+
+<div style="padding:3px 3px;">
+
+     <a href="message_compose.php?resend=%{$answers[ansec].id}%" class="message_resend" target="_blank" data-comment="переслать сообщение" style=" margin-right:5px; margin-top:-7px;  " ></a>
+    
+    
+    %{if $answers[ansec].is_new}%
+    <div id="mark_cont_%{$answers[ansec].id}%" style="float:left; margin-right:10px;"><a href="#" id="mark_%{$answers[ansec].id}%"><img src="/img/new_m.gif" width="14" height="11" border="0" alt="" /></a></div>
+    %{/if}%
+    
+    
+    <div  style="float:left; margin-right:20px;">
+    <span class="message_cap">Дата:</span>
+    %{$answers[ansec].pdate}%
+    
+    </div>
+    
+    
+    
+    <div  style="float:left; margin-right:20px;"> 
+    
+    <span class="message_cap">От:</span>
+    <a href="info.html?name=%{$answers[ansec].s_login|replace:" (Вы)":""}%" target="_blank">
+    %{if $answers[ansec].s_group_id==3}%
+    %{$answers[ansec].s_name_d}%
+    %{else}%
+    %{$answers[ansec].s_name_s}%
+    %{/if}%
+    
+    
+    <!--%{$answers[ansec].s_login}%--></a>
+    
+    </div>
+    
+    
+    <div   style="float:left; margin-right:0px;">
+    
+    <span class="message_cap">Кому:</span>
+    
+    %{foreach name=rf from=$answers[ansec].to_users item=user}%
+    <a href="info.html?name=%{$user.login|replace:" (Вы)":""}%">%{if $user.group_id==3}%
+    %{$user.name_d}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+    
+    %{else}%
+    %{$user.name_s}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+    
+    %{/if}%</a>
+    %{/foreach}%
+    
+    
+   <!-- <a href="info.html?name=%{$answers[ansec].r_login|replace:" (Вы)":""}%" target="_blank">
+    %{if $answers[ansec].r_group_id==3}%
+    %{$answers[ansec].r_name_d}%
+    %{else}%
+    %{$answers[ansec].r_name_s}%
+    %{/if}%
+    
+    </a>-->
+    
+    
+    </div>
+</div>
+<br clear="all" />
+<p />
+ 
+
+ 
+ 
+<div class="message">%{$answers[ansec].txt}%</div>
+
+%{section name=filesec loop=$answers[ansec].files}%%{/section}%
+%{if $smarty.section.filesec.total>0}%
+<span class="message_cap">Вложения:</span><p />
+<div class="message_attaches">
+%{section name=filesec loop=$answers[ansec].files}%
+	<a href="attachment.html?id=%{$answers[ansec].files[filesec].id}%" class="message_attach"></a>
+    
+    <a href="attachment.html?id=%{$answers[ansec].files[filesec].id}%">%{$answers[ansec].files[filesec].orig_filename}%</a>
+    %{$answers[ansec].files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+       <br clear="left" />
+
+%{/section}%
+</div>
+<br>
+%{/if}%
+
+ 
+
+
+<!--<a href="#" onclick="window.open('message_print.php?resend=%{$answers[ansec].id}%', 'message','width=1000,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1'); return false;" style="display:block; float:left;"><img src="/img/icons/print.png" width="24" height="24" alt="" border="0"   alt="Печать..." title="Печать..." /></a>-->
+ 
+
+
+
+%{$answers[ansec].subs}%
+
+
+<script type="text/javascript">
+$(function(){
+	$("#mark_%{$answers[ansec].id}%").bind("click",function(){
+		$.ajax({
+		  async: true,
+		  url: "/js/messages.php",
+		  type: "POST",
+		  data:{
+			  "action":"mark_as_read",
+			  "id":"%{$answers[ansec].id}%"
+		  },
+		  beforeSend: function(){
+				
+		  },
+		  success: function(data){
+						
+		  },
+		  error: function(xhr, status){
+			 // alert("Ошибка отправки сообщения.");	
+		  },
+		  complete:function(){
+			 $("#mark_cont_%{$answers[ansec].id}%").remove(); 
+		  }
+	  });
+		
+		return false;
+	});
+});
+</script>
+
+
+</div>
+%{/section}%

@@ -1,0 +1,896 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/md5.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+var old_invcalc_pdate='%{$now}%';
+var old_supplier_id=0;
+
+
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#invcalc_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#akt_given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('notes');
+	//touchScroll('suppliers');
+	//touchScroll('bdetails');
+});
+</script>
+<h1 style="float:left; margin-right:20px;">Редактирование инвентаризационного акта</h1>
+
+%{include file="every_help_dialog.html" filename="invcalc_edit.htm" prefix="_calc" description="редактирование акта корректировки взаиморасчетов"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+
+
+<div style="float:right; margin-right:10px;">
+
+%{if $bill.is_confirmed_inv==1}%
+
+%{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  <a href="#" id="print_table" class="reestr_print reestr_right_button24" data-comment="Печать..."></a>
+  
+  
+  <div id="or_print_dialog" title="Выберите режим печати">
+    <strong>Выберите форму для печати:</strong><br />
+
+    	
+      
+       
+
+	<input type="checkbox" id="do_print_ved" value="1" />инвентаризационный акт<br />
+	<input type="checkbox" id="do_print_akt" value="1" />акт сверки взаиморасчетов<br />
+        
+       
+    </div>
+  
+  
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	   $("#or_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					
+					
+					if($("#do_print_ved").prop("checked")){
+					  zc=window.open('ed_invcalc.php?action=1&id=%{$bill.id}%&print=1', 'incalc','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+					  
+					}
+					
+					if($("#do_print_akt").prop("checked")){
+						zc=window.open('an_supplier.php?tab_page=1&print='+'1'+'&supplier_name='+$("#supplier_id").val()+'&pdate1=%{$begin_pdate_for_print}%&pdate2='+$("#invcalc_pdate").val()+'&extended_an=1&doSub=1&do_print_akt=1', 'incalcsverka','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+					}
+					
+					$("#or_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#or_print_dialog").dialog("close");
+				}
+				
+			}
+		});
+	  
+	  
+	  
+	  $("#print_table").bind("click",function(){
+		
+		
+		$("#or_print_dialog").dialog("open");	
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать инвентаризационного акта..."></a>
+ %{/if}%
+ 
+%{else}%
+ <a href="#" target="_blank" onclick="alert('В данном режиме печать инвентаризационного акта недоступна. Пожалуйста, утвердите инвентаризационный акт.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать инвентаризационного акта..." ></a>
+ %{/if}%
+
+</div>
+
+<div style="float:right; margin-right:10px;">
+<input type="button" value="Файлы..." onclick="location.href='invcalc_files.php?bill_id=%{$bill.id}%';" />
+
+
+
+</div>
+
+<br clear="all" />
+
+ <div style="float:right; margin-top:-5px; min-width:120px;" id="toggle_annul">
+    %{include file="invcalc/toggle_annul_card.html"}%
+    </div>
+  <br clear="all" />  
+
+<form action="noscripts.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+<input type="hidden" name="current_status_id" value="%{$bill.status_id}%" />
+
+<input type="hidden" name="bind_to_bills" id="bind_to_bills" value="0" />
+
+
+
+<div style="float:left; ">
+    
+    
+        
+    <div style="float:left; margin-right:20px;">
+    <strong>Номер:</strong><br />
+    
+    %{$bill.code}%
+    </div>
+    
+    <div style="float:left; margin-right:20px;">
+    <strong>Дата создания:</strong><br />
+    
+    %{$bill.pdate}%<br />
+    <small>создан: %{$created_by}%</small>
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    <br clear="all" />
+    
+    
+    
+    
+    
+    <div style="float:left;">
+    
+        <div style="float:left; margin-right:20px;">
+       
+        
+        <label for="invcalc_pdate">Дата пров. <br />
+        корр-ки вз.р.:</label><br />
+        
+        <input type="text" size="10" maxlength="12"  value="%{$bill.invcalc_pdate}%" name="invcalc_pdate" id="invcalc_pdate" %{if !$can_modify}%disabled="disabled"%{/if}% />
+        
+        </div>
+        
+        
+        <div style="float:left; margin-right:20px; ">
+        
+        <br />
+        <label for="supplier_id">Контрагент</label>
+        <br />
+        <select id="supplier_id" name="supplier_id" style="width:250px;" %{if !$can_modify}%disabled="disabled"%{/if}%>
+        %{html_options values=$supplier_ids selected=$bill.supplier_id output=$supplier_names}%
+        </select>
+        
+        </div>
+        
+	</div>
+    <br clear="all" />
+    <p />
+    <div style="float:left;">   
+        <div style="float:left; margin-right:20px;">
+        <br />
+
+        <label for="given_no">Заданный №:</label><br />
+		
+        <input type="text" size="10" maxlength="512" value="%{$bill.given_no}%" name="given_no" id="given_no" %{if !$can_modify}%disabled="disabled"%{/if}% />
+        </div>
+        
+        
+        <div style="float:left; margin-right:20px;">
+        
+        <br />
+		<label for="">Организация:</label>
+        <br />
+        <input type="text" size="20" maxlength="255" value="%{$org}%" id="org" disabled="disabled"  style="width:250px;" />
+        <input type="hidden" value="%{$org_id}%" id="org_id" />
+        
+        </div>
+        
+	
+    </div>    
+    
+    
+   
+    
+</div>
+<div style="float:left; margin-right:10px;">
+
+     <div style="float:left; border:1px solid blue; padding:2px 2px; margin-bottom:5px; width:550px;">
+    %{include file="invcalc/debt_actions.html"}%
+    </div>
+    <br clear="all" />
+
+    
+    <div style="float:left; border:1px solid blue; padding:2px 2px; width:550px;">
+    <h4>Основания для корректировки:</h4>
+    
+    %{section name=reassec loop=$reasons}%
+    <div style="float:left; margin-right:5px;">
+    <input type="radio" name="reason_id" id="reason_id%{$reasons[reassec].id}%" value="%{$reasons[reassec].id}%" %{if !$can_modify}%disabled="disabled"%{/if}% %{if $bill.reason_id==$reasons[reassec].id}%checked="checked"%{/if}% /> <strong>%{$reasons[reassec].name}%:</strong>
+    </div>
+    
+    
+    %{if $reasons[reassec].id==1}%
+    <br clear="all" />
+    <div id="reason_section_%{$reasons[reassec].id}%" >  
+      
+      <div style="float:left; margin-right:20px;">
+      <label for="akt_given_pdate">Дата акта сверки:</label>
+      <input type="text" size="10" maxlength="12"  name="akt_given_pdate" id="akt_given_pdate" %{if !$can_modify or $bill.reason_id!=1}%disabled="disabled"%{/if}% value="%{$bill.akt_given_pdate}%" />
+      </div>
+      
+      <div style="float:left; margin-right:20px;">
+      <label for="akt_given_no">Зад. № акта:</label>
+      <input type="text" size="10" maxlength="512" name="akt_given_no" id="akt_given_no" %{if !$can_modify or $bill.reason_id!=1}%disabled="disabled"%{/if}% value="%{$bill.akt_given_no}%" />
+      </div>
+      
+      
+      <div style="float:left; margin-right:0px;">
+      <input type="button" value="Файлы акта..." onclick="location.href='invcalc_akt_files.php?bill_id=%{$bill.id}%';" %{if $bill.reason_id!=1}%disabled="disabled"%{/if}% />
+      </div>
+      
+      <br clear="all" />
+      
+    </div>  
+    %{elseif $reasons[reassec].id==2}% 
+    
+    <div style="float:left; margin-right:5px; padding-top:5px;">
+    <small>(не менее 20 символов)</small>
+    </div>
+    <br clear="all" />
+    <div id="reason_section_%{$reasons[reassec].id}%" style=" float:left;">   
+      <div style="float:left; margin-right:00px;">
+      <textarea name="reason_txt" id="reason_txt" cols="80" rows="2" %{if !$can_modify or $bill.reason_id!=2}%disabled="disabled"%{/if}%>%{$bill.reason_txt}%</textarea>
+      
+      </div>
+      <br clear="all" />
+    </div>  
+    %{/if}%
+    
+    
+    
+    <p />
+    <script type="text/javascript">
+    $(function(){
+        $("input[id=reason_id%{$reasons[reassec].id}%]").bind("click", function(){
+            
+            
+            $("div[id^=reason_section_] input, div[id^=reason_section_] textarea").prop("disabled",true);	
+            
+            $("div[id=reason_section_%{$reasons[reassec].id}%] input").prop("disabled",false);
+            $("div[id=reason_section_%{$reasons[reassec].id}%] textarea").prop("disabled",false);
+            
+        });
+    });
+    </script>
+    %{/section}%
+  </div>
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="invcalc/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+  </div>
+    %{if $can_notes_edit}%
+    %{include file="invcalc/d_notes_dialog.html" word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+<div style="float:left; margin-right:10px;">
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+%{if $can_confirm==false}% 
+
+%{/if}%
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_inv").prop("disabled",true);
+		
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/invcalc.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                  $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 $("#is_confirmed_inv").prop("checked",false);
+			 $("#is_confirmed_inv").trigger("click");
+			  $("#is_confirmed_inv").prop("checked",false);
+		}
+	});
+});
+</script>
+
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_inv" name="is_confirmed_inv" value="1" onchange="" %{if $bill.is_confirmed_inv==1}% checked="checked"%{/if}% %{if $can_confirm_inv==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_inv">Утверждаю корректировку задолженности</label>
+%{if $can_confirm_inv==false}%
+
+%{/if}%
+
+<span id="is_confirmed_inv_confirmer">%{$is_confirmed_inv_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_inv").bind("click",function(){
+		
+		if(	$("#is_confirmed_inv").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/invcalc.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_shipping_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                $("#is_confirmed_inv_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');    
+              },
+              success: function(data){
+                $("#is_confirmed_inv_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку инвентаризационных актов" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='invent.php?tab_page=2';
+}else location.href='invent.php?tab_page=2';" />
+
+
+</form>
+
+<div id="changes_dialog" title="Изменения связанных документов">
+
+<div id="changes_dialog_text"></div>
+<strong>Продолжение работы приведет к удалению акта из связанных документов.<br />
+
+Продолжить?</strong>
+</div>
+
+
+
+<script type="text/javascript">
+ $(function(){
+	var changes_were_accepted=false;
+	var do_stay=true;
+	
+	$("#crea_form").attr("action",'ed_invcalc.php'); 
+	$("#changes_dialog").dialog({
+								autoOpen: false,
+								dialogClass: 'semi_auth',
+								modal: true,
+								width: 500,
+								height: 350
+	});
+	
+	$("#doEdit").bind("click",function(){
+		do_stay=false;
+		return RotPos();
+	});
+	
+	$("#doEditStay").bind("click",function(){
+		do_stay=true;
+		return RotPos();
+	});
+	
+	function RotPos(){
+		var can_go=true;
+		//alert('zz');
+		
+		//проверка дат
+		if(!PeriodChecker('invcalc_pdate', '%{$pch_date}%')){
+			alert("Дата проведения корректировки взаиморасчетов должна быть не ранее %{$pch_date}%!");
+			can_go=can_go&&false;
+			return false;
+		}
+		
+		if(!PeriodCheckerByPeriod('invcalc_pdate', closed_date )){
+			alert('Дата проведения корректировки взаиморасчетов не должна попадать в закрытый период '+interval_string+'!');
+			can_go=can_go&&false;
+			return false;	
+		}
+		
+		
+		if(can_go&&($("#supplier_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Выберите контрагента!");
+			$("#supplier_id").focus();
+		}
+		
+	
+		
+		
+		
+		//проверка даты инвентаризации
+		if(can_go&&($("#invcalc_pdate").val()=='')){
+			can_go=can_go&&false;
+			alert("Укажите дату проведения корректировки взаиморасчетов!");
+			$("#invcalc_pdate").focus();
+		}
+		
+		
+		if(can_go&&(isNaN($("#debt").val().replace("\,","\.")))){
+			can_go=can_go&&false;
+			alert("Укажите задолженность в руб. на дату проведения корректировки  взаиморасчетов!");
+			$("#debt").focus();
+		}
+		
+		if(can_go&&(parseFloat($("#debt").val().replace("\,","\."))<0)){
+			can_go=can_go&&false;
+			alert("Укажите задолженность в руб. на дату проведения корректировки  взаиморасчетов!");
+			$("#debt").focus();
+		}
+		
+		if(can_go){
+			
+			if(($("input[name=debt_id]").filter(":checked").val()==1)&&(parseFloat($("#debt").val().replace("\,","\."))!=0)){
+				can_go=can_go&&false;
+				alert("Значение задолженности должно быть равно нулю, если выбрана нулевая задолженность.");
+				$("#debt").focus();	
+			}
+			if(($("input[name=debt_id]").filter(":checked").val()>1)&&(parseFloat($("#debt").val().replace("\,","\."))==0)){
+				can_go=can_go&&false;
+				alert("Значение задолженности должно быть не равно нулю, если не выбрана нулевая задолженность.");
+				$("#debt").focus();	
+			}
+		}
+		
+		
+		if(can_go){
+			
+			if(($('#reason_id1').prop("checked")==false)&&($('#reason_id2').prop("checked")==false)){
+				can_go=can_go&&false;
+				alert("Укажите основания для корректировки!");
+			}
+			
+			
+		}
+		
+		if(can_go&&($('#reason_id1').prop("checked"))){
+			if(can_go&&($("#akt_given_pdate").val()=='')){
+				can_go=can_go&&false;
+				alert("Укажите дату акта сверки!");
+				$("#akt_given_pdate").focus();
+			}
+			
+			if(can_go&&($("#akt_given_no").val()=='')){
+				can_go=can_go&&false;
+				alert("Укажите заданный номер акта сверки!");
+				$("#akt_given_no").focus();
+			}
+		}
+		
+		if(can_go&&($('#reason_id2').prop("checked"))){
+			if(
+			($("#reason_txt").val().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 20){
+				can_go=can_go&&false;
+				alert("Укажите причину!");
+				$("#reason_txt").focus();
+			}
+		}
+		
+		
+		if(can_go){
+			dateObj = new Date();
+			 d=dateObj.getDate();
+		  
+			 m=dateObj.getMonth();
+				
+				   
+			dateObj_now=new Date(dateObj.getFullYear(),m,d,0,0,0,0); 
+			dateObj1= new Date( $("#invcalc_pdate").val().substring(6,10), parseFloat($("#invcalc_pdate").val().substring(3,5))-1, $("#invcalc_pdate").val().substring(0,2));
+			
+			
+			if(dateObj1>dateObj_now){
+				can_go=can_go&&false;
+				alert("Невозможно сохранить акт с датой инвентаризации позже сегодняшней!");
+			}
+			
+		}
+		
+		
+		if(can_go&&(%{$bill.is_confirmed}%==0)){
+			
+			$.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_fill",
+					"id": "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					  alert("Невозможно утвердить заполнение акта. Причина: "+data+""); 
+					 can_go=can_go&&false;
+				  }else{
+					  can_go=can_go&&true;
+					
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+					can_go=can_go&&false;
+				}	 
+			});	
+			
+			if(can_go){
+			  $.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_invcalc_pdate",
+					"supplier_id":$("#supplier_id").val(),
+					"pdate":$("#invcalc_pdate").val(),
+					"id":$("#id").val()
+				},
+				beforeSend: function(){
+				  //alert("Загрузка реквизитов.");
+				},
+				success: function(data){
+				  if(data!=0){
+					  
+					  can_go=can_go&&false;
+					  //alert("Внимание! Вы выбрали недопустимую дату, так как по состоянию на выбранную дату "+data+"\nПожалуйста, выберите более позднюю дату.");
+					   $('#annul_dialog').dialog({ title: "Невозможно сохранить документ" });
+					   
+					  $('#annul_dialog_text').html('Внимание! Вы выбрали недопустимую дату, так как по состоянию на выбранную дату '+data+'.<br /> Пожалуйста, выберите более позднюю дату.');
+					  $('#annul_dialog').dialog('open');
+					  
+				  }
+				},
+				error: function(xhr, status){
+			  //	 alert("Ошибка загрузки реквизитов.");	
+				  can_go=can_go&&false;
+				  alert("Ошибка. Невозможно проверить акты по дате инвентаризации. Пожалуйста, повторите попытку позже.");
+				}	 
+			  });
+			}
+			
+			
+		}
+		
+		
+		if(can_go&&(%{$bill.is_confirmed}%==1)){
+			$.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_fill",
+					"id": "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					  alert("Невозможно снять утверждение заполнения акта. Причина: "+data+""); 
+					 can_go=can_go&&false;
+				  }else{
+					  can_go=can_go&&true;
+					
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+					can_go=can_go&&false;
+				}	 
+			});	
+			
+		}
+		
+		
+		//проверка доступности снятия утверждения коррекции
+
+		if(can_go&&(%{$bill.is_confirmed_inv}%==1)&&($("#is_confirmed_inv").prop("checked")==false)){
+			//ajax
+			var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					"id": "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					  $('#annul_dialog').dialog({ title: "Невозможно снять утверждение корректировки задолженности" });
+					 $('#annul_dialog_text').html('Невозможно снять утверждение корректировки задолженности.<br /> Причина: '+data+'.');
+   					 $('#annul_dialog').dialog('open');
+					// alert("Невозможно снять утверждение корректировки задолженности. Причина: "+data+"\nДля снятия утверждения корректировки задолженности необходимо снять утверждения всех связанных документов."); 
+					 can_ret=false;
+				  }else{
+					  can_ret=true;
+					// can_ret=window.confirm("Вы уверены, что хотите снять  утверждение корректировки задолженности по инвентаризационному акту № %{$bill.code}%?");
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+					can_ret=false;	
+				}	 
+			});	
+			can_go=can_go&&can_ret;
+			
+			
+			//спросить о связанных документах (2 раза)
+			if(can_go){
+				//alert('zzzzz');
+				$.ajax({
+					  async: false,
+					  url: "/js/invcalc.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_binded_docs",
+						  "id": "%{$bill.id}%"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						  if(data.length>0){
+							if(!window.confirm("Внимание!\n"+data+"\nПродолжение работы приведет к удалению акта из связанных документов.\nПродолжить?")){
+								 can_go=can_go&&false;
+							}else{
+								if(!window.confirm("Вы уверены?")){
+									can_go=can_go&&false;
+								}
+							}
+							  
+						  }
+						  
+						 
+					  },
+					  error: function(xhr, status){
+						  
+						  alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+						 can_go=can_go&&false;
+					  }	 
+				  });
+				
+				
+				
+			}
+		}
+		
+		//подтверждение утверждения коррекции
+		if(can_go&&(%{$bill.is_confirmed_inv}%==0)&&($("#is_confirmed_inv").prop("checked")==true)){
+			
+			var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					"id": "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					 alert("Невозможно утверждение корректировки задолженности. Причина: "+data+""); 
+					 can_ret=false;
+				  }else{
+					  can_ret=true;
+					
+					 %{if $bill.real_debt_id==2}%
+					 //исходящая оплата
+					 //проверить наличие неоплаченных вход счетов
+					 //если такие есть, спросить, прикреплять к ним оплату или нет
+					 $.ajax({
+						async: false,
+						  url: "/js/invcalc.php",
+						  type: "POST",
+						  data:{
+							  "action":"check_unpayed_bills",
+							  "id": "%{$bill.id}%",
+							  "is_incoming":1
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+						  	if(data!=""){
+								if(window.confirm("Внимание!\nДанный акт является оплатой в пользу контрагента %{$current_supplier}% на %{$bill.invcalc_pdate}% на сумму %{$bill.real_debt}% руб.\nУ контрагента имеются неоплаченные входящие счета "+data+".\nВыполнить автоматическую привязку акта к неоплаченным счетам в качестве оплаты?")){
+									$("#bind_to_bills").val('1');	
+								}
+							}
+						  },
+						  error: function(xhr, status){
+							  
+							  alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+							  can_ret=false;	
+						  }	 
+					  });		
+					%{elseif $bill.real_debt_id==3}%
+					 //входящая оплата
+					 //проверить наличие неоплаченных исход счетов
+					 //если такие есть, спросить, прикреплять к ним оплату или нет
+					 $.ajax({
+						async: false,
+						  url: "/js/invcalc.php",
+						  type: "POST",
+						  data:{
+							  "action":"check_unpayed_bills",
+							  "id": "%{$bill.id}%",
+							  "is_incoming":0
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+						  	if(data!=""){
+								if(window.confirm("Внимание!\nДанный акт является оплатой в пользу %{$org}% на %{$bill.invcalc_pdate}% на сумму %{$bill.real_debt}% руб.\nУ контрагента имеются неоплаченные исходящие счета "+data+".\nВыполнить автоматическую привязку акта к неоплаченным счетам в качестве оплаты?")){
+									$("#bind_to_bills").val('1');	
+								}
+							}
+						  },
+						  error: function(xhr, status){
+							  
+							  alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+							  can_ret=false;	
+						  }	 
+					  });				  
+					 %{/if}%
+					
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+					can_ret=false;	
+				}	 
+			});	
+			can_go=can_go&&can_ret;
+			
+		}
+		
+		
+		
+		//alert(can_go);
+		return can_go;
+	}
+	
+	
+	
+	
+	
+	 
+	
+	
+  });
+ 
+</script>

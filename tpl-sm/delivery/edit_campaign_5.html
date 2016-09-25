@@ -1,0 +1,194 @@
+ <script src="/js/ui/i18n/ui.datepicker-ru.js"></script>
+ <script type="text/javascript">
+            $(function(){
+				$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+                $("#date").datepicker({
+changeMonth: true,
+changeYear: true,
+yearRange:"2012:+15" 
+});
+			});
+</script>
+<style>
+.gydex_table h3{
+	margin:0 0;
+}
+</style>			
+ 
+%{include file="delivery/navi.html" id=$id step=$step}%
+
+<h1>Проверьте и запланируйте рассылку</h1>
+
+ <form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="step" id="step" value="%{$step}%">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+ 
+<input type="hidden" name="template_id" id="template_id" value="%{$data.template_id}%" />
+  
+  
+<table width="100%" cellpadding="2" cellspacing="2" border="0" class="gydex_table">
+<tbody>
+<tr align="left" valign="top">
+	<td width="30">
+    	<div class="%{if $step_ok_1}%go%{else}%nogo%{/if}%"></div>
+    </td>
+    <td width="*">
+    	<h3>Получатели</h3>
+        
+        %{if !$step_ok_1}%
+        <div class="wrong">
+        %{/if}%
+        %{$step_message_1}%
+        
+        %{if !$step_ok_1}%
+        </div>
+        %{/if}%
+
+    </td>
+	<td width="40" align="right">	
+    	 %{if !$step_ok_1}%
+         <input type="button" value="Исправить" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=1';">
+         %{else}%
+         <input type="button" value="Редактировать" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=1';">
+         %{/if}%
+    </td>
+</tr>
+
+<tr align="left" valign="top">
+	<td width="30">
+    	<div class="%{if $step_ok_2}%go%{else}%nogo%{/if}%"></div>
+    </td>
+    <td width="*">
+    	<h3>Настройка</h3>
+        
+        %{if !$step_ok_2}%
+        <div class="wrong">
+        %{/if}%
+        %{$step_message_2}%
+        
+        %{if !$step_ok_2}%
+        </div>
+        %{/if}%
+
+    </td>
+	<td width="40" align="right">	
+    	 %{if !$step_ok_2}%
+         <input type="button" value="Исправить" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=2';">
+         %{else}%
+         <input type="button" value="Редактировать" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=2';">
+         %{/if}%
+    </td>
+</tr>
+
+
+<tr align="left" valign="top">
+	<td width="30">
+    	<div class="%{if $step_ok_3}%go%{else}%nogo%{/if}%"></div>
+    </td>
+    <td width="*">
+    	<h3>Шаблон</h3>
+        
+        %{if !$step_ok_3}%
+        <div class="wrong">
+        %{/if}%
+        %{$step_message_3}%
+        
+        %{if !$step_ok_3}%
+        </div>
+        %{/if}%
+
+    </td>
+	<td width="40" align="right">	
+    	 %{if !$step_ok_3}%
+         <input type="button" value="Исправить" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=3';">
+         %{else}%
+         <input type="button" value="Редактировать" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=3';">
+         %{/if}%
+    </td>
+</tr>
+
+
+<tr align="left" valign="top">
+	<td width="30">
+    	<div class="%{if $step_ok_4}%go%{else}%nogo%{/if}%"></div>
+    </td>
+    <td width="*">
+    	<h3>Дизайн</h3>
+        
+        %{if !$step_ok_4}%
+        <div class="wrong">
+        %{/if}%
+        %{$step_message_4}%
+        
+        %{if !$step_ok_4}%
+        </div>
+        %{/if}%
+
+    </td>
+	<td width="40" align="right">	
+    	 %{if !$step_ok_4}%
+         <input type="button" value="Исправить" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=4';">
+         %{else}%
+         <input type="button" value="Редактировать" onClick="location.href='delivery_ed_campaign.php?id=%{$id}%&step=4';">
+         %{/if}%
+    </td>
+</tr>
+
+</tbody>
+</table>  
+  
+  
+
+
+%{if  $step_ok_1 and $step_ok_2 and $step_ok_3 and $step_ok_4}%
+<h2>Запланируйте рассылку</h2>
+
+
+<input  %{if !$can_edit}% disabled="disabled"%{/if}%  type="button" id="do_plan" value="Запланировать" onclick="$('#sched').show(200); $(this).hide(200);" %{if $data.schedule_pdate!=""}% style="display:none"%{/if}% />
+<input  %{if !$can_edit}% disabled="disabled"%{/if}%  type="submit" id="send_now" name="send_now" value="Отправить немедленно" />
+
+
+<br>
+<br>
+
+<div id="sched"  style=" overflow:hidden; %{if $data.schedule_pdate==''}%display:none;%{/if}%" >
+
+
+<div style="float:left; margin-right:20px;">
+<label for="schedule_pdate">Дата отправки</label><br>
+<input type="text"  %{if !$can_edit}% disabled="disabled"%{/if}%  value="%{$date}%" id="date" name="date" size="10" maxlength="10"/><br>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="hours">Время отправки</label><br>
+   <select %{if !$can_edit}% disabled="disabled"%{/if}%  name="ptime_beg_h" id="ptime_beg_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$hours output=$ptime_beg_h}%
+    </select>: 
+    <select  %{if !$can_edit}% disabled="disabled"%{/if}%  name="ptime_beg_m" id="ptime_beg_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$mins output=$ptime_beg_m}%
+    </select>
+</div>    
+ <br>
+
+
+
+
+<input  %{if !$can_edit}% disabled="disabled"%{/if}%  type="submit" name="do_plan" value="Запланировать"  />
+<br><br>
+
+
+</div>
+
+
+%{/if}% 
+  <br>
+
+  
+  
+<input type="button" id="do_close" value="Отмена" onclick="location.href='%{$list_pagename}%';" />
+
+
+</form>

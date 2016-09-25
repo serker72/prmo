@@ -1,0 +1,194 @@
+<h1>Товары на объектах (выбор по ассортименту)</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период:</strong><br />
+<strong>с:<br /></strong>
+%{$pdate2_1}%
+<p />
+
+
+<strong>по:<br /></strong>
+%{$pdate2_2}%
+
+%{if $only_period_2==1}%
+<p />
+<strong>только товары, завезенные за период</strong>
+%{/if}%
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+%{if $id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Код позиции:</strong><br />
+%{$id2}%
+</div>
+%{/if}%
+
+
+%{if $name2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Наименование:</strong><br />
+%{$name2}%
+</div>
+%{/if}%
+
+%{if $group_id2!="" or $group_id!="" or $group_id3!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Товарная группа/ подгруппа 1 ур./ подгруппа 2 ур. :</strong><br />
+
+ %{section name=groupsec loop=$group}%
+    	 %{if $group[groupsec].is_current}%%{$group[groupsec].name}%%{/if}%
+    %{/section}%
+ %{section name=two_groupsec loop=$two_group}%
+    	%{if $two_group[two_groupsec].is_current}% - %{$two_group[two_groupsec].name}%%{/if}%
+    %{/section}%
+    
+   %{section name=three_groupsec loop=$three_group}%
+    	%{if $three_group[three_groupsec].is_current}% - %{$three_group[three_groupsec].name}%%{/if}%
+    %{/section}%
+
+</div>
+%{/if}%
+
+%{if $gost_tu2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ГОСТ/ТУ:</strong><br />
+%{$gost_tu2}%
+</div>
+%{/if}%
+
+%{if $dimension_id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ед.изм.:</strong><br />
+%{section name=dimsec loop=$dim}%
+    %{if $dim[dimsec].is_current}%%{$dim[dimsec].name}%%{/if}%
+%{/section}%
+</div>
+%{/if}%
+
+%{if $length2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Длина, мм :</strong><br />
+%{$length2}%
+</div>
+%{/if}%
+
+%{if $width2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Ширина, мм :</strong><br />
+%{$width2}%
+</div>
+%{/if}%
+
+%{if $height2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Высота/ толщина, мм :</strong><br />
+%{$height2}%
+</div>
+%{/if}%
+
+%{if $diametr2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Диаметр, мм: :</strong><br />
+%{$diametr2}%
+</div>
+%{/if}%
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="left" valign="top">
+    <th scope="col" width="40"> Код позиции</th>
+	<th scope="col" width="*">Наименование</th> 
+     <th width="50" scope="col">
+    ед.изм.
+   
+    </th>
+     <th scope="col" width="150">
+    Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+   
+    </th>
+    <th scope="col" width="50">
+    ГОСТ/ТУ
+   
+    </th>
+    
+   
+    
+     <th width="50" scope="col">
+    Длина, мм
+   
+    </th>
+    <th width="50" scope="col">
+    Ширина, мм
+   
+    </th>
+    <th width="50" scope="col">
+    Высота/ толщина, мм
+   
+    </th>
+    <th width="50" scope="col">
+    Диаметр, мм:
+    </th>   
+    
+    <th scope="col" width="50">Входящий остаток на начало периода</th>    
+    <th scope="col" width="50">Приход</th>
+    <th scope="col" width="50">Расход</th>
+    <th scope="col" width="50">Остаток на конец периода</th>    
+  </tr>
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+   <tr align="left" valign="top">
+    <td width="40">%{$items[rowsec].pl_position_id|string_format:"%05d"}%</td>
+    <td width="*">%{$items[rowsec].name}%</td>
+    <td width="50">%{$items[rowsec].dim_name}%</td>
+   
+    
+     <td width="150">%{$items[rowsec].group_name}%</td>
+    
+    <td width="50">%{$items[rowsec].gost_tu}%</td>
+    
+    <td width="50">
+   
+    %{$items[rowsec].length|default:"-"}%
+    </td>
+    <td width="50">
+	 %{$items[rowsec].width|default:"-"}%
+    </td>
+    <td width="50">
+	 %{$items[rowsec].height|default:"-"}%
+    </td>
+	
+ 	<td width="50">
+    %{$items[rowsec].diametr|default:"-"}%
+    </td>
+    
+    <td width="50">%{$items[rowsec].begin_ost}%</td>
+    <td width="50">%{$items[rowsec].prihod}%</td>
+    <td width="50">%{$items[rowsec].rashod}%</td>
+    <td width="50">
+   %{$items[rowsec].final_ost}%
+    
+   
+    </td>
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+    
+

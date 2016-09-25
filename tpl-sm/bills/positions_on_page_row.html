@@ -1,0 +1,207 @@
+<tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        <td width="20">
+        <span id="new_position_code_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].id|string_format:"%05d"}%
+        </span>
+        </td>
+        <td width="60%">
+        <span id="new_position_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].hash}%" name="new_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].id}%" />
+        
+       <input type="hidden" id="new_hash_%{$pospos[pospossec].hash}%" name="new_hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        </td>
+        <td width="80">
+        <span id="new_position_dim_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].hash}%" name="new_dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="80">
+        <span id="new_span_quantity_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].quantity}%</span>
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].hash}%" name="new_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%"  />
+        
+      
+    	</td>
+        
+        
+         <td width="80">
+        %{$pospos[pospossec].quantity_confirmed}%
+        </td>
+        
+        <td width="80" >
+        <span id="new_span_max_quantity_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].max_quantity}%</span>
+        </td>
+        
+         <td width="80">
+        %{$pospos[pospossec].in_rasp}%
+      
+        </td>
+        
+        <td width="80">
+        %{$pospos[pospossec].in_rasp_in}%
+      
+        </td>
+        
+        
+        
+        
+        <td width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>
+        %{$pospos[pospossec].price}%
+        <input type="hidden" id="new_price_%{$pospos[pospossec].hash}%" name="new_price_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price}%" />
+        
+        </td>
+        <td style=" white-space:nowrap; %{if $cannot_view_pm}% display:none;%{/if}%">
+        
+        %{if $pospos[pospossec].has_pm}%
+        
+        %{if $pospos[pospossec].plus_or_minus==0}%
+        +
+         %{elseif $pospos[pospossec].plus_or_minus==1}%
+        -
+        %{/if}%
+        
+        %{$pospos[pospossec].value}%
+        
+        %{if $pospos[pospossec].rub_or_percent==0}%
+        руб.
+         %{elseif $pospos[pospossec].rub_or_percent==1}%
+        %
+        <br />
+
+        <small>(%{$pospos[pospossec].value_from_percent}%)</small>
+        
+        
+        %{/if}%
+        
+        
+        
+        %{/if}%
+        
+        <input type="hidden" name="new_has_pm_%{$pospos[pospossec].hash}%" id="new_has_pm_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].has_pm}%" />
+        
+        <input type="hidden" name="new_plus_or_minus_%{$pospos[pospossec].hash}%" id="new_plus_or_minus_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].plus_or_minus}%" />
+        
+        <input type="hidden" name="new_rub_or_percent_%{$pospos[pospossec].hash}%" id="new_rub_or_percent_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].rub_or_percent}%" />
+        
+        <input type="hidden" name="new_value_%{$pospos[pospossec].hash}%" id="new_value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].value}%" />
+        
+        
+        
+        </td>
+        
+        
+         <td style=" white-space:nowrap; %{if $cannot_view_pm}% display:none;%{/if}%">
+        
+        %{if $pospos[pospossec].has_pm}%
+        
+       
+        
+        %{$pospos[pospossec].discount_value}%
+        
+        %{if $pospos[pospossec].discount_rub_or_percent==0}%
+        руб.
+         %{elseif $pospos[pospossec].discount_rub_or_percent==1}%
+        %
+        <br />
+
+        <small>(%{$pospos[pospossec].discount_value_from_percent}%)</small>
+        %{/if}%
+        
+        
+        %{/if}%
+        
+       
+        
+       
+        
+        <input type="hidden" name="new_discount_rub_or_percent_%{$pospos[pospossec].hash}%" id="new_discount_rub_or_percent_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].discount_rub_or_percent}%" />
+        
+        <input type="hidden" name="new_discount_value_%{$pospos[pospossec].hash}%" id="new_discount_value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].discount_value}%" />
+        
+        
+        
+        </td>
+        
+       
+        
+        <td width="80">
+        <span id="new_price_pm_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].price_pm}%</span>
+       <input type="hidden" id="check_new_price_pm_%{$pospos[pospossec].hash}%" name="new_price_pm_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_pm}%" />
+        </td>
+        <td width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>
+        <span id="new_cost_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].cost|string_format:"%.2f"}%</span>
+         
+        </td>
+        <td width="80">
+        <span id="new_nds_proc_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_proc}%</span>
+        </td>
+        
+         <td width="80">
+        <span id="new_nds_summ_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_summ}%</span>
+        </td>
+        
+        
+        <td width="80">
+        <span id="new_total_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].total}%</span>
+         <input type="hidden" id="check_new_total_%{$pospos[pospossec].hash}%" name="new_total_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].total}%" />
+        </td>
+        
+        <td width="100"  style="display:none;">
+       	<span id="new_storage_name_storage_id_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].storage_name|default:"-"}%</span>
+        <input type="hidden" id="new_storage_id_%{$pospos[pospossec].hash}%" name="new_storage_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].storage_id}%" />
+        
+        
+        <input type="hidden" id="new_old_storage_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].storage_id}%" />
+       
+        </td>
+        
+        <td width="100"  style="display:none;">
+       	<span id="new_sector_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].sector_name|default:"-"}%</span>
+        <input type="hidden" id="new_sector_id_%{$pospos[pospossec].hash}%" name="new_sector_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].sector_id}%" />
+        
+        
+        <input type="hidden" id="new_old_sector_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].sector_id}%" />
+       
+        </td>
+        
+         <td width="100">
+       	<a href="ed_komplekt.php?action=1&id=%{$pospos[pospossec].komplekt_ved_id}%" target="_blank"><span id="new_komplekt_ved_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].komplekt_ved_name|default:"-"}%</span></a>
+        <input type="hidden" id="new_komplekt_ved_id_%{$pospos[pospossec].hash}%" name="new_komplekt_ved_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].komplekt_ved_id}%" />
+        
+        
+        <input type="hidden" id="new_old_komplekt_ved_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].komplekt_ved_id}%" />
+       
+        </td>
+       
+        
+        <td width="24">
+      
+    
+    <input type="checkbox" value="%{$pospos[pospossec].in_free_complex}%" 
+    id="to_ship_%{$pospos[pospossec].hash}%" 
+    %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    
+    onchange="try{ if(!$('#table_select_all').prop('disabled')){   x=$('input[type=checkbox][id^=to_ship_]:enabled').length;  y=$('input[type=checkbox][id^=to_ship_]:enabled:checked').length;  $('#table_select_all').prop('checked',(x==y));  };  }catch(e){};"
+    />
+    
+    %{*$pospos[pospossec].in_free_complex*}%
+        </td>
+        
+        <td width="24">
+        
+       %{if $can_modify}%
+       
+       %{if $can_delete_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_right_button24" data-comment="удалить позицию..." ></a>
+        %{else}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%"  class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..."></a>
+        %{/if}%
+        
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%"  class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..."></a>
+        %{/if}%
+        </td>
+    </tr>

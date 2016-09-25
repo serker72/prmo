@@ -1,0 +1,123 @@
+<form action="an_fill.php" method="get" id="an_fill_form%{$prefix}%">
+<input type="hidden" name="tab_page" value="2" />
+
+
+<div style="float:left;  margin-right:20px;">
+<label for="fields%{$prefix}%">Выберите данные для отчета:</label><br />
+<em>используйте Ctrl+клик для множественного выбора</em><br />
+
+
+<select name="fields%{$prefix}%[]" id="fields%{$prefix}%" multiple="multiple" size="25">
+<option value="-1">-выбрать все-</option>
+%{foreach from=$fields item=field}%
+%{if $field.kind==-1}%
+<option value="%{$field.id}%" %{if $field.is_active}% selected="selected"%{/if}%>%{$field.name}%</option>
+%{elseif $field.kind==0}%
+<optgroup label="%{$field.name}%">
+%{elseif $field.kind==1}%
+</optgroup>
+%{/if}%
+%{/foreach}%
+</select>
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#fields%{$prefix}%").bind("change",function(){
+		//alert($(this).val());
+		
+		$.each($("#fields%{$prefix}%").val(), function(index, value){
+			
+			 
+			//множественный выбор
+			if(value==-1){
+				$.each($("#fields%{$prefix}% option"), function(i, v){
+					if((v.value!=0)&&(v.value!=-1)&&(v.value!=-2)&&(v.value!=-3)) v.selected=true;
+					if(v.value==-1) v.selected=false;
+				});
+				 
+			}
+		});
+	});
+	
+});
+</script>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+%{include file="every_help_dialog.html" filename="an_files.htm" prefix=$prefix description="отчет Файлы без описания"  style="float:right;  margin-left:00px;" is_right=true}%
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+
+<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+<input type="image" name="doSub%{$prefix}%" value="Найти"  alt="Найти" src="/img/24.png"   />
+</div>
+
+<a href="an_fill.php?doSub%{$prefix}%=1&tab_page=2" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить фильтры" ></a>
+
+%{if $can_print}%
+<a href="#" id="print_an_fill%{$prefix}%"  class="reestr_print reestr_right_button24" data-comment="Печать отчета" ></a>
+%{/if}%
+<br clear="all" />
+
+
+<script type="text/javascript">
+$(function(){
+	%{if $can_print}%
+	$("#print_an_fill%{$prefix}%").bind("click",function(){
+		 
+		window.open('an_fill.php?print=1&'+$("#an_fill_form%{$prefix}%").serialize()+'&doSub%{$prefix}%=1', 'users_quests','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		
+		 return false; 
+	});
+	%{/if}%
+	
+	 
+	
+});
+</script>
+
+
+<br />
+<br />
+<small><em>Примечания.<br />
+
+1. В отчет попадают файлы без описания, и файлы с описанием 5 символов и короче.<br />
+</em></small>
+
+
+</div>
+<br clear="all" />
+<p />
+
+ 
+
+
+
+
+</form>
+
+
+
+%{if $do_it}%
+%{include file="an_files/an_files_table.html" }%
+%{/if}%

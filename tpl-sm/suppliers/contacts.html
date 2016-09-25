@@ -1,0 +1,680 @@
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    <th scope="col" width="200">
+    ФИО, должность
+    </th>
+    <th scope="col" width="80">
+    Дата рождения
+    </th>
+    <th scope="col" width="*">
+    Контакты
+    </th>
+    <th scope="col" width="20">&nbsp;
+    
+    </th>
+    </tr>
+    </thead>
+ <tbody id="contacts_tbody">
+%{section name=rowsec loop=$items}%
+    <tr align="left" valign="top">
+    	
+    
+    <td width="200">
+    <strong>%{$items[rowsec].name}%</strong><br />
+	<strong>%{$items[rowsec].position}%</strong>
+    
+    <input type="hidden" id="name_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].name|escape:"html"}%" >
+    <input type="hidden" id="position_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].position|escape:"html"}%" >
+    
+   <br>
+
+ %{if $can_add_contact and (!($block_first and ($items[rowsec].first_email or $items[rowsec].first_phone)) or $items[rowsec].can_edit_spec)}%
+    
+<a href="#" id="edit_%{$word}%_%{$items[rowsec].id}%" data-comment="редактировать %{$named}%" class="reestr_edit reestr_button24"></a>
+
+
+	
+     %{/if}%
+    
+	%{if $can_add_contact}%
+    <a href="#" id="copy_%{$word}%_%{$items[rowsec].id}%" data-comment="копировать %{$named}%" class="reestr_copy reestr_button24"></a>
+    %{/if}%    
+
+    <script type="text/javascript">
+	$(function(){
+		
+		// 
+		$("#copy_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			
+			$("#%{$word}%_old_contact_id").val("%{$items[rowsec].id}%");
+			
+			$("#dialog_copy_%{$word}%").dialog("open");
+			
+			//загрузить рабочие телефоны по старому контакту
+			$.ajax({
+				async: true,
+				url: "/js/supplier.php",
+				type: "POST",
+				data:{
+					"action":"load_phones_contact",
+					"supplier_id":"%{$user_id}%",
+					"contact_id":"%{$items[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  $("#%{$word}%_copy_phones").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');		
+				},
+				success: function(data){
+				  $("#%{$word}%_copy_phones").html(data);
+				  
+				},
+				error: function(xhr, status){
+					
+				}	 
+			});
+			
+			
+			return false;	
+		});
+		
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":"%{$user_id}%"
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":"%{$user_id}%"
+						  },
+						  beforeSend: function(){
+								$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');		
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 $("#%{$word}%_fio").val($("#name_%{$word}%_%{$items[rowsec].id}%").val());
+			 
+			 $("#%{$word}%_position").val($("#position_%{$word}%_%{$items[rowsec].id}%").val());
+			 $("#%{$word}%_birthdate").val($("#birthdate_%{$word}%_%{$items[rowsec].id}%").val());
+			
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						
+						
+						res=true;
+						var error_fields=new Array();
+						
+						
+						$(".blue").removeClass("blue");
+						
+						//тест на длину
+						if($.trim($("#%{$word}%_fio").val()).length<3){
+						
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_fio",
+								"name":"Фамилия, имя, отчество",
+								"error":"Заполните поле Фамилия, имя, отчество!"
+							});						 
+						}
+						
+						//тест на повтор символов
+						re=new RegExp(/(.)\1{2,}/);
+						 
+						if(re.test( $.trim($("#%{$word}%_fio").val()) )){
+								res=res&&false;
+							error_fields.push({
+								"id":"%{$word}%_fio",
+								"name":"Фамилия, имя, отчество",
+								"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - введены повторяющиеся более 2 раз символы!"
+							});		
+						}
+						
+						//тест на только буквы, пробелы, точки
+						re=new RegExp(/[^a-zA-Zа-яА-Я\s\.\-]+/);
+						if(re.test( $.trim($("#%{$word}%_fio").val()) )){
+								res=res&&false;
+							error_fields.push({
+								"id":"%{$word}%_fio",
+								"name":"Фамилия, имя, отчество",
+								"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - недопустимые символы в поле!"
+							});		
+						}
+						
+						//минимум 2 слова
+						re=new RegExp(/[a-zA-Zа-яА-Я\.\-].\s[a-zA-Zа-яА-Я\.\-]./);
+						if(!re.test( $.trim($("#%{$word}%_fio").val()) )){
+								res=res&&false;
+							error_fields.push({
+								"id":"%{$word}%_fio",
+								"name":"Фамилия, имя, отчество",
+								"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - необходимо указать как минимум фамилию и имя!"
+							});		
+						}
+						
+						
+						
+						 
+						//тест на длину
+						if($.trim($("#%{$word}%_position").val()).length<3){
+						
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_position",
+								"name":"Должность",
+								"error":"Заполните поле Должность!"
+							});					 
+						}
+						
+						//тест на повтор символов
+						re=new RegExp(/(.)\1{2,}/);
+						 
+						if(re.test( $.trim($("#%{$word}%_position").val()) )){
+								res=res&&false;
+							error_fields.push({
+								"id":"%{$word}%_position",
+								"name":"Должность",
+								"error":"Вы вводите некорректное значение в поле Должность - введены повторяющиеся более 2 раз символы!"
+							});		
+						}
+						
+						//тест на только буквы, пробелы, точки
+						re=new RegExp(/[^a-zA-Zа-яА-Я0-9\s\.№\-]+/);
+						if(re.test( $.trim($("#%{$word}%_position").val()) )){
+								res=res&&false;
+							error_fields.push({
+								"id":"%{$word}%_position",
+								"name":"Должность",
+								"error":"Вы вводите некорректное значение в поле Должность - недопустимые символы в поле!"
+							});		
+						}
+						
+						 
+						
+						 
+						
+						
+						if(res){
+						
+						
+						
+							
+							
+							$.ajax({
+								async: true,
+								url: "/js/supplier.php",
+								type: "POST",
+								data:{
+									"action":"edit_%{$word}%",
+									"position": $("#%{$word}%_position").val(),
+									"fio": $("#%{$word}%_fio").val(),
+									"id":"%{$items[rowsec].id}%",
+									"birthdate":$("#%{$word}%_birthdate").val(),
+									"user_id":"%{$user_id}%"
+								},
+								beforeSend: function(){
+									  
+								},
+								success: function(data){
+								  $.ajax({
+									  async: true,
+									  url: "/js/supplier.php",
+									  type: "POST",
+									  data:{
+										  "action":"redraw_%{$word}%",
+										  "user_id":"%{$user_id}%"
+									  },
+									  beforeSend: function(){
+										$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');		
+									  },
+									  success: function(data){
+										$("#%{$word}%").html(data);
+										
+									  },
+									  error: function(xhr, status){
+										  
+									  }	 
+								  });
+								},
+								error: function(xhr, status){
+									alert("%{$named}%: Ошибка редактирования.");	
+								}	 
+							});
+							
+							$(this).dialog("close");
+						}else{
+							
+							var tt='<ul>';
+							$.each(error_fields,function(k,v){
+								tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+								
+								$("#"+v.id).addClass("blue");
+							});
+							
+							tt+='</ul>';
+							
+							$("#error_window_text").empty();
+							$("#error_window_text").html(tt);
+							
+							$("#error_window_dialog").dialog("open");
+							
+							 max_height=700; min_height=140;
+							 
+								 
+							 our_height=parseInt($("#error_window_text").height());
+							  
+							  
+							  
+							 if(our_height>max_height) our_height=max_height;
+							 if(our_height<min_height) our_height=min_height;
+							 
+							 
+							 
+							 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+							
+							
+						}
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$(".blue").removeClass("blue");
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+   
+	</td>
+	
+	<td width="80">
+	%{$items[rowsec].birthdate}%
+    
+    
+     <input type="hidden" id="birthdate_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].birthdate|escape:"html"}%" >
+	</td>
+	
+	<td width="*" id="contacts_list_%{$items[rowsec].id}%">
+    %{if $can_add_contact}%
+	 <a href="#" id="input_%{$word}%_%{$items[rowsec].id}%" data-comment="добавить данные" class="reestr_add16 reestr_button24"></a><br />
+ %{/if}%
+	  
+    %{section name=rowsec1 loop=$items[rowsec].data}%
+    	<div class="common_block">
+        <img src="%{$items[rowsec].data[rowsec1].pc_icon}%" border="0" alt=" %{$items[rowsec].data[rowsec1].pc_name}%" title="%{$items[rowsec].data[rowsec1].pc_name}%" align="left" vspace="0" hspace="3" />%{$items[rowsec].data[rowsec1].value}%
+        
+        %{if $items[rowsec].data[rowsec1].value1!=""}%
+        доб. %{$items[rowsec].data[rowsec1].value1}%
+        %{/if}%
+        
+        
+        
+        
+        
+        <input type="hidden" id="value_%{$word}%_%{$items[rowsec].id}%_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].data[rowsec1].value|escape:"html"}%">
+        
+        <input type="hidden" id="value1_%{$word}%_%{$items[rowsec].id}%_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].data[rowsec1].value1|escape:"html"}%">
+		
+		<input type="hidden" id="kind_%{$word}%_%{$items[rowsec].id}%_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].data[rowsec1].kind_id}%" />
+		
+        %{if $can_add_contact and (!($block_first and ($items[rowsec].first_email or $items[rowsec].first_phone)) or $items[rowsec].can_edit_spec)}%
+        
+        <a href="#" id="edit_nest_%{$word}%_%{$items[rowsec].data[rowsec1].id}%" data-comment="редактировать %{$items[rowsec].data[rowsec1].value|escape:"html"}%" class="reestr_edit16 reestr_button24"><img src="/img/icon_edit_16x16.gif" width="16" height="16" border="0" alt=""  /></a>
+        %{/if}%
+		
+		 %{if $can_del_contact  and (!($block_first and (($items[rowsec].first_email and $items[rowsec].data[rowsec1].first_email)  or ($items[rowsec].first_phone and $items[rowsec].data[rowsec1].first_phone))) or $items[rowsec].can_edit_spec)}%
+		
+		<a href="#" id="delete_nest_%{$word}%_%{$items[rowsec].data[rowsec1].id}%" data-comment="удалить %{$items[rowsec].data[rowsec1].value|escape:"html"}%" class="reestr_delete16 reestr_button24"></a>
+		
+		%{/if}%
+        </div>
+    %{/section}%
+    
+     
+      </td>
+	  
+	  <td width="20">
+    %{if $can_del_contact and (!($block_first and ($items[rowsec].first_email or $items[rowsec].first_phone)) or $items[rowsec].can_edit_spec)}%
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" data-comment="удалить %{$named}%" class="reestr_delete16 reestr_button16"><img src="/img/del.gif" width="15" height="15" border="0" alt=""  /></a>        
+   
+   
+    %{/if}%
+   	
+    
+   
+    
+    </td>
+	
+	</tr>
+%{/section}%
+</tbody>
+
+	</table>
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%
+
+
+
+
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_nest_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 600,
+    height: 370,
+    buttons: {
+        "Готово": function() { 
+        	
+         $(this).dialog("close"); }
+      }
+    
+    });
+	
+	 
+	
+	 
+	
+	$("input[name=%{$word}%_kind]").bind("change", function(){
+		ph=new Array("1","2","3","4"); dph=new Array("1", "2");
+		
+		//sce_phone_code_
+		avail_codes=new Array(); avail_codes1=new Array(); avail_codes2=new Array();
+		$.each($("input[id^=sce_phone_code_]"), function(k,v){
+			
+			if($.inArray($(v).val(), avail_codes)==-1){
+				avail_codes.push( $(v).val());
+				avail_codes1.push('('+$(v).val()+')');
+				
+				avail_codes2.push( "+"+$(v).val());
+			}
+		});
+		
+		code='';
+		if(avail_codes.length==1){
+			code=avail_codes[0];
+		}else if(avail_codes.length==0){
+			code='7';
+		}else{
+			code=avail_codes1.join('|');
+		}
+		
+		code=code.replace(/9/g, "\\9");
+		//alert(code);
+		
+		$("#codes_nest_%{$word}%").html(avail_codes2.join(', '));
+		
+		if($.inArray($("input[name=%{$word}%_kind]:checked").val(), ph )!=-1){
+			
+			mask="+"+code+" 999[9][9][9][9] 9[9][9]-99-99";
+			
+			
+			$('#%{$word}%_value').inputmask({"mask": mask,
+											 keepStatic: false
+											  
+											 });
+											 
+			$('#%{$word}%_value1').inputmask({"mask": "[9][9][9][9][9][9][9][9][9][9][9][9]",
+											 keepStatic: false
+											  
+											 });							 
+		}else{
+			//unmask
+			$('#%{$word}%_value').inputmask('remove');
+			$('#%{$word}%_value1').inputmask('remove');
+		}
+		
+		if($.inArray($("input[name=%{$word}%_kind]:checked").val(), dph )!=-1){
+			$("#block_%{$word}%_value1").show();
+		}else{
+			$("#block_%{$word}%_value1").hide();
+		}
+		
+	});
+	
+	
+	
+	%{section name=rowsec loop=$items}%
+	$("#input_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+		
+		$('input:radio[name="%{$word}%_kind"][value="1"]')
+.prop('checked',true);
+		
+
+ 		$("#%{$word}%_value").val("");
+		$("#%{$word}%_value1").val("");
+		
+		$("input[name=%{$word}%_kind]").trigger("change");
+
+		
+		 $("#dialog_nest_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					//alert( $('input:radio[name="%{$word}%_kind"]:checked').val());
+					
+					$.ajax({
+						async: true,
+						url: "/js/supplier.php",
+						type: "POST",
+						data:{
+							"action":"add_value_%{$word}%",
+							"kind_id": $('input:radio[name="%{$word}%_kind"]:checked').val(),
+							"value": $("#%{$word}%_value").val(),
+							"value1": $("#%{$word}%_value1").val(),
+							"user_id":"%{$user_id}%",
+							"contact_id":"%{$items[rowsec].id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  //alert("%{$named}% добавлены!"); 
+						   $.ajax({
+							  async: true,
+							  url: "/js/supplier.php",
+							  type: "POST",
+							  data:{
+								  "action":"redraw_%{$word}%",
+								  "user_id":"%{$user_id}%"
+							  },
+							  beforeSend: function(){
+								$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');		
+							  },
+							  success: function(data){
+								 //alert(data);
+								  $("#%{$word}%").html(data);
+								
+							  },
+							  error: function(xhr, status){
+									//alert('e');  
+							  }	 
+						  });
+						},
+						error: function(xhr, status, m){
+							alert("Ошибка добавления %{$named}%.");//+status+m);	
+						}	 
+					});
+					
+					$(this).dialog("close");
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		
+		 $("#dialog_nest_%{$word}%").dialog("open");
+		 return false;
+	});
+	
+	
+	%{section name=rowsec1 loop=$items[rowsec].data}%
+	/*правка контакта*/
+	$("#edit_nest_%{$word}%_%{$items[rowsec].data[rowsec1].id}%").bind("click",function(){
+			 $('input:radio[name="%{$word}%_kind"][value="%{$items[rowsec].data[rowsec1].kind_id}%"]').prop('checked',true);
+			 
+			 
+			 
+			 
+			 $("#%{$word}%_value").val($("#value_%{$word}%_%{$items[rowsec].id}%_%{$items[rowsec].data[rowsec1].id}%").val());
+			 
+			 $("#%{$word}%_value1").val($("#value1_%{$word}%_%{$items[rowsec].id}%_%{$items[rowsec].data[rowsec1].id}%").val());
+			 
+			 $("input[name=%{$word}%_kind]").trigger("change");
+
+			 
+			  $("#dialog_nest_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						$.ajax({
+							async: true,
+							url: "/js/supplier.php",
+							type: "POST",
+							data:{
+								"action":"edit_nest_%{$word}%",
+								"value": $("#%{$word}%_value").val(),
+								"value1": $("#%{$word}%_value1").val(),
+								"kind_id": $('input:radio[name="%{$word}%_kind"]:checked').val(),
+								"id":"%{$items[rowsec].data[rowsec1].id}%",
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  
+							  $.ajax({
+								  async: true,
+								  url: "/js/supplier.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":"%{$user_id}%"
+								  },
+								  beforeSend: function(){
+									$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');		
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_nest_%{$word}%").dialog("open");
+			
+			
+			return false;
+		});
+	
+	
+	
+	
+	/*удаление контакта*/
+	$("#delete_nest_%{$word}%_%{$items[rowsec].data[rowsec1].id}%").bind("click",function(){
+		if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+			$.ajax({
+				async: true,
+				url: "/js/supplier.php",
+				type: "POST",
+				data:{
+					"action":"delete_nest_%{$word}%",
+					"id":"%{$items[rowsec].data[rowsec1].id}%",
+					"user_id":"%{$user_id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/supplier.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%",
+						  "user_id":"%{$user_id}%"
+					  },
+					  beforeSend: function(){
+						$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');		
+					  },
+					  success: function(data){
+						$("#%{$word}%").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("%{$named}%: Ошибка удаления.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+	
+	
+	
+	%{/section}%
+	
+	%{/section}%
+	
+	
+				
+		
+	});
+</script>

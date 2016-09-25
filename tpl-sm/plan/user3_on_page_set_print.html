@@ -1,0 +1,10 @@
+<!-- таблица на странице -->
+
+ 
+ 
+    %{section name=pospossec loop=$pospos}%
+    
+     %{$pospos[pospossec].name_s}%%{if $smarty.section.pospossec.last==false}%, %{/if}%
+   
+    %{/section}%
+   

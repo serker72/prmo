@@ -1,0 +1,283 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+ 
+
+<form action="message_compose.php" method="post" enctype="multipart/form-data" id="form_message">
+
+
+<h2>Ваш ответ:</h2>
+
+
+
+<label for="who">Кому:</label><br />
+ <small><em>для выбора адресата начните печатать его ФИО в поле и выберите необходимого адресата из доступных вариантов, либо нажмите кнопку "..." для выбора адресата из списка.</em></small>
+ 
+<br clear="all" />
+ 
+<div style="width:100%; min-width:550px; white-space:nowrap;">    
+<input type="text" value="%{foreach from=$adresat name=asat item=item}%%{$item.id}%%{if $smarty.foreach.asat.last==false}%;%{/if}%%{/foreach}%" id="who" name="who" size="60" maxlength="512" style="min-width:500px; width:95%;"  />&nbsp;&nbsp; 
+<input type="button" value="..." id="who_select" />
+
+</div>
+%{include file="messages1/who_actions.html"}% 
+
+
+
+ 
+  
+<br clear="all" />
+  
+
+
+<input type="hidden" name="parent_id" value="%{$parent_id}%" />
+
+<label for="topic_s">Тема:</label><br />
+<input type="text" size="100" maxlength="255" value="Re: %{$older_message.topic|escape}%" id="topic_s" name="topic_s" style="min-width:550px; width:100%;" />
+<p />
+
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+
+
+<div style="min-width:550px; width:99%;">
+<label for="txt_s">Текст сообщения:</label><br />
+<textarea id="txt_s" name="txt_s" cols="100" rows="20" style="width:550px;"></textarea>
+</div>
+<p />
+
+
+ <script type="text/javascript">
+	CKEDITOR.replace( 'txt_s',
+					 
+					 {
+						 customConfig : '/ckeditor4/config-smiles.js',
+						 width:'100%'
+    				  }
+					 );
+	</script>
+
+ 
+<div id="uploaded_files">
+	
+</div><br />
+
+<strong>Приложите файл:</strong>
+
+ 
+<input type="file" id="file" /> 
+<em>максимальный размер файла: 192M</em>  
+
+
+ 
+
+<script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+
+<div id="queue"></div>
+
+<script type="text/javascript">
+$(function(){
+			function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		
+		$('#file').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите файл...',
+			'fileTypeDesc' : 'Все файлы',
+        	'fileTypeExts' : '*.*', 
+				'fileSizeLimit' : '192 MB', 
+				'width'           : 120,
+				'formData'         : {
+									   "PHPSESSID" : "%{$session_id}%"
+				                     },
+				'queueID'          : 'queue',
+				'uploadScript'     : '/swfupl-js/upload_file_message.php',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				}
+			});
+		
+	 
+});
+ </script>
+
+
+ 
+
+<p />
+
+
+
+<input type="submit" value="Отправить сообщение" id="send_s" name="send_s" style="width:250px; font-weight:bold;" />
+
+
+<!--<input type="submit" value="Отправить всем" id="send_all" name="send_all" style="width:250px; font-weight:bold;" />-->
+
+<p />
+
+
+<h2>Ответить на сообщение</h2>
+
+<strong>От: </strong>
+<a href="info.html?name=%{$older_user.login}%">%{if $older_user.group_id==3}%
+%{$older_user.name_d}%
+
+%{else}%
+%{$older_user.name_s}%
+
+%{/if}%
+<!--(%{$older_user.login}%)--></a>
+<br />
+
+
+
+<strong>Кому: </strong>
+%{foreach name=rf from=$to_users item=user}%
+<a href="info.html?name=%{$user.login}%">%{if $user.group_id==3}%
+%{$user.name_d}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+
+%{else}%
+%{$user.name_s}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+
+%{/if}%</a>
+%{/foreach}%
+<!--(%{$older_user.login}%)-->
+<p />
+
+
+
+<strong>Сообщение:</strong>
+<div class="message" style="min-width:550px; width:100%; height:150px; padding:2px 2px; border:1px solid silver; overflow:scroll;">%{$older_message.txt}%</div>
+<p />
+
+
+%{section name=filesec loop=$files}%%{/section}%
+%{if $smarty.section.filesec.total>0}%
+<strong>Вложения:</strong><br />
+%{section name=filesec loop=$files}%
+	<a href="attachment.html?id=%{$files[filesec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$files[filesec].orig_filename}%</a><br />
+
+%{/section}%
+%{/if}%
+
+<p />
+
+
+
+</form>
+
+
+
+<script type="text/javascript">
+$(function(){
+	
+	
+	
+	
+	/*$("#send_all").bind("click", function(){
+		return window.confirm("Внимание!\nСообщение будет отправлено всем участникам переписки!\nВы уверены?");
+	});*/
+	
+	function SelectGo2(name){
+		
+		data=new Array();
+		data.push({id: '2', text: 'dsjhbbsdhjfsd'});
+	 
+		
+		 $("#"+name).select2({
+		
+			multiple: true,
+			minimumInputLength:2,
+			separator:';',
+			
+			ajax: {
+					url: "/js/messages.php",
+					dataType: 'json',
+					quietMillis: 100,
+					data: function (term, page) {
+						return {
+							term: term, //search term
+							page_limit: 10 // page size
+						};
+					},
+					results: function (data, page) {
+						return { results: data.results };
+					}
+		
+			},
+			initSelection:  function(element, callback) {
+				
+					var data = new Array();  
+					 
+					
+					%{foreach from=$adresat item=item}%
+					 
+					
+					data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%%{$item.name_d|escape:"html"}%'});
+					 %{/foreach}%
+					 
+					 
+					
+					callback(data);
+			} 
+		 });  
+	}	
+	
+	
+	SelectGo2("who");
+	
+	//обработчик отправки сообщения
+	$("#form_message").bind("submit",function(){
+		can_send=true;
+		
+		
+		
+		if(can_send&&( ($("#who").select2("val")=='')||($("#who").select2("val")==null)||($("#who").select2("val")==undefined)||($("#who").select2("val").length==0)  ) ){
+			can_send=can_send&&false;
+			alert("Выберите получателя сообщения!");
+			$("#who").focus();
+			
+		}
+	 
+		
+		if(can_send) $(window).unbind("beforeunload");
+		return can_send;
+		
+		
+	});
+	
+	$(window).bind("beforeunload",function(){
+		 if ( (CKEDITOR.instances.txt_s.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '')).length >0 ){
+		  
+		 	return 'Вы собираетесь покинуть раздел "Сообщения". Текст письма будет потерян. Вы уверены?';
+		  
+	  	}
+	});
+});
+</script>

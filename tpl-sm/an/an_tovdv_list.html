@@ -1,0 +1,304 @@
+<script type="text/javascript">
+$(function(){
+	$(".blacktable").columnHover();
+	$(".blacktable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+});
+</script>
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+<div style="float:left; margin-right:20px;">
+<br />
+<label for="position_id">Позиция:</label><br />
+<select name="position_id" id="position_id" style="width:300px;">
+ %{section name=sgsec loop=$sg}%
+    	<option value="%{$sg[sgsec].id}%" %{if $sg[sgsec].is_current}%selected="selected"%{/if}%>%{$sg[sgsec].name|escape:"html"}%</option>
+    %{/section}%
+</select>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период</strong><br />
+<label for="pdate1">с:</label><br />
+<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+
+<div style="float:left; margin-right:20px;">
+<br />
+	<label for="pdate2">по:</label><br />
+    <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="storage_id">Объект:</label>
+<select id="storage_id" name="storage_id" style="width:150px;">
+<option value="0">-выберите-</option>
+%{html_options values=$storage_ids selected=$storage_id output=$storage_names}%
+</select>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id">Участок:</label>
+<select id="sector_id" name="sector_id" style="width:150px;">
+%{html_options values=$sector_ids selected=$sector_id output=$sector_names}%
+</select>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<input type="submit" value="Вывести" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col">
+    Объект
+    </th>
+    <th scope="col">
+    
+    </th>
+    
+	<th scope="col" colspan="4">Количество (в базовых единицах)			
+
+	</th>
+	
+</tr>
+<tr align="center" valign="top">
+	<th scope="col">
+    Участок
+    </th>
+    <th scope="col">
+    
+    </th>
+    
+	<th scope="col" rowspan="2">		
+Начальный остаток
+
+	</th>
+    <th scope="col" rowspan="2">		
+Приход
+
+	</th>
+    <th scope="col" rowspan="2">		
+Расход
+
+	</th>
+    <th scope="col" rowspan="2">		
+Конечный остаток
+
+	</th>
+	
+</tr>
+<tr align="center" valign="top">
+    <th scope="col">
+    Номенклатура, Базовая единица измерения
+
+    </th>
+    <th scope="col">
+    Операция
+    </th>
+  
+</tr>
+
+</thead>
+<tbody>
+
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    <strong>Объект %{$items[rowsec].name}%</strong>
+    
+    </td>
+     <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+</tr>
+%{section name=rowsec1 loop=$items[rowsec].itemswith}%   
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    <strong>Участок %{$items[rowsec].itemswith[rowsec1].name}%</strong>
+    
+    </td>
+     <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+</tr>
+%{section name=rowsec2 loop=$items[rowsec].itemswith[rowsec1].items}%
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    %{$items[rowsec].itemswith[rowsec1].items[rowsec2].name}%,    
+    %{$items[rowsec].itemswith[rowsec1].items[rowsec2].dimension}%
+    
+    </td>
+     <td width="*">
+    %{if $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==1}%
+    приемка  по вх. счету
+    %{elseif $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==2}%
+    выдача по межскладу
+    %{elseif $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==3}%
+    приемка по межскладу
+    %{elseif $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==4}%
+    списание
+    %{/if}%
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    %{if $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==1 or $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==3}%
+    %{$items[rowsec].itemswith[rowsec1].items[rowsec2].s_q}%
+    %{/if}%
+    </td>
+    <td width="*">
+    %{if $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==2 or $items[rowsec].itemswith[rowsec1].items[rowsec2].operation_type==4}%
+    %{$items[rowsec].itemswith[rowsec1].items[rowsec2].s_q}%
+    %{/if}%
+    </td>
+    <td width="*">
+    
+    </td>
+</tr>
+
+%{/section}%
+%{/section}%
+    
+<!-- без участка -->  
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    <b>Объект %{$items[rowsec].name}%, Без участка</b>
+    
+    </td>
+    <td>
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    
+    </td>
+</tr>  
+%{section name=rowsec11 loop=$items[rowsec].itemswo}%     
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    <em>%{$items[rowsec].itemswo[rowsec11].name}%,
+    %{$items[rowsec].itemswo[rowsec11].dimension}%
+    
+    </em>
+    
+    </td>
+    <td width="*">
+    %{if $items[rowsec].itemswo[rowsec11].operation_type==1}%
+    приемка по вх. счету
+    %{elseif $items[rowsec].itemswo[rowsec11].operation_type==2}%
+    выдача по межскладу
+    %{elseif $items[rowsec].itemswo[rowsec11].operation_type==3}%
+    приемка по межскладу
+    %{elseif $items[rowsec].itemswo[rowsec11].operation_type==4}%
+    списание
+    %{/if}%
+    
+    </td>
+    <td width="*">
+    
+    </td>
+    <td width="*">
+    %{if $items[rowsec].itemswo[rowsec11].operation_type==1 or $items[rowsec].itemswo[rowsec11].operation_type==3}%
+    %{$items[rowsec].itemswo[rowsec11].s_q}%
+    %{/if}%
+    </td>
+    <td width="*">
+    %{if $items[rowsec].itemswo[rowsec11].operation_type==2 or $items[rowsec].itemswo[rowsec11].operation_type==4}%
+    %{$items[rowsec].itemswo[rowsec11].s_q}%
+    %{/if}%
+    </td>
+    <td width="*">
+    
+    </td>
+</tr>
+%{/section}%    
+    
+    
+   
+
+%{/section}%
+<tr align="center" valign="top">
+<td>
+    <strong>Итог</strong>
+    </td>
+    <td>&nbsp;</td>
+    
+    
+    <td>%{$begin_ost}%</td>
+    <td>%{$prihod}%</td>
+    <td>%{$rashod}%</td>
+    <td>%{$end_ost}%</td>
+    
+</tr>
+</tbody>
+</table>
+</form>
+
+
+
+
+
+
+%{$pages}%

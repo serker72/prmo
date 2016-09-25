@@ -1,0 +1,160 @@
+%{if $has_header}%
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="100">
+    <strong>Контрагент</strong>
+    </th>
+     <th scope="col" width="100" >
+   <strong> Город(а) контрагента</strong>
+    </th>
+    
+     <th scope="col" width="100">
+  <strong>  Контакты </strong>
+    </th>
+    
+    <th scope="col" width="25%">
+   <strong> Цель </strong>
+    </th>
+    
+     %{if $many}%
+    <th scope="col" width="35%">
+   <strong> Результат </strong>
+    </th>
+    %{/if}%
+    <th scope="col" width="20">&nbsp;
+    
+    </th>
+    </tr>
+    </thead>
+ <tbody id="suppliers_tbody">
+ %{/if}%
+%{section name=supsec loop=$suppliers}%
+  <tr align="left" valign="top" id="supplier_row_%{$suppliers[supsec].id}%">
+    	
+    
+    <td width="100" >
+    	<input type="hidden" id="supplier_id_%{$suppliers[supsec].id}%" name="supplier_id_%{$suppliers[supsec].id}%" value="%{$suppliers[supsec].id}%" />
+    
+      <span id="supplier_string_%{$suppliers[supsec].id}%">%{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%</span> 
+      
+      <a href="supplier.php?action=1&id=%{$suppliers[supsec].id}%&show_actions=1" target="_blank" class="reestr_edit reestr_button24"  data-comment="перейти во вкладку Действия по контрагенту" ></a> 
+    </td>
+    
+    <td width="100" >
+    <small>
+    %{foreach from=$suppliers[supsec].cities item=city}%	 
+    <input type="hidden" id="supplier_city_id_%{$suppliers[supsec].id}%_%{$city.id}%" value="%{$city.city_id}%"/>
+    
+    <span id="supplier_city_name_%{$suppliers[supsec].id}%_%{$city.id}%">%{$city.name}%, %{$city.okrug_name}%, %{$city.region_name}%,  %{$city.country_name}%</span><br>
+
+    
+    
+    %{/foreach}%
+    </small>
+    </td>
+    
+    <td width="100" >
+      <small>
+    %{foreach from=$suppliers[supsec].contacts item=contact}%	 
+    <input type="hidden" id="supplier_contact_id_%{$suppliers[supsec].id}%_%{$contact.id}%" name="supplier_contact_id_%{$suppliers[supsec].id}%_%{$contact.id}%" value="%{$contact.id}%"/>
+    
+    <span id="supplier_contact_name_%{$suppliers[supsec].id}%_%{$contact.id}%">%{$contact.name}%, %{$contact.position}%</span><br>
+
+    
+    
+    %{/foreach}%
+    </small>
+    </td>
+    
+    <td width="25%">
+    	 
+    	
+        <textarea %{if !$can_modify}% disabled %{/if}%  cols="70" rows="2" id="supplier_note_%{$suppliers[supsec].id}%"  name="supplier_note_%{$suppliers[supsec].id}%"  style="width:100%; height:50px;">%{$suppliers[supsec].note|escape:"html"}%</textarea>
+    
+    </td>
+    
+    
+     %{if $many}%
+      <td width="35%">
+	 
+     <input type="checkbox" id="supplier_not_meet_%{$suppliers[supsec].id}%" name="supplier_not_meet_%{$suppliers[supsec].id}%" %{if !$can_modify_result}% disabled %{/if}% %{if $suppliers[supsec].not_meet==1}% checked %{/if}% />
+     <label for="supplier_not_meet_%{$suppliers[supsec].id}%" >не встречался</label>     
+     <br>
+
+     
+     <textarea %{if !$can_modify_result or $suppliers[supsec].not_meet==1}% disabled %{/if}%  cols="70" rows="2" id="supplier_result_%{$suppliers[supsec].id}%"  name="supplier_result_%{$suppliers[supsec].id}%"  style="width:100%; height:50px;">%{$suppliers[supsec].result|escape:"html"}%</textarea>
+     
+     
+    </td>
+    %{/if}%
+    <td width="20">
+  
+     %{if $can_modify}% 
+    <a href="#" id="delete_sup_%{$suppliers[supsec].id}%" class="reestr_delete16 reestr_button16" data-comment="удалить"> </a>
+  	<script type="text/javascript">
+	$(function(){
+	
+	
+		$("#delete_sup_%{$suppliers[supsec].id}%").bind("click", function(){
+			if(window.confirm("Вы уверены, что хотите удалить контрагента из карты?")){
+				$("#supplier_row_%{$suppliers[supsec].id}%").remove(); 
+			 
+							
+			}
+			return false;
+		});
+		
+	
+		
+	});
+	
+	
+	</script>
+    %{/if}%
+    
+    <script>
+	$(function(){
+		$("#supplier_not_meet_%{$suppliers[supsec].id}%").bind("change", function(){
+			id=$(this).attr("id");
+			sid=id.replace(/^supplier_not_meet_/,'');
+			if($(this).prop("checked")){
+				
+				try{
+					CKEDITOR.instances["supplier_result_"+sid].setReadOnly(true);
+					 
+					CKEDITOR.instances["supplier_result_"+sid].setData('');
+	 
+				}catch(e){
+					$("#supplier_result_"+sid).prop("disabled", true);	
+					$("#supplier_result_"+sid).text('');
+				}
+			}else{
+				try{
+					CKEDITOR.instances["supplier_result_"+sid].setReadOnly(false);
+				}catch(e){
+					$("#supplier_result_"+sid).prop("disabled", false);	
+				}
+			}
+		});
+	});
+	
+	try{
+			$("#supplier_result_%{$suppliers[supsec].id}%").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'97%',
+				height:'40px'
+         	});
+		
+	}catch(e){}
+	</script>
+    </td>
+    
+   </tr> 
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+%{/if}%
+

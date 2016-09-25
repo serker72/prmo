@@ -1,0 +1,172 @@
+	<a href="#" id="mode_reestr_%{$prefix}%" class="reestr_mode  %{if $is_right}%reestr_right_button24 %{else}%reestr_button24%{/if}%" data-comment="настроить реестр..."></a>
+    
+    
+    
+    <div id="mode_reestr_dialog_%{$prefix}%" title="Настройка реестра" style="display:none;">
+		
+        <table width="100%" border="0" cellspacing="10">
+   		<tr align="left" valign="top">
+        	<td width="380">
+            	<strong>Доступные столбцы:</strong><br><br>
+
+				<select id="mode_reestr_all_rows_%{$prefix}%" size="18" multiple style="width:380px; height:350px;">
+                %{foreach from=$unview item=item}%
+                <option value="%{$item.id}%">%{$item.name}%</option>
+                %{/foreach}%
+                </select>
+                
+               
+            </td>
+            <td width="60" align="center" valign="middle" style="vertical-align:middle;">
+            	 <input id="mode_reestr_right_%{$prefix}%" type="button" value="&gt;" /><br><br>
+
+
+                 <input id="mode_reestr_left_%{$prefix}%"  type="button" value="&lt;" />
+                 
+            </td>
+            <td width="400">
+            	<strong>Вы видите столбцы:</strong><br><br>
+
+				<select id="mode_reestr_your_rows_%{$prefix}%"   multiple style="width:380px;  height:350px;">
+                %{foreach from=$view item=item}%
+                <option value="%{$item.col_id}%">%{$item.name}%</option>
+                %{/foreach}%
+                </select>
+            </td>
+              <td width="60" align="center" valign="middle" style="vertical-align:middle;">
+            	 <input id="mode_reestr_up_%{$prefix}%"  type="button" value="" style="background-image:url(/img/icons/up.png); background-repeat:no-repeat; background-position:center center;" /><br><br>
+
+
+                 <input id="mode_reestr_down_%{$prefix}%"  type="button" value="" style="background-image:url(/img/icons/down.png); background-repeat:no-repeat; background-position:center center;" />
+                 
+            </td>
+        </tr> 
+        </table>
+    
+    </div>
+	<script type="text/javascript">
+      $(function(){
+        $("#mode_reestr_dialog_%{$prefix}%").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 900,
+        height: 500,
+        buttons: {
+            "Готово": function() { 
+			
+				var cols=new Array();
+				$.each($("#mode_reestr_your_rows_%{$prefix}% option"), function(k,v){
+					cols.push($(v).val());
+					
+				});
+				
+				//alert(cols);
+				$.ajax({
+					  async: true,
+					  url: "/js/%{$pagename}%",
+					  type: "POST",
+					  data:{
+						  "action":"mode_reestr",
+						  "cols[]": cols
+					  },
+					  beforeSend: function(){
+						// $("#lenta_new_set").prop("disabled", true);	
+					  },
+					  success: function(data){
+						//alert(data); 
+						
+						$(this).dialog("close");
+						location.reload();
+					  },
+					  error: function(xhr, status){
+						  
+					  }	 
+				  });
+									
+				 
+			 },
+			 "Сделать стандартными": function() { 
+			
+				 
+				if(window.confirm("Вы уверены?")){
+				//alert(cols);
+					$.ajax({
+						  async: true,
+						  url: "/js/%{$pagename}%",
+						  type: "POST",
+						  data:{
+							  "action":"mode_reestr_clear" 
+						  },
+						  beforeSend: function(){
+							// $("#lenta_new_set").prop("disabled", true);	
+						  },
+						  success: function(data){
+							//alert(data); 
+							
+							$(this).dialog("close");
+							location.reload();
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+				}
+									
+				 
+			 }
+          }
+        
+        });
+		
+		//$("#mode_reestr_dialog_%{$prefix}%").dialog('open');
+		
+		$("#mode_reestr_%{$prefix}%").bind("click", function(){
+			$("#mode_reestr_dialog_%{$prefix}%").dialog('open');
+			return false;
+		});
+		
+		$("#mode_reestr_left_%{$prefix}%").bind("click", function(){
+			if($("#mode_reestr_your_rows_%{$prefix}% option:selected").length>0){
+			
+				$("#mode_reestr_all_rows_%{$prefix}%").append($("#mode_reestr_your_rows_%{$prefix}% option:selected"));
+				$.each($("#mode_reestr_all_rows_%{$prefix}% option:selected"), function(k,v){
+					$(v).prop("selected", false);
+				});
+			}
+		});
+		
+		$("#mode_reestr_right_%{$prefix}%").bind("click", function(){
+			if($("#mode_reestr_all_rows_%{$prefix}% option:selected").length>0){
+			
+				$("#mode_reestr_your_rows_%{$prefix}%").append($("#mode_reestr_all_rows_%{$prefix}% option:selected"));
+				
+				$.each($("#mode_reestr_your_rows_%{$prefix}% option:selected"), function(k,v){
+					$(v).prop("selected", false);
+				});
+			}
+			
+		});
+		
+		$("#mode_reestr_up_%{$prefix}%").bind("click", function(){
+			if($("#mode_reestr_your_rows_%{$prefix}% option:selected").length>0){
+				
+				var $op = $('#mode_reestr_your_rows_%{$prefix}% option:selected');
+				
+				$op.first().prev().before($op) ; 
+               
+			  
+			}
+		});
+		
+		$("#mode_reestr_down_%{$prefix}%").bind("click", function(){
+			if($("#mode_reestr_your_rows_%{$prefix}% option:selected").length>0){
+				
+				var $op = $('#mode_reestr_your_rows_%{$prefix}% option:selected');
+				
+			 	$op.last().next().after($op);	
+			}
+		});
+		
+	  });
+	</script>

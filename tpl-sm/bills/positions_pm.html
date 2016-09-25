@@ -1,0 +1,540 @@
+
+<div id="discount_given_dialog" title="Полученный +/-" style="display:none;">
+<strong>Введите сумму полученного +/-.</strong><br />
+Максимальная сумма: <span id="span_max_pm"></span> руб.
+<br />
+<input type="text" id="pm_to_give" size="10" maxlength="255" />
+
+
+
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#discount_given_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 300,
+		height: 150
+	});
+			
+});
+</script>
+
+
+
+
+ <table width="100%" border="0" cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+
+<tr align="center" valign="top">    
+	<th scope="col" width="20">№ по вх. счету
+</th>
+<th scope="col" width="20">Код
+</th>
+    <th scope="col" width="*">Номенклатура
+</th>
+	<th scope="col" width="20">Ед. изм.
+</th>
+	<th scope="col" width="40">Кол-во
+</th>
+	<th scope="col" width="50">Цена без +/-
+	</th>
+    <th scope="col" width="50">Цена c +/-
+	</th>
+     <th scope="col" width="50">+/- 
+	</th>
+    
+    <th scope="col" width="50">сумма +/-
+	</th>
+    <th scope="col" width="50">дисконт +/-
+	</th>
+    
+    <th scope="col" width="50">К выдаче, руб.
+	</th>
+    
+    <th scope="col" width="50">Получено
+</th>
+
+	 
+
+ <th scope="col" width="*">Сохранено
+</th>
+	
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+%{if $items[rowsec].has_pm}%
+ <tr align="left" valign="top">
+  <td width="20" class="small">
+    %{$smarty.section.rowsec.index+1}%
+    </td>
+     <td width="20" class="small">
+    %{$items[rowsec].position_id|string_format:"%05d"}%
+    </td>
+  <td width="*" class="small">
+    %{$items[rowsec].position_name}%
+    
+    </td>
+   
+    <td width="20" class="small">
+    %{$items[rowsec].dim_name}%
+    </td>
+    <td width="40"  class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].quantity}%
+   
+    </td>
+   
+    
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].price}%
+    </td>
+    
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].price_pm}%
+   
+    </td>
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+    %{if $items[rowsec].plus_or_minus==0}%
+    +
+   %{else}%
+    -
+    %{/if}%
+    %{$items[rowsec].value}%
+    %{if $items[rowsec].rub_or_percent==0}%
+    руб.
+   %{else}%
+    %
+    <br />
+	<small>( %{$items[rowsec].pm_per_unit}%)</small>
+    %{/if}%
+    </td>
+    
+    
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+     %{$items[rowsec].pm_per_cost}%
+    </td>
+    
+     <td class="small" width="50" style="white-space:nowrap;">
+   
+   <!-- %{$items[rowsec].discount_value}%
+    %{if $items[rowsec].discount_rub_or_percent==0}%
+    руб.
+   %{else}%
+    %
+    %{/if}%
+    
+    
+     %{$items[rowsec].discount_amount}%
+     -->
+     %{$items[rowsec].discount_total_amount}%
+      %{if $items[rowsec].discount_rub_or_percent==1}%
+     <br />
+	<small>(%{$items[rowsec].discount_value}% %)</small>
+     %{/if}%
+    </td>
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+     <span id="span_vydacha_%{$items[rowsec].p_id}%">%{$items[rowsec].vydacha}%</span>
+     
+     <input type="hidden" value="%{$items[rowsec].vydacha}%" id="vydacha_%{$items[rowsec].p_id}%" />
+    </td>
+   
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+   
+   <input type="text" value="%{$items[rowsec].semi_discount_given}%" id="our_discount_given_%{$items[rowsec].p_id}%" size="5" maxlength="255" />
+   
+   <input type="hidden" value="%{$items[rowsec].discount_given}%" id="check_our_discount_given_%{$items[rowsec].p_id}%" size="5" maxlength="255" />
+   
+     <input type="hidden" id="check_our_semi_discount_given_%{$items[rowsec].p_id}%" value="%{$items[rowsec].semi_discount_given}%" size="10" maxlength="255" />
+   
+   	<script type="text/javascript">
+	$(function(){
+		function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+		
+		
+		function RecalcSum(){
+			var sum=0;
+			
+			
+			$.each($("input[id^=our_discount_given_]"), function(k, v){
+				
+				sum=sum+parseFloat($(v).val().replace("\,","\."));
+				
+				
+			});
+			$("#given_summ").html(roundPlus(sum,2));	
+		}
+		
+		
+		$("#our_discount_given_%{$items[rowsec].p_id}%").bind("dblclick",function(){
+			$("#our_discount_given_%{$items[rowsec].p_id}%").val($("#vydacha_%{$items[rowsec].p_id}%").val());
+			
+			//RecalcSum();
+			$("#our_discount_given_%{$items[rowsec].p_id}%").trigger("change");
+			
+		});
+		
+		$("#our_discount_given_%{$items[rowsec].p_id}%").bind("change",function(){
+			
+			
+				var local_res=true;
+				
+				//корректность ввода
+				if(isNaN($(this).val())){
+					
+					local_res=local_res&&false;
+					alert("Некорректно введена сумма полученного +/-.");
+				}
+				
+				
+				to_give=parseFloat($("#vydacha_%{$items[rowsec].p_id}%").val());
+				value=parseFloat($("#our_discount_given_%{$items[rowsec].p_id}%").val());
+				given=parseFloat($("#check_our_discount_given_%{$items[rowsec].p_id}%").val());
+				
+				semi_given=parseFloat($("#check_our_semi_discount_given_%{$items[rowsec].p_id}%").val());
+				
+				
+				//сначала проверить утвержденные, но не выданные расходы
+				
+				
+				
+				//не можем дать меньше, чем выдано
+				//если к выдаче >=0 - то не можем дать меньше, чем выдано
+				//если к выдаче <=0 - то не можем дать больше, чем выдано
+				
+				if(local_res){
+					if(to_give>=0){
+						if(value<semi_given){
+							 local_res=local_res&&false; 
+							 alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+semi_given+" до "+to_give+" руб.\nПо данной позиции сформированы следующие расходы наличных: "+$("#saver_data_%{$smarty.section.rowsec.index+1}%").text());
+						}
+					}else{
+						if(value>semi_given){
+							 local_res=local_res&&false; 
+							 alert("Некорректно введена сумма полученного +/-. Сумма может быть от  "+to_give+" до "+semi_given+" руб.\nПо данной позиции сформированы следующие расходы наличных: "+$("#saver_data_%{$smarty.section.rowsec.index+1}%").text());
+						}
+					}					
+				}
+				
+				
+				//не можем дать больше, чем к выдаче
+				//если к выдаче >= 0 - то не можем дать больше, чем к выдаче
+				//если к выдаче < 0 - то не можем дать меньше, чем к выдаче
+				
+				
+				if(local_res){
+					
+					if(to_give>=0){
+						if(value>to_give){
+							 local_res=local_res&&false; 
+							 alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+given+" до "+to_give+" руб.");
+						}
+						
+					}else{
+						//не можем писать >0 либо < чем к выдаче
+						if((value<to_give)||(value>0)){
+							 local_res=local_res&&false; 
+							 alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+to_give+" до "+given+" руб.");
+						}
+					}
+				}
+				
+				
+				//не можем дать меньше, чем выдано
+				//если к выдаче >=0 - то не можем дать меньше, чем выдано
+				//если к выдаче <=0 - то не можем дать больше, чем выдано
+				
+				if(local_res){
+					if(to_give>=0){
+						if(value<given){
+							 local_res=local_res&&false; 
+							 alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+given+" до "+to_give+" руб.");
+						}
+					}else{
+						if(value>given){
+							 local_res=local_res&&false; 
+							 alert("Некорректно введена сумма полученного +/-. Сумма может быть от  "+to_give+" до "+given+" руб.");
+						}
+					}					
+				}
+				 
+				
+				if(local_res){
+					$(this).removeClass("wrong");
+							RecalcSum();
+				}else{
+					$(this).addClass("wrong");
+				}
+			
+			 
+		});
+	});
+	</script>
+
+	</td>	
+   
+   <td class="small" width="*" id="saver_data_%{$smarty.section.rowsec.index+1}%">
+  %{foreach from=$items[rowsec].docs item=doc}%
+    № <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">%{$doc.code}%</a> на сумму %{$doc.value}%&nbsp;руб., по позиции %{$doc.given_value}%&nbsp;руб., статус %{$doc.status_name}%<br />
+    %{/foreach}%
+    </td>
+  </tr>
+ %{/if}% 
+ %{/section}%  
+ 
+ <tr align="left" valign="top">
+ <tr align="center" valign="top">    
+	<th scope="col" width="*" colspan="10" align="right">
+Итог:
+	</th>
+    
+    <th scope="col" width="50" id="to_give_summ">%{$to_give_summ}%
+	</th>
+    
+    <th scope="col" width="50" id="given_summ">%{$given_summ}%
+</th>
+
+	 
+ <th scope="col" width="*">
+</th>
+ </tr>
+   </tbody>
+</table>   
+<br />
+
+
+<label for="responsible_user_id">Сотрудник-получатель платежа:</label><br />
+<select id="responsible_user_id" style="width:350px;">
+%{html_options values=$responsible_user_id_ids selected=$responsible_user_id output=$responsible_user_id_vals}%
+</select>
+<p />
+
+
+<span style="color:#F00"><small>Вы можете вписать сумму к выдаче в графу "Получено". Если необходимая сумма совпадает с графой "К выдаче, руб.", то двойным щелчком мыши в графе "Получено" Вы можете скопировать туда сумму. </small>
+</span>
+
+<p />
+
+<input type="button" id="pms_given_save" value="Сохранить" />
+<script type="text/javascript">
+$(function(){
+		function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}	
+		
+	
+	$("#pms_given_save").bind("click", function(){
+		
+		
+		function CheckInput(){
+				var res=true;
+				
+				$.each($("input[id^=our_discount_given_]"), function(k, v){
+					local_res=true;
+					
+					key=$(v).attr("id").replace("our_discount_given_",'');
+					
+					//1. дублируем проверку ряда
+					//корректность ввода
+					if(isNaN($(this).val())){
+						
+						local_res=local_res&&false;
+						res=res&&false;
+						 
+					}
+					
+					to_give=parseFloat($("#vydacha_"+key).val());
+					value=parseFloat($("#our_discount_given_"+key).val());
+					given=parseFloat($("#check_our_discount_given_"+key).val());
+					semi_given=parseFloat($("#check_our_semi_discount_given_"+key).val());
+					
+					//не можем дать меньше, чем выдано
+					
+					//если к выдаче >=0 - то не можем дать меньше, чем выдано
+					//если к выдаче <=0 - то не можем дать больше, чем выдано
+					
+					if(local_res){
+						if(to_give>=0){
+							if(value<semi_given){
+								 local_res=local_res&&false; 
+								 
+							}
+						}else{
+							if(value>semi_given){
+								 local_res=local_res&&false; 
+								 
+							}
+						}					
+					}
+					
+					
+					
+					if(local_res){
+						
+						if(to_give>=0){
+							if(value>to_give){
+								 local_res=local_res&&false; 
+								 res=res&&false;
+								// alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+given+" до "+to_give+" руб.");
+							}
+							
+						}else{
+							//не можем писать >0 либо < чем к выдаче
+							if((value<to_give)||(value>0)){
+								 local_res=local_res&&false;
+								 res=res&&false; 
+								 //alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+to_give+" до "+given+" руб.");
+							}
+						}
+					}
+					
+					
+					//не можем дать меньше, чем выдано
+					//если к выдаче >=0 - то не можем дать меньше, чем выдано
+					//если к выдаче <=0 - то не можем дать больше, чем выдано
+					
+					if(local_res){
+						if(to_give>=0){
+							if(value<given){
+								 local_res=local_res&&false; 
+								 res=res&&false;
+							}
+						}else{
+							if(value>given){
+								 local_res=local_res&&false; 
+								 res=res&&false;
+							}
+						}					
+					}
+					
+					
+					
+					
+					if(local_res){
+						$(v).removeClass("wrong");
+					}else{
+						$(v).addClass("wrong");
+					}
+						
+				});
+				
+				//2. + должен перевесить -
+				//найти сколько даем: сумма( check_unf_discount_given_ - edit_unf_discount_given_ )
+				if(res){
+					var sum=0;
+					$.each($("input[id^=our_discount_given_]"), function(k, v){
+						 
+						key=$(v).attr("id").replace("our_discount_given_",'');	
+						
+						to_give=parseFloat($("#vydacha_"+key).val());
+						value=parseFloat($("#our_discount_given_"+key).val());
+						given=parseFloat($("#check_our_discount_given_"+key).val());
+						semi_given=parseFloat($("#check_our_semi_discount_given_"+key).val());
+					
+						
+						//sum+=(given-value);
+						if(to_give>=0){
+							sum+=(value-semi_given);
+						}else{
+							sum+=(value-semi_given);	
+						}
+						
+					});
+					//alert(sum);
+					if(sum<=0){
+						res=res&&false;
+						alert("Внимание!\nСумма формируемого расхода наличных получается равной "+roundPlus(sum,2)+" руб.\nЭто некорректное значение.\nДля корректировки значения укажите значения в графе Получено таким образом, чтобы сумма формируемого расхода была неотрицательной.");	
+					}
+				}
+				
+				 
+				
+				//4. д.быть выбран сотрудник-получатель
+				if(res){
+					if(($("#responsible_user_id").val()==0)||($("#responsible_user_id").val()==null)||($("#responsible_user_id").val()==undefined)){
+						res=res&&false;
+						alert("Выберите сотрудника-получателя платежа.");
+						$("#responsible_user_id").focus();
+					}
+				}
+				
+				return res;
+			}
+			
+			if(CheckInput()){
+				//alert("ok!");
+				 
+				 //сформировать массив заносимых значений
+				 var complex_positions=new Array();
+				 var total_sum=0;  
+				 $.each($("input[id^=our_discount_given_]"), function(k, v){
+			 
+					key=$(v).attr("id").replace("our_discount_given_",'');	
+					
+					to_give=parseFloat($("#vydacha_"+key).val());
+					value=parseFloat($("#our_discount_given_"+key).val());
+					given=parseFloat($("#check_our_discount_given_"+key).val());
+					
+					//sum+=(given-value);
+					if(to_give>=0){
+						sum=(value-semi_given);
+					}else{
+						sum=(value-semi_given);	
+					}
+					if(sum!=0){
+						total_sum+=sum;
+						
+						str=key+';'+sum+';'+$("#id").val();
+						complex_positions.push(str);
+						
+						 
+					}
+				});
+				 
+				 
+				 
+				if((complex_positions.length>0)&&( total_sum!=0)){
+				 $.ajax({
+					async: true,
+					url: "/js/an_pm.php",
+					type: "POST",
+					data:{
+						"action":"transfer_positions",
+						"complex_positions[]":complex_positions,
+						"responsible_user_id":$("#responsible_user_id").val(),
+						"supplier_id":$("#supplier_id").val(),
+						"value":total_sum
+					},
+					beforeSend: function(){
+					  //alert("Загрузка реквизитов.");
+					},
+					success: function(data){
+					  //alert(data);
+					  
+					  alert("Изменения внесены!"); 
+					  location.reload();
+					},
+					error: function(xhr, status, mm){
+					  // alert("Ошибка загрузки реквизитов.");	
+					}	 
+				  }); 
+				}else alert("Изменения не были внесены, т.к. не были изменены суммы к выдаче!"); 
+				
+				
+			}else{
+				alert("Ошибка! Были заданы некорректные значения."); 	
+			}
+	});
+});
+</script>

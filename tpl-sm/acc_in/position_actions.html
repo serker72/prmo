@@ -1,0 +1,155 @@
+	<div id="positions" style="/* border:1px solid silver; width:650px; height:200px; overflow:scroll;*/">
+%{if $has_positions}%
+%{include file="acc_in/positions_on_page_set.html" pospos=$positions}%
+%{/if}%
+</div>
+
+
+<div style="float:left;  padding-right:0px; padding-top:0px;">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+<div style=" float:right; padding-right:0px; padding-top:5px;">
+<strong>Всего, руб.:&nbsp;</strong><span id="positions_cost">%{$total_cost}%</span>
+<br />
+<strong>НДС (в т.ч.):&nbsp;</strong><span id="positions_nds">%{$total_nds}%</span>
+</div>
+
+<br clear="all" />
+
+<div id="position_confirm_dialog" title="Количество позиций">
+
+	<div id="position_confirm_dialog_text"></div>
+
+</div>
+
+
+
+<div id="positions_dialog" title="Выберите позиции">
+
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	var low_mode_made=false;
+	var high_mode_made=false;
+	var choice_was_made=true;
+	
+	//обработка нажатия Выбрать позиции
+	$("#add_pos").bind("click",function(){
+			was_changed=true;
+			
+			low_mode_made=false;
+			high_mode_made=false;
+			choice_was_made=false;
+			
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			
+			var complex_positions=new Array();
+			
+			
+			$.each($("#positions table tbody tr td input[id^='new_hash_']"), function(key, value){
+				
+				//вычленить айди позиции, заполнить массивы данными
+				
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_quantity_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_has_pm_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_price_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_rub_or_percent_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_plus_or_minus_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_komplekt_ved_id_"+hash).val();
+				hashed_string=hashed_string+';';
+				hashed_string=hashed_string+';';
+				hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val();
+				hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val();
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);		
+			});
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/acc_in.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "acc_id":$("#id").attr("value"),
+				  "sh_i_id":$("#sh_i_id").attr("value"),
+				  "bill_id":$("#bill_id").attr("value"),
+				  "complex_positions[]":complex_positions,
+				  "change_high_mode":$("#change_high_mode").val(),
+				  "change_low_mode":$("#change_low_mode").val(),
+				  "storage_id":$("#storage_id").val(),
+				  "sector_id":$("#sector_id").val(),
+				  "komplekt_ved_id":$("#komplekt_ved_id").val()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data);  
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			$("#positions_dialog_komplekt_name").html($("#bill_id").attr("value"));
+			$("#positions_dialog").dialog("open");
+		
+	});
+	
+	$("#position_confirm_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 500,
+		height: 350,
+		stack: true
+	});
+	
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+				  if(isNaN(x) || isNaN(n)) return false;
+				  var m = Math.pow(10,n);
+				  return Math.round(x*m)/m;
+				}
+	
+	
+	
+		
+	
+	
+	
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 900,
+		height: 490,
+		buttons:{
+			"Готово":  function(){
+				 $(this).dialog("close"); 
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

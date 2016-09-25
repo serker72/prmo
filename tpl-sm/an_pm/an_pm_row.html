@@ -1,0 +1,91 @@
+  
+  <td width="20" class="small">
+    %{$smarty.section.possec.index+1}%
+    </td>
+  <td width="*" class="small">
+    %{$items[rowsec].subs[possec].name}%
+    
+    </td>
+   
+    <td width="20" class="small">
+    %{$items[rowsec].subs[possec].dimension}%
+    </td>
+    <td width="40"  class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].subs[possec].quantity}%
+   
+    </td>
+   
+    %{if $view_full_version}%
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].subs[possec].price}% 
+    
+    </td>
+    %{/if}%
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].subs[possec].price_pm}%
+   
+    </td>
+    %{if $view_full_version}%
+    <td class="small" width="50" style="white-space:nowrap;">
+    %{if $items[rowsec].subs[possec].plus_or_minus==0}%
+    +
+   %{else}%
+    -
+    %{/if}%
+    %{$items[rowsec].subs[possec].value}%
+    %{if $items[rowsec].subs[possec].rub_or_percent==0}%
+    руб.
+   %{else}%
+    %
+    <br />
+	<small>(%{$items[rowsec].subs[possec].pm_per_unit}%)</small>
+    
+    %{/if}%
+    
+    
+    </td>
+  
+    <td class="small" width="50" style="white-space:nowrap;">
+     %{$items[rowsec].subs[possec].pm_per_cost}%
+    </td>
+    
+     <td class="small" width="50" style="white-space:nowrap;">
+   
+     
+     %{$items[rowsec].subs[possec].discount_total_amount}%
+     %{if $items[rowsec].subs[possec].discount_rub_or_percent==1}%
+     <br />
+	<small>(%{$items[rowsec].subs[possec].discount_value}% %)</small>
+     %{/if}%
+    </td>
+    %{/if}%
+    <td class="small" width="50" style="white-space:nowrap;">
+     <span id="vydacha_%{$items[rowsec].subs[possec].p_id}%">%{$items[rowsec].subs[possec].vydacha}%</span>
+     
+     <input type="hidden" id="unf_vydacha_%{$items[rowsec].subs[possec].p_id}%" value="%{$items[rowsec].subs[possec].unf_vydacha}%" />
+     
+    </td>
+    %{if $print==0}%
+    %{if $not_given}%
+    <td class="small" width="20">
+    <input type="checkbox" id="checked_%{$items[rowsec].subs[possec].p_id}%" value="%{$items[rowsec].subs[possec].p_id}%" />
+    </td>
+    %{/if}%
+    %{/if}%
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+    
+    <span id="discount_given_%{$items[rowsec].subs[possec].p_id}%">%{$items[rowsec].subs[possec].discount_given}%</span>
+    
+  <input type="hidden" id="unf_discount_given_%{$items[rowsec].subs[possec].p_id}%" value="%{$items[rowsec].subs[possec].unf_discount_given}%" />
+   
+  
+   
+    </td>
+    
+    <td class="small" width="50">
+     %{foreach from=$items[rowsec].subs[possec].semi_docs item=doc}%
+    № <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">%{$doc.code}%</a> на сумму %{$doc.value}%&nbsp;руб., по позиции %{$doc.given_value}%&nbsp;руб., статус %{$doc.status_name}% <br />
+
+    %{/foreach}%
+    </td>

@@ -1,0 +1,116 @@
+
+
+div#messenger_block{
+	position:fixed;
+	bottom: 5px;
+	right: 5px;
+	
+	background-color:white;
+	border:1px solid gray;
+	
+	-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+-webkit-box-shadow: #666 0px 2px 3px;
+-moz-box-shadow: #666 0px 2px 3px;
+box-shadow: #666 0px 2px 3px;
+	
+	
+	overflow:hidden;
+	width:800px;
+	
+}
+div#messenger_block, #messenger_who, div#messenger_block #messenger_send_text,
+.messenger_selected, .messenger_unselected, .messenger_selected div, .messenger_unselected div, .messenger_chat_message, #messenger_send_button, #messenger_chat, #messenger_outer_chat
+{
+	font-size:20px !important;
+}
+
+div#messenger_block.restored{
+	
+	height:950px;
+}
+
+div#messenger_block.minimized{
+	height:20px;
+}
+
+div#messenger_header_block{
+	
+	background: #F5F6EE;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#f6bcbc), to(#d65353));
+	background: -webkit-linear-gradient(#f6bcbc, #d65353);
+	background: -moz-linear-gradient(#f6bcbc, #d65353);
+	background: -ms-linear-gradient(#f6bcbc, #d65353);
+	background: -o-linear-gradient(#f6bcbc, #d65353);
+	background: linear-gradient(#f6bcbc, #d65353);
+	
+	height:20px;
+	padding:3px 3px 0px 3px;
+	overflow:hidden;
+	white-space:nowrap;
+	
+}
+div#messenger_inner_block{
+	padding:3px 5px;
+}
+
+div#messenger_who{
+	width:350px; height:210px; border:1px solid gray; overflow:scroll;
+}
+
+
+div#messenger_user_info{
+	width:360px; height:100px; overflow:auto;
+}
+
+
+div#messenger_outer_chat{
+	width:780px; height:360px; border:1px solid gray; overflow:scroll;
+}
+
+textarea#messenger_send_text{
+	width:780px !important; 
+	height:190px;
+}
+
+.messenger_selected, .messenger_unselected, .messenger_selected div, .messenger_unselected div{
+	white-space:nowrap;
+	font-size:9px;	
+}
+.messenger_selected{
+	background-color:#006;
+	color:white;
+}
+.messenger_selected a{
+	color:white;
+}
+.messenger_unselected{
+	background-color:none;	
+}
+.messenger_selected:hover{
+	background-color:#283C57;
+}
+ .messenger_unselected:hover{ background-color:#eee;}
+ 
+.messenger_from_title{
+	font-weight:bold;
+	color:blue;
+}
+
+.messenger_to_title{
+	font-weight:bold;
+	color:red;
+}
+
+.messenger_chat_message{
+	margin-bottom:10px;
+}
+.messenger_chat_message_text{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+a.messenger_selected_days{
+	color:red;
+}

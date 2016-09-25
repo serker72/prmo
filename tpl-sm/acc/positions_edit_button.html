@@ -1,0 +1,310 @@
+%{if $can_edit_quantities}%
+    
+  %{if $acc.is_leading==0}%
+  <a href="#" onclick="alert('Невозможно редактировать количества позиций. Причина: реализация создана на основе автоматически созданных документов при копировании заявки из другой организации. Для редактирования количеств отредактируйте начальную заявку(счет) в исходной организации.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" align="absmiddle" /></a>
+       
+%{else}%      
+           
+       
+        <a href="#" id="edit_quantities"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" align="absmiddle" /></a>
+         <script type="text/javascript">
+        $(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+			  if(isNaN(x) || isNaN(n)) return false;
+			  var m = Math.pow(10,n);
+			  return Math.round(x*m)/m;
+			}
+			
+			
+			function RecalcPrices(hash){
+				//cena +-
+				
+				cenapm=parseFloat($("#check_new_price_pm_"+hash).val().replace("\,","\."));
+				
+				$("#new_price_pm_"+hash).html(roundPlus(cenapm,2));	
+				$("#check_new_price_pm_"+hash).html(roundPlus(cenapm,2));	
+				
+				//peres4et nds summ
+				$("#new_nds_summ_"+hash).html(roundPlus(cenapm*parseFloat($("#new_quantity_"+hash).val().replace("\,","\."))-cenapm*parseFloat($("#new_quantity_"+hash).val().replace("\,","\."))/1.18,2));
+				
+				
+				
+				//st-t'
+				$("#new_cost_"+hash).html(roundPlus(parseFloat($("#new_price_"+hash).val().replace("\,","\."))*parseFloat($("#new_quantity_"+hash).val().replace("\,","\.")),2));
+				
+				//vsego
+				$("#new_total_"+hash).html(roundPlus(cenapm*parseFloat($("#new_quantity_"+hash).val().replace("\,","\.")),2));
+				$("#check_new_total_"+hash).val(roundPlus(cenapm*parseFloat($("#new_quantity_"+hash).val().replace("\,","\.")),2));
+				
+			}
+			
+			
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#positions_on_page_table input[id^=acc_pos_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#positions_on_page_table input[id^=acc_pos_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  hash=$(value).attr('id').replace(/^acc_pos_/,'');
+				  id=$("#new_position_id_"+hash).val();
+				  
+				  usl=true;
+				  res='1';
+				  really_do_it=true;
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#name_'+hash).text()+', '+$('#dim_name_'+hash).text(), $('#kol_'+hash).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<=0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#name_'+hash).text()+', '+$('#dim_name_'+hash).text()+'. Пожалуйста, введите правильное значение.');
+					}else{
+					
+						%{if $acc.interstore_id==0}%
+						//блок проверок по заявке, счету, расп.
+						/*если это услуга - не проверять ПО ЗАЯВКЕ!  */	
+							
+							//проверка на превышение
+							%{if $can_exclude_positions==1}%
+							
+							
+							if((roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3))){
+								//сделать проверку на БОЛЬШЕ
+								
+								
+								//три проверки: распоряжение, счет, заявка
+								
+								//сравнение с распоряжением
+								
+								alert("Количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" превышает максимальное доступное количество по счету ("+roundPlus(parseFloat($("#new_max_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3)+")!\nКоличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+								usl=true;	
+							
+							}else if((parseInt($("#new_is_usl_"+hash).val())!=1)&&(roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_komplekt_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3))){
+								
+								//сравнение с заявкой	
+								alert("Количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" превышает максимальное доступное количество по заявке ("+roundPlus(parseFloat($("#new_max_komplekt_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3)+")!\nКоличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+								
+								usl=true;	
+							}else if((parseInt($("#new_is_usl_"+hash).val())!=1)&&(roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_incoming_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3))){
+								
+								//сравнение с поступлениям	
+								alert("Количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" превышает максимальное доступное количество по связанным поступлениям ("+roundPlus(parseFloat($("#new_max_incoming_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3)+")!\nКоличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+								
+								usl=true;	
+							}else{
+								//проверки на превышение пройдены... нужно спросить, действительно ли мы хотим увел. позицию...
+								/*if(
+								
+								(
+								roundPlus(parseFloat(res),3)<=roundPlus(parseFloat($("#new_max_quantity_"+hash).val())*parseFloat("%{$PPUP}%"),3))
+								
+								&&(
+								roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3))
+								
+								&&(
+								roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_incoming_quantity_"+hash).val()),3))
+								
+								){
+									
+									
+									//информировать об увеличении... в любом случае увеличивать счет и распоряжеине!
+									if(window.confirm("Внимание! Вы превышаете максимальное количество по позиции "+$('#name_'+hash).text()+"?\nПри утверждении реализации количество позиции будет увеличено в счете.\nВы уверены?")){	
+										usl=false;
+										$("#change_high_mode").val('1'); 	
+									}		
+									
+								
+								}else usl=false;*/
+								usl=false;
+								
+							}
+							
+							%{else}%
+							//превысить нет прав
+							if(
+								roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3))){
+								alert("Количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" превышает максимальное доступное количество по счету!");
+								
+								usl=true;		
+							}else if(
+								roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_incoming_quantity_"+hash).val()),3))){
+								alert("Количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" превышает максимальное доступное количество по связанным поступлениям!");
+								
+								usl=true;		
+							}else usl=false;	
+							
+							%{/if}%
+							
+							
+							//проверка на УМЕНЬШЕНИЕ!
+							//подвоз или не подвоз
+							
+							if(	roundPlus(parseFloat(res),3)<roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3)){
+									
+								
+								/*if(window.confirm("Внимание!\nВы выбрали меньшее количество позиций, чем доступно по счету.\nБудет ли производиться довоз по позиции "+$('#name_'+hash).text()+" ?\n\nОК - будет довоз\nОтмена - не будет довоза.\n\nЕсли будет производиться довоз, то при утверждении реализации количество этих позиций НЕ будет уменьшено в счете.\nЕсли довоз производиться не будет, то при утверждении реализации количество этих позиций в счете будет уменьшено!")){
+									
+									if(window.confirm("Внимание!\nКоличества остальных позиций реализации, меньшие, чем доступно по счету, также не будут уменьшены в счете.\nВсе равно продолжить?")){
+										$("#change_low_mode").val('0');
+										usl=false;
+									}else{
+										usl=true;
+									}	
+									
+									
+								}else{
+									if(window.confirm("Внимание!\nУменьшение количества позиции "+$('#name_'+hash).text()+" в счете также будет применено к остальным позициям реализации с количествами, меньшими, чем доступно по счету.\nВсе равно продолжить?")){
+										usl=false;	
+										$("#change_low_mode").val('1');
+									}else{
+										usl=true;
+									}
+								}*/
+								
+								usl=false;	
+							}
+						
+						%{else}%
+						//блок проверок по межскладу
+						
+						
+						//alert('по межскладу');
+						//проверка на БОЛЬШЕ. не давать проводить.
+						if((roundPlus(parseFloat(res),3)>roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3))){
+							alert("Количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" превышает максимальное доступное количество по распоряжению на межсклад № %{$acc.interstore_id}% ("+roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3)+" "+$('#dim_name_'+hash).text()+")!\nКоличество позиций не может превышать доступное количество.");
+								usl=true;	
+						}else{
+							//проверки на превышение пройдены
+							usl=false;
+							
+  
+							
+						}
+						
+						
+						if(	roundPlus(parseFloat(res),3)<roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3)){
+									
+								
+						  if(window.confirm("Внимание!\nВы выбрали меньшее количество позиции "+$('#name_'+hash).text()+" "+roundPlus(parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+", чем доступно по распоряжению на межсклад № %{$acc.interstore_id}% ("+roundPlus(parseFloat($("#new_max_quantity_"+hash).val()),3)+" "+$('#dim_name_'+hash).text()+").\nПо недовезенному количеству "+roundPlus(parseFloat($("#new_max_quantity_"+hash).val())-parseFloat(res),3)+" "+$('#dim_name_'+hash).text()+" будет автоматически создан акт списания недостачи.\nВы уверены?")){
+							  
+								usl=false; 
+							 	$("#change_low_mode").val('1');
+								
+						  }else usl=true;
+						  
+						  
+					  }
+						
+						
+						%{/if}%
+					}
+				  }
+				  if(really_do_it&&(res!=undefined)){
+					  //внесем изменения
+					 $('#kol_'+hash).html(res);
+					 $('#new_quantity_'+hash).val(res);
+					 RecalcPrices(hash);
+				  }
+				});
+				
+				
+				
+				
+				var complex_positions=new Array();
+				$.each($("#positions_on_page_table input[id^=acc_pos_]"), function(key, value){
+							
+							
+				  hash1=$(value).val();
+				  
+				  hashed_string='';
+				  hashed_string=$("#new_position_id_"+hash1).val();
+				  hashed_string=hashed_string+';'+$("#new_quantity_"+hash1).val().replace("\,","\.");
+				  if($("#new_has_pm_"+hash1).val()=='1') hashed_string=hashed_string+';'+'1';
+				  else hashed_string=hashed_string+';'+'0';
+				  hashed_string=hashed_string+';'+$("#new_price_"+hash1).val().replace("\,","\.");
+				  hashed_string=hashed_string+';'+$("#new_rub_or_percent_"+hash1).val().replace("\,","\.");
+				  
+				  hashed_string=hashed_string+';'+$("#new_plus_or_minus_"+hash1).val();
+				  hashed_string=hashed_string+';'+$("#new_value_"+hash1).val().replace("\,","\.");
+				  
+				  
+				  hashed_string=hashed_string+';'+$("#new_komplekt_ved_id_"+hash1).val();
+				  hashed_string=hashed_string+';';
+				hashed_string=hashed_string+';';
+				hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash1).val().replace("\,","\.");
+				hashed_string=hashed_string+';'+$("#check_new_total_"+hash1).val().replace("\,","\.");
+				  
+				  //alert(hashed_string);
+				  
+				  complex_positions.push(hashed_string);			  
+			  });
+				
+				
+				//подсчет нового Итого
+				$.ajax({
+				  async: true,
+				  url: "/js/acc.php",
+				  type: "POST",
+				  data:{
+					  "action":"calc_new_total",
+					  
+					  "bill_id":$("#bill_id").val(),
+					 "complex_positions[]":complex_positions
+				  },
+				  beforeSend: function(){
+					$("#positions_cost").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#positions_cost").html(data); 
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+				
+				//подсчет нового НДС
+				$.ajax({
+				  async: true,
+				  url: "/js/acc.php",
+				  type: "POST",
+				  data:{
+					  "action":"calc_new_nds",
+					  
+					   "bill_id":$("#bill_id").val(),
+					  "complex_positions[]":complex_positions
+				  },
+				  beforeSend: function(){
+					$("#positions_nds").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#positions_nds").html(data); 
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+        %{/if}%    
+    %{else}%
+    
+   
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций. Причина: %{$cannot_edit_quantities_reason}%.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" align="absmiddle" /></a>
+       
+    
+    %{/if}%

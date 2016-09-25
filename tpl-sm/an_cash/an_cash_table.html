@@ -1,0 +1,120 @@
+ 
+
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40" class="main">Код
+    
+    </th>
+    %{if $extended_an==1}%
+    <th scope="col" width="40" class="main">Дата
+    
+    </th>
+    %{/if}%
+    <th scope="col" width="*" class="main">Расшифировка
+    
+    </th>
+    <th scope="col" width="60" class="main">Сумма расходов
+    
+    </th>
+     
+</tr>
+</thead>
+<tbody>
+%{foreach from=$items item=doc1}%
+
+%{if  $doc1.value>0 }%
+<tr align="left" valign="top">
+	<td width="40"  class="contract"  >%{$doc1.code}%
+    
+    </td>
+      %{if $extended_an==1}%
+    <td width="40"  class="contract"  > 
+    
+    </td>
+    %{/if}%
+    <td width="*"  class="contract"  >%{$doc1.name}%
+    
+    </td>
+    <td width="60"  class="contract"   >%{if $doc1.value>0 }% %{$doc1.value}% %{/if}%
+    
+    </td>
+   
+</tr>
+%{if $extended_an==1}%
+%{foreach from=$doc1.docs item=doc}%
+<tr align="left" valign="top">
+	<td width="40" >%{$doc1.code}%
+    
+    </td>
+    <td width="40" >%{$doc.given_pdate}%
+    
+    </td>
+    
+    <td width="*">
+    %{if $doc.kind==2}%
+ 
+   
+   
+    <a href="ed_pay.php?action=1&id=%{$doc.id}%" target="_blank">Исходящая оплата № %{$doc.code}% от %{$doc.given_pdate}%</a>,
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+     
+     %{if $doc.is_inner_pay==1 and $doc.inu_login!=""}%
+     <a href="info.html?name=%{$doc.inu_login}%" target="_blank">
+    %{$doc.inu_name_s}%</a>
+    %{/if}%
+     
+%{elseif $doc.kind==3}%
+ 
+    
+   
+    <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">Расход наличных № %{$doc.code}% от %{$doc.given_pdate}%</a>
+   
+   
+%{elseif $doc.kind==4}%
+ 
+    
+   
+    <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">Проценты по расходу наличных № %{$doc.code}% от %{$doc.given_pdate}%</a>
+   
+    
+    %{/if}%
+    
+    
+    </td>
+    <td width="60"  style="white-space:nowrap;" > %{$doc.value}%  
+    
+    </td>
+   
+</tr>
+%{/foreach}%
+%{/if}%
+
+
+%{/if}%
+%{/foreach}%
+</tbody>
+<tfoot>
+<tr align="center" valign="top">
+	<th scope="col" width="40" class="main"> 
+    Итог
+    </th>
+        %{if $extended_an==1}%
+    <th scope="col" width="40" class="main"> 
+   
+    </th>
+    %{/if}%
+    <th scope="col" width="*" class="main"> 
+    
+    </th>
+    <th scope="col" width="60" class="main" style="white-space:nowrap;"> 
+     %{$value_pays}% 
+    </th>
+     
+</tr>
+</tfoot>
+</table>
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>

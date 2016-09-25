@@ -1,0 +1,66 @@
+<h1>Отчет +/-: %{if $not_given}%не%{/if}% выдано</h1>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период</strong><br />
+с:<br />
+<strong>%{$pdate1}%</strong></div>
+
+<div style="float:left; margin-right:20px;">
+<br />
+	по:<br />
+    <strong>%{$pdate2}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<br />
+Покупатель:<br />
+%{foreach from=$our_suppliers item=item}%
+				 %{$item.full_name}%;
+				%{/foreach}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+%{if $only_payed==1 or $only_semi_payed==1 or $only_not_payed==1}%<strong>Вы выбрали:</strong><br />
+%{if $only_payed==1}%оплаченные счета<br />
+%{/if}%
+%{if $only_semi_payed==1}%частично оплаченные счета<br />
+%{/if}%
+%{if $only_not_payed==1}%неоплаченные счета%{/if}%
+%{/if}%
+</div>
+<br clear="all" />
+
+
+<div style="float:left; margin-right:20px;">
+
+Зад. № с/ф:<br />
+%{$given_no}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+№ исх. счета. к-та:<br />
+%{$supplier_bill_no}%
+</div>
+
+
+<br clear="all" />
+<p />
+
+<style type="text/css">
+
+	
+	.blacktable th.small, td.small{
+		font-size:11px !important;
+		/*color:#666;	*/
+	}
+</style>
+
+
+%{include file="an_pm/an_pm_table_print.html}%
+
+
+%{include file="an_pm/an_short_supplier.html}%

@@ -1,0 +1,62 @@
+	<div class="login_program">
+    <h2>Выберите программу и организацию:</h2>
+    
+    
+	
+    <table width="600" border="0" cellpadding="5" cellspacing="2">
+    <tr align="left" valign="top">
+    <td colspan="3">
+    <em>Вам доступны следующие программы и организации. Кликните по названию программы и организации в списке для перехода в нее.</em><br>
+ 
+
+    </td>
+    </tr>
+    <tr align="left" valign="top">
+    <td width="400">
+    <div style="border:1px solid silver; width:400px; height:350px; overflow:scroll;">
+    
+    %{foreach name=rowsec from=$matched item=item}%
+   
+     <div class="common_block"   %{if $item.org_id==0}% onclick="location.href='/redir_program.php?program_id=%{$item.id}%&login=%{$item.login}%&password=%{$item.password}%'; return false;" %{else}%  onclick="location.href='/redir_program.php?program_id=%{$item.id}%&login=%{$item.login}%&password=%{$item.password}%&org_id=%{$item.org_id}%'; return false;" %{/if}%>
+     
+     
+     
+     %{if $item.org_id==0}%
+ <a href="#" onclick="location.href='/redir_program.php?program_id=%{$item.id}%&login=%{$item.login}%&password=%{$item.password}%'; return false;">%{$item.name}%</a> 
+%{else}%
+ <a href="#" onclick="location.href='/redir_program.php?program_id=%{$item.id}%&login=%{$item.login}%&password=%{$item.password}%&org_id=%{$item.org_id}%'; return false;">%{$item.name}%: %{$item.opf_name}% %{$item.full_name}%</a> 
+%{/if}%
+     
+    
+    
+     </div>
+     
+    %{/foreach}%
+   
+    </div>
+    </td>
+    <td width="20">&nbsp;</td>
+    <td width="*">
+    	 <a href="login.html?doOut" class="login_program">Выйти</a> 
+         <p />
+         
+     %{if $error_message!=""}%
+   <br />
+
+        <span class="error_message">%{$error_message}%</span>
+<br />
+      	
+    %{/if}%
+    
+    <p /> 
+    
+    <p /> 
+   
+    
+    </td>
+    </tr>
+    </table>
+    
+    </div>
+    
+	 

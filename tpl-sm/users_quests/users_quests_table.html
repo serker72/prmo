@@ -1,0 +1,41 @@
+
+
+<table width="*" cellpadding="1" cellspacing="0" %{if $print==1}% border="1"%{else}% border="0"%{/if}% class="blacktable">
+<thead>
+<tr align="left" valign="top">
+	<th scope="col" width="*">
+    Сотрудники/вопросы
+    </th>
+    %{section name=rowsec1 loop=$qsts}%
+    %{if $qsts[rowsec1].is_checked}%
+    <th scope="col" align="center" width="100">
+    %{$qsts[rowsec1].name}%
+    </th>
+    %{/if}%
+    %{/section}%
+
+</tr>
+</thead>
+<tbody>
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="*" align="left" valign="top">
+    <a href="info.html?name=%{$items[rowsec].login}%" target="_blank">%{$items[rowsec].name_s}% (%{$items[rowsec].login}%)</a>
+    </td>
+    
+    %{section name=rowsec2 loop=$items[rowsec].subs}%
+	<td width="100">
+    %{if $items[rowsec].subs[rowsec2]==1}%
+    <big><strong>+</strong></big>
+    %{else}%
+    -
+    %{/if}%
+    </td>
+    %{/section}%
+
+</tr>
+%{/section}%
+
+</tbody>
+</table>

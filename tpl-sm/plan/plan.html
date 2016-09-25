@@ -1,0 +1,325 @@
+<script src="/js/fc/moment.min.js"></script>
+<script src="/js/fc/fullcalendar.min.js"></script>
+<script src="/js/fc/lang/ru.js"></script>
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+
+<link type="text/css" rel="stylesheet" href="/js/jquery.qtip.min.css" />
+ 
+<script type="text/javascript" src="/js/jquery.qtip.min.js"></script>
+
+
+
+
+<link href="/js/fc/fullcalendar.min.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+$(function(){
+	$("#tabs").tabs({
+		cookie: { expires: 14, name: 'sc_Tab' }  
+  	});
+	
+	%{if $force_tab}%
+	index = $('#tabs a[href="#tabs-%{$force_tab}%"]').parent().index();
+	$('#tabs').tabs('select', index);
+	
+	%{/if}%
+	
+	
+	$("#sc_new_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 250,
+		height: 250,
+		dialogClass: 'semi_auth',
+		buttons:{
+			"OK":function(){
+				if(($("input[type=radio][id^=sc_kind_]:checked").val()!=undefined)){
+					
+					if($("input[type=radio][id^=sc_kind_]:checked").val()==1){
+						url='ed_sched_task.php?action=0&kind_id='+$("input[type=radio][id^=sc_kind_]:checked").val();
+					}else{
+						url='ed_sched.php?action=0&kind_id='+$("input[type=radio][id^=sc_kind_]:checked").val();
+					
+					}
+					
+					if($("#sc_time").val()!='') url+='&datetime='+$("#sc_time").val();	
+					location.href=url;
+				}
+				
+				
+				$("#sc_new_dialog").dialog("close");
+				$("#sc_time").val("");
+			},
+			"Отмена":function(){
+				
+				$("#sc_new_dialog").dialog("close");
+				$("#sc_time").val("");
+			}
+		}
+	});
+	
+	
+	$("#sc_new").bind("click", function(){
+		
+		$("#sc_new_dialog").dialog("open");
+	});
+	
+	%{if $force_create}%
+	
+	$("#sc_new").trigger("click");
+	%{/if}%
+	
+	
+	$('#sc_plan').fullCalendar({
+			lang: 'ru',
+			theme: true,
+			height: "auto",
+			
+			columnFormat: 'DD.MM.YYYY, dddd',
+			header: {
+				left: '',
+				center: '',
+				right: ''
+			},
+			defaultDate: '%{$pdate}%',
+			defaultView: 'agendaDay',
+			defaultTimedEventDuration: '01:00:00',
+			%{if $can_edit}%
+			eventClick: function(calEvent, jsEvent, view) {
+		
+				//alert('Event: ' + calEvent.title);
+				/*alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+				alert('View: ' + view.name);
+		
+				// change the border color just for fun
+				$(this).css('border-color', 'red');*/
+		
+			},
+			%{/if}%
+			%{if $can_create}%
+			dayClick: function(date, jsEvent, view) {
+
+				//alert('Clicked on: ' + date.format());
+				$("#sc_time").val(date.format());
+				$("#sc_new").trigger("click");
+		
+				/*alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+				alert('Current view: ' + view.name);
+		
+				// change the day's background color just for fun
+				$(this).css('background-color', 'red');*/
+		
+			},
+			%{/if}%
+			
+			eventRender: function(event, element) {
+				element.qtip({
+					content: event.description,
+					position: {
+						my: 'top left',  // Position my top left...
+						at: 'bottom left', // at the bottom right of...
+						target: $(element) // my target
+					}
+				});
+			},
+			events: [
+				%{foreach name=fr from=$ribbon item=item}%
+				{
+					title: '%{$item.ribbon_short_title}%',
+					start: '%{$item.ribbon_begin}%',
+					description: '%{$item.ribbon_title}%',
+					%{if $item.ribbon_end!=""}%end: '%{$item.ribbon_end}%',%{/if}%
+					%{if $can_edit}%
+					url:'/ed_sched.php?action=1&id=%{$item.id}%'
+					%{/if}%
+					
+				}
+				%{if !$smarty.foreach.fr.last}%
+				,
+				%{/if}%
+				%{/foreach}%
+				/*{
+					title: 'All Day Event',
+					start: '%{$pdate}%'
+				},
+				{
+					title: 'Long Event',
+					start: '2015-01-01',
+					end: '%{$pdate}%'
+				},
+				 
+				{
+					title: 'Meeting',
+					start: '%{$pdate}%T10:30:00',
+					end: '%{$pdate}%T12:30:00'
+				},
+				{
+					title: 'Lunch',
+					start: '%{$pdate}%T12:00:00'
+				},
+				{
+					title: 'Birthday Party',
+					start: '%{$pdate}%T07:00:00'
+				},
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '%{$pdate}%'
+				}*/
+			]
+			 
+    });
+	
+	 $.ajax({
+		async: true,
+		url: "/js/annul.php",
+		type: "GET",
+		data:{
+			action: "try_annul",
+			kind: 15
+		},
+		beforeSend: function() {
+		 
+		},
+		success: function(data) {
+			//alert(data);
+		},
+		error: function() {
+		 // alert("");
+		}
+	}); 
+
+});
+</script>
+
+<style>
+#sc_plan{
+	width:230px;
+	 
+}
+</style>
+
+ 
+ 
+
+<table width="100%" border="0">
+<tr align="left" valign="top">
+
+ <td width="*">
+ 
+ 	%{if $can_create}%
+    <div style="margin-bottom:10px;">
+	<input type="button" id="sc_new" value="Создать событие..." /></div>
+	%{/if}%
+    
+    
+   
+    <div id="sc_new_dialog" title="Я хочу запланировать..." style="display:none;">
+    
+    	<img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+
+		<div style="float:left; padding-top:5px; margin-bottom:10px;">
+    
+            <input type="hidden" id="sc_time" value="" />
+            
+            <h2>Я хочу запланировать:</h2>
+            <input type="radio" name="sc_kind" id="sc_kind_3" value="3" /><label for="sc_kind_3">Встречу</label><br>
+            <input type="radio" name="sc_kind"  id="sc_kind_1" value="1" /><label for="sc_kind_1">Задачу</label><br>
+            <input type="radio" name="sc_kind"  id="sc_kind_5" value="5" /><label for="sc_kind_5">Заметку</label><br>
+            
+            <input type="radio" name="sc_kind"  id="sc_kind_4" value="4" /><label for="sc_kind_4">Звонок</label><br>
+            <input type="radio" name="sc_kind"  id="sc_kind_2" value="2" /><label for="sc_kind_2">Командировку</label>
+        </div>
+		<br clear="all" />
+
+		
+    </div>
+    
+	
+   <div id="tabs">
+       <ul>
+       
+       <li><a href="#tabs-3">Встречи</a></li>
+       
+        <li><a href="#tabs-1">Задачи</a></li>
+        
+        <li><a href="#tabs-5">Заметки</a></li>
+       
+        
+         <li><a href="#tabs-4">Звонки</a></li>
+        
+        
+        <li><a href="#tabs-2">Командировки</a></li>
+        
+       
+        
+      </ul>
+      
+      <div id="tabs-3">
+        <p>
+        %{$log3}%
+        
+        </p>
+      </div>
+      
+       <div id="tabs-1">
+        <p>
+        %{$log1}%
+        
+        </p>
+      </div>
+      
+     
+       <div id="tabs-5">
+        <p>
+        %{$log5}%
+        
+        </p>
+      </div>
+    
+      
+      <div id="tabs-4">
+        <p>
+        %{$log4}%
+        
+        </p>
+      </div>
+      
+      
+      
+       <div id="tabs-2">
+        <p>
+        %{$log2}%
+        
+        </p>
+      </div>
+      
+     
+        
+     
+    </div>
+    
+    
+</td>
+
+<td width="230" style="padding-left:10px;">
+ 
+
+
+    <div id="sc_calendar">
+    %{$calendar}%
+    </div>
+    
+    <div id="sc_plan">
+    
+    </div>
+    <div class="clear"></div>
+   
+ </td>
+</tr>
+</table>
+
+
+

@@ -1,0 +1,102 @@
+<h1>Отчет Планировщик</h1>
+
+ 
+
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+	.blacktable th, .blacktable td{
+		border:1px solid black;
+	}
+	.blacktable{
+		border-collapse:collapse;
+	}
+</style>
+ 
+ 
+ 
+ <div style="float:left; margin-right:20px; margin-bottom:10px; white-space:nowrap; overflow:hidden;">
+  
+
+    <b>Виды:</b><br>
+
+    
+    %{if $kind_id_3==1 or $all_kinds==1}% Встречи<br>
+%{/if}%  
+    %{if $kind_id_1==1 or $all_kinds==1}% Задачи<br>
+%{/if}%  
+      %{if $kind_id_5==1 or $all_kinds==1}% Заметки<br>
+%{/if}%  
+      %{if $kind_id_4==1 or $all_kinds==1}% Звонки<br>
+%{/if}% 
+     
+     %{if $kind_id_2==1 or $all_kinds==1}% Командировки%{/if}%  
+     
+   
+
+</div>
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:10px; white-space:nowrap; overflow:hidden;">
+
+ 
+
+
+    <b>Статусы:</b><br>
+
+ %{if $status_id_18==1 or $all_statuses==1}% Создан(а) %{/if}% 
+    %{if $status_id_23==1 or $all_statuses==1}% Ждет выполнения <br>
+%{/if}% 
+    %{if $status_id_24==1 or $all_statuses==1}% Выполняется<br>
+%{/if}%  
+     %{if $status_id_25==1 or $all_statuses==1}% Отложена<br>
+%{/if}%  
+     
+    %{if $status_id_10==1 or $all_statuses==1}% Выполнен(а)<br>
+%{/if}% 
+     %{if $status_id_26==1 or $all_statuses==1}% Ждет контроля <br>
+%{/if}% 
+     
+    
+     
+   %{if $status_id_2==1 or $all_statuses==1}% Утвержден<br>
+%{/if}% 
+    %{if $status_id_22==1 or $all_statuses==1}% Запланирован<br>
+%{/if}%  
+     
+     %{if $status_id_3==1 or $all_statuses==1}% Аннулирован%{/if}%
+     
+    
+   
+
+
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:10px; white-space:nowrap;">
+<strong>Период:</strong>
+  &nbsp;&nbsp; 
+
+<b>с:</b> %{$pdate_1}% 
+ &nbsp;&nbsp;
+<b>по:</b> %{$pdate_2}% 
+
+</div>
+
+
+     
+
+<br clear="all" />
+<p />    
+    
+ 
+<p />
+%{include file="an_sched/an_table.html"}%

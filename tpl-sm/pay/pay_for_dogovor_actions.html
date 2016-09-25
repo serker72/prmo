@@ -1,0 +1,76 @@
+<script type="text/javascript">
+$(function(){
+	$("#pay_for_dogovor").bind("change",function(){
+		if($("#pay_for_dogovor").prop("checked")){
+			if(($("#supplier_id").val()==0)||($("#supplier_id").val()=="")||($("#supplier_id").val()==null)){
+				alert("Пожалуйста, выберите контрагента!");
+				$("#pay_for_dogovor").prop("checked",false);
+				return false;
+			}else if(($("#contract_id").val()==0)||($("#contract_id").val()=="")||($("#contract_id").val()==null)){
+			
+				alert("Пожалуйста, выберите договор контрагента!");
+				$("#pay_for_dogovor").prop("checked",false);
+				return false;
+			}else{
+				if((parseFloat($("#value").val().replace("\,","\."))<=0)||($("#value").val()=="")||($("#value").val()==null)){
+					alert("Пожалуйста, укажите сумму платежа!");
+					$("#pay_for_dogovor").prop("checked",false);
+					$("#value").focus();
+					return false;
+				}else{
+					//
+					do_it=true;
+					if($("#bill_positions_table tbody > tr").length>0){
+						do_it=window.confirm("Внимание! Данное действие приведет к сбросу ранее выбранных счетов в оплате. Счета для оплаты будут выбраны автоматически. Все равно продолжить?");
+					}
+					
+					if(do_it){
+						//снять галочку "оплата по счету"
+						$("#pay_for_bill").prop("checked",false);
+						 $("#bill_id").val("");
+						
+						
+						$.ajax({
+							async: true,
+							url: "/js/pay.php",
+							type: "POST",
+							data:{
+								"action":"auto_find_bills",
+								"supplier_id":$("#supplier_id").val(),
+								"contract_id":$("#contract_id").val(),
+				  				"pay_id":$("#id").val(),
+								"value":$("#value").val().replace("\,","\.")
+							},
+							beforeSend: function(){
+								$("#positions").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="0" />');  
+							},
+							success: function(data){
+							 
+							  $("#positions").html(data);
+							 
+							  
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+						//alert('dd');	
+					}else{
+						$("#pay_for_dogovor").prop("checked",false);
+						return false;
+					}
+				}
+			}
+			
+			
+				
+		}else{
+			if(window.confirm("Внимание! Данное действие приведет к сбросу ранее выбранных счетов в оплате. Все равно продолжить?")){
+				$("#positions").empty();
+			}else{
+				$("#pay_for_dogovor").prop("checked",true);
+			}
+		}
+	});
+});
+</script>

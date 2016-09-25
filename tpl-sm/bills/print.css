@@ -1,0 +1,72 @@
+body{
+	margin:00px 0 0 0;
+	padding:00px 0 0 0;
+		
+}
+body, div, p, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10pt;
+}
+h1{
+	font-size:14pt;
+	border-bottom:2px solid black;
+	margin-top:25px;
+	padding-bottom:10px;
+}
+
+h2{
+	font-size:10pt;
+	border-bottom:2px solid black;
+	margin-top:15px;
+	padding-bottom:8px;
+}
+
+table.bordered, table.bordered td{
+	border:1px solid black;
+	border-collapse:collapse;	
+}
+.s8{
+	font-size:8pt;
+}
+.tb1{
+	font-size:8pt;
+}
+.tb{
+	font-weight:bold;
+	font-size:8pt;
+}
+table.tpos{
+	border:3px solid black;
+	border-collapse:collapse;		 
+}
+
+table.tpos td, table.tpos th{
+	border:1px solid black;
+	border-collapse:collapse;	
+}
+
+table.tpos td{
+	font-size:8pt;
+}
+
+td.tl{
+	border-bottom:1px solid black;
+}
+.foot, .foot p{
+	font-size:7pt;
+	font-weight:bold;
+	 
+	text-align:justify; 
+	 
+	page-break-inside:avoid !important; page-break-before:auto;
+	
+}
+.foot1, .foot1 p{
+	font-size:7pt;
+	font-weight:bold;
+	 
+	text-align:justify; 
+ 
+	
+}
+ 

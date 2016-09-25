@@ -1,0 +1,128 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+     %{if $can_edit}%
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" title="удалить %{$named}%"><img src="/img/del.gif" width="15" height="15" border="0" alt="" align="right" /></a>        
+    <a href="#" id="edit_%{$word}%_%{$items[rowsec].id}%" title="редактировать %{$named}%"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_%{$word}%_%{$items[rowsec].id}%" border="0" alt="" align="right" /></a>
+    %{/if}%
+    
+    <em>Вид:</em><strong>%{$items[rowsec].form_name}%</strong><br>
+
+    
+    <em>Адрес:</em><strong>%{$items[rowsec].address}%</strong>
+
+   
+    </div>
+    %{if $can_edit}%
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$.ajax({
+					async: true,
+					url: "/js/user_d.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":%{$user_id}%
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/user_d.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":%{$user_id}%
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 $("#%{$word}%_phone").val("%{$items[rowsec].address|regex_replace:"/[\n]/":"\\n"|regex_replace:"/[\r]/":"\\r"|regex_replace:"/&quot;/":"\\\""}%");
+			 $("#%{$word}%_kind_id").val("%{$items[rowsec].kind_id}%");
+			 
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						$.ajax({
+							async: true,
+							url: "/js/user_d.php",
+							type: "POST",
+							data:{
+								"action":"edit_%{$word}%",
+								"phone": $("#%{$word}%_phone").attr("value"),
+								"kind_id": $("#%{$word}%_kind_id").val(),
+								"id":"%{$items[rowsec].id}%",
+								"user_id":%{$user_id}%
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  $.ajax({
+								  async: true,
+								  url: "/js/user_d.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":%{$user_id}%
+								  },
+								  beforeSend: function(){
+										
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

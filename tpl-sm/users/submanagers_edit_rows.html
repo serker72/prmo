@@ -1,0 +1,33 @@
+%{section name=pospossec loop=$pospos}%
+ 
+
+%{if 
+    ($kind==0 and ( $pospos[pospossec].is_in==1 )) or
+    ($kind==1 and ( $pospos[pospossec].is_in==0 ))
+    
+    
+    
+    }%
+	
+    
+    
+    <tr align="left" valign="top">
+    	<td width="24" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        <input type="checkbox" value="1" id="submanagers_is_in_%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].is_in==1}% checked%{/if}% %{if $pospos[pospossec].is_avail==false}% disabled title="Выбор невозможен, т.к. сотрудник подчинен сотруднику %{$pospos[pospossec].manager_of_user}%"%{/if}%/>
+        </td>
+    	<td width="*" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+        <input type="hidden" id="submanagers_hash_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].hash}%" />
+        
+        <input type="hidden" id="submanagers_id_%{$pospos[pospossec].hash}%"   value="%{$pospos[pospossec].user_id}%" />
+        
+        %{$pospos[pospossec].name_s}%, %{$pospos[pospossec].position_s}%
+        </td>
+       
+       
+       
+       
+    </tr>    
+    
+%{/if}%
+%{/section}%        

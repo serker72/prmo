@@ -1,0 +1,190 @@
+
+<input type="button" %{if !$can_modify}% disabled %{/if}% id="add_users" value="Добавить пользователя" />
+
+
+<div id="share">
+ 
+%{include file="plan/share_on_page_set.html" pospos=$shares}%
+ 
+</div>
+ 
+
+<br clear="all" />
+
+
+<div id="positions_dialog" title="Выберите пользователей" style="display:none;">
+
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	var dialog_width=1200;
+	var dialog_position='center';
+	
+	 
+	
+	$("#add_users").bind("click",function(){
+		 
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			
+			
+			
+			var complex_positions=new Array();
+			
+			$.each($("#share table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				
+				
+				
+				hashed_string=$("#new_share_user_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("input[type=radio][name=new_share_right_id_"+hash+"]:checked").val();
+				 
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);			  
+			  
+			});
+			
+			var except_ids=new Array(); except_ids.push($("#manager_id").val());
+			
+			
+			w=parseInt($(window).width());
+			if(w<1200){
+				 dialog_width=w-10;
+				 dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 
+			}else{
+				dialog_width=1200;
+				dialog_position='center';
+			}
+			
+			$("#positions_dialog").dialog( "option", "position", dialog_position );
+			$("#positions_dialog").dialog( "option", "width", dialog_width );
+			
+			
+			//alert(quantities.length);
+			$.ajax({
+			  async: true,
+			  url: "/js/sched.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_users",
+				  "sched_id":"%{$bill.id}%",
+				  
+				  "complex_positions[]":complex_positions,
+				  "except_ids[]":except_ids
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#positions_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data); 
+				
+				  
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			 
+			$("#positions_dialog").dialog("open");
+		 
+	});
+	
+	
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: dialog_width,
+		position: dialog_position,
+		height: 620,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				var complex_positions=new Array();
+				 
+				
+				
+				
+				if(can_put) {
+					
+					
+					//перенос данных в таблицу на странице
+					
+					
+					$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+						
+						
+						hash1=$(value).val();
+						
+						if($("#share_is_in_"+hash1).prop("checked")){
+							
+						
+							hashed_string='';
+							hashed_string=$("#share_user_id_"+hash1).val();
+							hashed_string=hashed_string+';'+$("input[type=radio][name=share_right_id_"+hash1+"]:checked").val();
+							
+							//alert(hashed_string); 
+							complex_positions.push(hashed_string);			  
+						}
+					});
+					
+					
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/sched.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_users",
+						  "shed_id":"%{$bill.id}%",
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#share").html(data); 
+						
+						 
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					//alert('zs');
+					$(this).dialog("close"); 
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

@@ -1,0 +1,27 @@
+<br>
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" %{if !$can_edit}% disabled="disabled"%{/if}% />
+
+
+<div id="dialog_nest_%{$word}%" title="%{$named}%" style="display:none;">
+
+    <em>Вид:</em><br />
+    
+	%{section name=kindsec loop=$kinds}%
+	<input name="%{$word}%_kind" id="%{$world}%_kind_%{$kinds[kindsec].id}%" type="radio" value="%{$kinds[kindsec].id}%" %{if $kinds[kindsec].is_current}%checked="checked"%{/if}% />
+	<label for="%{$world}%_kind_%{$kinds[kindsec].id}%"><img src="%{$kinds[kindsec].icon}%" alt="" border="0" align="left" hspace="0" />%{$kinds[kindsec].name}%</label>
+	<br clear="all" />
+
+	%{/section}%
+	
+	<p>
+
+    
+    <em>Значение:</em><br>
+<input type="text" size="40" maxlength="255" id="%{$word}%_value" /><p>
+
+   
+
+</div>
+
+
+

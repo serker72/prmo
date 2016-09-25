@@ -1,0 +1,16 @@
+<li><a href="help.php?topic_id=%{$item.item.id}%#answer" %{if $item.item.is_active}% class="active"%{/if}% >%{$item.item.name}%</a> 
+
+%{foreach name=fe from=$item.subs item=it}%%{/foreach}%
+%{if $smarty.foreach.fe.total>0}%
+<ul>
+
+%{foreach name=fe from=$item.subs item=item}%
+
+
+%{include file="help_nested.html" item=$item}%
+%{/foreach}%
+</ul>
+%{else}%
+
+%{/if}%
+</li>

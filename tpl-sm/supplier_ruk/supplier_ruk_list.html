@@ -1,0 +1,154 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+		
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	 
+	 
+	$("#pdate1%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#pdate2%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#pdate").datepicker({changeYear:true, yearRange: '2012:+00'});	
+	 
+	
+}); 
+</script>
+
+ 
+
+
+%{include file="every_help_dialog.html" filename="supplier_ruks.htm" prefix=$prefix description="Блок Руководители организации"  style="float:right;  margin-right:0px;"  is_right=true}%
+
+
+ 
+ 
+
+
+ 
+
+ 
+<input type="button" value="Создать запись руководителя..." id="create_percent" onclick="location.href='ed_supplier_ruks.php?action=0&supplier_id=%{$supplier_id}%';"  />
+&nbsp;&nbsp;
+
+
+<input type="button" value="Назад в карту %{$opf.name|escape}% %{$supplier.full_name|escape}%" onclick="location.href=%{if $supplier.is_org==0}%'supplier.php?action=1&id=%{$supplier.id}%';%{else}%'ed_organization.php?action=1&id=%{$supplier.id}%';%{/if}%" />
+     
+<br clear="all" />
+<p />  
+ 
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+   
+    
+    <th scope="col" width="60">
+    Дата начала действия
+   
+    </th>
+    
+     <th scope="col" width="50">
+   Должность
+   
+    </th>
+    
+  
+ 
+    <th scope="col" width="300" >
+    
+    ФИО
+   
+    </th>
+   
+   
+    
+      
+  <!--
+    
+     <th scope="col" width="*">
+    Примечания
+   
+    </th>-->
+    
+   
+    
+   <th scope="col" width="24" >&nbsp;
+   
+   </th>
+    <th scope="col"  width="24">&nbsp;
+   
+   </th>
+</tr>
+
+</thead>
+<tbody>
+ 
+%{section name=rowsec loop=$items}%
+
+
+<tr align="center" valign="top" id="pay_item_row%{$prefix}%_%{$items[rowsec].id}%">
+
+    
+     
+     <td width="60" %{if $items[rowsec].is_active}%class="item_active"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].begin_pdate}%
+    
+    
+    </td>
+    
+    <td width="50"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%> 
+   %{if $items[rowsec].is_active}%<strong>%{/if}%
+   
+    %{$items[rowsec].name}%
+   
+      %{if $items[rowsec].is_active}%</strong>%{/if}%
+    </td>
+   
+       <td width="300"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+    %{$items[rowsec].fio}% 
+    </td>
+   
+     
+   
+   
+    <!--<td width="*"  %{if $items[rowsec].is_active}%class="item_active"%{/if}% align="left">
+    <div style="max-height:100px; overflow:auto;"><small>  
+    %{$items[rowsec].notes}%
+   </small></div>
+   
+    <input type="hidden" id="notes_%{$items[rowsec].id}%" value="%{$items[rowsec].notes|escape:"html"}%" />
+    </td>-->
+   
+   
+    <td width="24"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+   
+    <a href="ed_supplier_ruks.php?action=1&id=%{$items[rowsec].id}%" data-comment="Подробно..."  class="reestr_edit reestr_right_button24"  ></a>
+    
+  
+    
+    </td>
+    
+     <td width="24"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+  <a href="ed_supplier_ruks.php?action=2&id=%{$items[rowsec].id}%" onclick="return window.confirm('Вы уверены, что хотите удалить запись руководителя?');"  data-comment="Удалить..."  class="reestr_delete reestr_right_button24" ></a>
+    
+    </td>
+    
+   
+</tr>
+ 
+%{/section}%
+ 
+</tbody>
+</table>
+ 
+%{if $smarty.section.rowsec.total==0}%
+<em>Руководителей не найдено.</em><br />
+%{/if}%
+
+
+
+
+ 

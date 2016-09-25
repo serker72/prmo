@@ -1,0 +1,901 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+$(function(){
+	touchScroll('contact');
+});
+</script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pasp_kogda").datepicker({changeYear:true, yearRange: '1900:2012'});
+	 $("#pasp_bithday").datepicker({changeYear:true, yearRange: '1900:2012'});
+	 $("#vacation_till_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	 $.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+<form action="user_s.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$user.id}%" />
+
+
+
+%{include file="every_help_dialog.html" filename="user_edit.htm" prefix="" description="редактирование карты сотрудника"  style="float:right;  margin-right:10px;" is_right=true}%
+
+
+%{if $can_common}%
+<div style="float:left; margin-right:20px;">
+<label for="login">Логин:</label><br>
+<strong>%{$user.login}%</strong>
+
+</div>
+%{/if}%
+
+
+<div style="float:left; margin-right:20px;">
+<label for="email_s">Основная электронная почта:</label><br>
+<input type="text" name="email_s" id="email_s" size="30" maxlength="255" value="%{$user.email_s}%" %{if !$can_change_primary_email}% disabled="disabled"%{/if}%  />
+ 
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_active" value="1" %{if $user.is_active==1}%checked="checked"%{/if}% %{if ($user.is_active==0 and $can_unblock==false) or($user.is_active==1 and $can_block==false)}% disabled="disabled"%{/if}% />
+<label for="is_active">Карта пользователя активна</label><br><br>
+
+<p />
+</div>
+<br clear="all" />
+<p />
+
+%{if $can_common}%
+
+
+
+
+
+
+
+
+<!--<div style="float:left; margin-right:20px; width:230px;">
+<label for="group_id">Роль в системе:</label><br />
+<select name="group_id" id="group_id" style="width:230px;" %{if $cannot_change_password or !$can_edit_role}% disabled="disabled"%{/if}%>
+%{html_options values=$group_ids selected=$user.group_id output=$group_names}%
+</select>
+
+<div id="change_mode" style="display:none;">
+<label for="change_mode">
+Вы изменили роль в системе у пользователя %{$user.login}%!<br />
+Укажите, как редактировать права пользователя %{$user.login}%?</label>
+<br />
+
+<input type="radio" name="change_mode" value="0" checked="checked" />Не редактировать<br />
+<input type="radio" name="change_mode" value="1" />Добавить права из новой роли, не удалять права, которых нет в новой роли<br />
+<input type="radio" name="change_mode" value="2" />Удалить права, которых нет в новой роли, не добавлять права из новой роли<br />
+<input type="radio" name="change_mode" value="3" />Полная смена прав<br />
+</div>
+
+</div>-->
+
+<input type="hidden" name="group_id" id="group_id" value="0" />
+
+
+
+
+
+ 
+
+<!--<strong>Место работы:</strong><br />
+
+%{section name=rowsec loop=$sectors}%
+%{if $smarty.section.rowsec.index==0 or $smarty.section.rowsec.index==$div}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+<input type="checkbox" value="1" name="sector_id_%{$sectors[rowsec].id}%" %{if $sectors[rowsec].is_in==1}% checked="checked"%{/if}% %{if !$can_modify_sectors}% disabled="disabled"%{/if}% /><label for="sector_id_%{$sectors[rowsec].id}%" %{if $sectors[rowsec].is_active==0}% class="item_inactive"%{/if}%>%{$sectors[rowsec].name}%</label><br />
+%{if $smarty.section.rowsec.last or $smarty.section.rowsec.index_next==$div}%
+</div>
+%{/if}%
+%{/section}%
+
+<div style="float:left; margin-right:20px;">
+
+  <div style="width: 350px; border:1px solid silver; padding:5px 5px; overflow:auto;">
+    <img src="/img/voskl.png" width="64" height="64" alt="" border="0" align="left" hspace="5" />
+      <strong>Внимание!</strong><br />
+	  При выборе участков сотрудник имеет право работы только с документами по отмеченным участкам!<br />
+	  Исключение - участок "Центральный офис".
+     
+  </div>
+
+</div>
+
+<br clear="all" />
+<p />-->
+ 
+
+<!--
+<strong>Просмотр документов по всем участкам объектов:</strong><br />
+
+%{section name=rowsec2 loop=$storages}%
+%{if $smarty.section.rowsec2.index==0 or $smarty.section.rowsec2.index==$divs}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+<input type="checkbox" value="1" name="storage_id_%{$storages[rowsec2].id}%" %{if $storages[rowsec2].is_in==1}% checked="checked"%{/if}% %{if !$can_modify_sectors}% disabled="disabled"%{/if}% /><label for="storage_id_%{$storages[rowsec2].id}%" %{if $storages[rowsec2].is_active==0}% class="item_inactive"%{/if}%>%{$storages[rowsec2].name}%</label><br />
+%{if $smarty.section.rowsec2.last or $smarty.section.rowsec2.index_next==$divs}%
+</div>
+%{/if}%
+%{/section}%
+
+<div style="float:left; margin-right:20px;">
+
+  <div style="width: 350px; border:1px solid silver; padding:5px 5px; overflow:auto;">
+    <img src="/img/voskl.png" width="64" height="64" alt="" border="0" align="left" hspace="5" />
+      <strong>Внимание!</strong><br />
+	 
+	 Для сотрудников участка "Центральный офис" данный блок заполнять не нужно.
+     
+  </div>
+
+</div>
+
+<br clear="all" />
+<p />
+-->
+
+%{/if}%
+
+%{if $can_photo}%
+<div style="float:left; margin-right:20px; width:200px; overflow:auto;">
+<strong>Фото сотрудника:</strong><br />
+<input type="hidden" name="photo" id="photo" value="%{$user.photo|escape:"html"}%" />
+<img src="%{$user.photo}%" alt="" id="user_photo" border="0" />
+<div id="user_photo_warning" style="display:none; color:red;">Для сохранения загруженного фото нажмите кнопку "Сохранить и перейти к списку пользователей, или "Сохранить и остаться".</div>
+<p />
+
+
+
+ 
+
+<script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+<input type="hidden"  id="photo_" value="" />
+
+ <em>максимальный размер файла: 6M</em>  
+
+<div id="queue_"></div>
+
+
+
+<script type="text/javascript">
+$(function(){
+		 
+		
+		
+		$('#photo_').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите и загрузите файл...',
+			'fileTypeDesc' : 'Веб-изображения',
+        	'fileTypeExts' : '*.jpg;*.jpe;*.jpeg;*.gif;*.png', 
+				'fileSizeLimit' : '6 MB',
+				'uploadLimit' : 1, 
+			'multi'          : false, 
+				'width'           : 200,
+				'formData'         : {
+									   "PHPSESSID" : "%{$session_id}%",
+									  
+									  "id":"%{$user.id}%"
+				                     },
+				'queueID'          : 'queue_',
+				'uploadScript'     : '/swfupl-js/upload_user_s_photo.php',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				}
+			});
+		
+		 
+ 
+});
+ </script>
+
+  
+  <p />
+</div>  
+%{/if}%
+
+
+<div style="float:left; margin-right:0px;">
+    %{if $can_common}%
+    
+     
+    <div style="float:left; margin-right:20px;">
+    <label for="name_s">Ф.И.О.:</label><br>
+    <input type="text" size="40" maxlength="255" name="name_s" value="%{$user.name_s|escape:"html"}%"  %{if !$can_edit_common}% disabled%{/if}%  />
+    </div>
+    
+    
+    <div style="float:left; margin-right:0px;">
+    <label for="position_s">Должность:</label><br>
+    <input type="text" size="40" maxlength="255" name="position_s" value="%{$user.position_s|escape:"html"}%"  %{if !$can_edit_common}% disabled%{/if}%  />
+    </div>
+    
+    <br clear="all">
+    <p />
+    
+    
+    <div style="float:left;  margin-right:0px;">
+    
+    
+    <label for="password">Новый пароль:</label><br>
+    <small><em>Если смена пароля не требуется, оставьте поле пустым</em><br />
+    <em>При смене пароля: минимальная длина 6 символов; допустимые символы - латинские буквы и цифры</em></small><br />
+    
+    <div style="float:left; margin-right:20px;">
+    <input type="text" size="20" maxlength="255" name="password" id="password" %{if $cannot_change_password}% disabled="disabled"%{/if}% />
+    </div>
+    
+    
+    
+    <div style="float:left; margin-right:20px;">
+    %{if $can_chp}%
+    <style>
+        .empty, .go, .nogo{
+            margin-top:5px;
+            width:32px;
+            height:32px;
+            
+            background-image:url(/img/icons/go-nogo.jpg);
+            background-repeat:no-repeat;	
+        }
+        .empty{
+            background-position:64px 64px;
+            
+        }
+        .go{
+            
+            background-position:left top;
+        }
+        .nogo{
+            background-position:-32px top;
+        }
+    </style> 
+    
+    <input type="button" id="user_chp" value="Сменить пароль..." title="смена пароля сотрудника и отправка нового пароля на его основную электронную почту" />
+    
+    <div id="user_chp_dialog" title="Установите пароль" style="display:none;">
+        
+        <small> 
+    <em>Минимальная длина пароля 6 символов; допустимые символы - латинские буквы и цифры</em></small><br /><br>
+    
+        
+        <div style="float:left; margin-right:5px;">
+            <label for="new_pass_1">Введите пароль:</label><br>
+    
+            <input type="text" id="new_pass_1" value=""  size="20" maxlength="255" />
+        </div>
+        
+        <div id="new_pass_ind_1" style="float:left;" class="empty">
+        
+        </div>
+        <br clear="all" />
+        <p />
+        
+        <div style="float:left; margin-right:5px;">
+            <label for="new_pass_2">Повторите пароль:</label><br>
+    
+            <input type="text" id="new_pass_2" value=""  size="20" maxlength="255" />
+        </div>
+        
+        <div id="new_pass_ind_2" style="float:left; " class="empty">
+        
+        </div>
+        
+        
+    
+    </div>
+    
+    <script type="text/javascript">
+    $(function(){
+        
+        function CheckRegular(res){
+            ret1=true;
+            if(res.length<6) ret1=ret1&&false;
+                  
+            reg1=new RegExp("^[A-Za-z0-9]+$");
+             
+              
+            if(res.search(reg1)==-1) ret1=ret1&&false;
+            
+            //console.log('1'); 
+            return ret1;	
+        }
+        
+        
+        $("#user_chp_dialog").dialog({
+          autoOpen: false,
+		  dialogClass: 'semi_auth',
+          modal: true,
+          width: 270,
+          height: 250,
+          buttons: {
+              "ОК": function() { 
+                do_change=true;
+            
+                do_change=do_change&&CheckRegular($("#new_pass_1").val());
+                do_change=do_change&&CheckRegular($("#new_pass_2").val());
+                do_change=do_change&&($("#new_pass_1").val()==$("#new_pass_2").val());
+                
+                if(do_change){
+                    $.ajax({
+                        async: true,
+                        url: "/js/user_chp.php",
+                        type: "POST",
+                        data:{
+                            "action":"do_chp",
+                            "setted_password":$("#new_pass_1").val(),
+                            "id": $("#id").val()
+                        },
+                        beforeSend: function(){
+                              
+                        },
+                        success: function(data){
+                           alert("Пароль успешно изменен.\nПользователю отправлено уведомление на основной адрес электронной почты.\nУведомление будет рассылаться ежедневно дважды в день до первого входа пользователя в программу.");
+                           $("#user_chp_dialog").dialog("close");	
+                          
+                        },
+                        error: function(xhr, status){
+                            alert("Ошибка при сбросе пароля. Пожалуйста, попробуйте сбросить пароль повторно!"); 
+                        }	 
+                    });	
+                            
+                        
+                }
+              },
+              "Отмена": function() { 
+                $(this).dialog("close");
+              }
+          }
+        });
+        
+         
+        
+        
+        $("#new_pass_1").bind("keyup", function(){
+            ret=true;
+            
+            ret=ret&&CheckRegular($("#new_pass_1").val());
+            
+            //проверка второго поля
+            second_ret=ret;
+            second_ret=second_ret&&CheckRegular($("#new_pass_2").val());		
+            second_ret=second_ret&&( $("#new_pass_1").val()==$("#new_pass_2").val()  );
+            
+            if(ret) $("#new_pass_ind_1").removeClass("empty") .removeClass("nogo") .addClass("go");
+            else $("#new_pass_ind_1").removeClass("empty") .removeClass("go") .addClass("nogo");
+            
+            if(second_ret) $("#new_pass_ind_2").removeClass("empty") .removeClass("nogo") .addClass("go");
+            else $("#new_pass_ind_2").removeClass("empty") .removeClass("go") .addClass("nogo");
+            
+             
+            
+        });
+        
+        $("#new_pass_2").bind("keyup", function(){
+            ret=true;
+            
+            
+            
+            //проверка второго поля
+            second_ret=ret;
+            second_ret=second_ret&&CheckRegular($("#new_pass_1").val());		
+            
+            ret=ret&&CheckRegular($("#new_pass_2").val());
+            
+            ret=ret&&( $("#new_pass_1").val()==$("#new_pass_2").val()  );
+            
+            
+            if(ret) $("#new_pass_ind_2").removeClass("empty") .removeClass("nogo") .addClass("go");
+            else $("#new_pass_ind_2").removeClass("empty") .removeClass("go") .addClass("nogo");
+            
+            if(second_ret) $("#new_pass_ind_1").removeClass("empty") .removeClass("nogo") .addClass("go");
+            else $("#new_pass_ind_1").removeClass("empty") .removeClass("go") .addClass("nogo");
+            
+             
+        });
+            
+            
+        $("#user_chp").bind("click", function(){
+            $("#new_pass_1").val('');
+            $("#new_pass_2").val('');
+            
+            $("#new_pass_ind_1").removeClass("go") .removeClass("nogo") .addClass("empty");
+            $("#new_pass_ind_2").removeClass("go") .removeClass("nogo") .addClass("empty");
+            
+            
+            $("#user_chp_dialog").dialog('open');
+        });
+    });
+    </script>
+    %{else}%
+    <input type="button" id="user_chp" value="Сменить пароль..." disabled />
+    %{/if}%
+    </div>
+    
+    </div>
+    
+    
+  
+    
+    
+     <br clear="all" />
+    
+    <p />
+   
+   	  
+     %{if $can_common}%
+    <div style="float:left; margin-right:20px;">
+    
+    
+     <label for="manager_id_string">Сотрудник подчиняется:</label><br />
+     <input type="hidden" id="manager_id" name="manager_id" value="%{$user.manager_id}%" />
+     <input type="text" id="manager_id_string" disabled value="%{$user.manager_id_string}%" style="width:250px;" />
+     
+    
+    
+     <input type="button" value="..." id="select_manager_id"  %{if !$can_edit_common}% disabled%{/if}%  />
+     <input type="button" value="x" id="clear_manager_id"  %{if !$can_edit_common}% disabled%{/if}%  />
+     
+     
+       %{include file="users/manager_actions.html"}%
+     
+   </div>
+    <div style="float:left; margin-right:00px;">
+    
+        <strong>Подчиненные менеджеры сотрудника:</strong> <br />
+        
+        
+        <div style="float:left; margin-right:10px;">
+        <input type="button" id="add_submanager" value="Добавить подчиненного"  %{if !$can_edit_common}% disabled%{/if}%  />
+        </div>
+        
+        
+        <div id="sub_managers" style="float:left; margin-right:10px;">
+         
+        %{include file="users/submanagers_on_page_set.html" pospos=$pod}%
+         
+        </div>
+        
+    
+     
+    </div>
+    %{/if}%
+
+
+%{/if}%
+</div>
+<p />
+<br clear="all" />
+%{if $can_common}%
+
+
+
+
+
+
+<strong>Контактная информация:</strong>
+
+
+<div id="contact" style="border:1px solid silver; min-width:720px; width:auto; height:150px; overflow:auto;">
+        %{include file="users/contacts.html" items=$contacts word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    </div>
+    %{if $can_cont_edit}%
+    %{include file="users/contact_dialog.html" word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    %{/if}%
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Время работы (МСК):</strong>
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_from_h_s">с:</label>
+<select name="time_from_h_s" style="width:60px"  %{if !$can_edit_common}% disabled%{/if}% >
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m_s" style="width:60px"  %{if !$can_edit_common}% disabled%{/if}% >
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_to_h_s">по:</label>
+<select name="time_to_h_s" style="width:60px"  %{if !$can_edit_common}% disabled%{/if}% >
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m_s" style="width:60px"  %{if !$can_edit_common}% disabled%{/if}% >
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="is_in_vacation">В отпуске</label>
+<input type="checkbox" name="is_in_vacation" id="is_in_vacation" value="1" %{if $user.is_in_vacation==1}%checked="checked"%{/if}% />
+&nbsp;
+
+<script type="text/javascript">
+$(function(){
+	$("#is_in_vacation").bind("click",function(){
+		if(this.checked){
+			$("#vacation_till_pdate_block").css("display","inline");
+			$("#vacation_till_pdate").trigger("focus");
+		}else{
+			$("#vacation_till_pdate_block").css("display","none");
+		}
+	});
+});
+</script>
+
+<div id="vacation_till_pdate_block" style="display: %{if $user.is_in_vacation==1}%inline;%{else}%none;%{/if}%">
+<label for="vacation_till_pdate">до:</label>
+<input type="text" size="15" maxlength="255" name="vacation_till_pdate" id="vacation_till_pdate" value="%{$user.vacation_till_pdate|escape:"html"}%" />
+</div>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<strong>Дополнительное время работы (МСК):</strong><br />
+
+<div id="ints" style="/*border:1px solid silver; min-width:720px; width:auto; height:150px; overflow:scroll;*/">
+        %{include file="users/userint.html"  word="ints" named="время работы" items=$ints user_id=$user.id can_edit=$can_cont_edit}%
+    </div>
+    %{if $can_cont_edit}%
+ %{include file="users/userint_dialog.html" word="ints" named="время работы" user_id=$user.id can_edit=$can_cont_edit}%   
+    %{/if}%
+   
+
+<br clear="all" />
+<p />
+
+
+%{/if}%
+
+<strong>Вопросы, которые курирует сотрудник:</strong><br>
+<div id="questions" style="/*border:1px solid silver; width:450px; height:200px; overflow:scroll;*/">
+%{include file="users/s_user_questions.html"  can_edit_questions=$can_edit_questions}%
+</div>
+<br clear="all" />
+%{if $can_expand_questions}%
+<br>
+<input type="button" value="Добавить вопросы..." id="show_questions" />
+<div id="questions_dialog" title="Вопросы, которые курируют сотрудники" style="display:none;">
+%{include file="users/allquestions.html"}%
+<script type="text/javascript">
+$(function(){
+	
+	
+});
+</script>
+
+</div>
+<script type="text/javascript">
+$(function(){
+  $("#questions_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#questions_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics_page",
+				"user_id":"%{$user.id}%"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				$("#questions").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_questions").bind("click",function(){
+	  $("#questions_dialog").dialog("open");
+  });
+  
+  function RedrawDic(){
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics",
+				"user_id":"%{$user.id}%"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#questions_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_question").bind("click", function(){
+		if($("#new_question").attr("value").length<3){
+			$("#new_question").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"add_question",
+				"question":$("#new_question").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Ваш вопрос добавлен!"); 
+			   $("#new_question").attr("value","");
+			   RedrawDic();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+
+%{/if}%
+
+<p />
+
+
+<div id="sched">
+%{$sched_view}%
+</div>
+
+
+
+%{if $can_common}%
+<h4>Паспортные данные:</h4>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_ser">Серия:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_ser" value="%{$user.pasp_ser|escape:"html"}%"   %{if !$can_edit_common}% disabled%{/if}% />
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_no">№:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_no" value="%{$user.pasp_no|escape:"html"}%"  %{if !$can_edit_common}% disabled%{/if}%  />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_kogda">Дата выдачи:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_kogda" id="pasp_kogda" value="%{$user.pasp_kogda|escape:"html"}%"  %{if !$can_edit_common}% disabled%{/if}%  />
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_kogda">Дата рождения:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_bithday" id="pasp_bithday" value="%{$user.pasp_bithday|escape:"html"}%"  %{if !$can_edit_common}% disabled%{/if}%  />
+</div>
+
+%{if $can_pasp_button}%
+<div style="float:left; margin-right:20px;">
+<br />
+
+<input type="button" value="Документы сотрудника..." onclick="location.href='user_pasp.php?user_id=%{$user.id}%';" />
+</div>
+%{/if}%
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pasp_kem">Кем выдан:</label><br />
+<textarea cols="30" rows="5" name="pasp_kem" style="height:40px;"  %{if !$can_edit_common}% disabled%{/if}% >%{$user.pasp_kem|escape:"html"}%</textarea>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="pasp_reg">Адрес регистрации:</label><br />
+<textarea cols="60" rows="5" name="pasp_reg" style="height:40px;"  %{if !$can_edit_common}% disabled%{/if}% >%{$user.pasp_reg|escape:"html"}%</textarea>
+</div>
+
+
+<br clear="all" />
+<p />
+
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку пользователей" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='users_s.php';
+}else location.href='users_s.php';" />
+
+%{if $can_delete}%
+<p />
+<input type="submit" name="doDelete" id="doDelete" value="Удалить пользователя" />
+
+%{/if}%
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#group_id").bind("change",function(){
+		//подтверждение режима работы смены прав
+		if($("#group_id").attr("value")!="%{$user.group_id}%"){
+			$("#change_mode").css("display","block");	
+		}else $("#change_mode").css("display","none");
+	});
+	
+	
+	$("#crea_form").bind("submit",function(){
+		//проверка пароля - мин 6 символов, лат буквы+цифры
+		var can_submit=true;
+		
+		if(can_submit){
+			if($("#password").attr("value").length>0){
+			  if($("#password").attr("value").length<6) can_submit=can_submit&&false;
+			  
+			  reg1=new RegExp("^[A-Za-z0-9]+$");
+			  
+			  if($("#password").attr("value").search(reg1)==-1) can_submit=can_submit&&false;
+			   
+			  if(!can_submit){
+				  alert("Пароль должен быть 6 символов и длиннее и состоять только из латинских букв и цифр!");	
+				  $("#password").focus();
+			  }
+			}
+		}
+		
+		 %{if $can_change_primary_email}%
+		if(can_submit){
+			//проверка основного имейл
+			regexp=/^([a-zA-Z0-9_-]+\.)*[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-zA-Z]{2,9}$/;
+			if(!regexp.test($("#email_s").val())){
+				can_submit=can_submit&&false;
+				alert("Некорректно задан адрес основной электронной почты!");	
+				$("#email_s").focus();
+			} 
+			
+			if(can_submit) $.ajax({
+				async: false,
+				url: "/js/user_s.php",
+				type: "POST",
+				data:{
+					"action":"check_primary_email",
+					"email_s":$("#email_s").val(),
+					"id": $("#id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно сохранить карту пользователя. Причина: "+data+"."); 
+					 can_submit=can_submit&&false;
+					 $("#email_s").focus();
+				  } 
+				  
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке основной электронной почты. Пожалуйста, попытайтесь сохранить карту сотрудника снова.");
+					can_ret=false;	
+				}	 
+			});	
+		}
+		%{/if}%
+		
+
+
+		return can_submit;
+	});
+	
+	$("#doDelete").bind("click", function(e){
+		%{if $can_delete_user}%
+		
+		res=window.confirm("Вы действительно хотите удалить пользователя %{$user.login|escape:"html"}%?");
+		if(res==true){
+			$("#crea_form").unbind("submit");
+			
+		}
+		return res;
+		%{else}%
+		
+		alert("Невозможно удалить карту сотрудника. Причина: у данного сотрудника есть утвержденные документы.");
+		return false;
+		%{/if}%
+		
+	});
+});
+		
+</script>

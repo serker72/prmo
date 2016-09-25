@@ -1,0 +1,308 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+ 
+
+ 
+ 
+ 
+%{section name=rowsec loop=$items}%
+%{if $smarty.section.rowsec.first  or (!$smarty.section.rowsec.first and $items[rowsec.index_prev].break)}%
+%{if $print==1 and !$smarty.section.rowsec.first}%
+<br>
+%{/if}%
+
+
+<table  cellpadding="1" cellspacing="0" class="blacktable"  %{if $print==1}% style="width:780px !important;" border="1"%{else}%  width="100%"%{/if}%>
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40">
+    Номер
+    
+     
+    </th>
+    
+    
+    <th scope="col" width="60">
+   Крайний срок
+   
+   
+  
+    </th>
+    
+   <th scope="col" width="60">
+   Приоритет
+    
+    </th>
+     
+    
+    <th scope="col" width="*">
+    Название
+    
+       
+    </th>
+    
+    %{if $has_content}%
+      <th scope="col" width="50%">
+    Содержание
+    
+       
+    </th>
+%{/if}%
+	    
+     <th scope="col" width="60">
+    Постановщик
+    
+      
+    </th>
+    
+      <th scope="col" width="60">
+    Ответственный
+     
+    </th>
+      <th scope="col" width="80">
+    Контрагент(ы)
+    
+    
+    </th>
+    
+      
+     <th scope="col" width="80">
+    Тип
+   
+   
+    </th>
+    
+     
+      <th scope="col" width="80">
+    Статус
+      
+        </th>
+        
+  
+      
+      
+     <th scope="col" width="60">
+    Создал
+   
+   
+    </th>
+    
+ 
+    %{if $print==0}%
+    <th scope="col" width="24">&nbsp;</th>
+     %{/if}%
+      
+</tr>
+
+ 
+</thead>
+<tbody>
+%{/if}% 
+  
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%" style="page-break-inside:avoid;">
+ 
+	
+    <td width="40" %{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3}%class="item_inactive"%{/if}%>
+    
+    
+     %{if $can_edit and $print==0}%
+    <a href="ed_sched.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" title="Подробно...">
+    %{/if}%
+    %{$items[rowsec].code}%
+    %{if $can_edit  and $print==0}%
+    </a>
+    %{/if}%
+    
+    
+      
+        </td>
+    
+    <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+    %{$items[rowsec].pdate_beg}% %{$items[rowsec].ptime_beg}%<br>
+
+    
+    %{$items[rowsec].pdate_end}% %{$items[rowsec].ptime_end}%
+    
+    </td>
+    
+    <td width="60">
+    
+    %{if $items[rowsec].priority==0}% 
+    <span style="color:#aaaaaa;"> низкий</span>
+    %{elseif $items[rowsec].priority==1}%
+    <span style="color:#3a87ad; font-weight:bold;">средний</span>
+    %{elseif $items[rowsec].priority==2}%
+    <span style="color:#e9510f; font-weight:bold;">высокий</span>
+    %{/if}%
+    
+    </td>
+    
+     
+    
+    
+    <td width="*" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     %{$items[rowsec].topic}% 
+    </td>
+    
+     %{if $has_content}%
+     <td width="50%" align="left" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    
+    %{$items[rowsec].description}% 
+    
+        <br>
+	%{$items[rowsec].files}%
+
+    <br>
+	%{foreach from=$items[rowsec].content item=item}%
+      <div class=""  >
+     
+        
+          
+        <strong>%{$item.pdate}%</strong>
+        %{$item.name_s}%: 
+        <br />
+    
+        
+       <div style="border:1px solid #aeaeae; padding:1px 1px;">
+        %{$item.txt}%
+       </div>
+       
+       %{section name=filesec loop=$item.files}%%{/section}%
+       
+        %{section name=filesec loop=$item.files}%
+      	%{if $print==0}%
+         <a href="sched_lenta_file.html?id=%{$item.files[filesec].id}%" class="sched_report_file_link">
+        %{/if}%
+        %{$item.files[filesec].orig_name}%
+        	%{if $print==0}%
+        </a>
+          %{/if}%
+        %{$item.files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+        <br />
+        %{/section}%
+ 
+       
+    </div>
+    <br>
+
+    %{/foreach}%
+       
+    </td>
+%{/if}%
+    
+    <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    <small>
+     %{$items[rowsec].user_name_1}%  
+    </small> 
+    </td>
+    
+     <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     <small>
+     %{$items[rowsec].user_name_2}%  
+     </small>
+    </td>
+    
+     <td width="80" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     <small>
+     %{foreach from=$items[rowsec].suppliers item=item}%
+      %{if $print==0}%
+     <a href="supplier.php?action=1&id=%{$item.id}%" target="_blank">
+     %{/if}%
+     
+     %{$item.opf_name}% %{$item.full_name}%
+     
+     %{if $print==0}%
+     </a>
+     
+     <!--  <a href="supplier.php?action=1&id=%{$item.id}%" target="_blank" title="карта контрагента..." class="reestr_edit"></a>-->
+     %{/if}%
+      <br>
+
+     %{/foreach}%
+      </small>
+      </td>
+    
+     <td width="80" %{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3}%class="item_inactive"%{/if}% align="left" >
+     
+      %{if $items[rowsec].task_id==0}%
+      Задача
+      %{else}%
+       <div style="max-height:100px; overflow:auto;"><small>
+       Подзадача, создана на основании <a href="ed_sched_task.php?action=1&id=%{$items[rowsec].task_id}%&from_begin=1" target="_blank" title="Подробно...">задачи %{$items[rowsec].parent_code}% %{$items[rowsec].parent_topic}%, статус %{$items[rowsec].parent_status_name}%</a>	
+       
+         </small>
+     </div>
+      %{/if}%
+     
+     
+     </td>
+   
+    
+     <td width="60" %{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3}%class="item_inactive"%{/if}% >
+  %{$items[rowsec].status_name}% 
+    </td>
+   
+    
+  
+  
+  
+    
+     <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     <small>
+    %{$items[rowsec].cr_name}% 
+    
+     %{$items[rowsec].pdate}%
+     </small>
+    </td>
+    
+    
+     %{if $print==0}%
+    <td width="24" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+    <a href="ed_sched_task.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+  
+    %{else}% 
+    <a href="#" onClick="return false;" data-comment="Подробно..." class="reestr_edit reestr_inactive reestr_right_button24"></a>
+    
+  
+    %{/if}%
+   
+    
+    
+
+    
+    </td>
+     %{/if}%
+    
+    
+  
+</tr>
+
+
+%{if $smarty.section.rowsec.last or (!$smarty.section.rowsec.last and $items[rowsec].break)}%
+</tbody>
+</table>
+%{if $print==1 and !$smarty.section.rowsec.last}%
+<div style="page-break-after:always !important;"></div>
+%{/if}%
+
+%{/if}%
+
+ 
+%{/section}% 
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям записей планировщика не найдено.</em><br />
+%{else}%
+ 
+<br>
+<strong>Итого: %{$no}% задач на %{$otv_no}% ответственных сотрудников по %{$supplier_no}% контрагентам%{if $supplier_list!=""}%: %{$supplier_list}%%{/if}%.</strong>
+
+
+
+%{/if}%
+
+ 
+ 

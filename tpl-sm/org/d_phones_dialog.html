@@ -1,0 +1,91 @@
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" />
+<div id="dialog_%{$word}%" title="%{$named}%" style="display:none;">
+
+    <em>Вид:</em><br />
+    <select id="%{$word}%_kind_id" style="width:100px">
+    %{html_options values=$form_ids selected=$kind_id  output=$forms}%
+    </select>
+    <p />
+    
+    <em>Телефон:</em><br />
+	<input type="text" id="%{$word}%_phone" size="20" maxlength="255" value="" />
+  
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 300,
+    height: 180,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 
+		 $("#%{$word}%_kind_id").val();
+		 $("#%{$word}%_phone").attr("value","");	
+		 
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					$.ajax({
+						async: true,
+						url: "/js/ed_org.php",
+						type: "POST",
+						data:{
+							"action":"add_%{$word}%",
+							"phone": $("#%{$word}%_phone").attr("value"),
+							"kind_id": $("#%{$word}%_kind_id").attr("value"),
+							"user_id":%{$user_id}%
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						   alert("%{$named}% добавлены!"); 
+						   $.ajax({
+							  async: true,
+							  url: "/js/ed_org.php",
+							  type: "POST",
+							  data:{
+								  "action":"redraw_%{$word}%",
+								  "user_id":%{$user_id}%
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								  $("#%{$word}%").html(data);
+								
+							  },
+							  error: function(xhr, status){
+								  
+							  }	 
+						  });
+						  
+						},
+						error: function(xhr, status){
+							alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+						
+					$(this).dialog("close");
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$("#dialog_%{$word}%").dialog("open");
+	});
+	
+});
+</script>

@@ -1,0 +1,53 @@
+%{if $items[rowsec].can_annul}%
+ 
+    
+    <a href="#" id="delete%{$prefix}%_%{$items[rowsec].id}%"  data-comment="Удалить..."  class="reestr_delete reestr_right_button24"> </a>
+    
+     <script type="text/javascript">
+	$(function(){
+		$("#delete%{$prefix}%_%{$items[rowsec].id}%").bind("click",function(){
+			 
+			
+			usl=true;
+			do_it=true;
+			note='';
+			 
+			
+			if(do_it&&window.confirm("Внимание! Вы действительно хотите удалить запись № %{$items[rowsec].id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/supplier_tool.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$items[rowsec].id}%",
+					  "shorter":0 
+				  },
+				  beforeSend: function(){
+						$("#item_row%{$prefix}%_%{$items[rowsec].id}%").html('<td colspan="15"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+    
+    
+    %{else}%
+    <a href="#"  onclick="
+     $('#annul_dialog_text%{$prefix}%').html('Невозможно аннулировать запись № %{$items[rowsec].id}%. <br /> Причина: %{$items[rowsec].can_annul_reason}%.');
+    
+    $('#annul_dialog%{$prefix}%').dialog('open');
+    
+    return false;" data-comment="Аннулировать..."  class="reestr_delete reestr_inactive reestr_right_button24"> </a>
+    
+ 
+    %{/if}%

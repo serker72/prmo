@@ -1,0 +1,134 @@
+%{if $item.status_id==3}%
+<nobr><strong>не утв.</strong></nobr>
+%{elseif $item.is_confirmed_shipping==0}%
+   <nobr><strong>пр-ка не утв.</strong></nobr>
+    %{if $can_confirm_shipping}%
+    <input type="button" value="Утвердить" id="confirm_shipping%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed_price==0}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{else}%
+    <nobr><strong>пр-ка утв.</strong></nobr>
+    
+    %{if  ($can_unconfirm_shipping ) or $can_super_confirm_shipping}%
+    
+    <input type="button" value="Не утвердить" id="confirm_shipping%{$prefix}%_%{$item.id}%" />
+    
+    %{/if}% 
+%{/if}%
+    <br />
+
+    %{$item.confirmed_shipping_name}%  %{$item.confirm_shipping_pdate}%
+    
+    %{if $can_confirm_shipping or $can_super_confirm_shipping}%
+    <script type="text/javascript">
+	$(function(){
+		$("#confirm_shipping%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			
+			%{if $item.is_confirmed_shipping==1}%
+			//сделать проверку по аджакс
+			
+			
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение приемки счета %{$item.code}%. Причина:\n"+data+"\nДля снятия утверждения приемки счета необходимо снять утверждения всех связанных документов."); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			if(can_ret){
+			if(window.confirm("Вы уверены, что хотите снять утверждение приемки счета %{$item.code}%?")){
+			%{elseif $item.is_confirmed_shipping==0}%
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить приемку счета %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			if(can_ret){	
+			%{/if}%
+				
+				
+				
+				
+				$.ajax({
+				  async: true,
+				  url: "/js/%{$filename}%",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_confirm_shipping",
+					  "id":"%{$item.id}%",
+							"shorter":"%{$shorter}%"
+				  },
+				  beforeSend: function(){
+						$("#item_row%{$prefix}%_%{$items[rowsec].id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+					
+					
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			  
+			  
+			%{if $item.is_confirmed_shipping==1 }%
+			}
+			}else{
+					
+			}
+			%{elseif $item.is_confirmed_shipping==0 }%
+			}
+			%{/if}%
+		  	
+			
+			
+		  
+		});
+	});
+	</script>
+    %{/if}%
+    
+    

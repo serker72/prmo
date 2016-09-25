@@ -1,0 +1,8 @@
+ 
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity_confirmed==0}%
+   
+     %{include file="komplekt/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%

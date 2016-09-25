@@ -1,0 +1,133 @@
+
+<h1 style="">Исходящая оплата № %{$ship.id}%</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+Код:<br />
+
+<strong>%{$ship.id}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$ship.pdate}%</strong><br />
+<small>создана: %{$created_by}%</small>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+Сумма платежа, руб.:<br />
+
+<strong>%{$ship.value}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:0px;">
+
+Реквизиты организации:<br />
+
+<strong>%{$ship.org_bdetails_id_string}%</strong>
+</div>
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+
+Код оплаты:<br />
+
+<strong>%{$ship.code_id_string}%</strong>
+</div>
+
+
+
+
+ 
+<br clear="all" />
+<p />
+
+<div id="inner_user_id_block" %{if $ship.is_inner_pay==0}% style="display:none;"%{/if}%>
+<div style="float:left; margin-right:20px;">
+	<label for="inner_user_id">Сотрудник-получатель:</label><br />
+	<select id="inner_user_id" name="inner_user_id" style="width:400px"  disabled="disabled"  >
+    %{html_options values=$inner_user_id_ids selected=$ship.inner_user_id output=$inner_user_id_vals}%
+    </select>
+
+</div>
+<br clear="all" />
+<p />
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+
+Контрагент:<br />
+
+
+<strong>%{$ship.supplier_id_string}%</strong>
+</div>
+
+ 
+
+ 
+ 
+
+
+<br clear="all" />
+<p />
+<div style="float:left; margin-right:0px;">
+
+
+Реквизиты контрагента:<br />
+
+
+<strong>%{$ship.bdetails_id_string}%</strong>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+ 
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="demands/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+   
+<p />    
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Утверждаю
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+
+
+</div>
+<br clear="all" />
+<p />
+

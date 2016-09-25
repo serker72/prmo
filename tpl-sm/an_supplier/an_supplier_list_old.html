@@ -1,0 +1,297 @@
+<!--<script type="text/javascript" src="/js/jquery.autocomplete.pack.js"></script>-->
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#supplier_name" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_supplier_new.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+		
+	
+	
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#cccccc;
+}
+.blacktable th.main{
+	background-color:#e5edf0;
+}
+.blacktable th.contract{
+	background-color:#eee;
+	font-weight:normal;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="print" value="0" id="print" />
+
+
+%{include file="every_help_dialog.html" filename="an_supplier.htm" description="ведомость по контрагенту"  prefix="" style="float:right;  margin-right:10px;"}%
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+<br />
+
+<label for="supplier_name">Контрагент:</label><br />
+<input type="text" value="%{$supplier_name}%" id="supplier_name" name="supplier_name" size="40" maxlength="512" />
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong><br />
+<label for="pdate1">с:</label><br />
+<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+
+<div style="float:left; margin-right:10px;">
+<br />
+	<label for="pdate2">по:</label><br />
+    <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+
+
+
+<input type="checkbox" name="extended_an" id="extended_an" value="1" %{if $extended_an==1}%checked="checked"%{/if}% />
+<label for="extended_an">Расширенная ведомость</label>
+<br />
+
+
+<input type="checkbox" name="by_contract" id="by_contract" value="1" %{if $by_contract==1}%checked="checked"%{/if}% />
+<label for="by_contract">С разбивкой по договорам</label>
+<br />
+
+
+<input type="checkbox" id="similar_firms" name="similar_firms" value="1" %{if $similar_firms==1}%checked="checked"%{/if}% /><label for="similar_firms">Все к-ты с похожим названием</label><br />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<br />
+<br />
+
+<input type="image" src="/img/icons/old-zoom-original.png" value="Вывести" alt="Вывести" title="Вывести" name="doSub"  />
+
+<a href="an_supplier.php?doSub=1"><img src="../../img/icons/old-zoom-deselect.png" border="0" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" /></a>
+
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  <a href="#" id="print_table"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+  <div id="or_print_dialog" title="Выберите режим печати">
+    <strong>Выберите, в каком режиме Вы желаете распечатать отчет:</strong><br />
+
+    	
+      
+       
+
+	<input type="checkbox" id="do_print_ved" value="1" />ведомость по контрагенту<br />
+	<input type="checkbox" id="do_print_akt" value="1" />акт сверки взаиморасчетов<br />
+        
+       
+    </div>
+  
+  
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	   $("#or_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					extended_an=0;
+					if($("#extended_an").prop("checked")) extended_an=1;
+					
+					similar_firms=0;
+					if($("#similar_firms").prop("checked")) similar_firms=1;
+					
+					by_contract=0;
+					if($("#by_contract").prop("checked")) by_contract=1;
+					
+					if($("#do_print_ved").prop("checked")){
+					  zc=window.open('an_supplier.php?tab_page=1&print='+'1'+'&supplier_name='+encodeURI($("#supplier_name").val())+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&extended_an='+extended_an+'&similar_firms='+similar_firms+'&by_contract='+by_contract+'&doSub=1&do_print_ved=1', 'ved','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+					  
+					}
+					
+					if($("#do_print_akt").prop("checked")){
+						zc=window.open('an_supplier.php?tab_page=1&print='+'1'+'&supplier_name='+encodeURI($("#supplier_name").val())+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&extended_an='+extended_an+'&similar_firms='+similar_firms+'&by_contract='+by_contract+'&doSub=1&do_print_akt=1', 'sverka','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+					}
+					
+					$("#or_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#or_print_dialog").dialog("close");
+				}
+				
+			}
+		});
+	  
+	  
+	  
+	  $("#print_table").bind("click",function(){
+		
+		
+		if(("%{$extended_an}%"==1)&&
+		(("%{$pdate1}%"!="-")&&("%{$pdate1}%"!="")&&("%{$pdate2}%"!="-")&&("%{$pdate2}%"!=""))&&
+		(parseInt("%{$smarty.section.rowsec.total}%")==1)	
+		){
+			
+			$("#do_print_akt").prop("disabled",false);
+		 	//диалог с выбр режимом печати
+			$("#or_print_dialog").dialog("open");	
+			
+		 
+		}else{
+			$("#do_print_akt").prop("disabled",true);
+			
+			
+			$("#or_print_dialog").dialog("open");	
+			
+		}
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+
+
+</div>
+
+<br clear="all" />
+
+<small>
+1.
+
+Фильтр  <strong>"Контрагент"</strong>. 
+
+
+Вы можете осуществлять отбор по нескольким контрагентам.
+<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента.
+Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию.
+При необходимости отобрать в отчет данные по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов.
+<br />
+После выбора всех необходимых контрагентов нажмите кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.
+
+<br />
+<em>1.1. Если Вы не выбрали ни одного контрагента в фильтре, то контрагенты, у которых за выбранный период начальный остаток, сумма поступлений, сумма оплат (и конечный остаток) равны нулю, автоматически исключаются из отчета.<br />
+1.2. Если Вы выбрали определенного контрагента, и у него за выбранный период начальный остаток, сумма поступлений, сумма оплат (и конечный остаток) равны нулю, то контрагент включен в отчет с комментарием об отсутствии оборотов.
+</em>
+<br />
+<br />
+
+2. Флажок <strong>"Все к-ты с похожим названием"</strong> позволяет отбирать в ведомость контрагентов, в названиях которых содержатся введенные в фильтре <strong>"Контрагент"</strong> значения.<br />
+
+<em>Например, если Вы ввели в фильтр название <strong>Текма</strong> и выбрали этот флажок, то в ведомость будут включены сведения по контрагенту Текма и по всем остальным контрагентам, в название которых входит слово <strong>Текма</strong> (такие, как Спектор (Текма) и т.д.). </em>
+
+<br />
+<br />
+
+
+3. Флажок <strong>"Расширенная ведомость"</strong> позволяет получить перечень документов движения по каждому выбранному контрагенту. Для этого необходимо отметить флажок <strong>"Расширенная ведомость"</strong> и нажать кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.
+<br /><br />
+
+4. Для того, чтобы распечатать <strong>Акт сверки взаиморасчетов</strong>, необходимо:<br />
+
+-сформировать отчет по единственному контрагенту,<br />
+-выбрать режим <strong>Расширенная ведомость</strong>,
+<br />
+-выбрать определенный период.
+<br />
+
+Если не соблюдается хотя бы одно из перечисленных условий, печать акта сверки взаиморасчетов будет недоступна.
+<br />
+Задав все перечисленные фильтры, необходимо нажать кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />, затем - кнопку <img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  />, отметить режим <strong>"акт сверки взаиморасчетов"</strong> и нажать кнопку <strong>Печать</strong>. 
+
+</small>
+
+
+<p />
+
+
+
+
+</form>
+
+%{if $do_it}%
+%{include file="an_supplier/an_supplier_table.html"}%
+%{/if}%
+
+
+
+
+

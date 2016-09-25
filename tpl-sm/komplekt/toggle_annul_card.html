@@ -1,0 +1,126 @@
+%{if $komplekt_ved.can_annul}%
+<a href="#" id="do_annul" data-comment="Аннулировать/Восстановить..." class="reestr_delete reestr_right_button24" style="float:right;">
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			
+			
+			
+			%{if $komplekt_ved.binded_to_annul!=""}%
+			if(!window.confirm("Внимание! С данным документом связаны следующие документы: %{$komplekt_ved.binded_to_annul}%. При аннулировании документа  они также будут аннулированы. Продолжить?")) return false;
+			%{/if}%
+			
+			usl=true;
+			do_it=false;
+			note='';
+			while(usl){
+					res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
+					if(res==undefined) {
+						break;
+					}
+					if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
+						note=res;
+						usl=false;
+						do_it=true;						
+					}
+			}
+			
+			if(do_it&&window.confirm("Внимание! Вы действительно хотите аннулировать заявку № %{$komplekt_ved.id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$komplekt_ved.id}%",
+					  "shorter":0,
+					  "from_card":1,
+					  "note":note
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					  location.reload();
+					
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+
+%{else}%
+
+%{if $komplekt_ved.can_restore}%
+    <a href="#" id="do_annul" data-comment="Аннулировать/Восстановить..." class="reestr_delete reestr_right_button24" style="float:right;">
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			
+			
+			if(window.confirm("Внимание! Вы действительно хотите восстановить заявку № %{$komplekt_ved.id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$komplekt_ved.id}%",
+					  "shorter":0,
+					  "from_card":1
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					 location.reload();
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+    %{else}%
+	
+    %{include file="annul_dialog.html"}%
+    
+<a href="#" onclick="
+	$('#annul_dialog_text').html('Невозможно аннулировать заявку № %{$komplekt_ved.id}%.<br /> Причина: %{$komplekt_ved.can_annul_reason}%.');
+    $('#annul_dialog').dialog('open');
+    return false;" data-comment="Аннулировать/Восстановить..." class="reestr_delete reestr_inactive reestr_right_button24" style="float:right;"></a>
+	%{/if}%
+%{/if}%
+
+<strong>Статус:</strong><br />
+%{if $komplekt_ved.blink}%
+<img src="/img/new_message.gif" width="13" height="10" alt="" border="0" /> 
+%{/if}%
+
+%{if $komplekt_ved.status_id==1}%
+не утверждена 
+%{elseif $komplekt_ved.status_id==2}%
+утверждена 
+%{elseif $komplekt_ved.status_id==3}%
+аннулирована
+%{elseif $komplekt_ved.status_id==11}%
+новая
+%{elseif $komplekt_ved.status_id==12}%
+не выполнена
+%{elseif $komplekt_ved.status_id==13}%
+выполнена
+%{/if}%

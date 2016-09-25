@@ -1,0 +1,195 @@
+ 
+<script type="text/javascript">
+$(function(){
+	//обработка всех нажатий.
+	
+	//установка/снятие доступа к папке
+	$("input[id^=share_right_]").bind("change", function(){
+		if($(this).prop("disabled")) return false;
+		
+		state=$(this).prop("checked"); id=$(this).attr("id");
+		folder_id=id.replace(/^share_right_/,'');
+	
+		 
+		old_state=$("#old_share_right_"+id.replace(/^share_right_/,'')).val()=="1";
+		
+		
+		if(state!=old_state){
+			$(this).addClass("changed");
+			$("label[for="+id+"]").html("*").addClass("changed");
+		}else{
+			$(this).removeClass("changed");
+			$("label[for="+id+"]").html("").removeClass("changed");
+		}
+		
+		id=$(this).attr("id");
+		
+		user_id=id.replace(/^share_right_/,'').replace(/_[0-9]+$/,'');
+		ScanRow(user_id);
+		
+		ob_id=$(this).val();
+		ScanCol(ob_id);
+		
+		//если мы снимаем обработчик для доступа в папку - снять и остальные!
+		/*if($("#has_inherits_"+id).val()==1){
+			$.each($("input[type=checkbox][id^=share_right_"+user_id+"_]"), function(k,v){ 
+				if($(v).prop("disabled")==false){
+					 $(v).prop("checked",false);
+					 
+					 
+					 state=$(v).prop("checked"); tid=$(v).attr("id");
+					 
+					 
+					old_state=$("#old_share_right_"+tid.replace(/^share_right_/,'')).val()=="1";
+					
+					
+					if(state!=old_state){
+						$(v).addClass("changed");
+						$("label[for="+tid+"]").html("*").addClass("changed");
+					}else{
+						$(v).removeClass("changed");
+						$("label[for="+tid+"]").html("").removeClass("changed");
+					}
+					 
+					  // $(v).trigger("change");
+				}
+			});	
+		}*/
+		
+		//если обработчик для доступа в папку снят - то не ставить остальные...
+	});
+	
+	function ScanCol(ob_id){
+		total=0;
+		checked=0;
+		$.each($("input[type=checkbox][id^=share_right_]"), function(k,v){ 
+			if(($(v).val()==ob_id)&&($(v).prop("disabled")==false)){
+				total++;
+				if($(v).prop("checked")) checked++;
+			}
+		});
+		
+		//alert(total+' va '+checked);
+		if((total!=0)&&(checked==total)){
+			$("#share_rightcol_"+ob_id).prop("checked", true);
+		}else if(checked<total) $("#share_rightcol_"+ob_id).prop("checked", false);
+		
+	}
+	
+	function ScanRow(user_id){
+		total=0;
+		checked=0;
+		$.each($("input[type=checkbox][id^=share_right_"+user_id+"_]"), function(k,v){ 
+			if($(v).prop("disabled")==false){
+				total++;
+				if($(v).prop("checked")) checked++;
+			}
+		});
+		
+		//alert(total+' va '+checked);
+		if((total!=0)&&(checked==total)){
+			$("#share_userrow_"+user_id).prop("checked", true);
+		}else if(checked<total) $("#share_userrow_"+user_id).prop("checked", false);
+	}
+	
+	 
+	
+	$("input[id^=share_userrow_]").bind("change", function(){
+		id=$(this).attr("id");
+		
+		user_id=id.replace(/^share_userrow_/,'');
+		 
+		$("input[id^=share_right_"+user_id+"]").each(function(index, element) {
+            
+			if(!$(element).prop("disabled")) {
+				$(element).prop("checked", $("#"+id).prop("checked"));
+				$(element).trigger("change");
+				
+			}
+        });
+		 
+	});
+	
+	$("input[id^=share_rightcol_]").bind("change", function(){
+		id=$(this).attr("id");
+		ob_id=id.replace(/^share_rightcol_/,'');
+		//alert(ob_id);
+		$("input[id^=share_right_]").each(function(index, element) {
+            
+			if(($(element).val()==ob_id)&&!$(element).prop("disabled")) {
+				$(element).prop("checked", $("#"+id).prop("checked"));
+				$(element).trigger("change");
+				
+			}
+        });
+	});
+	
+	
+})
+</script>
+  
+
+
+<!-- найденная группа действий над записью --> 
+<input type="hidden" id="gr_aj_id" value="%{$gr_id}%" />
+
+ 
+ 
+
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	 
+    	<th scope="col" width="*" rowspan="2">Ф.И.О.</th>
+        <th scope="col" width="24" rowspan="2" valign="bottom"></th>
+         
+        %{section name=obgsec loop=$obg}%
+    <th width="50" style="word-break:break-all; width:50px; min-width:50px; max-width:50px;">
+     %{$obg[obgsec].id}%/ %{$obg[obgsec].parent_object_id}%. %{$obg[obgsec].name}% 
+     
+     
+    </th>
+   
+    %{/section}%
+    </tr> 
+     <tr align="center" valign="top">  
+       %{section name=obgsec loop=$obg}%
+     <th width="50" style="word-break:break-all; width:50px; min-width:50px; max-width:50px;">		    
+     <input type="checkbox" id="share_rightcol_%{$obg[obgsec].id}%" />
+    
+     </th>
+      %{/section}%  
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=usec loop=$u}%
+    <tr align="left" valign="top">
+    	<td width="*">
+        %{$u[usec].name_s}% 
+        </td>
+        <td width="24"><input type="checkbox" id="share_userrow_%{$u[usec].id}%" /></td>
+        
+         %{foreach from=$u[usec].rights_arr item=right}%
+        <td width="*" align="center" title="Пользователь %{$u[usec].name_s}%| Права на объект %{$right.object_name}%" >
+            
+        
+           
+            <label for="share_right_%{$u[usec].id}%_%{$right.object_id}%"></label>
+            <input id="share_right_%{$u[usec].id}%_%{$right.object_id}%" value="%{$right.object_id}%" type="checkbox" %{if $right.is_checked}% checked%{/if}% %{if !$right.is_active}% disabled%{/if}% />
+            
+            
+            <input type="hidden" id="old_share_right_%{$u[usec].id}%_%{$right.object_id}%" value="%{if $right.is_checked}%1%{else}%0%{/if}%" />
+            
+            <input type="hidden" id="has_inherits_share_right_%{$u[usec].id}%_%{$right.object_id}%" value="%{$right.has_inherits}%" />
+            
+        </td>
+        
+        %{/foreach}%
+    </tr>
+    %{/section}%
+    </tbody>
+</table>    
+ 
+  
+ 

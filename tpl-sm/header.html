@@ -1,0 +1,46 @@
+
+	<div class="header">
+		<a href="/" class="header-item logo"></a> 
+		<div class="header-item email"><a href="mailto:support@gydex.ru">support@gydex.ru</a></div>
+		<div class="header-item phone">+7 495 517 02 46</div>
+		<div class="header-item right">
+		 %{if $authed}%
+        	<div class="user">
+				<span class="fio"><a href="/info.html">%{$name}%</a></span>
+				<span class="logout"><a href="/login.html?doOut">Выйти</a></span>
+			</div>
+			<div class="login">Логин: %{$email_s}%<!-- (%{$login}%)-->
+            	%{if $has_skidka}%
+                 %{$skidka}%% 
+                %{/if}%
+            </div>
+			<div class="company">Компания: %{$org_name}% %{if $has_address}%, 
+                 
+                 %{$fact_address_form}% 
+                 %{$fact_address_name}% 
+                %{/if}%
+			</div>
+         %{/if}%   
+		</div>
+    %{if $has_plan}%    
+    %{include file="plan/plan_head.html"}% 
+    %{if !$stop_popup}%%{include file="plan/plan_head1.html"}%  %{/if}%
+   
+    %{/if}%
+	</div>
+    
+    
+    %{if $authed}%
+     %{include file="session_check.html"}%    
+
+     %{/if}%
+    
+    
+ 
+<table border="0" cellpadding="0" cellspacing="0" class="header-table">
+
+<tr align="left" valign="top">
+<td  class="header-cell"> 
+   
+
+<!-- content -->

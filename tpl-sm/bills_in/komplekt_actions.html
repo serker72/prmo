@@ -1,0 +1,127 @@
+<div id="komplekt_dialog" title="Выберите заявку">
+Выберите заявку:<br />
+
+	<div style="width:520px; height:380px; border:1px solid gray; overflow:scroll;" id="komplekts">
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	<th scope="col">&nbsp;</th>
+        <th scope="col">Номер</th>
+        <th scope="col">Код</th>
+        <th scope="col">Название</th>
+        <th scope="col">Объект</th>
+       
+    </tr>
+    %{section name=kpossec loop=$kpos}%
+    <tr align="left" valign="top">
+    	<td align="center"><input type="radio" id="komplekt_%{$kpos[kpossec].id}%" name="komplekt_radio" value="%{$kpos[kpossec].id}%" %{if $kpos[kpossec].id==$current_komplekt}% checked="checked"%{/if}% /></td>
+    	<td>%{$kpos[kpossec].id}%</td>
+        <td>%{$kpos[kpossec].code}%</td>
+        <td>%{$kpos[kpossec].name}%</td>
+        <td>%{$kpos[kpossec].storage_name}%</td>
+        
+        <td><a href="ed_komplekt.php?action=1&id=%{$kpos[kpossec].id}%" target="_blank">Карта</a></td>
+    </tr>
+    %{/section}%
+    </table>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#komplekt_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,
+		height: 490,
+		buttons: {
+			"Готово":function() {
+				 var selected_komplekt=0;
+				 $.each($("#komplekts table tr td input[type=radio]"), function(key, value){
+					if(value.checked){
+						selected_komplekt=value.value;
+					}
+				});
+				
+				if($("#komplekt_ved_id").attr("value")!=selected_komplekt){
+					$("#komplekt_ved_clear").trigger("click");
+					//подгружаем все данные по поставщику
+					if(selected_komplekt>0){
+					  $.ajax({
+						async: true,
+						url: "/js/bill.php",
+						type: "GET",
+						dataType: "json",
+						data:{
+							"action":"retrieve_komplekt",
+							"id":selected_komplekt
+						},
+						beforeSend: function(){
+						  
+						},
+						success: function(data){
+						  $("#komplekt_ved_id").attr("value",data.id);
+						  $("#komplekt_ved_id_string").attr("value","№ "+data.id+", код "+data.code+", "+data.name);
+						  $("#storage_id_string").attr("value",data.storage_name);
+						  $("#storage_id").attr("value",data.storage_id);
+						  
+						  //подгрузить участки
+						   $("#sector_id").empty();
+						  
+						  $.ajax({
+							  async: true,
+							  url: "/js/bill.php",
+							  type: "POST",
+							  data:{
+								  "action":"load_sectors",
+								  "storage_id":$("#storage_id").attr("value"),
+								  "current_id":0
+							  },
+							  beforeSend: function(){
+								//alert("Загрузка реквизитов.");
+							  },
+							  success: function(data){
+								$("#sector_id").html(data);  
+							  },
+							  error: function(xhr, status){
+								// alert("Ошибка загрузки реквизитов.");	
+							  }	 
+							});
+							
+							//очистить позиции!
+							$("#positions").empty();
+						},
+						error: function(xhr, status){
+						  // alert("Ошибка загрузки кв.");	
+						}	 
+					  });
+					}
+				}
+				 
+				$(this).dialog("close"); 
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	
+	$("#komplekt_ved_select").bind("click",function(){
+		$("#komplekt_dialog").dialog("open");
+	});
+	
+	$("#komplekt_ved_clear").bind("click",function(){
+		
+		
+		$("#komplekt_ved_id").attr("value","");
+		$("#komplekt_ved_id_string").attr("value","");
+		$("#storage_id_string").attr("value","");
+		$("#storage_id").attr("value","");
+		$("#sector_id").empty();
+		
+		//очистить позиции!
+		$("#positions").empty();
+	});
+});
+</script>

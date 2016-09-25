@@ -1,0 +1,62 @@
+
+
+%{section name=adrsec loop=$adr}%
+<a href="#" id="messenger_select_%{$adr[adrsec].id}%" >
+<div id="messenger_string_%{$adr[adrsec].id}%" %{if $adr[adrsec].is_selected}% class="messenger_selected"%{else}% class="messenger_unselected"%{/if}%>
+	<nobr>
+    
+    
+   
+    
+    <input type="checkbox" value="%{$adr[adrsec].id}%" %{if $adr[adrsec].is_selected}% checked="checked"%{/if}% id="messenger_who_%{$adr[adrsec].id}%" style="display:none;" /> 
+	
+    
+    <span id="messenger_select_is_online_%{$adr[adrsec].id}%">
+    %{if $adr[adrsec].is_online and $adr[adrsec].id>0}%
+    <img src="/img/icons/online.png" width="16" height="16" alt="пользователь в сети" title="пользователь в сети" border="0" /> 
+    %{elseif $adr[adrsec].id>0}%
+    <img src="/img/icons/offline.png" width="16" height="16" alt="пользователь не в сети" title="пользователь не в сети" border="0" />
+    %{/if}% 
+    </span>
+    
+    
+     <span id="messenger_select_is_new_messages_%{$adr[adrsec].id}%">
+     %{if $adr[adrsec].is_new_messages}%
+     <img src="/img/icons/message-anim.gif" width="13" height="10" alt="Есть новые сообщения!" border="0" title="Есть новые сообщения!" vspace="3" /> 
+     %{/if}%
+    </span>
+    
+    <span id="messenger_select_descr_%{$adr[adrsec].id}%">
+    %{if $sort_mode==1}%
+
+
+    <!--%{$adr[adrsec].login|escape:"html"}% -->%{$adr[adrsec].name_s|escape:"html"}% 
+    
+    
+    %{elseif $sort_mode==2}%
+     %{$adr[adrsec].name_s|escape:"html"}% <!--%{$adr[adrsec].login|escape:"html"}% -->
+    
+    %{/if}%
+    </span>
+    
+  
+    
+  
+    </nobr>
+    <br clear="all" />
+</div> </a>
+
+
+%{/section}%
+
+<script type="text/javascript">
+$(function(){
+	
+	
+	%{section name=adrsec loop=$adr}%
+	$("#messenger_select_%{$adr[adrsec].id}%").bind("click", function(e){
+		return MessengertoggleSelect('%{$adr[adrsec].id}%',e);
+	});
+	%{/section}%
+});
+</script>

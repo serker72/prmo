@@ -1,0 +1,107 @@
+ <script>
+ $(function(){
+	$("#check_all").bind("change", function(){
+		$("input[id^=do_process_]").prop("checked", $(this).prop("checked"));
+		
+	});
+	$("input[id^=do_process_]").bind("change", function(){
+		$("#check_all").prop("checked", ( $("input[id^=do_process_]").length==$("input[id^=do_process_]:checked").length) );
+	});
+ });
+ </script>
+
+          <table class="gydex_table" >
+          <thead>
+          <tr align="left" valign="top">
+           <th width="24"> <input id="check_all" type="checkbox" value="1" /> </th>
+           
+              <th width="100"> Адрес </th>
+               <th width="50"> Подписан </th>	
+              <th width="100"> Фамилия </th>
+              <th width="100"> Имя </th>
+              <th width="100"> Отчество </th>
+              
+                <th width="100"> Сегмент </th>
+              
+              
+              <th width="*"> Параметры </th>	
+             
+              <th width="80"> Действия </th>	
+             
+          </tr>
+          </thead>
+          <tbody>
+
+
+%{section name=rowsec loop=$items}%
+		  
+	 
+	
+	<tr align="left" valign="top">
+     <td width="24" align="center" >
+			<input name="%{$items[rowsec].id}%_do_process" id="do_process_%{$items[rowsec].id}%" type="checkbox"  value="%{$items[rowsec].id}%" %{if $items[rowsec].s_id!=""}% checked%{/if}% />
+		</td>
+		<td width="100">
+        <a name="%{$items[rowsec].id}%"></a>
+        
+         %{$items[rowsec].email}% 
+        
+     
+		
+		</td>
+        
+        
+         <td width="50">
+        %{if $items[rowsec].is_subscribed}% 
+        ДА
+        %{else}%
+        НЕТ
+        %{/if}%
+        </td>
+        
+        
+        <td width="100">
+        %{$items[rowsec].f}% 
+        </td>
+        <td width="100">
+        %{$items[rowsec].i}% 
+        </td>
+        <td width="100">
+        %{$items[rowsec].o}% 
+        </td>
+        
+        
+        <td width="100">
+         <div class="details_col">
+         <small>
+        %{foreach from=$items[rowsec].segments item=item}%  
+        %{$item.name}%<br>
+        %{/foreach}%
+         </small> 
+         </div> 
+        </td>
+        
+        
+		<td width="*">
+		<!-- параметры раздела -->
+        %{$items[rowsec].comment}%
+        
+		 
+		</td>	
+		 
+		<td width="80" >
+        	 
+            <a class="gydex_edit" target="_blank" title="правка" href="%{$ed_pagename}%?&action=1&id=%{$items[rowsec].id}%&from=%{$from}%&to_page=%{$to_page}%"></a> 
+           	 
+        
+            
+           
+		</td>
+		
+	</tr>
+	
+%{/section}%
+	 </tbody>
+     </table>
+
+ 

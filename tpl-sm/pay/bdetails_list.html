@@ -1,0 +1,39 @@
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">р/с</th>
+        <th scope="col">к/с</th>
+        <th scope="col">БИК</th>
+        
+        <th scope="col">Банк</th>
+        <th scope="col">Город</th>
+        
+    </tr>
+    %{section name=possec loop=$pos}%
+    <tr align="left" valign="top" id="bdetails_row_%{$pos[possec].id}%" style="cursor:pointer;">
+    	<td>
+        <input type="radio" id="bdetails_%{$pos[possec].id}%" name="bdetails_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_bank or $pos[possec].is_current==true}% checked="checked"%{/if}% />
+        %{$pos[possec].rs}%
+        </td>
+        
+        <td>%{$pos[possec].ks}%</td>
+    	<td>%{$pos[possec].bik}%</td>
+        
+        <td>%{$pos[possec].bank}%</td>
+        <td>%{$pos[possec].city}%</td>
+       
+        
+    </tr>
+    %{/section}%
+    </table>
+    
+    <script type="text/javascript">
+    %{section name=possec loop=$pos}%
+    $("#bdetails_row_%{$pos[possec].id}%").bind("dblclick",function(){
+			//alert($("#supplier_%{$pos[possec].id}%").attr("value"));
+			$("#bdetails_%{$pos[possec].id}%").prop("checked",true);
+			bdbuild();
+			
+		});
+    %{/section}%
+	</script>

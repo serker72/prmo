@@ -1,0 +1,140 @@
+
+<h1 style="">Приход наличных № %{$ship.code}%</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+Код:<br />
+
+<strong>%{$ship.code}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$ship.pdate}%</strong><br />
+<small>создана: %{$created_by}%</small>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+Сумма платежа, руб.:<br />
+
+<strong>%{$ship.value}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+ 
+
+<div style="float:left; margin-right:0px;">
+
+Статья дохода:<br />
+
+<strong>%{$ship.code_id_string}%</strong>
+</div>
+<br clear="all" />
+<p />
+
+
+
+
+
+<div id="supplier_block"  >
+
+<div style="float:left; margin-left:20px;">
+ 
+Контрагент: <br />
+
+
+<strong> %{$ship.supplier_id_string}%</strong>
+</div>
+
+%{if $ship.wo_supplier}%
+<div style="float:left; margin-left:20px;">
+<strong>Без контрагента</strong>
+</div>
+%{/if}%
+
+<br clear="all" />
+<p />
+ 
+</div>
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<label for="responsible_user_id">Сотрудник, ответственный за приход д/с:</label><br />
+
+<select id="responsible_user_id" name="responsible_user_id" style="width:400px;"  disabled="disabled"  >
+ %{html_options values=$responsible_user_id_ids selected=$ship.responsible_user_id output=$responsible_user_id_vals}%
+</select>
+<br clear="all" />
+<p />
+
+
+   
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="cash_in/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+   
+<p />    
+
+ 
+
+
+<div style="float:left; margin-right:20px;">
+
+%{if $ship.is_confirmed==1}%
+<strong>Утверждаю заполнение</strong>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+<p />
+%{/if}%
+
+
+%{if $ship.is_confirmed_given==1}%
+<strong>Утверждаю приход</strong>
+<span id="is_confirmed_given_confirmer">%{$is_confirmed_given_confirmer}%</span>
+<p />
+%{/if}%
+
+
+</div>
+<br clear="all" />
+<p />
+

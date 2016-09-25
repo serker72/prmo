@@ -1,0 +1,215 @@
+
+<div id="plan1_remind_gialog" title="Напоминания о задачах" style="display:none;">
+	
+    <h2>Внимание! По следующим Вашим задачам длительное время отсутствуют комментарии от Вас и Вашей команды:</h2>
+    <br>
+
+	<div id="plan1_reminders_block">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+function CalcNewPlans1(){
+	 
+	 if(_window_is_active)  $.ajax({
+		  async: true,
+		  url: "/js/sched_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind1"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			//  alert(data); 
+		  	 if((data>0)&& !$("#plan1_remind_gialog").dialog("isOpen")) $("#plan1_remind_gialog").dialog("open");
+			 else if((data==0) && $("#plan1_remind_gialog").dialog("isOpen"))  $("#plan1_remind_gialog").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	
+$(function(){
+	$("#plan1_remind_gialog").dialog({
+		autoOpen: false,
+	 
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		dialogClass: 'semi_auth_no',
+		close: function( event, ui ) {
+			
+			
+			 
+			
+		},
+		buttons:{
+			"Готово": function(){
+				 
+				 
+				var can_ret=true;
+			
+				function doBlink(v){
+			
+					var blr=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr);
+						$(v).removeClass("blue");
+					}, 3000);
+				}
+				
+				//проверка корректности
+				var err_fields=new Array();
+				$.each($("input[id^=plan1_id_]"), function(k,v){
+					id=$(v).attr("id").replace(/plan1_id_/,'');
+					
+					//выбор не сделан - поле некооректно!
+					if(($("input[name=plan_1_"+id+"]:checked").val()==null)||($("input[name=plan_1_"+id+"]:checked").val()==undefined)){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("label[for^=plan_1_"+id+"]"));
+					}
+					
+					if(($("input[name=plan_1_"+id+"]:checked").val()==0)&&($("#plan_1_comment_"+id).val().length<10)){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("#plan_1_comment_"+id+""));
+					}
+					
+					
+				});
+				
+				if(can_ret){
+					//если выбрали ПОЗЖЕ, то переспросить
+					
+					codes=new Array();
+					$.each($("input[id^=plan1_id_]"), function(k,v){
+						id=$(v).attr("id").replace(/plan1_id_/,'');
+						if($("input[name=plan_1_"+id+"]:checked").val()==1){
+							codes.push($("#plan1_code_"+id).val());
+						}
+					});
+					
+					if(codes.length>0){
+						 
+						can_ret=can_ret&&window.confirm("Вы уверены, что не хотите актуализировать данные по задачам: "+codes.join(', ')+"?\nО ваших действиях будет сделана запись в задачах.");	
+						
+						
+					}
+					
+					if(can_ret){
+						//вносим данные...	
+						//все ОК, формируем аргументы
+						var data=new Array();
+						$.each($("input[id^=plan1_id_]"), function(k,v){
+							 
+								id=$(v).attr("id").replace(/plan1_id_/,'');
+								
+								hashed="";
+								
+								hashed+=id+"/"+$("input[name=plan_1_"+id+"]:checked").val()+"/"+$("#plan_1_comment_"+id).val();
+								
+								 
+								
+								//alert(hashed);
+								data.push(hashed);	
+							 
+							 
+						});
+						
+						//alert(data);
+						
+						//отправляем аргументы
+						$.ajax({
+							  async: false,
+							  url: "/js/sched_checknew.php",
+							  type: "POST",
+							  data:{
+								  "action":"put_work_statuses1",
+								  "data[]":data
+								  
+							  }
+							 
+						  });
+						$("#plan1_remind_gialog").dialog("close");
+					}
+						
+				}else{
+					alert("Сделайте выбор для всех задач и корректно заполните отмеченные поля!");
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+					
+				}
+				
+				 
+				
+			}
+		},
+		open: function( event, ui ) {
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/sched_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind1"
+			  },
+			  beforeSend: function(){
+				 $("#plan1_reminders_block").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#plan1_reminders_block").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=400; min_height=200;
+				 
+				   our_height=parseInt($("#plan1_reminders_block table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#plan1_reminders_block").css('height', our_height);
+				   
+				   $("#plan1_remind_gialog").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewPlans1()', 60000);
+});
+</script>

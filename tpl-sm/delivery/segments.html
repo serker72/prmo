@@ -1,0 +1,123 @@
+ 
+ 
+
+<!-- форма разбивки списка итемов по Х штук на страницу -->
+
+	<form action="%{$listpagename}%" name="topa" id="topa">
+		 
+		<input type="hidden" name="from" value="0">
+        <input type="hidden" name="id" value="%{$id}%">
+		
+		<strong>Разбивать по:</strong> 
+		<select name="to_page" id="to_page" onChange="document.forms.topa.submit();">
+        <option value="20"%{if $to_page==20}% SELECTED %{/if}%>20</option>
+			<option value="10"%{if $to_page==10}% SELECTED %{/if}%>10</option>
+			<option value="1"%{if $to_page==1}% SELECTED %{/if}%>1</option>
+			<option value="30"%{if $to_page==30}% SELECTED %{/if}%>30</option>
+			<option value="50"%{if $to_page==50}% SELECTED %{/if}%>50</option>
+			<option value="100"%{if $to_page==100}% SELECTED %{/if}%>100</option>			
+			<option value="9999"%{if $to_page==9999}% SELECTED %{/if}%>9999</option>						
+		</select> <strong>позиций на страницу.</strong>
+		
+		</form>	
+
+<form action="%{$listpagename}%" method="post" name="updater" id="updater">
+<div align="right">
+
+%{if $can_edit}%
+<input type="submit" name="Update1" id="Update1" value="Внести изменения!" onclick="return window.confirm('ВНИМАНИЕ!!! Вы уверены, что хотите произвести выбранное действие над группой записей?');"></div>
+%{/if}%
+ 
+<input type="hidden" name="from" id="from" value="%{$from}%">
+<input type="hidden" name="to_page" id="to_page" value="%{$to_page}%">
+ <input type="hidden" name="id" value="%{$id}%">
+
+%{$pages}%
+
+
+          <table class="gydex_table" >
+          <thead>
+          <tr align="left" valign="top">
+              <th width="250"> Имя 
+              
+               <div class="gydex_sort">
+                <a href="%{$link}%&sortmode=1" class="gydex_sort_down %{if $sortmode==1}% gydex_sort_hover%{/if}%"></a>
+              <a href="%{$link}%&sortmode=0" class="gydex_sort_up %{if $sortmode==0}% gydex_sort_hover%{/if}%"></a>
+              	</div>
+              </th>
+              <th width="*"> Параметры </th>	
+             
+              <th width="80"> Действия </th>	
+              <th width="24"> <input id="check_all" type="checkbox" value="1" /> </th>
+          </tr>
+          </thead>
+          <tbody>
+
+
+%{section name=rowsec loop=$items}%
+		  
+	<!-- подраздел в разделе -->
+	
+	<tr align="left" valign="top">
+		<td width="250">
+        <a name="%{$items[rowsec].id}%"></a>
+        
+        <a href="delivery_list_users.php?id=%{$id}%&segment=%{$items[rowsec].id}%">%{$items[rowsec].name}%&nbsp;(%{$items[rowsec].s_q}%)</a> <br>
+        
+        Создан: %{$items[rowsec].pdate}%<br>
+		Изменен: %{$items[rowsec].pdate_change}%<br>
+
+        
+        
+        
+         
+		
+		</td>
+		<td width="*">
+		<!-- параметры раздела -->
+		%{$items[rowsec].comment}%
+             
+           
+		
+		</td>	
+		 
+		<td width="80" >
+        	%{if $can_edit}%
+            <a class="gydex_edit" title="правка" href="%{$ed_pagename}%?&action=1&id=%{$items[rowsec].id}%&from=%{$from}%&to_page=%{$to_page}%"></a> 
+           	%{/if}% 
+      	
+        
+           %{if $can_delete}%
+          <a class="gydex_del" title="удалить запись" href="%{$ed_pagename}%?action=2&id=%{$items[rowsec].id}%&from=%{$from}%&to_page=%{$to_page}%" onclick="return window.confirm('ВНИМАНИЕ!!! Вы действительно хотите удалить данную запись из списка?');"></a>
+           %{/if}%           
+           
+		</td>
+		 <td width="24" align="center" >
+			<input name="%{$items[rowsec].id}%_do_process" id="do_process_%{$items[rowsec].id}%" type="checkbox"  value="%{$items[rowsec].id}%" />
+		</td>
+	</tr>
+	
+%{/section}%
+	 </tbody>
+     </table>
+
+%{$pages}%
+
+
+%{if $can_edit}%
+ <p>Выберите желаемое действие над выбранными позициями:<br>
+          <select name="kind" id="kind">
+              <option value="1" SELECTED>Внести изменения</option>
+              
+              <option value="2">Удалить из базы</option>
+           <!--   <option value="4">Сделать отображаемыми на сайте</option>
+              <option value="5">Сделать невидимыми на сайте</option>-->
+              
+          </select>&nbsp;&nbsp;&nbsp;
+          
+          
+          
+          <p><input type="submit" name="Update" id="Update" value="Внести изменения!" onclick="return window.confirm('ВНИМАНИЕ!!! Вы уверены, что хотите произвести выбранное действие над группой записей?');">
+          
+%{/if}%          
+                    </form>

@@ -1,0 +1,153 @@
+
+<style type="text/css">
+h4{
+	margin-bottom:0px;	
+}
+</style>
+%{if $work_mode==0}%
+<h1>Мой профиль</h1>
+%{else}%
+<h1>Пользователь %{$user.login}%</h1>
+%{/if}%
+
+<h4>Логин:</h4>
+%{$user.login}%
+<p />
+
+%{if $work_mode==0}%
+<h4>Пароль:</h4>
+<a href="chp.html">Сменить пароль</a>
+<p />
+
+%{if $user.can_change_pin}%
+<h4>Пин-код:</h4>
+<a href="chpin.html">Сменить пин-код</a>
+<p />
+%{/if}%
+
+%{/if}%
+
+
+<h4>Название:</h4>
+%{$user.opf}% %{$user.name_d}%
+<p />
+
+
+<h4>Тип дилера:</h4>
+%{$user.dealer}%
+<p />
+
+
+<h4>Куратор:</h4>
+<a href="/info.html?name=%{$user.kurator_login}%">%{$user.kurator}% %{$user.kurator_login}%</a>
+<p />
+
+
+<h4>№ договора:</h4>
+%{$user.contract_no_d}%
+<p />
+
+
+<h4>Дата договора:</h4>
+%{$user.contract_pdate_d}%
+<p />
+
+<h4>Файлы договора:</h4>
+%{$user.contracts}%
+
+
+
+
+
+<h4>Рабочий телефон:</h4>
+%{$user.phone_work_d}%
+<p />
+
+<h4>Сотовый телефон:</h4>
+%{$user.phone_cell_d}%
+<p />
+
+
+<h4>Контактное лицо:</h4>
+%{$user.contact_person_d}%
+<p />
+
+
+
+<h4>Электронная почта:</h4>
+<a href="mailto:%{$user.email_d}%">%{$user.email_d}%</a>
+<p />
+
+
+<h4>Юридический адрес:</h4>
+%{$user.legal_address_d}%
+<p />
+
+<h4>ИНН:</h4>
+%{$user.inn_d}%
+<p />
+
+<h4>КПП:</h4>
+%{$user.kpp_d}%
+<p />
+
+<h4>ОКПО:</h4>
+%{$user.okpo_d}%
+<p />
+
+
+<h4>Фактический адрес:</h4>
+%{section name=fasec loop=$user.fa}%
+<div class="common_block" style="width:400px;">
+<strong>%{$user.fa[fasec].form_name}%:</strong><br />
+%{$user.fa[fasec].address}%
+
+</div>
+%{/section}%
+<p />
+
+
+<h4>Реквизиты:</h4>
+%{section name=bdsec loop=$user.bdetails}%
+<div class="common_block" style="width:400px;">
+<strong>р/с:</strong> %{$user.bdetails[bdsec].rs}%
+<p />
+
+<strong>к/с:</strong> %{$user.bdetails[bdsec].ks}%
+<p />
+
+<strong>БИК:</strong> %{$user.bdetails[bdsec].bik}%
+<p />
+
+<strong>Банк:</strong> %{$user.bdetails[bdsec].bank}%
+<p />
+
+<strong>Город банка:</strong> %{$user.bdetails[bdsec].city}%
+</div>
+
+%{/section}%
+<p />
+
+
+<h4>Скидка:</h4>
+%{$user.discount_d}%%
+<p />
+
+
+<h4>Оборот за прошлый месяц:</h4>
+%{$user.month_value}%
+<p />
+
+
+<h4>Оборот за прошлый год:</h4>
+%{$user.year_value}%
+<p />
+
+
+<h4>Примечания:</h4>
+%{section name=bdsec loop=$user.notes}%
+<strong>%{$user.notes[bdsec].pdate}%</strong>: %{$user.notes[bdsec].note}%
+<br />
+%{/section}%
+<p />
+

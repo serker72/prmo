@@ -1,0 +1,239 @@
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+<form action="ed_sector.php" method="post" id="crea_form">
+
+%{include file="every_help_dialog.html" filename="sector_edit.htm" prefix="" description="редактирование участка"  style="float:right;  margin-left:10px;" is_right=true}%
+
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$sector.id}%" />
+
+
+
+<label for="name">Название:</label><br />
+<input type="text" size="40" maxlength="255" name="name" value="%{$sector.name|escape:"html"}%" />
+<p />
+
+
+
+<label for="fact_address">Фактический адрес:</label><br />
+<textarea name="fact_address" id="fact_address" cols="100" rows="5">%{$sector.fact_address|escape:"html"}%</textarea>
+<p />
+
+
+<div style="float:left; margin-right:10px;">
+<label for="nach_user_id">Начальник склада:</label><br />
+<select name="nach_user_id" style="width:200px;">
+%{html_options values=$nach_user_ids selected=$sector.nach_user_id output=$nach_user_names}%
+</select>
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="zamnach_user_id">Заместитель начальника склада:</label><br />
+<select name="zamnach_user_id" style="width:200px;">
+%{html_options values=$zamnach_user_ids selected=$sector.zamnach_user_id output=$zamnach_user_names}%
+</select>
+</div>
+
+<br clear="all" />
+<p />
+
+<strong>Время работы (МСК):</strong>
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_from_h_s">с:</label>
+<select name="time_from_h_s" style="width:40px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m_s" style="width:40px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_to_h_s">по:</label>
+<select name="time_to_h_s" style="width:40px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m_s" style="width:40px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+<br clear="all" />
+<p />
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:700px; height:100px; overflow:scroll;">
+        %{include file="sector/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$sector.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="sector/d_notes_dialog.html" word="notes" named="Примечания" user_id=$sector.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />  
+
+
+
+<div style="float:left; margin-right:30px; ">
+<input type="checkbox" name="is_active" id="is_active" value="1" %{if $sector.is_active==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% />
+<label for="is_active">Cклад активен</label><br />
+</div>
+
+
+
+<div style="float:right;">
+<input type="checkbox" value="1" name="s_s" %{if $sector.s_s==1}% checked="checked"%{/if}% %{if $can_s_s==false}% disabled="disabled"%{/if}% /><label for="s_s" >S/S</label>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку складов" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='sector.php';
+}else location.href='sector.php';" />
+
+
+</form>
+
+<div id="non_unconfirm_dialog" title="Невозможно снять активность склада">
+    <strong>Невозможно снять активность склада %{$sector.name}%.</strong><br />
+	<br />
+
+    На данном складе находятся товарные остатки. Для того, чтобы снять активность склада,
+    необходимо списать все товарные остатки по нему.<br />
+<br />
+	
+    Для того, чтобы выяснить, какие товарные остатки находятся на данном складе, Вы можете воспользоваться 
+    отчетом <a href="goods_on_stor.php" target="_blank">"Товары на объектах"</a>.
+<br />
+<br />
+    
+    Для списания остатков Вы можете создать акт списания в разделе <a href="writeoff.php" target="_blank">"Списание продукции"</a> при наличии у Вас соответствующих прав.
+      
+ </div>
+
+<script type="text/javascript">
+$(function(){
+	
+		$("#non_unconfirm_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 550,
+			height: 250,
+			stack: true,
+			buttons:{
+				"ОК":function(){
+					$(this).dialog("close");
+				}
+			}
+		});
+	
+	
+	
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		
+		%{if $sector.is_active==0}%
+		if($("#is_active").prop("checked")){
+			if($("#fact_address").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<10){
+				res=false;
+				alert("Для утверждения склада заполните поле Фактический адрес!");
+				$("#is_active").prop("checked",false);
+				$("#fact_address").focus();
+			}
+			
+		}
+		%{/if}%
+		
+		%{if $sector.is_active==1}%
+		if(!$("#is_active").prop("checked")){
+			$.ajax({
+				async: false,
+				url: "/js/ed_sector.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$sector.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					 
+				  if(data!=0){
+					
+					 $("#non_unconfirm_dialog").dialog("open");
+					 
+					 res=false;
+				  }else{
+					//запросить док-ты на ав, аа, вывести их список
+					$.ajax({
+					  async: false,
+					  url: "/js/ed_sector.php",
+					  type: "POST",
+					  data:{
+						  "action":"check_unconfirm_by_docs",
+						  id: "%{$sector.id}%"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						 // alert(data); 
+						  if(data!=""){ 
+							if(window.confirm("Внимание!\nПо данному складу есть документы с неполным завозом и без завоза.\nПри снятии флага Склад активен документы без завоза будут автоматически аннулированы, документы с неполным завозом - автоматически выровнены.\n"+data+"\nВы уверены?")){
+								res=window.confirm("Вы уверены?");
+							}else res=false;
+						  }
+					  },
+					  error: function(xhr, status){
+						  
+						  alert("Ошибка при проверке состояния склада. Пожалуйста, попытайтесь сохранить склад снова.");
+						  res=false;	
+					  }	 
+				  });	  
+					  
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния склада. Пожалуйста, попытайтесь сохранить склад снова.");
+					res=false;	
+				}	 
+			});
+		}
+		%{/if}%
+		
+		
+		return res;
+	});
+});
+</script>

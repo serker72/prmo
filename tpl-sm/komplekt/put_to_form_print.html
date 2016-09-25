@@ -1,0 +1,76 @@
+
+<tr align="left" valign="top" id="pos_block_%{$tempid}%">
+	
+    <td width="20">
+    <span id="no_%{$id}%">%{$no}%</span>
+    </td>
+     <td width="20">
+    <span id="code_%{$id}%">%{$id}%</span>
+    </td>
+    <td width="*">
+    <span id="name_%{$id}%">%{$name}%</span>
+ 
+    
+    </td>
+    <td width="50">
+    <span id="dim_name_%{$id}%">%{$dim_name}%</span>
+    </td>
+	<td width="50">
+    <span id="kol_init_%{$id}%">%{$kol_init}%</span>
+    </td>
+    <td width="50">
+    <span id="kol_%{$id}%" %{if $kol!=$kol_init and ($kol!=$in_pol or $kol==0) and ($komplekt_ved.status_id==1 or $komplekt_ved.status_id==2 or $komplekt_ved.status_id==12)}%style=" font-weight:bold; "%{/if}%>%{$kol}%</span>
+    </td>
+    
+    
+    
+      %{if $printmode==1}%
+    <td width="50" class="kompl1">
+     %{$in_bills_in}% 
+    </td>
+    
+    <td width="50" class="kompl1">
+    %{$in_pol_in}% 
+    </td>
+    
+    <td width="50" class="kompl1">
+    %{*$in_free*}%
+    
+    <span id="in_free_in_%{$id}%">%{$kol-$in_bills_in-$in_sh_in-$in_pol_in|string_format:"%.3f"}%</span>
+    </td>
+    
+    
+    
+    
+    <td width="50" class="kompl2">
+    %{$in_bills}%
+    </td>
+    
+    <td width="50" class="kompl2">
+    %{$in_pol}% 
+    </td>
+    
+    <td width="50" class="kompl2">
+    %{*$in_free*}%
+    
+    <span id="in_free_%{$id}%">%{$kol-$in_bills-$in_sh-$in_pol|string_format:"%.3f"}%</span>
+    </td>
+    
+    
+    
+     <td width="50" class="kompl3">
+      <!--<span id="in_all_%{$id}%">%{$kol-$in_bills-$in_pol-$kol+$in_bills_in+$in_pol_in|string_format:"%.3f"}%</span>-->
+       <span id="in_all_%{$id}%">%{$in_pol-$in_pol_in}%</span>
+     </td>
+     
+     
+    %{/if}% 
+     
+    
+   
+    
+  
+
+</tr>
+
+

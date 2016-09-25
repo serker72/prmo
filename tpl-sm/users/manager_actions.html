@@ -1,0 +1,339 @@
+<script type="text/javascript">
+
+	//подгрузка  
+	function load_managers(){	
+		 
+		var except_ids=new Array();
+		if(("%{$user.id}%").length>0) except_ids.push("%{$user.id}%"); 
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"find_managers",
+				"except_ids[]":except_ids,
+				"manager_id":"%{$user.manager_id}%"
+			},
+			beforeSend: function(){
+			 
+				  $("#managers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+			  
+			},
+			success: function(data){
+			  
+			  		$("#managers_found").html(data);
+			 
+			  
+			  
+			  
+			  
+			},
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	function load_sub_managers(){	
+		 
+		var except_ids=new Array();
+		if(("%{$user.id}%").length>0) except_ids.push("%{$user.id}%"); 
+		if(("%{$user.manager_id}%").length>0) except_ids.push("%{$user.manager_id}%"); 
+		
+		var complex_positions=new Array();  
+			
+			$.each($("#sub_managers table tbody tr td input[type=hidden][id^='new_submanager_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				
+				
+				
+				hashed_string=$("#new_submanager_id_"+hash).val();
+				 
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);			  
+			  
+			});
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"load_submanagers",
+				  "user_id":"%{$user.id}%",
+				  
+				  "complex_positions[]":complex_positions,
+				  "except_ids[]":except_ids
+				
+			},
+			beforeSend: function(){
+			 
+				  $("#sub_managers_dialog_table").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+			  
+			},
+			success: function(data){
+			  
+			  		$("#sub_managers_dialog_table").html(data);
+			 
+			  
+			},
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	
+      
+	 
+	
+$(function(){	
+	
+	
+	
+	
+	
+	$("#managers_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 650 
+	 });
+	 
+	 
+	 $("#sub_managers_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 650 
+	 });
+	
+	$("#select_manager_id").bind("click",function(){
+		//$("#branch_radio_"+$("#branch_id").val()+"").prop("checked",true);
+		 load_managers();
+		 
+		  
+		
+		$("#managers_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   
+			   
+				   if( ($("input[name=managers]:checked").val()==0)||($("input[name=managers]:checked").val()==null)||($("input[name=managers]:checked").val()==undefined) ){
+						
+						alert("Выберите сотрудника!");
+					   return false;  
+			 	}
+				   
+				   
+				   
+				   
+				  
+				 selected_branch=$("input[name=managers]:checked").val()
+					   
+				  
+				  
+				 
+				 
+				  
+				  if($("#manager_id").val()!=selected_branch){
+					 
+					  $("#clear_manager_id").trigger("click");
+					  //подгружаем все данные по контрагенту
+					  if(selected_branch>0){
+						$.ajax({
+						  async: true,
+						  url: "/js/user_s.php",
+						  type: "GET",
+						  dataType: "json",
+						  data:{
+							  "action":"retrieve_manager",
+							  "id":selected_branch
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							
+							//alert(data.contract_no);
+							$("#manager_id_string").val(data.name_s+", "+data.position_s);
+							$("#manager_id").val(data.id);
+							
+							 
+							 
+							 
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+					  }
+				  
+			   } 
+			   
+			  $("#managers_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		 
+		
+		$("#managers_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	  
+	$("#add_submanager").bind("click",function(){
+		 
+		
+		
+		load_sub_managers(); 
+		 
+		$("#sub_managers_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				
+				
+			var complex_positions=new Array();
+				 
+				
+				
+				 
+					
+					//перенос данных в таблицу на странице
+					
+					
+					$.each($("#sub_managers_dialog_table table tbody tr td input[type=hidden][id^='submanagers_hash_']"), function(key, value){
+						
+						
+						hash1=$(value).val();
+						
+						if($("#submanagers_is_in_"+hash1).prop("checked")){
+							
+						
+							hashed_string='';
+							hashed_string=$("#submanagers_id_"+hash1).val();
+							 
+							
+							//alert(hashed_string); 
+							complex_positions.push(hashed_string);			  
+						}
+					});
+					
+					
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/user_s.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_submanagers",
+						  "user_id":"%{$user.id}%",
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#sub_managers").html(data); 
+						
+						 
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					 
+					 
+			   
+			  $("#sub_managers_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		
+		
+		$("#sub_managers_dialog").dialog("open");
+	});
+	 
+	
+	 
+	
+ 
+	 
+	 $("#clear_manager_id").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+	
+		$("#manager_id_string").val("");
+		$("#manager_id").val("0");
+		
+		
+	});
+	
+	 
+});
+</script>
+
+<div id="managers_dialog" title="Выберите сотрудника" style="display:none;">
+	
+ 
+
+ 
+ 
+ 
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Ф.И.О</th>
+        
+        
+    </tr>
+    	
+       
+        
+    
+    <tbody id="managers_found">
+    
+    
+  
+    </tbody>
+    </table>
+	
+  
+  	 
+  
+</div>
+
+
+
+<div id="sub_managers_dialog" title="Выберите подчиненных сотрудников" style="display:none;">
+	
+ 
+
+ <div id="sub_managers_dialog_table"></div>
+	
+  
+  	 
+  
+</div>
+ 

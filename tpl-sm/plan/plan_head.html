@@ -1,0 +1,145 @@
+
+<div id="sched_remind_gialog" title="Напоминания планировщика" style="display:none;">
+	
+    <h2>Внимание! Напоминаем Вам о следующих событиях:</h2>
+    <br>
+
+	<div id="sched_reminders_block" style="width:760px; height:280px; overflow:auto;">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+function CalcNewPlans(){
+	 if(_window_is_active)  $.ajax({
+		  async: true,
+		  url: "/js/sched.php",
+		  type: "POST",
+		  data:{
+			  "action":"calc_new_plans"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+		  	 if((data>0)&& !$("#sched_remind_gialog").dialog("isOpen")) $("#sched_remind_gialog").dialog("open");
+			 else if((data==0) && $("#sched_remind_gialog").dialog("isOpen"))  $("#sched_remind_gialog").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	  else if($("#sched_remind_gialog").dialog("isOpen"))  $("#sched_remind_gialog").dialog("close"); 
+	}
+$(function(){
+	$("#sched_remind_gialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		
+		height: 420,
+		dialogClass: 'semi_auth',
+		close: function( event, ui ) {
+			var data=new Array();
+			 
+			$.each($("#sched_reminders_block input[id^=sched_reminder_id_]"), function(k,v){
+				//	data.push($(v).val());
+				st='';
+				
+				st=st+$(v).val();
+				st=st+";"+$("input[name=next_remind_"+$(v).val()+"]:checked").val();
+				
+				if($("input[name=next_remind_"+$(v).val()+"]:checked").val()==0){
+					st=st+";"+$("#remind_period_"+$(v).val()).val();
+				}
+				
+				data.push(st);	
+			});
+			
+			
+			$.ajax({
+				  async: false,
+				  url: "/js/sched.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_read_plans",
+					  "data[]":data
+					  
+				  }/*,
+				  success: function(data1){
+						alert(data1);					 
+				  },
+				   error: function(xhr, status,error){
+				 alert(status+error);
+			  		}*/
+				 
+			  });
+			//alert(data);
+			
+		},
+		buttons:{
+			"Готово": function(){
+				 
+				$("#sched_remind_gialog").dialog("close");
+				
+			}
+		},
+		open: function( event, ui ) {
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/sched.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_new_plans"
+			  },
+			  beforeSend: function(){
+				 $("#sched_reminders_block").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#sched_reminders_block").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=700; min_height=50;
+				 
+				   our_height=parseInt($("#sched_reminders_block table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#sched_reminders_block").css('height', our_height);
+				   
+				   $("#sched_remind_gialog").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewPlans()', 60000);
+});
+</script>

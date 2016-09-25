@@ -1,0 +1,272 @@
+<div id="messenger_block">
+	<!--<script type="text/javascript" src="/js/touch.js"></script>-->
+	
+    <!-- Заголовок окна -->
+    <div id="messenger_header_block" title="Двойной клик по заголовку позволяет свернуть или развернуть окно мгновенных сообщений.">
+    	
+        <div id="messenger_has_new_messages" style="float:left; margin-right:5px; %{if $has_new_messages==false}% display:none;%{/if}%">
+        <img src="/img/icons/message-anim.gif" width="13" height="10" alt="Есть новые сообщения!" border="0" title="Есть новые сообщения!" vspace="2" /> 
+        </div>
+        
+        <div style="float:left; margin-right:5px;">
+    	 Мгновенные сообщения 
+        </div>
+        
+        
+         <div id="messenger_close_block" style="float:right; margin-right:0px;">
+        <a href="#"><img src="/img/icons/icon-close.png" width="16" height="16" border="0" alt="закрыть" title="закрыть" /> </a>
+        </div>
+        
+        
+          <div id="messenger_maximise_block" style="float:right; margin-right:5px;">
+         <a href="#"><img src="/img/icons/icon-restore.png" width="16" height="16" border="0"  alt="свернуть окно" title="свернуть окно" /></a>
+        </div>
+        
+        <div id="messenger_minimise_block" style="float:right; margin-right:5px;">
+        <a href="#"><img src="/img/icons/icon-minimize.png" width="16" height="16" border="0"  alt="свернуть окно" title="свернуть окно" /></a> 
+        </div>
+        
+       
+    </div>
+    <!-- конец заголовка окна -->
+    
+    <!-- содержимое окна -->
+  <div id="messenger_inner_block">
+		
+         <div style="float:left; margin-right:5px; margin-bottom:5px; width:95%;">
+        
+        <strong>Кому:</strong>
+        <small><em>(используйте 
+        ctlr+щелчок мыши для множественного выбора)</em></small>
+        
+     
+        </div>
+        
+     
+         
+          
+        <br clear="all" />
+        
+         
+        
+        <div style="float:left; margin-right:5px;">
+       	  
+          
+        
+
+       	  <div id="messenger_who" >
+            %{include file="messenger/addresses.html"}%
+            </div>
+        
+        
+      
+        
+        </div>
+        
+   		 <div style="float:left; margin-right:0px;">
+          
+          <input type="text" id="messenger_string_filter" value="%{$messenger_string_filter}%" size="35" maxlength="255" />
+          <a href="#" id="messenger_apply_filter" class="reestr_right_button24"  data-comment="найти пользователей"></a>
+          
+          <a href="#" id="messenger_clear_filter" class="reestr_right_button24"  data-comment="снять фильтр"></a>
+          
+           %{include file="every_help_dialog.html" filename="messenger.htm" prefix="_messenger" description="Мгновенные сообщения" is_right=true style="float:left;  margin-right:0px; "}%  
+          
+          <br clear="all" />
+         
+         
+         <div style="display:none;">
+             <strong>Сортировка:</strong> <br />
+             <div style="float:left; margin-right:10px;">
+             
+            <input id="messenger_sort_mode1" name="messenger_sort_mode" type="radio" value="1" %{if $sort_mode==1}% checked="checked"%{/if}% />по логину 
+            &nbsp;&nbsp;&nbsp;
+            <input id="messenger_sort_mode2" name="messenger_sort_mode" type="radio" value="2" %{if $sort_mode==2}% checked="checked"%{elseif $sort_mode!=1}% checked="checked"%{/if}% />по имени
+            </div>
+            
+            <div style="float:left;"><a href="#" id="messenger_save_sort_mode"><img src="/img/icons/save.png" width="24" height="24" alt="Сохранить" title="Сохранить" border="0" /></a></div>
+             <br clear="all" />
+         </div>
+         
+         
+       	 
+            <div id="messenger_user_info" style=""></div>
+            
+            
+        </div>
+        
+          
+      
+        
+        
+    <script type="text/javascript">
+		$(function(){
+			
+			/*
+			if($.cookie('messenger_sort_mode')==null){
+				$.cookie('messenger_sort_mode', 2, { expires: 14 });		
+			}
+			
+			if($.cookie('messenger_sort_mode')==1){
+				$("#messenger_sort_mode1").prop("checked",true);
+			}else if($.cookie('messenger_sort_mode')==2){
+				$("#messenger_sort_mode2").prop("checked",true);
+			}*/
+			$.cookie('messenger_sort_mode', 2, { expires: 14 });	
+			$("#messenger_sort_mode2").prop("checked",true);
+			
+			
+			$("#messenger_save_sort_mode").bind("click",function(){
+				//alert($("input[name=sort_mode]:checked").val());
+				$.cookie('messenger_sort_mode', $("input[name=messenger_sort_mode]:checked").val(), { expires: 14 });
+				//перезагрузка адресов
+				
+				
+				
+				//вызвать функцию подгрузки адресов
+				MessengerShowUsers();
+				
+					  
+				return false;	
+			});
+			
+		
+		});
+		</script>
+       <br clear="all" />
+       
+       <div style=" margin-top:5px;">
+           <strong>Ваша переписка:</strong>
+           <a href="#" onclick="return MessengerLoadChat(2);" id="messenger_load_chat_2">Вчера</a>
+           <a href="#" onclick="return MessengerLoadChat(8);" id="messenger_load_chat_8"> 7 дней</a>
+           <a href="#" onclick="return MessengerLoadChat(31);" id="messenger_load_chat_31">30 дней</a>
+           <a href="#" onclick="return MessengerLoadChat(91);" id="messenger_load_chat_91">3 мес.</a>
+           <a href="#" onclick="return MessengerLoadChat(181);" id="messenger_load_chat_181">6 мес.</a>
+           <a href="#" onclick="return MessengerLoadChat(0);" id="messenger_load_chat_0">Все</a>
+           
+           <input type="hidden" value="8" id="messenger_selected_days" />
+           
+           <br />
+           <div id="messenger_outer_chat">
+           <div id="messenger_chat"></div>	
+           </div>  
+       
+       </div>     
+       
+       <div style=" margin-top:5px;">
+           <strong>Отправить сообщение:</strong> <br />
+            
+           
+           <textarea id="messenger_send_text" cols="50" rows="5"></textarea>
+           <script type="text/javascript">
+            
+            try{
+            $("#messenger_send_text").ckeditor({
+               customConfig : '/ckeditor4/config-smiles-formessenger.js',
+			   width:'96%'
+            });
+            }catch(e){}
+            
+            
+                
+            try{	
+            CKEDITOR.instances.messenger_send_text.on('key', function(ev) {
+              // alert(ev.data.keyCode);
+               
+               if ((ev.data.keyCode==13))
+               {
+                   ev.cancel();
+                   //console.log('enter');
+                   $("#messenger_send_button").trigger("click");
+                   
+               }  
+               
+               
+                if($("input[id^=messenger_who_]:checked").length==0){
+                    $("#messenger_chat").html('<span style="  font-weight:bold; color:red; font-size:12px;">Пожалуйста, выберите пользователей для отправки сообщения!</span>');
+                }
+                
+                
+                MessengerBlinkStop();
+                MessengerToggleReadMessages();     
+            });	
+            }catch(e){
+                $("#messenger_send_text").bind("keypress", function(e){
+                    if(e.keyCode==13){
+                        $("#messenger_send_button").trigger("click");
+                    }
+                    
+                    
+                    
+                    if($("input[id^=messenger_who_]:checked").length==0){
+                        $("#messenger_chat").html('<span style="font-weight:bold; color:red; font-size:12px;">Пожалуйста, выберите пользователей для отправки сообщения!</span>');
+                    } 
+                });
+                
+            }
+            
+            
+            
+           </script>
+            <br />
+    
+            
+            <div style="float:left; margin-right:10px;">
+            <input type="button" value="Отправить" id="messenger_send_button" /> 
+            </div>
+            
+            <div style="float:left; min-width:300px;">
+            <small>
+            Нажмите <strong>Enter</strong> для отправки сообщения.
+            <br />
+            Для перехода на следующую строку используйте <em>Shift+Enter</em>.
+            </small>
+            </div>
+        </div>
+        
+        <br clear="all" />
+
+        
+       <!-- <input type="button" value="11" id="messenger_test" />-->
+        
+	</div>
+    <!-- конец содержимого окна -->
+    
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#messenger_header_block").bind("dblclick", MessengerToggleRestore);
+	
+	
+	$("#messenger_close_block a").bind("click", MessengerClose);
+	
+	$("#messenger_maximise_block a").bind("click", MessengerRestore);
+	
+	$("#messenger_minimise_block a").bind("click", MessengerMinimize);
+	
+	$("#messenger_send_button").bind("click", MessengerSendMessage);
+	
+	$("#messenger_apply_filter").bind("click", function(){
+		$("#messenger_save_sort_mode").trigger("click");
+		return false;
+	});
+	
+	$("#messenger_string_filter").bind("keypress", function(e){
+		if(e.keyCode==13) $("#messenger_apply_filter").trigger("click");
+	});
+	
+	$("#messenger_clear_filter").bind("click", function(){
+		$("#messenger_string_filter").val('');
+		$("#messenger_save_sort_mode").trigger("click");
+		return false;
+	});
+	
+	
+	
+	
+	
+	//touchScrollXY('messenger_who');
+	//touchScrollXY('messenger_outer_chat');
+});
+</script>

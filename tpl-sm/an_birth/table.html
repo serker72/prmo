@@ -1,0 +1,219 @@
+
+<h2>Контакты контрагентов</h2>
+%{section name=rowsec loop=$items1}%%{/section}%
+ 
+  
+ 
+%{section name=rowsec loop=$items1}%
+ 
+%{if $smarty.section.rowsec.first  or (!$smarty.section.rowsec.first and $items1[rowsec.index_prev].break)}%
+%{if $print==1 and !$smarty.section.rowsec.first}%
+<br>
+%{/if}%
+
+
+<table  cellpadding="1" cellspacing="0" class="blacktable"  %{if $print==1}% style="width:780px !important;" border="1"%{else}%  width="100%"%{/if}%>
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="60">
+    Дата рождения
+    </th>
+    
+    <th scope="col" width="40">
+   	Юбилей
+    </th>
+    
+    <th scope="col" width="*">
+    Контакт
+    </th>
+    
+     <th scope="col" width="*">
+    Контрагент
+    </th>
+    
+    
+    %{if $print==0}%
+    <th scope="col" width="24">&nbsp;</th>
+    %{/if}%
+     
+   
+</tr>
+
+ 
+</thead>
+<tbody> 
+ %{/if}% 
+ 
+ 
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items1[rowsec].id}%" style="page-break-inside:avoid;">
+ 
+	
+    <td width="60" %{if $items1[rowsec].status_id==1 or $items1[rowsec].status_id==3}%class="item_inactive"%{/if}%>%{$items1[rowsec].birthdate}%</td>
+    
+    <td width="40" %{if $items1[rowsec].status_id==1 or $items1[rowsec].status_id==3}%class="item_inactive"%{/if}%>%{if $items1[rowsec].has_yub}%<span style="font-weight:bold; font-size:24px;">+</span>%{/if}%</td>
+    
+    <td width="*" align="left"    %{if $items1[rowsec].status_id==1 and $items1[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{$items1[rowsec].name}%,  %{$items1[rowsec].position}%
+     
+     
+    </td>
+    
+     <td width="*" align="left"   %{if $items1[rowsec].status_id==1 and $items1[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{$items1[rowsec].code}%  %{$items1[rowsec].full_name}%,  %{$items1[rowsec].opf_name}% 
+     
+     
+    </td>
+    
+   
+    
+    
+     %{if $print==0}%
+    <td width="24" %{if $items1[rowsec].status_id==1 and $items1[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit_supplier}%
+    <a href="supplier.php?action=1&id=%{$items1[rowsec].supplier_id}%&from_begin=1" target="_blank" title="Подробно..." class="reestr_edit"></a>
+      %{else}% 
+    <a href="#" onClick="return false;" title="Подробно..." class="reestr_edit reestr_inactive"></a>
+    
+  
+    %{/if}%
+   
+    
+   
+    
+    
+   
+    
+    </td>
+    %{/if}%
+    
+    
+     
+  
+</tr>
+
+%{if $smarty.section.rowsec.last or (!$smarty.section.rowsec.last and $items1[rowsec].break)}%
+
+ </tbody>
+</table>
+ %{if $print==1 and !$smarty.section.rowsec.last}%
+<div style="page-break-after:always !important;"></div>
+%{/if}%
+
+%{/if}%
+ 
+%{/section}%
+ 
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям записей не найдено.</em><br />
+%{/if}%
+ 
+
+<br>
+<br>
+
+ 
+ 
+<h2>Сотрудники</h2> 
+
+%{section name=rowsec2 loop=$items2}%%{/section}%
+ 
+  
+ 
+%{section name=rowsec2 loop=$items2}%
+ 
+%{if $smarty.section.rowsec2.first  or (!$smarty.section.rowsec2.first and $items2[rowsec2.index_prev].break)}%
+%{if $print==1 and !$smarty.section.rowsec2.first}%
+<br>
+%{/if}%
+
+
+<table  cellpadding="1" cellspacing="0" class="blacktable"  %{if $print==1}% style="width:780px !important;" border="1"%{else}%  width="100%"%{/if}%>
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="60">
+    Дата рождения
+    </th>
+    
+    <th scope="col" width="40">
+   	Юбилей
+    </th>
+    
+    <th scope="col" width="*">
+    Сотрудник
+    </th>
+    
+     
+    
+    
+    %{if $print==0}%
+    <th scope="col" width="24">&nbsp;</th>
+    %{/if}%
+     
+   
+</tr>
+
+ 
+</thead>
+<tbody> 
+ %{/if}% 
+ 
+ 
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items2[rowsec2].id}%" style="page-break-inside:avoid;">
+ 
+	
+    <td width="60" %{if $items2[rowsec2].status_id==1 or $items2[rowsec2].status_id==3}%class="item_inactive"%{/if}%>%{$items2[rowsec2].pasp_bithday}%</td>
+    
+    <td width="40" %{if $items2[rowsec2].status_id==1 or $items1[rowsec].status_id==3}%class="item_inactive"%{/if}%>%{if $items2[rowsec2].has_yub}%<span style="font-weight:bold; font-size:24px;">+</span>%{/if}%</td>
+    
+    <td width="*" align="left"  %{if $items2[rowsec2].status_id==1 and $items2[rowsec2].status_id!=3}%class="item_inactive"%{/if}%>
+      %{$items2[rowsec2].name_s}%,  %{$items2[rowsec2].position_s}%
+     
+     
+    </td>
+    
+     
+    
+   
+    
+    
+     %{if $print==0}%
+    <td width="24" %{if $items2[rowsec2].status_id==1 and $items2[rowsec2].status_id!=3}%class="item_inactive"%{/if}%>
+       %{if $can_edit_user}%
+    <a href="user_s.php?action=1&id=%{$items2[rowsec2].id}%&from_begin=1" target="_blank" title="Подробно..." class="reestr_edit"></a>
+    
+   
+    
+      %{else}% 
+    <a href="#" onClick="return false;" title="Подробно..." class="reestr_edit reestr_inactive"></a>
+    
+  
+    %{/if}%
+   
+    
+    </td>
+    %{/if}%
+    
+    
+     
+  
+</tr>
+
+%{if $smarty.section.rowsec2.last or (!$smarty.section.rowsec2.last and $items2[rowsec2].break)}%
+
+ </tbody>
+</table>
+ %{if $print==1 and !$smarty.section.rowsec2.last}%
+<div style="page-break-after:always !important;"></div>
+%{/if}%
+
+%{/if}%
+ 
+%{/section}%
+ 
+
+
+%{if $smarty.section.rowsec2.total==0}%
+<em>По выбранным Вами условиям записей не найдено.</em><br />
+%{/if}%

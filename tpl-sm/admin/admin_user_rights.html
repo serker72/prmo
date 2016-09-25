@@ -1,0 +1,190 @@
+
+
+<form action="%{$filename}%" method="post" id="user_rights_form">
+<input type="hidden" name="id" value="%{$user.id}%" />
+<input type="hidden" name="action" value="1" />
+
+<input type="hidden" name="doUserRights" value="1" />
+<input type="submit" name="doUserRights" value="Внести изменения" />
+<input type="submit" name="doUserRightsStay" value="Применить изменения" />
+
+
+<script type="text/javascript">
+$(function(){
+	$(".tableone").columnHover({eachCell:true, hoverClass:'hover', includeSpans:true}); 
+	$(".tableone tr:even").addClass("even");
+	
+	$("div[id^=user_right_]").cluetip({
+			  splitTitle: "|"
+			});
+});
+
+function OnMoveS(letter,object_id, user_id){
+	$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").css("cursor","pointer");
+}
+function OnOutS(letter,object_id, user_id){
+	$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").css("cursor","arrow");
+}
+function OnClickS(letter,object_id, user_id, anti_id,repeat){
+	
+	
+	$("#do_user_edit_"+letter+"_"+object_id+"_"+user_id+"").attr("value",1);
+					
+					
+					//меняем режим права
+					if($("#user_state_"+letter+"_"+object_id+"_"+user_id+"").attr("value")==0){
+						$("#user_state_"+letter+"_"+object_id+"_"+user_id+"").attr("value",1);
+						$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("inactive");
+						$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("inactive_changed");
+						
+						$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").addClass("active_changed");
+						
+						//если есть взаимоисключ об-т - снять его выделение
+						if(repeat&&(parseInt(anti_id)>0)&&($("#user_state_"+letter+"_"+object_id+"_"+anti_id).val()==1)){
+							OnClickS(letter,object_id, anti_id, user_id,false);
+						}
+						
+					}else{
+						
+						$("#user_state_"+letter+"_"+object_id+"_"+user_id+"").attr("value",0);
+						$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("active");
+						$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("active_changed");
+						
+						$("#user_right_"+letter+"_"+object_id+"_"+user_id+"").addClass("inactive_changed");
+						
+						
+						
+					}
+	
+}
+</script>
+
+
+<h3>Права пользователя %{$user.login}%</h3>
+<div style="border:1px solid gray; width:400px; height:600px; overflow:scroll; padding:2 2 2 2; text-align:left;">
+<table width="*" cellspacing="0" cellpadding="4" border="0" class="tableone">
+<thead>
+<!-- группы объектов -->
+<tr align="center" valign="top">
+	<th scope="col" width="160" colspan="2">
+    Объекты
+    </th>
+    
+
+<!-- объекты -->
+
+	<th scope="col" width="80">
+    Права
+    </th>
+
+
+    
+</tr>
+</thead>
+<tbody>
+<!-- группы пользователей + пользователи -->
+%{section name=usec loop=$o}%
+<tr align="left" valign="top">
+	<!-- группы объектов -->
+    %{if $o[usec].to_change}%
+    <td width="80" rowspan="%{$o[usec].objects_count}%">
+    <!--  -->
+    <div id="og_%{$o[usec].id}%" title="Группа объектов %{$o[usec].g_name|escape}%|%{$o[usec].g_description|escape}%" style="font-weight:bold;">%{$o[usec].g_name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#og_%{$o[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    %{/if}%
+    
+    <!-- объекты -->
+    <td width="80">
+    <div id="o_%{$o[usec].id}%" title="Объект %{$o[usec].name|escape}%|%{$o[usec].description|escape}%" style="font-weight:bold;">%{$o[usec].id}%. %{$o[usec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#o_%{$o[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    
+    <!-- права пользователей по объектам -->
+   %{section name=rsec loop=$o[usec].rights_arr}%
+	<td width="*" align="center" title="Пользователь %{$user.login}%| Права на объект %{$o[usec].name}%" id="column_%{$user.id}%_%{$o[usec].id}%">
+    	<script type="text/javascript">
+		$(function(){
+			$("#column_%{$user.id}%_%{$o[usec].id}%").cluetip({
+			  splitTitle: "|"
+			});
+			/*$("div[id^=user_right_]").cluetip({
+			  splitTitle: "|"
+			});*/
+		});
+		</script>
+    	%{section name=rrsec loop=$o[usec].rights_arr[rsec].rights}%
+        	%{if $o[usec].rights_arr[rsec].rights[rrsec].has_access}%
+            
+            <input type="hidden" value="1" name="user_state_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" id="user_state_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" />
+            <div title="Пользователь %{$user.login}%| Права на объект %{$o[usec].name}%"  id="user_right_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" class="active" onmouseover="OnMoveS('%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$user.id}%', '%{$o[usec].id}%');" onmouseout="OnOutS('%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$user.id}%', '%{$o[usec].id}%');" onclick="OnClickS('%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$user.id}%', '%{$o[usec].id}%', '%{$o[usec].anti_id}%', true);">
+            %{else}%
+             <input type="hidden" value="0" name="user_state_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" id="user_state_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" />
+            
+            <div title="Пользователь %{$user.login}%| Права на объект %{$o[usec].name}%"   id="user_right_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" class="inactive"  onmouseover="OnMoveS('%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$user.id}%', '%{$o[usec].id}%');" onmouseout="OnOutS('%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$user.id}%', '%{$o[usec].id}%');" onclick="OnClickS('%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$user.id}%', '%{$o[usec].id}%', '%{$o[usec].anti_id}%',true);">
+            %{/if}%
+            %{$o[usec].rights_arr[rsec].rights[rrsec].letter}%
+           
+            %{if $o[usec].rights_arr[rsec].rights[rrsec].has_access}%
+            </div>
+            %{else}%
+            </div>
+            %{/if}%
+            <input type="hidden" value="0" name="do_user_edit_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" id="do_user_edit_%{$o[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$user.id}%_%{$o[usec].id}%" />
+            
+        %{/section}%
+    </td>
+    
+    %{/section}%
+</tr>
+
+
+%{/section}%
+</tbody>
+</table>
+</div>
+<br />
+
+
+
+
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#user_rights_form").bind("submit", function(){
+		return window.confirm("Вы действительно хотите внести в базу сделанные изменения?");
+	});
+});
+</script>
+<p />
+
+
+<strong>Обозначения прав:</strong>
+<table width="275" border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <th scope="row">r</th>
+    <td>права на чтение</td>
+  </tr>
+  <tr>
+    <th scope="row">w</th>
+    <td>права на запись</td>
+  </tr>
+  <tr>
+    <th scope="row">x</th>
+    <td>права на администрирование</td>
+  </tr>
+</table><br />

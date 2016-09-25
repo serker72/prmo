@@ -1,0 +1,129 @@
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable2" style="border:2px solid black;">
+	<thead>
+    <tr align="center" valign="middle">
+    <th scope="col" width="30"  class="blacktable ">    
+    <strong>№</strong>
+    
+    </th>
+    <th scope="col" width="*" class="blacktable ">    
+    
+  	<strong>Наименование работ, услуг																
+	</strong>															
+
+    </th>
+    <th scope="col" width="70" class="blacktable ten">
+    
+    		<strong>Кол-во		
+		
+</strong>
+</th>
+<th scope="col" width="70" class="blacktable ten">  
+
+					<strong>Ед.	
+	
+</strong>	</th>
+<th scope="col" width="70"  class="blacktable ten"> 	
+
+<strong>Цена			
+			
+</strong>	
+</th>
+<th scope="col" width="70"  class="blacktable ten"> 
+	<strong>Сумма</strong>			
+			
+	
+    </th>
+  
+    </tr>
+    </thead>
+    <tbody>
+     %{section name=pospossec loop=$pospos}%
+    
+     <tr align="center" valign="top">
+      <td width="30" align="left" class="ten  blacktable">
+     %{$pospos[pospossec].index+1}%
+     </td>
+       <td width="*" align="left" class="ten  blacktable">
+     %{$pospos[pospossec].position_name}%
+     </td>
+      <td width="70" class="ten  blacktable">
+     %{$pospos[pospossec].quantity}%
+     </td>
+     
+      <td width="70" class="ten  blacktable">
+     %{$pospos[pospossec].dim_name}%
+     </td>
+     
+   
+     
+     <td width="70" class="ten  blacktable">
+    %{if $do_print_summ==1}%
+     %{$pospos[pospossec].price_pm_formatted}%
+     %{else}%
+-
+%{/if}% 
+     </td>
+     
+     
+      <td width="70" class="ten  blacktable">
+      %{if $do_print_summ==1}%
+     %{$pospos[pospossec].total_formatted}%
+     %{else}%
+-
+%{/if}% 
+     </td>
+     
+  
+     
+     </tr>
+    %{/section}% 
+    
+    
+    </tbody>
+
+
+</table>
+
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+<tr align="center" valign="middle">
+    <td width="*" >
+    </td>
+    <td width="70" align="right" style="white-space:nowrap;">
+    
+    <strong>Итого:
+</strong>
+
+    </td>
+    <td width="70">
+    %{if $do_print_summ==1}%
+    <strong> %{$totals_by_all}%</strong>
+    %{else}%
+-
+%{/if}% 
+   
+    </td>
+    </tr>
+    <tr align="center" valign="middle">
+    <td width="*" >
+    </td>
+    <td width="70" align="right" style="white-space:nowrap;">
+    
+  <strong>В том числе НДС</strong>
+
+    </td>
+    <td width="70">
+   %{if $do_print_summ==1}% 
+    <strong> %{$nds_sums_by_all}%</strong>
+    %{else}%
+-
+%{/if}% 
+
+    </td>
+    </tr>
+</table>   
+
+
+
+

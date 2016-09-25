@@ -1,0 +1,284 @@
+%{include file="delivery/navi.html" id=$id step=$step}%
+<style>
+.template_block{
+	float:left;
+	margin:5px 10px;
+	width:300px;
+	height:150px;
+	overflow:hidden;
+}
+
+.template_block a{
+	display:block;
+	float:left;
+	margin-right:5px;
+}
+
+#view_window{
+	background-color:#f2f2f2;
+	display:none;
+}
+#view_window.shown{
+	display:block;
+	position:fixed;
+	left:0px; top:0px; 
+	width:100%; height:100%;
+	min-width:1000px; min-height:600px;
+	z-index:2000;
+	overflow:auto;
+}
+#view_underwindow{
+	display:none;
+}
+
+#view_underwindow.shown{
+	position:absolute;
+	background-color:rgba(0,0,0,0.5);
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	height: 3047px;
+	
+	overflow:hidden;
+	z-index:1000;	
+	display:block;
+}
+
+</style>
+ 
+<script>
+$(function(){
+	$("#do_next").bind("click", function(){
+		$("#step_next").trigger("click");
+		 
+		location.href=$("#step_next").attr("href");
+		
+		
+		 
+	});
+	
+	$("#continue").bind("click", function(){
+		//установить просматриваемый шаблон выбранным
+		$("#template_select_"+$("#viewing_template").val()).trigger("click");
+		
+		$("#do_next").trigger("click");
+		
+		return false;
+		 
+	});
+	
+	
+	
+	$("a[id^=template_view_]").bind("click", function(){
+		id=$(this).attr("id").replace(/^template_view_/,'');
+		//window.open('delivery_preview_template.php?id='+id,'template_view');
+		$("#viewing_template").val(id);
+		
+		$("#mobile").attr("src","delivery_preview_template_if.php?id="+id);
+		$("#preview").attr("src","delivery_preview_template_if.php?id="+id);
+		
+		$("#view_window").addClass("shown");
+		$("#view_underwindow").addClass("shown");
+	});
+	
+	$("input[id^=template_select_]").bind("click", function(){
+		id=$(this).attr("id").replace(/^template_select_/,'');
+		if(id!=$("#template_id").val()){
+			if(window.confirm("Внимание! Вы выбираете другой шаблон! При его выборе текущее содержимое письма рассылки будет заменено на содержимое выбранного шаблона. Вы уверены?")){
+				$("#template_id").val(id);
+				//$("#template_name").load("/js/delivery_campaigns.php", {action:"load_template_name", id:id});
+				$.ajax({
+				  async: true,
+				  url: "js/delivery_campaigns.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_template_name",
+					  "id":id
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+				  },
+				  success: function(data){
+					$("#template_name").html(data);
+					 //window.open('delivery_preview_template.php?id='+$("#id").val(),'template_view');
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+			
+			}
+			
+		}
+	});
+	
+	$("a.gydex_delivery_action").bind("click", function(){
+		var can_go=true;
+		
+		%{if $can_edit}%
+		//обработка данных
+		
+		
+		if(can_go&&( ($("#template_id").val()=="")||($("#template_id").val()==0) ) ){
+			can_go=can_go&&false;
+			alert("Выберите шаблон рассылки!");
+			 
+		}
+		
+		 
+		 
+		
+		if(can_go){
+			 
+			
+			$.ajax({
+			  async: false,
+			  url: "js/delivery_campaigns.php",
+			  type: "POST",
+			  data:{
+				  "action":"save_data",
+				  "id":$("#id").val(),
+				 
+				  "step":$("#step").val(),
+				  "template_id":$("#template_id").val()
+				 
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				
+				 //window.open('delivery_preview_template.php?id='+$("#id").val(),'template_view');
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			//alert('work');
+		}
+		%{/if}%
+		
+		
+		
+		
+		return can_go;
+	});
+	
+	$("#close").click(function(){
+		$("#view_window").removeClass("shown");
+		$("#view_underwindow").removeClass("shown");
+				//window.close();
+		return false;		
+	});
+			
+			$("#rotate").click(function(){
+				if($("#mobile").width()==330){
+					$("#mobile").width(480).height(330);
+				}else $("#mobile").width(330).height(480);
+			});
+	
+});
+</script>  
+
+<div id="view_underwindow"></div>
+
+<div id="view_window">
+		
+        <div class="gydex_delivery_navi">
+        	  <a id="continue" class="gydex_delivery_next gydex_delivery_action1" href="#">Продолжить ></a>
+            
+            
+        
+            <a id="close" class="gydex_delivery_link gydex_delivery_action1" style="float:right;" href="#">Закрыть</a> 
+        	 
+        	 
+       
+        </div>
+        
+       		 
+	 	<input id="viewing_template" type="hidden" value="" />
+		
+        
+        <table width="100%" cellpadding="0" cellspacing="10" border="0"  >
+        <tr align="left" valign="top">
+        <td width="*">
+        	<strong>Ваше сообщение в браузере:</strong><br>
+            <iframe id="preview" style="text-align:left; background-color:white; min-width:630px; width:100%; min-height:550px; height:100%; overflow:auto; border:1px solid gray;" src="delivery_preview_template_if.php?id=%{$data.template_id}%"></iframe>
+            
+        </td>
+        
+        
+      <!--  <td width="30%">
+        	<strong>Ваше сообщение в мобильном браузере*:</strong><br>
+		 
+            <iframe id="mobile" style="text-align:left; background-color:white; width:330px; height:480px; overflow:auto; border:1px solid gray;" src="delivery_preview_template_if.php?id=%{$data.template_id}%"></iframe>
+			<br>
+			<em>*приблизительно</em><br>
+			<a href="#" id="rotate">поворот</a>
+        
+        </td>
+        -->
+        
+        </tr>
+        </table>
+        
+        
+		
+		 
+
+</div>
+
+
+
+
+<h1>Выберите шаблон</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="step" id="step" value="%{$step}%">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+ 
+<input type="hidden" name="template_id" id="template_id" value="%{$data.template_id}%" />
+ 
+<b>Сейчас выбран:</b> 
+<span id="template_name">%{if $data.template_id==0}%
+<em>шаблон не выбран</em>
+%{else}%
+<strong>%{$template_name}%</strong>
+%{/if}%</span>
+<br>
+<br>
+
+<h3>Доступные шаблоны:</h3> 
+<div style="overflow:hidden;" id="templates"  >
+%{foreach from=$templates item=item}% 
+
+	<div class="template_block">
+    	<a href="#" class="gydex_template" id="template_view_%{$item.id}%"></a>
+    	<b>%{$item.name}%</b><br>
+<br>
+ 
+
+    	
+        <input type="button" %{if !$can_edit}% disabled%{/if}% value="Выбрать шаблон" id="template_select_%{$item.id}%" />
+    </div> 
+  
+%{/foreach}%   
+</div>
+<br>
+
+
+<input type="button" id="do_close" value="Отмена" onclick="location.href='%{$list_pagename}%';" />
+<br>
+<br>
+
+
+<input type="button" id="do_next" class="gydex_imp_button"  value="Далее" />
+
+
+</form>

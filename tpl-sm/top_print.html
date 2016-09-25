@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>%{$SITETITLE}%</title>
+<style type="text/css">
+body, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+@page { size:portrait; }
+
+
+</style>
+<script type="text/javascript" src="/js/jquery-1.6.3.min.js"></script>
+<script type="text/javascript">
+window.onload=function(){
+	max_page=10;
+	
+	xval=document.body.scrollHeight;
+	if((xval/1300/max_page)>1){
+		if(window.confirm("Внимание! Документ, готовый к печати, содержит порядка "+Math.round((xval/1300))+" страниц. Вы уверены, что хотите распечатать такой объем информации?")) window.print() ;
+	}else{
+		window.print() ;
+	}
+};
+</script>
+</head>
+
+<body>
+
+<table width="800" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="*">

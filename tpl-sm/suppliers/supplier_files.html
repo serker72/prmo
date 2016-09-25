@@ -1,0 +1,36 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Файлы контрагента  %{$user.opf_name}% %{$user.full_name}%</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+      %{if $user.is_org==0}%
+    <input type="button" value="Перейти к карте контрагента" onclick="location.href='supplier.php?action=1&id=%{$user.id}%';" /><br />
+%{else}%
+    <input type="button" value="Перейти к карте организации" onclick="location.href='ed_organization.php?action=1&id=%{$user.id}%';" /><br />
+    %{/if}%
+    
+    %{$log}%
+    
+    </p>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

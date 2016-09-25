@@ -1,0 +1,58 @@
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+<strong>Всего в %{$smarty.section.rowsec.total}% реализациях%{if $smarty.section.rowsec.total>0}%:<p />%{else}%.%{/if}%</strong>
+
+
+%{if $smarty.section.rowsec.total>0}%
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+<thead>
+	<tr align="left" valign="top">
+    <th scope="col">
+    Документ
+    </th>
+    <th scope="col">
+    Дата
+    </th>
+    <th scope="col">
+    Документ
+    </th>
+    
+    <th scope="col">
+    Кол-во
+    </th>
+    
+    </tr>
+</thead>
+<tbody>
+%{/if}%
+
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+	<td>
+    
+Реализация <a href="ed_acc.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">№ %{$items[rowsec].id}%</a>
+
+	</td>
+    <td>
+     %{$items[rowsec].pdate}%
+    </td>
+    <td> 
+    %{if $items[rowsec].bill_id>0}%
+     Счет № <a href="ed_bill.php?action=1&id=%{$items[rowsec].bill_id}%&from_begin=1" target="_blank">%{$items[rowsec].code}%</a> от %{$items[rowsec].bill_pdate}%
+     %{else if $items[rowsec].inventory_id>0}%
+     Распоряжение на инвентаризацию № <a href="ed_inv.php?action=1&id=%{$items[rowsec].inventory_id}%&from_begin=1" target="_blank">%{$items[rowsec].inventory_id}%</a> от %{$items[rowsec].inventory_pdate}%
+     %{/if}%
+     </td>
+     <td>
+     <strong>%{$items[rowsec].quantity}%</strong>
+	</td>
+
+</tr>
+%{/section}%
+
+
+%{if $smarty.section.rowsec.total>0}%
+</tbody>
+</table>
+%{/if}%

@@ -1,0 +1,54 @@
+<h1>Восстановление забытого пароля</h1>
+<form action="forgot.html" method="post" id="restore_form">
+<h3>Введите Ваш логин или e-mail:</h3>
+<table width="*" border="0" cellpadding="2" cellspacing="2">
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">
+        <label for="login">Логин</label>
+        </td>
+        <td width="100"><input type="text" size="20" maxlength="5" name="login" id="login" value="%{$login}%" />
+        </td>
+    </tr>
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">
+        <label for="passw">E-mail</label>
+        </td>
+        <td width="100"><input type="text" size="20" maxlength="255" name="email" id="email" />
+        </td>
+    </tr>
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">&nbsp;
+        
+        </td>
+        <td width="100">
+        <input type="submit" value="Восстановить пароль" name="doFind" />
+        </td>
+    </tr>
+   
+    </table>
+
+</form>
+ <script type="text/javascript">
+	$(function(){
+		$("#restore_form").bind("submit",function(){
+			can=false;
+			
+			if($("#login").attr("value").length==5){
+				//$("#login").focus();
+				can=can||true;
+				//return false;
+			}
+			if($("#email").attr("value").length>0){
+				//$("#email").focus();
+				//return false;
+				can=can||true;
+			}
+			if(!can) {
+				$("#login").focus();
+				alert("Для восстановления пароля укажите Ваш логин или e-mail!");
+			}
+			return can;
+		});
+		$("#content_container").attr("valign","middle");
+	});
+	</script>

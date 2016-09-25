@@ -1,0 +1,46 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'anbirth_Tab' }  
+  	});
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+
+ 
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+ 
+</style>
+
+<div id="tabs">
+  <ul>
+   
+    
+    <li><a href="#tabs-1">Отчет Дни рождения</a></li>
+    
+   
+  </ul>
+  
+  
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+  
+   
+
+</div>

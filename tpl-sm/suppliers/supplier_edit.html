@@ -1,0 +1,1705 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/inputmask/jquery.inputmask.js"></script> 
+
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#contract_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 $.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('contact');
+	
+	touchScroll('contract');
+	
+	touchScroll('req');
+	touchScroll('fakt_addr');
+	
+	touchScroll('supplier_cities');
+	touchScroll('notes');
+	
+	try{
+	  if(isTouchDevice()){
+		$("#sce_items").css("width","450px");
+		$("#sce_items").css("height","300px");		    
+		$("#sce_items").css("overflow","auto");
+		touchScrollXY('sce_items');		  
+	  }
+	}catch(e){}
+
+});
+</script>
+<form action="supplier.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$user.id}%" />
+
+<input type="hidden" name="do_save" value="1" />
+
+<input type="hidden" id="user_id" value="%{$user_id}%" />
+
+<input type="hidden" id="created_id" value="%{$user.created_id}%" />
+
+%{if $user.is_active==0}%
+<div style="min-width: 400px; width:100%; border:1px solid silver; padding:5px 5px; overflow:auto;">
+  <img src="/img/voskl.png" width="64" height="64" alt="" border="0" align="left" hspace="5" />
+ 	<strong>Внимание! Карта контрагента не активна!</strong><br />
+    Пока карта не активирована, она не видна в системе, кроме того, карта не видна в реестре контрагентов, если не выключить режим "Активные контрагенты".
+</div>
+<p />
+%{/if}%
+
+
+    
+
+
+%{include file="every_help_dialog.html" filename="supplier_edit.htm" prefix="" description="редактирование контрагента"  style="float:right; margin-top:15px; margin-bottom:0px; margin-right:  0px;"}%
+ 
+
+%{include file="error_window.html"   prefix="" }%
+ 
+
+<div style="float:left;   min-width:1040px; margin-right: 10px;">
+
+
+
+<div style="float:right; width:150px; margin-right: 10px; ">
+<br>
+
+	<input type="button" value="Учредительные документы" id="view_uch"  style="width:150px;" onclick="location.href='uchcontracts.php?sup_id=%{$user.id}%';" />
+    <p />
+    <input type="button" value="Посмотреть договор" id="view_contract" onclick="location.href='contracts.php?sup_id=%{$user.id}%';" style=" width:150px;" />
+    
+    <p />
+    
+    <input type="button" value="Акты сверок" id="view_aktsv" onclick="location.href='supplier_aktsv.php?sup_id=%{$user.id}%';" style=" width:150px;" />
+    <p />
+    <input type="button" value="Схема проезда" id="view_shema" onclick="location.href='supplier_shema.php?sup_id=%{$user.id}%';" style=" width:150px;" />
+       <p />
+    
+      <input type="button" value="Файлы" id="view_files" onclick="location.href='supplier_files.php?sup_id=%{$user.id}%';" style=" width:150px;" />
+ 
+</div>
+
+
+<div style="float:left; width:80%; min-width:820px; margin-right: 10px;">
+
+		<div style="float:left; margin-right:10px;">
+      <strong>Код:</strong><br />
+      %{$user.code}%
+      </div>
+    
+
+    
+    
+      <div style="float:left; margin-right:10px;">
+      <label for="full_name">Полное наименование (без кавычек):</label><br />
+      <input type="text" size="30" maxlength="255" name="full_name" id="full_name" value="%{$user.full_name|escape}%" %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  style="width:206px;" />
+      </div>
+      
+      
+      
+      
+        <div style="float:left; margin-right:10px; max-width:220px;">
+  <label for="print_name">Наименование для печатных форм:</label><br />
+  <input type="text" size="35" maxlength="255" name="print_name" id="print_name"  %{if !$can_modify}% disabled="disabled"%{/if}%  value="%{$user.print_name|escape}%" style="width:206px;" /><br />
+  <small><em>если не заполнено, в печатных формах 
+  документов используется полное наименование</em></small>
+  </div>
+  
+      
+      
+      <div style="float:left; margin-right:10px; min-height:90px;">
+      <br />
+      <select style="width:90px;" name="ur_or_fiz" id="ur_or_fiz" %{if !$can_modify}% disabled="disabled"%{/if}%>
+      <option value="0" %{if $user.ur_or_fiz==0}% selected="selected"%{/if}%>Юр. лицо</option>
+      <option value="1" %{if $user.ur_or_fiz==1}% selected="selected"%{/if}%>Физ. лицо</option>
+      </select>
+      </div>
+      
+      <div style="float:left; margin-right:10px;  min-height:90px;">
+      <label for="opf_id">ОПФ:</label><br>
+      <select name="opf_id" id="opf_id" style="width:80px;" %{if !$can_modify}% disabled="disabled"%{/if}%>
+      %{html_options values=$opf_ids selected=$user.opf_id output=$opfs}%
+      </select>
+    
+     
+      <input type="button" value="Редактировать..." id="expand_opf" %{if !$can_modify or !$can_expand_opf}% disabled="disabled"%{/if}% />
+      <div id="opf_dialog" title="Виды ОПФ" style="display:none;">
+      <div id="opf_dic">
+      %{include file="suppliers/d_opfs.html"}%
+      </div>
+      
+      Новый вид ОПФ:<br>
+      <input type="text" id="new_opf" size="30" maxlength="255" />
+      <input type="button" value="Добавить ОПФ" id="add_new_opf"  />
+      </div>
+      
+      
+      <script type="text/javascript">
+      $(function(){
+        $("#opf_dialog").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 350,
+        height: 490,
+        buttons: {
+            "Готово": function() { 
+                $.ajax({
+                  async: true,
+                  url: "/js/supplier.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_opf_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#opf_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/supplier.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_opf_page"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                      $("#opf_id").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+            $(this).dialog("close"); }
+          }
+        
+        });
+        $("#expand_opf").bind("click",function(){
+            $("#opf_dialog").dialog("open");
+        });
+        
+        function RedrawDic(){
+              $.ajax({
+                  async: true,
+                  url: "/js/supplier.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_opf_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#opf_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+          }
+          
+          $("#add_new_opf").bind("click", function(){
+              if($("#new_opf").attr("value").length<3){
+                  $("#new_opf").focus();
+                  return false;
+              }
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/supplier.php",
+                  type: "POST",
+                  data:{
+                      "action":"add_opf",
+                      "opf":$("#new_opf").attr("value")
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                     alert("Вид ОПФ добавлен!"); 
+                     $("#new_opf").attr("value","");
+                     RedrawDic();
+                    // location.reload();
+                  },
+                  error: function(xhr, status){
+                      alert("Ошибка добавления ОПФ.");	
+                  }	 
+              });
+              
+          });
+        
+      });
+      </script>
+      
+        </div>
+        
+       
+       	 <div style="float:left;  display:table;  height:45px;"> 
+          <div style="   display:table-cell; vertical-align:bottom;">
+         
+         
+         <div style="  padding:3px 3px; border:1px solid #f29b9b ;   min-width:200px; width:auto; max-width:530px; height:auto; ">
+    		
+           <a href="#" id="has_uch_make" style="display:block; margin-left:5px; float:right;" class=" reestr_save %{if !$can_has_dog}% reestr_inactive%{/if}% reestr_button24" data-comment="Сохранить"></a>  
+            
+            
+          <input type="checkbox" value="1" id="has_uch" %{if $user.has_uch==1}%checked="checked"%{/if}% %{if !$can_has_dog}%disabled="disabled"%{/if}% /><label for="has_uch"><small>наличие заверенных копий учредительных документов</small></label>
+          
+         
+          
+           <span id="user_has_uch_state"></span>
+          <br />
+          <span id="user_has_uch" style="font-size:9px;">%{$user_has_uch}%</span>
+          
+          <script type="text/javascript">
+          $(function(){
+              
+              $("#has_uch").bind("change",function(){
+                if($("#has_uch").prop("checked")) state=1;
+                else state=0;
+                
+                
+                $.ajax({
+                          async: true,
+                          url: "/js/bill.php",
+                          type: "POST",
+                          data:{
+                              "action":"redraw_is_in_buh_confirmer",
+                              state: state
+                          },
+                          beforeSend: function(){
+                           $("#user_has_uch").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+                          },
+                          success: function(data){
+                          // alert(data);
+                            $("#user_has_uch").html(data);
+                            
+                          },
+                          error: function(xhr, status){
+                              //alert("Ошибка добавления вопроса.");	
+                          }	 
+                      });
+                      
+              });
+              
+              $("#has_uch_make").bind("click", function(){
+                  
+                  %{if !$can_has_dog}%
+                  alert("Невозможно внести изменения. Причина: %{$cannot_is_in_buh_reason}%.");
+                  
+                  %{else}%
+                  
+                  if($("#has_uch").prop("checked")) state=1;
+                  else state=0;
+                  
+                  $.ajax({
+                        async: true,
+                        url: "/js/supplier.php",
+                        type: "POST",
+                        data:{
+                            "action":"has_uch_save",
+                             "id":"%{$user.id}%",
+                            state: state
+                        },
+                        beforeSend: function(){
+                            $("#user_has_uch_state").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+                        },
+                        success: function(data){
+                         // alert(data);
+                           $("#user_has_uch_state").html(data);
+                          
+                        },
+                        error: function(xhr, status){
+                           // alert("Ошибка добавления вопроса.");	
+                        }	 
+                    });
+                  
+                  
+                  %{/if}%
+                  
+                  return false;
+              });
+          });
+          </script>
+          
+          </div>
+          </div>
+          </div>
+        
+        
+        
+        <br clear="all" />
+        <p />
+        
+        
+        <div style="float:left; margin-right:10px;">
+        <label for="inn">ИНН:</label><br />
+    
+        <input type="text" size="15" maxlength="255" name="inn" id="inn" value="%{$user.inn}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+        </div>
+        
+        <div style="float:left; margin-right:10px;">
+        <label for="kpp">КПП:</label><br />
+    
+        <input type="text" size="15" maxlength="255" name="kpp" id="kpp" value="%{$user.kpp}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+        </div>
+        
+        <div style="float:left; margin-right:20px;">
+        <label for="okpo">ОКПО:</label><br />
+    
+        <input type="text" size="15" maxlength="255" name="okpo" id="okpo" value="%{$user.okpo}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+        </div>
+        
+        
+        
+        <div style="float:left; margin-right:0px; white-space:nowrap;">
+        <strong>Расписание работы (МСК):</strong><br />
+        
+        
+        <label for="time_from_h">с:</label>
+        <select name="time_from_h" id="time_from_h" style="width:60px" %{if !$can_edit}% disabled="disabled"%{/if}%>
+            %{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+        </select>час. 
+        <select name="time_from_m" id="time_from_m" style="width:60px" %{if !$can_edit}% disabled="disabled"%{/if}%>
+            %{html_options values=$from_ms selected=$from_m output=$from_ms}%
+        </select>мин.
+        </div>
+        
+        <div style="float:left; margin-right:20px; white-space:nowrap;">
+        <br />
+        <label for="time_to_h">по:</label>
+        <select name="time_to_h" id="time_to_h" style="width:60px" %{if !$can_edit}% disabled="disabled"%{/if}%>
+            %{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+        </select>час. 
+        <select name="time_to_m" id="time_to_m" style="width:60px" %{if !$can_edit}% disabled="disabled"%{/if}%>
+            %{html_options values=$to_ms selected=$to_m output=$to_ms}%
+        </select>мин.
+        </div>
+        
+        
+        
+        
+        
+       
+      
+            <br clear="all" />
+          <p />
+           
+          
+          <div style="float:left; margin-right:20px;">
+            <input type="checkbox" value="1" id="is_upr_nalog" name="is_upr_nalog" %{if $user.is_upr_nalog==1}%checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /><label for="is_upr_nalog" style="color:red;">упрощенная форма налогообложения</label>
+               
+               
+              <br />
+            <script type="text/javascript">
+            $(function(){
+               $("#is_upr_nalog").bind("change", function(){
+                  if($("#is_upr_nalog").prop("checked")){
+                      $("#upr_nalog_no_block").show();
+                      alert("Пожалуйста, введите номер свидетельства об упрощенной системе налогообложения.\nОтсканируйте свидетельство и сохраните этот файл в разделе Учредительные документы.");
+                      $("#upr_nalog_no").focus();
+                  }else{
+                      $("#upr_nalog_no_block").hide();
+                  }
+               });
+            });
+            </script>
+            
+              
+              <div id="upr_nalog_no_block" style=" %{if $user.is_upr_nalog==0}% display:none;%{/if}%">
+              <label for="upr_nalog_no">№ свид-ва об упрощенной системе налогообложения:</label><br />
+              <input name="upr_nalog_no" id="upr_nalog_no" type="text" size="25" maxlength="255" value="%{$user.upr_nalog_no|escape}%" %{if !$can_modify}%disabled="disabled"%{/if}% />
+              </div>
+          </div>
+          
+          
+          
+          <div style="float:left; margin-right:10px;">
+           <input type="checkbox" value="1" id="is_customer" name="is_customer" %{if $user.is_customer==1}%checked="checked"%{/if}% %{if !$can_edit}%disabled="disabled"%{/if}% /><label for="is_customer" id="is_customer_label"  >покупатель</label> 
+          </div>
+          
+          
+           <div style="float:left; margin-right:10px;"> 
+            <input type="checkbox" value="1" id="is_supplier" name="is_supplier" %{if $user.is_supplier==1}%checked="checked"%{/if}% %{if !$can_edit}%disabled="disabled"%{/if}% /><label for="is_supplier"  >поставщик</label>
+          
+          </div>
+          
+           <div style="float:left; margin-right:0px;"> 
+            <input type="checkbox" value="1" id="is_partner" name="is_partner" %{if $user.is_partner==1}%checked="checked"%{/if}% %{if !$can_edit}%disabled="disabled"%{/if}% /><label for="is_partner"  >партнер</label>
+          
+          </div>
+      
+     
+
+</div>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left;  margin-right: 20px;"><h4 style="display:inline;">Договоры:</h4></div>
+ %{if $can_add_contract}%
+    %{include file="suppliers/d_contract_dialog.html" word="contract" named="Договор" user_id=$user.id can_edit=$can_modify}%
+    %{/if}%
+    
+      <div style="float:right;  margin-right: 20px; margin-bottom:5px;">
+    <input type="checkbox" name="wo_contract" id="wo_contract" value="1"  %{if !$can_add_contract}% disabled%{/if}% %{if $user.wo_contract==1}% checked%{/if}% />
+    <label for="wo_contract">Без договора</label>
+    </div>
+
+    <br clear="all" />
+
+ <div id="contract" style="border:1px solid silver; min-width:780px; width:auto; height:150px; overflow:auto;">
+        %{include file="suppliers/d_contract.html" items=$contracts word="contract" named="Договоры" user_id=$user.id can_edit=$can_modify}%
+    </div>
+   
+<p />
+
+ 
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="lim_deb_debt">Лимит дебиторской задолженности, руб.:<br />
+<small>оставьте это поле пустым, если нет ограничений</small>
+</label><br />
+
+<input type="text" size="20" maxlength="128" name="lim_deb_debt" id="lim_deb_debt" value="%{$user.lim_deb_debt}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+%{include file="suppliers/cities.html"}%
+
+
+    
+<strong>Контактная информация:</strong>
+
+
+<div id="contact" style="border:1px solid silver;  min-width:780px; width:auto;  height:300px; overflow:auto;">
+        %{include file="suppliers/contacts.html" items=$contacts word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    </div>
+    %{*if $can_cont_edit*}%
+    %{include file="suppliers/contact_dialog.html" word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    %{*/if*}%
+
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+ 
+<div style="float:left; margin-right:20px;">
+<label for="chief">Генеральный директор</label><br />
+<input type="name" value="%{$user.chief}%" name="chief" id="chief" size="30" maxlength="255"   disabled="disabled"  />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="main_accountant">Главный бухгалтер</label><br />
+<input type="name" value="%{$user.main_accountant}%" name="main_accountant" id="main_accountant" size="30" maxlength="255"  disabled="disabled"  />
+</div>
+
+<div style="float:left; margin-right:20px;"><br />
+
+<input type="button" value="..." %{if $can_modify==false}% disabled="disabled"%{/if}% onclick="location.href='supplier_ruks.php?supplier_id=%{$user.id}%';" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:10px;  min-width:380px; width:49%; ">
+<label for="legal_address">Юридический адрес:</label><br>
+<textarea cols="55" rows="5" style=" width:99%;  height:95px;" name="legal_address" id="legal_address" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$user.legal_address}%</textarea>
+</div>
+
+<div style="float:left;  min-width:385px; width:50%; margin-right:00px;">
+<b>Фактические адреса:</b>
+<div id="fakt_addr" style="border:1px solid silver;  width:99%;   height:100px; overflow:scroll;">
+        %{include file="suppliers/d_fakt_addr.html" items=$fa word="fakt_addr" named="Фактические адреса" user_id=$user.id can_edit=$can_fa_edit}%
+    </div>
+    %{if $can_fa_edit}%
+    %{include file="suppliers/d_fakt_addr_dialog.html" word="fakt_addr" named="Фактические адреса" user_id=$user.id can_edit=$can_fa_edit}%
+    %{/if}%
+  </div>
+  
+  
+<br clear="all" />
+<p />
+
+
+
+
+
+<a name="req"></a>
+<h4>Реквизиты:</h4>
+    <div id="req" style="border:1px solid silver; min-width:780px; width:auto; height:100px; overflow:auto;">
+        %{include file="suppliers/d_rekvizit.html" items=$rekviz word="req" named="Реквизиты" user_id=$user.id can_edit=$can_req_edit}%
+    </div>
+    %{if $can_req_edit}%
+    %{include file="suppliers/d_bank_dialog.html" word="req" named="Реквизиты" user_id=$user.id can_edit=$can_req_edit}%
+    %{/if}%
+ 
+
+ 
+<br clear="all" />
+<p />
+
+
+
+
+
+
+<div style="float:left;   width:335px;   margin-right:10px;">
+ 
+
+	<label for="branch_select">Отрасль:</label><br>
+
+	<input type="hidden"  id="branch_id" name="branch_id" value="%{$user.branch_id}%"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+   
+    <input type="text"  id="branch_string"  value="%{$branch_string|escape}%"  disabled size="40" maxlength="255" style="width:250px;" />
+  	
+    <input type="hidden"  id="branch_subbranch"  value="%{$branch_subbranch}%"   />
+
+	
+	<input type="button" id="branch_select" value="..."  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+    <input type="button" id="branch_clear" value="x"  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+	
+    
+    
+</div>
+
+
+
+<div style="float:left;   width:335px;   margin-right:10px;">
+ 
+
+	<label for="subbranch_select">Подотрасль:</label><br>
+
+	<input type="hidden"  id="subbranch_id" name="subbranch_id" value="%{$user.subbranch_id}%"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+   
+    <input type="text"  id="subbranch_string"  value="%{$subbranch_string|escape}%"  disabled size="40" maxlength="255" style="width:250px;" />
+  
+
+	
+	<input type="button" id="subbranch_select" value="..."  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+    <input type="button" id="subbranch_clear" value="x"  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+	
+    %{include file="suppliers/branch_actions.html"}%
+    
+</div>
+
+
+<div style="float:left;   width:335px;   margin-right:10px;">
+ 
+
+	<label for="subbranch_select">Подотрасль:</label><br>
+
+	<input type="hidden"  id="subbranch_id1" name="subbranch_id1" value="%{$user.subbranch_id1}%"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+   
+    <input type="text"  id="subbranch_string1"  value="%{$subbranch_string1|escape}%"  disabled size="40" maxlength="255" style="width:250px;" />
+  
+
+	
+	<input type="button" id="subbranch_select1" value="..."  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+    <input type="button" id="subbranch_clear1" value="x"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+	
+    
+    
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px;  min-width:370px; width:auto; ">
+	<h4>Ответственные сотрудники:</h4>
+	
+	%{include file="suppliers/resp_user_actions.html"  }%
+
+
+ 
+</div>
+
+  
+  
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+<div style="float:left;   width:335px;   margin-right:10px;">
+ 
+
+	<label for="holding_select">Основной холдинг:</label><br>
+
+	<input type="hidden"  id="holding_id" name="holding_id" value="%{$user.holding_id}%"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+   
+    <input type="text"  id="holding_string"  value="%{$holding_string|escape}%"  disabled size="40" maxlength="255" style="width:250px;" />
+  	 
+	<input type="button" id="holding_select" value="..."  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+    <input type="button" id="holding_clear" value="x"  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+	
+    
+    
+</div>
+
+
+
+<div style="float:left;   width:335px;   margin-right:10px;">
+ 
+
+	<label for="subholding_select">Субхолдинг:</label><br>
+
+	<input type="hidden"  id="subholding_id" name="subholding_id" value="%{$user.subholding_id}%"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+   
+    <input type="text"  id="subholding_string"  value="%{$subholding_string|escape}%"  disabled size="40" maxlength="255" style="width:250px;" />
+  
+
+	
+	<input type="button" id="subholding_select" value="..."  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+    <input type="button" id="subholding_clear" value="x"  %{if !$can_modify_activefields}% disabled="disabled"%{/if}%  />
+	
+    %{include file="suppliers/holding_actions.html"}%
+    
+</div>
+
+
+<div style="float:left;   width:150px;   margin-right:10px;">
+<strong></strong>	
+    <br>
+
+	<input type="checkbox" id="not_in_holding" %{if $user.not_in_holding==1}% checked %{/if}% %{if !$can_modify_activefields}% disabled="disabled" %{else}% name="not_in_holding"  %{/if}%><label for="not_in_holding"> Не входит в холдинг</label>
+	
+    %{if !$can_modify_activefields}%
+    <input type="checkbox" name="not_in_holding" value="%{$user.not_in_holding}%" style="display:none;" />
+    
+    %{/if}%
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:scroll;">
+        %{include file="suppliers/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$user.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="suppliers/d_notes_dialog.html" word="notes" named="Примечания" user_id=$user.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p /> 
+
+
+
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1"  %{if $user.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+
+<input type="hidden" name="is_confirmed_by_human" id="is_confirmed_by_human" value="1" />
+
+<span id="is_confirmed_confirmer">%{$confirmer_is_confirmed}%</span>
+%{if $can_confirm}%
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("change",function(){
+		if(	this.checked){
+			 state=1;
+		}else{
+			 state=0;
+		}
+		
+		$.ajax({
+              async: true,
+              url: "/js/supplier.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+%{/if}%
+<br />
+
+
+
+
+<input type="checkbox" name="is_active" id="is_active" value="1" %{if $user.is_active==1}% checked="checked"%{/if}% %{if $can_confirm_active==false}% disabled="disabled"%{/if}% /><label for="is_active">Карта активна</label>
+<span id="is_active_confirmer">%{$confirmer}%</span>
+%{if $can_confirm}%
+<script type="text/javascript">
+$(function(){
+	$("#is_active").bind("change",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/supplier.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_active_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#is_active_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+%{/if}%
+
+<p />
+
+
+%{if $can_edit}%
+<input type="submit" id="doEdit" name="doEdit" value="Сохранить и перейти к списку контрагентов" />
+<input type="submit" id="doEditStay" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='suppliers.php';
+}else location.href='suppliers.php';" />
+
+
+<!-- спрашивали или нет про дубляж названия -->
+<input type="hidden" id="was_asked" value="0" />
+
+<div id="name_dup_dialog" title="Внимание!" style="display:none;">
+
+    <img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+    
+    <div style="float:left; padding-top:5px; margin-bottom:10px;">
+    <strong>Внимание! В программе уже имеется карта контрагента:</strong>
+    
+    
+     <div id="name_dup_message"></div>
+	 <p />
+     <strong>Вы уверены, что не заводите контрагента дважды?</strong>
+	      
+    </div>
+    <br clear="all" />
+    
+     
+    
+   
+
+</div>
+
+
+</form>
+
+<script type="text/javascript">
+$(function(){
+	
+	
+	$("#name_dup_dialog").dialog({
+			autoOpen: false,
+			modal: true,
+			width: 500,
+			height: 400,
+			stack: true,
+			dialogClass: 'semi_auth',
+			buttons:{
+				"Да":function(){
+					//
+					
+					 
+				},
+				"Нет":function(){
+					//
+					
+					 
+				}
+			},
+			 
+		});
+	
+	
+	
+	
+	
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		var error_fields=new Array();
+		
+		%{if $user.is_confirmed==0}%
+		//спрашиваем всегда: если введена отрасль, то требовать подотрасль (всегда)
+		if(!isNaN($("#branch_subbranch").val())&&($("#branch_subbranch").val()>0)&&(($("#subbranch_id").val()=="")||($("#subbranch_id").val()==0))){
+				res=res&&false;
+				//alert("Укажите подотрасль контрагента!");
+				error_fields.push({
+					"id":"subbranch_string",
+					"name":"Подотрасль",
+					"error":"Укажите подотрасль контрагента!"
+				});
+				 
+			}
+		%{/if}%
+		
+		%{if !$can_edit_all}%
+		/* 
+			-если нет прав на смену состава списка отвественных, и этого пол-ля нет в списке ответственных - спрашивать 2 раза!*/	 
+				was_in=false; do_add=false;
+				
+				if($("#created_id").val()==$("#user_id").val()) was_in=was_in||true;
+				
+				$.each($("#resp table tbody tr td input[type=hidden][id^='new_resp_hash_']"), function(key, value){
+					hash=$(value).val();
+					
+					hashed_string='';
+					
+					
+					
+					if($("#user_id").val()==$("#new_resp_id_"+hash).val()) was_in=was_in||true;
+				});
+					
+				if(!was_in){
+					if(	window.confirm("Внимание! Вас нет в списке ответственных сотрудников по карте этого контрагента. Желаете ли Вы быть добавленным в список ответственных сотрудников?")){
+						do_add=true;
+					}else if(	window.confirm("Внимание! После сохранения карта контрагента будет для Вас недоступна. Желаете ли Вы быть добавленным в список ответственных сотрудников?")){
+						do_add=true;
+					}
+					
+				}
+				
+				if(do_add){
+					adding=new Array(); adding.push($("#user_id").val());
+					$.ajax({
+					  async: false,
+					  url: "/js/supplier.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_and_add_resp",
+						  "supplier_id":"%{$user.id}%",
+						  "complex_positions[]":adding
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#bill_positions_table tbody").append(data); 
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+				}
+			 
+			
+			%{/if}%
+			 
+		
+		%{if $user.is_active==0}%
+		%{if !$can_unconfirm_active}%
+		if($("#is_active").prop("checked")){
+			local_ret=window.confirm("Внимание!\nВы утверждаете активность карты контрагента.\nУ Вас нет прав на снятие утверждения активности карты.\nУбедитесь, что необходимые поля заполнены корректно.\nСнять утверждение активности карты могут следующие сотрудники: %{foreach from=$can_unconfirm_active_users name=us item=user1}%%{$user1.name_s|escape:"html"}%%{if !$smarty.foreach.us.last}%, %{/if}%%{/foreach}%\nПродолжить?");
+			if(!local_ret){
+				 $("#is_active").prop("checked", false);
+				 return false;
+			}
+			
+		}
+		%{/if}%
+		%{/if}%
+		
+		%{if $user.is_active==1}%
+		%{if !$can_unconfirm_active}%
+		if($("#is_active").prop("checked")==false){
+				$("#is_active").prop("checked", true);
+				alert("У Вас недостаточно прав для этого действия.\nСнять утверждение активности карты могут следующие сотрудники: %{foreach from=$can_unconfirm_active_users name=us item=user1}%%{$user1.name_s|escape:"html"}%%{if !$smarty.foreach.us.last}%, %{/if}%%{/foreach}%");
+				 return false;
+		}
+		%{/if}%
+		
+		//проверка наличия галочки Поставщик / Покупатель / Партнер
+			 if((!$("#is_customer").prop("checked")&&!$("#is_supplier").prop("checked")&&!$("#is_partner").prop("checked"))){
+				res=res&&false;
+				//alert("Отметьте хотя бы одну из галочек: Поставщик или Покупатель!");
+				error_fields.push({
+					"id":"is_customer_label",
+					"name":"Поставщик / Покупатель / Партнер",
+					"error":"Отметьте хотя бы одну из галочек: Поставщик, Покупатель или Партнер!"
+				});	
+			}
+		
+		
+		
+		if($("#is_active").prop("checked")==false){
+			 
+				
+					$.ajax({
+						async: false,
+						url: "/js/supplier.php",
+						type: "POST",
+						data:{
+							"action":"check_unconfirm_active",
+							"id":"%{$user.id}%" 
+							
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+							 
+							if(data!=0) {
+								res=false;
+								//alert("Невозможно снять утверждение активности контрагента. Причина: по контрагенту есть не аннулированные документы: "+data);	
+								
+								error_fields.push({
+									"id":"id",
+									"name":"Карта контрагента",
+									"error":"Невозможно снять утверждение активности контрагента. Причина: по контрагенту есть не аннулированные документы: "+data
+								});
+								
+								$("#is_active").prop("checked", true);
+							}
+						  
+						},
+						error: function(xhr, status){
+							//alert("%{$named}%: Ошибка удаления.");	
+						}	 
+					});	
+			 
+			
+		}
+		%{/if}%
+		
+		
+		%{if $user.is_confirmed==0}%
+		//у карты не утв заполнение
+		if($("#is_confirmed").prop("checked")){
+			/*копия проверок от утв. активности*/
+			
+		 	
+			 
+			if((($("#branch_id").val()=="")||($("#branch_id").val()==0))){
+				res=res&&false;
+				//alert("Укажите отрасль контрагента!");
+				error_fields.push({
+					"id":"branch_string",
+					"name":"Отрасль",
+					"error":"Укажите отрасль контрагента!"
+				});
+				 
+			}
+			
+			
+			
+			if(($("#full_name").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле Название!");
+				//$("#full_name").focus();	
+				error_fields.push({
+					"id":"full_name",
+					"name":"Название",
+					"error":"Заполните поле Название!"
+				});
+			}
+			
+			//proverka kontaktov
+			//проверка наличия 1 конт. лица:
+		 
+				var cont_fios=0;
+				$.each($("#contacts_tbody tr"), function(k,v){
+					cont_fios++;
+				});
+				
+				if(cont_fios==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы одно контактное лицо!");
+					
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы одно контактное лицо!"
+					});
+				}
+			 
+			//проверка наличия хотя бы 1 ср-ва связи
+			 
+				var cont_ph=0;
+				$.each($("#contacts_tbody tr td[id^=contacts_list_] div"), function(k,v){
+					cont_ph++;
+				});
+				
+				if(cont_ph==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы одно средство связи!");
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы одно средство связи!"
+					});
+				}
+			 
+			//проверка хотя бы одного телефона!!! телефон - это kind_id=(1.3.4)
+		 
+				var cont_ph=0;
+				$.each($("input[id^=kind_contact_]"), function(k,v){
+					if( ($(v).val()==1) ||  ($(v).val()==3) ||  ($(v).val()==4) ){
+						cont_ph++;
+					}
+				});
+				if(cont_ph==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы один контактный телефон!");
+					
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы один контактный телефон!"
+					});
+				}
+			 
+			
+			//проверка хотя бы одного email!!! телефон - это email=(5)
+			 
+				var cont_ph=0;
+				$.each($("input[id^=kind_contact_]"), function(k,v){
+					if( ($(v).val()==5)  ){
+						cont_ph++;
+					}
+				});
+				if(cont_ph==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы один контактный email!");
+					
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы один контактный email!"
+					});
+				}
+			 
+			
+			//проверка наличия города
+			 
+				if($("#supplier_cities_tbody tr").length==0){
+					res=res&&false;
+					//alert("Город контрагента: Укажите хотя бы один город контрагента!");
+					
+					error_fields.push({
+						"id":"supplier_cities",
+						"name":"Город контрагента",
+						"error":"Укажите хотя бы один город контрагента!"
+					});
+				}
+				
+				//холдинг или не состоит в холдинге
+				if((($("#holding_id").val()==0)||($("#holding_id").val()==""))&&($("#not_in_holding").prop("checked")==false)){
+					
+					res=res&&false;
+					error_fields.push({
+						"id":"holding_string",
+						"name":"Холдинг",
+						"error":"Укажите основной холдинг, в котором состоит контрагент, или отметьте галочку Не входит в холдинг!"
+					});	
+				}
+				
+				//холдинг и субхолдинг не должны совпадать
+				if((parseInt($("#holding_id").val())>0)&&(parseInt($("#subholding_id").val())>0)&&($("#subholding_id").val()==$("#holding_id").val())){
+					res=res&&false;
+					error_fields.push({
+						"id":"holding_string",
+						"name":"Холдинг",
+						"error":"Основной холдинг и субхолдинг не должны совпадать!"
+					});	
+				}
+				
+			 
+
+			 
+		 
+			/*
+			д. быть заполнены поля:
+			-опф
+			-юрид. адрес
+			-фактич. адрес
+			-инн
+			-кпп
+			-банковские рек-ты
+			-активный руководитель, глав.бух.
+			 
+			
+			-д.б. 1 договор и основной - обязательно
+			-отмечено, поставщик или покупатель
+			-для упрощен налооблож - № св-ва
+			
+			*/
+			 
+			if(($("#opf_id").val()==0)||($("#opf_id").val()==undefined)||($("#opf_id").val()==null)){
+				res=res&&false;
+				//alert("Заполните поле Юридический адрес!");
+				//$("#legal_address").focus();	
+				error_fields.push({
+					"id":"opf_id",
+					"name":"ОПФ",
+					"error":"Выберите ОПФ контрагента!"
+				});
+			}
+			
+			if(($("#legal_address").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле Юридический адрес!");
+				//$("#legal_address").focus();	
+				error_fields.push({
+					"id":"legal_address",
+					"name":"Юридический адрес",
+					"error":"Заполните поле Юридический адрес!"
+				});
+			}
+			
+			//факт адр
+			
+				if($("#fakt_addr>div").length==0){
+					res=res&&false;
+					//alert("Укажите хотя бы один фактический адрес!");
+					error_fields.push({
+						"id":"fakt_addr",
+						"name":"Фактический адрес",
+						"error":"Укажите хотя бы один фактический адрес!"
+					});
+				}				
+			
+			
+			if(($("#inn").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле ИНН!");
+				//$("#inn").focus();	
+				error_fields.push({
+						"id":"inn",
+						"name":"ИНН",
+						"error":"Заполните поле ИНН!"
+					});
+			}
+			
+			
+			if(($("#kpp").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле КПП!");
+				//$("#kpp").focus();	
+				error_fields.push({
+						"id":"kpp",
+						"name":"КПП",
+						"error":"Заполните поле КПП!"
+					});
+			}
+			
+			
+			
+				
+					$.ajax({
+						async: false,
+						url: "/js/supplier.php",
+						type: "POST",
+						data:{
+							"action":"check_inn_kpp",
+							"id":"%{$user.id}%",
+					 
+							"inn":$("#inn").val(),
+							"kpp":$("#kpp").val()
+							
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+							if(data!=0) {
+								res=false;
+								if(data==1) error_fields.push({
+						"id":"inn",
+						"name":"ИНН",
+						"error":"контрагент с таким ИНН уже существует."
+					});//alert("Невозможно сохранить контрагента. Причина: контрагент с таким ИНН уже существует.");	
+								else if(data==2)  error_fields.push({
+						"id":"kpp",
+						"name":"КПП",
+						"error":"контрагент с таким КПП уже существует."
+					});//alert("Невозможно сохранить контрагента. Причина: контрагент с таким КПП уже существует.");	
+								else if(data==3){
+									error_fields.push({
+										"id":"inn",
+										"name":"ИНН",
+										"error":"контрагент с таким ИНН уже существует."
+									});
+									
+									error_fields.push({
+										"id":"kpp",
+										"name":"КПП",
+										"error":"контрагент с таким КПП уже существует."
+									});
+								}
+								  
+							}
+						  
+						},
+						error: function(xhr, status){
+							//alert("%{$named}%: Ошибка удаления.");	
+						}	 
+					});	
+			
+			 
+			//-банковские рек-ты
+			
+				if($("#req>div").length==0){
+					res=res&&false;
+					//alert("Укажите хотя бы одни банковские реквизиты!");
+					error_fields.push({
+										"id":"req",
+										"name":"Банковские реквизиты",
+										"error":"Укажите хотя бы одни банковские реквизиты!"
+									});
+				}	
+			
+			
+			//-активный руководитель, глав.бух. 
+			
+			if(($("#chief").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле Генеральный директор!");
+				//$("#chief").focus();	
+				error_fields.push({
+					"id":"chief",
+					"name":"Генеральный директор",
+					"error":"Заполните поле Генеральный директор!"
+				});
+			}
+			
+			if(($("#main_accountant").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле Главный бухгалтер!");
+				//$("#main_accountant").focus();
+				
+				error_fields.push({
+					"id":"main_accountant",
+					"name":"Главный бухгалтер",
+					"error":"Заполните поле Главный бухгалтер!"
+				});	
+			}
+			
+			
+			if(($("#is_upr_nalog").prop("checked"))&&($("#upr_nalog_no").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<4)){
+				res=res&&false;
+				//alert("Заполните поле Номер свид-ва об упрощенной системе налогообложения!");
+				//$("#upr_nalog_no").focus();	
+				error_fields.push({
+					"id":"upr_nalog_no",
+					"name":"Номер свид-ва об упрощенной системе налогообложения",
+					"error":"Заполните поле Номер свид-ва об упрощенной системе налогообложения!"
+				});	
+			}
+			
+			if((!$("#is_customer").prop("checked")&&!$("#is_supplier").prop("checked")&&!$("#is_partner").prop("checked"))){
+				res=res&&false;
+				//alert("Отметьте хотя бы одну из галочек: Поставщик или Покупатель!");
+				error_fields.push({
+					"id":"is_customer_label",
+					"name":"Поставщик / Покупатель / Партнер",
+					"error":"Отметьте хотя бы одну из галочек: Поставщик, Покупатель или Партнер!"
+				});	
+			}
+			
+			
+				//проверка договора: д.быть хотя бы 1 и д.б. основной дог-р
+			if($("#wo_contract").prop("checked")==false){
+				
+				var cont_fios=0;
+				$.each($("#contract div.common_block"), function(k,v){
+					cont_fios++;
+				});
+				if(cont_fios==0){
+					res=res&&false;
+					//alert("Договоры: Укажите хотя бы один договор!");
+					error_fields.push({
+						"id":"contract",
+						"name":"Договоры",
+						"error":"Укажите хотя бы один договор, либо выберите режим Без договора!"
+					});	
+				}
+			
+			
+			
+				var cont_fios=0;
+				$.each($("#contract input[id^=is_basic_]"), function(k,v){
+					if($(v).val()==1) cont_fios++;
+				});
+				if(cont_fios==0){
+					res=res&&false;
+					//alert("Договоры: Выберите основной договор!");
+					error_fields.push({
+						"id":"contract",
+						"name":"Договоры",
+						"error":"Выберите основной договор, либо выберите режим Без договора!"
+					});	
+				}
+			
+			
+			}
+		}
+		%{/if}%
+		
+	
+	
+		%{if $user.is_active==0}%
+		//у карты не утв активность, утверждаем ее
+		if($("#is_active").prop("checked")){
+			/*	
+			д.быть заполнены поля:
+			-отрасль
+			-название
+			-1 контакт
+			-1 телефон
+			-1 город
+			-холдинг либо не состоит в холдинге
+			-если выбран холдинг и субхолдинг - они не должны совпадать
+			
+			
+			*/
+			
+			
+			 
+			if((($("#branch_id").val()=="")||($("#branch_id").val()==0))){
+				res=res&&false;
+				//alert("Укажите отрасль контрагента!");
+				error_fields.push({
+					"id":"branch_string",
+					"name":"Отрасль",
+					"error":"Укажите отрасль контрагента!"
+				});
+				 
+			}
+			
+			 
+			
+			if(($("#full_name").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+				res=res&&false;
+				//alert("Заполните поле Название!");
+				//$("#full_name").focus();	
+				error_fields.push({
+					"id":"full_name",
+					"name":"Название",
+					"error":"Заполните поле Название!"
+				});
+			}
+			
+			//proverka kontaktov
+			//проверка наличия 1 конт. лица:
+		 
+				var cont_fios=0;
+				$.each($("#contacts_tbody tr"), function(k,v){
+					cont_fios++;
+				});
+				
+				if(cont_fios==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы одно контактное лицо!");
+					
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы одно контактное лицо!"
+					});
+				}
+			 
+			//проверка наличия хотя бы 1 ср-ва связи
+			 
+				var cont_ph=0;
+				$.each($("#contacts_tbody tr td[id^=contacts_list_] div"), function(k,v){
+					cont_ph++;
+				});
+				
+				if(cont_ph==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы одно средство связи!");
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы одно средство связи!"
+					});
+				}
+			 
+			//проверка хотя бы одного телефона!!! телефон - это kind_id=(1.3.4)
+		 
+				var cont_ph=0;
+				$.each($("input[id^=kind_contact_]"), function(k,v){
+					if( ($(v).val()==1) ||  ($(v).val()==3) ||  ($(v).val()==4) ){
+						cont_ph++;
+					}
+				});
+				if(cont_ph==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы один контактный телефон!");
+					
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы один контактный телефон!"
+					});
+				}
+			 
+			
+			//проверка хотя бы одного email!!! телефон - это email=(5)
+			 
+				var cont_ph=0;
+				$.each($("input[id^=kind_contact_]"), function(k,v){
+					if( ($(v).val()==5)  ){
+						cont_ph++;
+					}
+				});
+				if(cont_ph==0){
+					res=res&&false;
+					//alert("Контакты: Укажите хотя бы один контактный email!");
+					
+					error_fields.push({
+						"id":"contact",
+						"name":"Контакты",
+						"error":"Укажите хотя бы один контактный email!"
+					});
+				}
+			 
+			
+			//проверка наличия города
+			 
+				if($("#supplier_cities_tbody tr").length==0){
+					res=res&&false;
+					//alert("Город контрагента: Укажите хотя бы один город контрагента!");
+					
+					error_fields.push({
+						"id":"supplier_cities",
+						"name":"Город контрагента",
+						"error":"Укажите хотя бы один город контрагента!"
+					});
+				}
+			 
+			 //проверка наличия галочки Поставщик / Покупатель / Партнер
+			 if((!$("#is_customer").prop("checked")&&!$("#is_supplier").prop("checked")&&!$("#is_partner").prop("checked"))){
+				res=res&&false;
+				//alert("Отметьте хотя бы одну из галочек: Поставщик или Покупатель!");
+				error_fields.push({
+					"id":"is_customer_label",
+					"name":"Поставщик / Покупатель / Партнер",
+					"error":"Отметьте хотя бы одну из галочек: Поставщик, Покупатель или Партнер!"
+				});	
+			}
+			
+			
+						//холдинг или не состоит в холдинге
+			if((($("#holding_id").val()==0)||($("#holding_id").val()==""))&&($("#not_in_holding").prop("checked")==false)){
+				
+				res=res&&false;
+				error_fields.push({
+					"id":"holding_string",
+					"name":"Холдинг",
+					"error":"Укажите основной холдинг, в котором состоит контрагент, или отметьте галочку Не входит в холдинг!"
+				});	
+			}
+			
+			//холдинг и субхолдинг не должны совпадать
+			if((parseInt($("#holding_id").val())>0)&&(parseInt($("#subholding_id").val())>0)&&($("#subholding_id").val()==$("#holding_id").val())){
+				res=res&&false;
+				error_fields.push({
+					"id":"holding_string",
+					"name":"Холдинг",
+					"error":"Основной холдинг и субхолдинг не должны совпадать!"
+				});	
+			}
+			
+
+		 
+			
+			//контроль дублирования названия.
+			if(res&&($("#was_asked").val()==0)){
+				 
+					var flag_stop=false;
+					$.ajax({
+						async: false,
+						url: "/js/supplier.php",
+						type: "POST",
+						data:{
+							"action":"check_full_name",
+							"id":"%{$user.id}%",
+							"name":$("#full_name").val() 
+							
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+							 
+							if(data!=0) {
+								 
+								 
+								res=res&&false;
+								$("#name_dup_message").html(data);
+								$("#name_dup_dialog").dialog({
+									 
+									 
+									buttons:{
+										"Да":function(){
+											//
+											$("#was_asked").val(1);
+											$("#name_dup_dialog").dialog("close"); 
+											$("#crea_form").trigger("submit");
+											 
+										},
+										"Нет":function(){
+											//
+											alert("Карта будет сохранена, но активность не будет установлена. Пожалуйста, проверьте активность карты.");
+											$("#is_active").prop("checked",false);
+											$("#was_asked").val(1);
+											$("#name_dup_dialog").dialog("close"); 
+											$("#crea_form").trigger("submit");
+											
+										}
+									},
+									 
+								});
+								
+								$("#name_dup_dialog").dialog("open");
+								flag_stop=flag_stop||true;
+							}
+						  
+						},
+						error: function(xhr, status){
+							//alert("%{$named}%: Ошибка удаления.");	
+						}	 
+					});	
+			 	
+					if(flag_stop) return false;
+			}
+			
+			
+		
+		}
+		
+		%{/if}%
+		
+	
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+	
+	 
+		return res;
+	});
+});
+</script>

@@ -1,0 +1,272 @@
+
+<div id="discount_given_dialog" title="Полученный +/-" style="display:none;">
+<strong>Введите сумму полученного +/-.</strong><br />
+Максимальная сумма: <span id="span_max_pm"></span> руб.
+<br />
+<input type="text" id="pm_to_give" size="10" maxlength="255" />
+
+
+
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#discount_given_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 300,
+		height: 150
+	});
+			
+});
+</script>
+
+
+
+
+ <table width="100%" border="0" cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+
+<tr align="center" valign="top">    
+	<th scope="col" width="20">№ по вх. счету
+</th>
+<th scope="col" width="20">Код
+</th>
+    <th scope="col" width="*">Номенклатура
+</th>
+	<th scope="col" width="20">Ед. изм.
+</th>
+	<th scope="col" width="40">Кол-во
+</th>
+	<th scope="col" width="50">Цена без +/-
+	</th>
+    <th scope="col" width="50">Цена c +/-
+	</th>
+     <th scope="col" width="50">+/- 
+	</th>
+    
+    <th scope="col" width="50">сумма +/-
+	</th>
+    <th scope="col" width="50">дисконт +/-
+	</th>
+    
+    <th scope="col" width="50">К выдаче, руб.
+	</th>
+    
+    <th scope="col" width="50">Получено
+</th>
+
+	 <th scope="col" width="50">Сохранить
+</th>
+
+ <th scope="col" width="*">Сохранено
+</th>
+	
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+%{if $items[rowsec].has_pm}%
+ <tr align="left" valign="top">
+  <td width="20" class="small">
+    %{$smarty.section.rowsec.index+1}%
+    </td>
+     <td width="20" class="small">
+    %{$items[rowsec].position_id|string_format:"%05d"}%
+    </td>
+  <td width="*" class="small">
+    %{$items[rowsec].position_name}%
+    
+    </td>
+   
+    <td width="20" class="small">
+    %{$items[rowsec].dim_name}%
+    </td>
+    <td width="40"  class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].quantity}%
+   
+    </td>
+   
+    
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].price}%
+    </td>
+    
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].price_pm}%
+   
+    </td>
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+    %{if $items[rowsec].plus_or_minus==0}%
+    +
+   %{else}%
+    -
+    %{/if}%
+    %{$items[rowsec].value}%
+    %{if $items[rowsec].rub_or_percent==0}%
+    руб.
+   %{else}%
+    %
+    <br />
+	<small>( %{$items[rowsec].pm_per_unit}%)</small>
+    %{/if}%
+    </td>
+    
+    
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+     %{$items[rowsec].pm_per_cost}%
+    </td>
+    
+     <td class="small" width="50" style="white-space:nowrap;">
+   
+   
+     %{$items[rowsec].discount_total_amount}%
+      %{if $items[rowsec].discount_rub_or_percent==1}%
+     <br />
+	<small>(%{$items[rowsec].discount_value}% %)</small>
+     %{/if}%
+    </td>
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+     <span id="span_vydacha_%{$smarty.section.rowsec.index+1}%">%{$items[rowsec].vydacha}%</span>
+     
+     <input type="hidden" value="%{$items[rowsec].vydacha}%" id="vydacha_%{$smarty.section.rowsec.index+1}%" />
+    </td>
+   
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+   
+   <input type="text" value="%{$items[rowsec].discount_given}%" id="our_discount_given_%{$smarty.section.rowsec.index+1}%" size="5" maxlength="255" />
+   
+   
+   <td class="small" width="50">
+   <input type="button" value="Сохранить" id="save_pm_%{$smarty.section.rowsec.index+1}%" />
+   <!-- средство для редактирования +/ -->
+ 
+	<script type="text/javascript">
+	$(function(){
+		function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+		
+		
+		function RecalcSum(){
+			var sum=0;
+			
+			
+			$.each($("input[id^=our_discount_given_]"), function(k, v){
+				
+				sum=sum+parseFloat($(v).val().replace("\,","\."));
+				
+				
+			});
+			$("#given_summ").html(roundPlus(sum,2));	
+		}
+		
+		
+		$("#our_discount_given_%{$smarty.section.rowsec.index+1}%").bind("dblclick",function(){
+			$("#our_discount_given_%{$smarty.section.rowsec.index+1}%").val($("#vydacha_%{$smarty.section.rowsec.index+1}%").val());
+			
+			RecalcSum();
+			
+		});
+		
+		$("#save_pm_%{$smarty.section.rowsec.index+1}%").bind("click",function(){
+			
+			
+			
+			function CheckValue(){
+				res=true;
+				
+				//не число
+				//меньше нуля или больше допустимого значения
+				if(
+					isNaN($("#our_discount_given_%{$smarty.section.rowsec.index+1}%").val().replace("\,","\.")) ||
+					(parseFloat($("#our_discount_given_%{$smarty.section.rowsec.index+1}%").val().replace("\,","\."))<0) ||
+					(parseFloat($("#our_discount_given_%{$smarty.section.rowsec.index+1}%").val().replace("\,","\."))>parseFloat($("#vydacha_%{$smarty.section.rowsec.index+1}%").val().replace("\,","\.")))
+					
+					
+					){
+					res=res&&false;
+					alert("Некорректно введена сумма полученного +/-. Сумма может быть от 0 до "+$("#span_vydacha_%{$smarty.section.rowsec.index+1}%").html()+" руб.");
+					$("#our_discount_given_%{$smarty.section.rowsec.index+1}%").focus();
+						
+				}
+				
+				return res;	
+			}
+			
+			
+			
+						if(CheckValue()){
+							//ajax, update
+							
+							
+							$.ajax({
+							  async: false,
+							  url: "/js/bill.php",
+							  type: "POST",
+							  data:{
+								  "action":"update_discount_given",
+								  "bill_id":"%{$items[rowsec].bill_id}%",
+								  
+								  "table_id":"%{$items[rowsec].p_id}%",
+								  "discount_given":$("#our_discount_given_%{$smarty.section.rowsec.index+1}%").val().replace("\,","\.")
+							  },
+							  beforeSend: function(){
+								//alert("Загрузка реквизитов.");
+								$("#save_pm_%{$smarty.section.rowsec.index+1}%").prop("disabled",true);
+							  },
+							  success: function(data){
+								$("#saver_data_%{$smarty.section.rowsec.index+1}%").html(data);
+								$("#save_pm_%{$smarty.section.rowsec.index+1}%").prop("disabled",false);
+								RecalcSum();
+							  },
+							  error: function(xhr, status, mm){
+								 alert("Ошибка сохранения суммы +/-. Пожалуйста, попробуйте сохранить сумму еще раз.");	
+								 $("#save_pm_%{$smarty.section.rowsec.index+1}%").prop("disabled",false);
+							  }	 
+							});
+							
+						}
+			
+		});
+	});
+	</script>
+   </td>
+   
+   <td class="small" width="*" id="saver_data_%{$smarty.section.rowsec.index+1}%">
+   
+  %{include file="bills/positions_pm_saver.html" item=$items[rowsec]}%
+    </td>
+  </tr>
+ %{/if}% 
+ %{/section}%  
+ 
+ <tr align="left" valign="top">
+ <tr align="center" valign="top">    
+	<th scope="col" width="*" colspan="10" align="right">
+Итог:
+	</th>
+    
+    <th scope="col" width="50" id="to_give_summ">%{$to_give_summ}%
+	</th>
+    
+    <th scope="col" width="50" id="given_summ">%{$given_summ}%
+</th>
+
+	 <th scope="col" width="50">
+</th>
+
+ <th scope="col" width="*">
+</th>
+ </tr>
+   </tbody>
+</table>   
+
+<span style="color:#F00"><small>Вы можете вписать сумму к выдаче в графу "Получено". Если необходимая сумма совпадает с графой "К выдаче, руб.", то двойным щелчком мыши в графе "Получено" Вы можете скопировать туда сумму. </small>
+</span>

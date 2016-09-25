@@ -1,0 +1,302 @@
+<script type="text/javascript">
+	
+	
+	
+	 
+	
+	
+  
+	
+	
+	function ship_rebuild(){
+	   
+	   var selected_supplier=0;
+	   $.each($("#ship_suppliers table tr td input[type=radio]"), function(key, value){
+		  if(value.checked){
+			  selected_supplier=value.value;
+		  }
+	  });
+	  
+	  
+	  if($("#ship_is_confirmed_"+selected_supplier).val()==0){
+		  alert("Для выбора контрагента "+$("#opf_name_"+selected_supplier).html()+" "+$("#full_name_"+selected_supplier).html()+" необходимо утвердить заполнение его карты.");
+		  return false;  
+	  }
+	  
+	 
+	  
+	  if($("#ship_supplier_id").val()!=selected_supplier){
+		  $("#ship_supplier_clear").trigger("click");
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			$.ajax({
+			  async: true,
+			  url: "/js/bill.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"retrieve_supplier",
+				  "id":selected_supplier
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#ship_supplier_id_string").val(data.opf_name+" "+data.full_name);
+				$("#ship_supplier_id").val(data.id);
+				
+				   
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		  }
+	  }
+	   
+	  $("#ship_supplier_dialog").dialog("close"); 
+	}
+$(function(){
+	
+	
+	
+	
+	$("#ship_supplier_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 490,
+		buttons: {
+			"Готово": ship_rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#ship_supplier_select").bind("click",function(){
+		$("#ship_supplier_"+$("#ship_supplier_id").val()+"").prop("checked",true);
+		$("#ship_supplier_dialog").dialog("open");
+	});
+	
+	$("#ship_supplier_clear").bind("click",function(){
+		 
+		
+		
+		$("#ship_supplier_id_string").val("");
+		$("#ship_supplier_id").val("");
+		 
+		
+	});
+	
+	
+	
+	
+	    
+	
+	
+	 
+});
+</script>
+
+<div id="ship_supplier_dialog" title="Выберите покупателя" style="display:none;">
+
+
+
+
+<a href="#" id="ship_more_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="absmiddle" vspace="3" hspace="5" /></a>
+    
+    <div id="ship_address_dialog_help" title="Информация о выборе покупателя" style="display:none;">
+    
+    В этом диалоге Вы можете выбрать контрагента по входящему счету.
+    
+    <br />
+	<br />
+	
+    Чтобы выбрать контрагента для входящего счета, выполните двойной клик по строчке с требуемым контрагентом.
+    <br />
+
+    При этом контрагент будет подставлен в счет, автоматически подставятся № и дата договора с контрагентом, и будут выбраны основные реквизиты контрагента (если они были заданы в карте контрагента). <br />
+	Для задания других (не основных) рекизитов контрагента воспользуйтесь кнопкой "..." возле поля "Банковский счет".
+    <br />
+<br />
+	По умолчанию раскрыт полный список контрагентов. 
+    В этом списке можно найти необходимого 
+    Вам контрагента с помощью фильтров. Фильтры доступны по полям:<br />
+	-Код контрагента<br />
+	-Полное наименование<br />
+	-ИНН <br />
+	-КПП<br />
+ 	-Юридический адрес.
+    
+    <br />
+	<br />
+	Введите в одно или несколько из этих полей фрагмент данных нужного Вам контрагента и нажмите кнопку <strong>"Найти"</strong>.
+	
+    
+    
+    </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#ship_address_dialog_help").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 600,
+		  height: 380,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#ship_more_info").bind("click", function(){
+			$("#ship_address_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+
+
+
+<div id="ship_suppliers" style="overflow:auto; width: 770px; height:350px;"  > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Код</th>
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Юридический адрес</th>
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        <td>
+        <input id="ship_find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+       
+        <td>
+        <input id="ship_find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="ship_find_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="ship_find_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="ship_find_legal_address" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input type="button" value="Найти" id="ship_doFind" />
+        <script type="text/javascript">
+		$(function(){
+			$("#ship_find_code").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#ship_doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#ship_find_full_name").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#ship_doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#ship_find_inn").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#ship_doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#ship_find_kpp").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#ship_doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#ship_find_legal_address").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#ship_doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			
+			$("#ship_doFind").bind("click",function(){
+				ret=true;
+		
+				
+				
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/bill.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_suppliers_ship",
+						  
+						  "code":$("#ship_find_code").val(),
+						
+						  "full_name":$("#ship_find_full_name").val(),
+						  "inn":$("#ship_find_inn").val(),
+						  "kpp":$("#ship_find_kpp").val(),
+						  "legal_address":$("#ship_find_legal_address").val()
+						  
+					  },
+					  beforeSend: function(){
+						$("#ship_suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+					  },
+					  success: function(data){
+						$("#ship_suppliers_found").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  $("#ship_suppliers_found").html("Ошибка загрузки контрагентов.");	
+					  }	 
+				  });
+				  
+				  
+				
+				return ret;
+			});
+		});
+		</script>
+        </td>
+    </tr>
+    <tbody id="ship_suppliers_found">
+   	%{include file="bills/ship_suppliers_list.html" pos=$suppliers}%
+    </tbody>
+    </table>
+	
+  
+    </div>
+  
+</div>
+  

@@ -1,0 +1,424 @@
+<div id="pcg_positions_dialog" title="Поиск позиций номенклатуры" style="display:none;">
+	 <strong>Поиск позиции</strong><br />
+    <input type="hidden" id="pcg_begin_kol" value="0" />
+    <input type="hidden" id="pcg_begin_id" value="0" />
+    <input type="hidden" id="pcg_begin_storage_id" value="0" />
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="pcg_positions_search_set2" >
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" style="width:450px;" size="80" maxlength="255" id="pcg_qry2" /></td>
+        <td>&nbsp;</td>
+        <td><a href="#" id="pcg_do_ext_search"><img src="/img/icons/plus.png" width="24" height="24" border="0" alt="Расширенный поиск" title="Расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#pcg_do_ext_search").unbind("click");
+			$("#pcg_do_ext_search").bind("click",function(){
+				
+				$("#pcg_qry").attr("value",$("#pcg_qry2").val());
+				
+				
+				$("#pcg_positions_search_set2").css("display","none");
+				$("#pcg_positions_search_set").css("display","table");
+				$("#pcg_positions_search_set3").css("display","table");
+				$("#pcg_qry2").attr("value","");
+				return false;
+			});
+			
+				$("#pcg_qry2").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#pcg_doSrch").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}				
+			});
+		});
+		</script>
+        
+        </td>
+        
+   </tr>
+    <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        </tr>
+   </table>
+   
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="pcg_positions_search_set" style="display:none" >
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" size="40" maxlength="255" id="pcg_qry" /></td>
+        <td>
+        <select id="pcg_dimension_id" style="width:50px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="pcg_length" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="pcg_width" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="pcg_height" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="pcg_weight" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="pcg_volume" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="pcg_diametr" /></td>
+        
+        <td><a href="#" id="pcg_donot_ext_search"><img src="/img/icons/minus.jpg" width="24" height="24" border="0" alt="Скрыть расширенный поиск" title="Скрыть расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#pcg_donot_ext_search").unbind("click");
+			$("#pcg_donot_ext_search").bind("click",function(){
+				
+				$("#pcg_qry2").attr("value",$("#pcg_qry").val());
+				$("#pcg_qry").attr("value","");
+				$("#pcg_positions_search_set").css("display","none");
+				$("#pcg_positions_search_set3").css("display","none");
+				$("#pcg_dimension_id").val("");
+				$("#pcg_length").val("");
+				$("#pcg_width").val("");
+				$("#pcg_height").val("");
+				$("#pcg_weight").val("");
+				$("#pcg_volume").val("");
+				$("#pcg_diametr").val("");
+				
+				$("#pcg_tov_grp").val("");
+				$("#pcg_group_id2").val("");
+				$("#pcg_group_id3").val("");
+				
+				$("#pcg_positions_search_set2").css("display","table");
+				return false;
+			});
+			
+				$("#pcg_qry").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#pcg_doSrch").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}				
+			});
+		});
+		</script>
+        </td>
+      </tr>
+      <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        <td><small>ед. изм.</small></td>
+        <td><small>Длина, мм</small></td>
+        <td><small>Ширина, мм</small></td>
+        <td><small>Высота/ <br />
+толщина, мм</small></td>
+
+		<td><small>Вес <br />
+1 ед., кг</small></td>
+        <td><small>Объем <br />
+1 ед., м<sup>3</sup></small></td>
+
+        <td><small>Диаметр, мм</small></td>
+      </tr>
+    </table>
+	&nbsp;
+    &nbsp;
+  
+	
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="right">
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td><input type="button" value="Найти" id="pcg_doSrch"  /></td>
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td>
+        %{include file="every_help_dialog.html" filename="komplekt_find_pos.html" prefix="kfpc" description="Информация о поиске позиций номенклатуры"  style="display:inline;"}%
+        </td>
+      </tr>
+      
+      %{if $can_create_position}%
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td colspan="3">
+      
+        <input type="button" value="Создать позицию" id="pcg_doCreate"  />
+        
+        </td>
+         
+      </tr>
+      %{/if}% 
+    </table>
+
+ 	
+    <br />
+	
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" id="pcg_positions_search_set3" style="display:none" >
+  <tr align="left" valign="top">
+    <td>
+    <select id="pcg_tov_grp" style="width:150px;">
+    %{html_options values=$tov_group_ids selected=$tov_group_id output=$tov_group_names}%
+    </select>
+    </td>
+    <td>
+    <select id="pcg_group_id2" style="width:150px;">
+    
+    </select>
+    </td>
+    <td>
+    <select id="pcg_group_id3" style="width:150px;">
+   
+    </select>
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <small>товарная группа</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;1&nbsp;ур.</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;2&nbsp;ур.</small>
+    </td>
+  </tr>
+</table>
+
+    
+    
+	
+    <br clear="all" />
+    
+    <strong>Найденные позиции:</strong><br />
+    <div id="pcg_pos_rows" style="border:1px solid silver; width:820px; height:300px; overflow:scroll;">
+    
+    </div>
+    
+</div>
+
+ <script type="text/javascript">
+  $(function(){
+    
+	
+	
+	$("#pcg_positions_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 850,
+    height: 540,
+    buttons: {
+        "Заменить на выбранную позицию": function() { 
+        	
+			
+			//найдем исходный ряд!
+			//выполним замену!
+			
+			ChangeToSel();
+			
+			
+			
+			$(this).dialog("close");	
+        },
+	   
+		"Закрыть": function(){
+		  $("#pcg_qry").attr("value","");
+			$("#pcg_tov_grp").val(0);
+			$("#pcg_pos_rows").empty();	
+			$("#pcg_group_id2").empty();
+			$("#pcg_group_id3").empty();
+			
+		 $(this).dialog("close");	
+		}
+      }
+    
+    });
+	
+	
+	//поиск позиций по филтьру
+	$("#pcg_doSrch").bind("click",function(){
+		ret=true;
+		
+		if(($("#pcg_qry").attr("value").length>0)||($("#pcg_tov_grp").val()!=0)||
+		($("#pcg_dimension_id").val()!=0)||
+		($("#pcg_length").attr("value").length>0)||
+		($("#pcg_width").attr("value").length>0)||
+		($("#pcg_height").attr("value").length>0)||
+		($("#pcg_diametr").attr("value").length>0)||
+		
+		($("#pcg_weight").attr("value").length>0)||
+		($("#pcg_volume").attr("value").length>0)||
+		($("#pcg_qry2").attr("value").length>0)
+		
+		){
+			//alert("loading");
+			
+			group_id=0;
+			if($("#pcg_group_id3").val()>0) group_id=$("#pcg_group_id3").val();
+			else if($("#pcg_group_id2").val()>0) group_id=$("#pcg_group_id2").val();
+			else if($("#pcg_tov_grp").val()>0) group_id=$("#pcg_tov_grp").val();
+			
+			var qry='';
+			if($("#pcg_qry").attr("value").length>0) qry=$("#pcg_qry").attr("value");
+			else qry=$("#pcg_qry2").attr("value");
+			
+			
+			$.ajax({
+              async: true,
+              url: "/js/komplekt.php",
+              type: "POST",
+              data:{
+                  "action":"pcg_find_pos",
+				  "group_id":group_id,
+				  "except_id":$("#pcg_begin_id").val(),
+				  "qry":qry,
+				  "kol":$("#pcg_begin_kol").val(),
+				  "dimension_id":$("#pcg_dimension_id").val(),
+				  "length":$("#pcg_length").attr("value"),
+				  "width":$("#pcg_width").attr("value"),
+				  "height":$("#pcg_height").attr("value"),
+				  "diametr":$("#pcg_diametr").attr("value"),
+				  
+				  "weight":$("#pcg_weight").attr("value"),
+				  "volume":$("#pcg_volume").attr("value")
+				  
+              },
+              beforeSend: function(){
+                $("#pcg_pos_rows").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+              },
+              success: function(data){
+                $("#pcg_pos_rows").html(data);
+                
+              },
+              error: function(xhr, status){
+                  $("#pcg_pos_rows").html("Ошибка загрузки позиций.");	
+              }	 
+          });
+		  
+		  
+		}else ret=ret&&false;
+		
+		return ret;
+	});
+	
+	
+	
+	//создание позиции по данным филтьра
+	$("#pcg_doCreate").bind("click",function(){
+		ret=true;
+		
+		if(($("#pcg_qry").attr("value").length>0)||($("#pcg_tov_grp").val()!=0)||
+		($("#pcg_dimension_id").val()!=0)||
+		($("#pcg_length").attr("value").length>0)||
+		($("#pcg_width").attr("value").length>0)||
+		($("#pcg_height").attr("value").length>0)||
+		($("#pcg_diametr").attr("value").length>0)||
+		
+		($("#pcg_weight").attr("value").length>0)||
+		($("#pcg_volume").attr("value").length>0)||
+		($("#pcg_qry2").attr("value").length>0)
+		
+		){
+			//alert("loading");
+			
+			group_id=0;
+			if($("#pcg_group_id3").val()>0) group_id=$("#pcg_group_id3").val();
+			else if($("#pcg_group_id2").val()>0) group_id=$("#pcg_group_id2").val();
+			else if($("#pcg_tov_grp").val()>0) group_id=$("#pcg_tov_grp").val();
+			
+			var qry='';
+			if($("#pcg_qry").attr("value").length>0) qry=$("#pcg_qry").attr("value");
+			else qry=$("#pcg_qry2").attr("value");
+			
+			if(qry.length==0){
+				alert("Введите название позиции!");	
+				return false;
+			}
+			
+			if($("#pcg_dimension_id").val()==0){
+				alert("Укажите единицы измерения для создания позиции!");	
+				return false;
+			}
+			
+			
+			$.ajax({
+              async: true,
+              url: "/js/komplekt.php",
+              type: "POST",
+              data:{
+                  "action":"create_pos",
+				  "group_id":group_id,
+				  "qry":qry,
+				  "dimension_id":$("#pcg_dimension_id").val(),
+				  "length":$("#pcg_length").attr("value"),
+				  "width":$("#pcg_width").attr("value"),
+				  "height":$("#pcg_height").attr("value"),
+				  "diametr":$("#pcg_diametr").attr("value"),
+				  
+				  "weight":$("#pcg_weight").attr("value"),
+				  "volume":$("#pcg_volume").attr("value")
+				  
+              },
+              beforeSend: function(){
+                //$("#pos_rows").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');  
+				$("#pcg_doCreate").prop("disabled", true);  
+              },
+              success: function(data){
+                //$("#pos_rows").html(data);
+                $("#pcg_doSrch").trigger("click");
+				$("#pcg_doCreate").prop("disabled", false);  
+              },
+              error: function(xhr, status){
+                  $("#pcg_pos_rows").html("Ошибка создания позиций.");	
+				  $("#pcg_doCreate").prop("disabled", false);  
+              }	 
+          });
+		  
+		  
+		}else ret=ret&&false;
+		
+		return ret;
+	});
+	
+		/*выборка товарной группы*/
+		$("#pcg_tov_grp").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#pcg_tov_grp").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					//alert(data);
+				  $("#pcg_group_id3").empty();
+				  $("#pcg_group_id2").html('<option value=""></option>'+data);				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#pcg_group_id2").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#pcg_group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#pcg_group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	
+  });
+  </script>
+ 

@@ -1,0 +1,25 @@
+ %{section name=possec loop=$pos}%
+	%{include file="komplekt/put_to_form.html" 
+    no=$smarty.section.possec.index+1 
+    tempid=$pos[possec].id 
+    id=$pos[possec].position_id 
+    name=$pos[possec].position_name 
+    kol=$pos[possec].quantity_confirmed 
+    kol_init=$pos[possec].quantity_initial 
+    
+    
+     
+    in_bills_in=$pos[possec].in_bills_in
+    in_free_in=$pos[possec].in_free_in 
+    in_pol_in=$pos[possec].in_pol_in 
+    
+    
+    
+    in_bills=$pos[possec].in_bills 
+    in_free=$pos[possec].in_free 
+    in_pol=$pos[possec].in_pol 
+   
+    
+    
+    storage_name=$pos[possec].storage_name storage_id=$pos[possec].storage_id dim_name=$pos[possec].dim_name}%
+%{/section}%

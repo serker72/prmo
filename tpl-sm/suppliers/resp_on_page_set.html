@@ -1,0 +1,56 @@
+<!-- таблица на странице -->
+
+%{if !$has_no_header}% 
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable1" id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="*">Ф.И.О.</th>
+         
+        
+   
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+%{/if}%    
+    %{section name=pospossec loop=$pospos}%
+    
+    %{include file="suppliers/resp_on_page_row.html"}%
+   
+    %{/section}%
+    
+%{if !$has_no_header}%    
+    </tbody>
+    </table>
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			 
+		
+		function new_del(hash){
+			%{if $can_edit_resp}%
+				 
+				if(window.confirm('Вы действительно хотите удалить пользователя?')){ 
+					$('#new_row_'+hash).remove();
+					 
+							
+				}
+				 
+				%{else}%
+				alert("Невозможно удалить пользователя.");
+				%{/if}%
+				return false;
+			
+		}
+		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].hash}%").bind("click",function(){
+				return new_del("%{$pospos[pospossec].hash}%");
+				
+			});
+			
+    	%{/section}%
+	
+	});
+      </script>
+%{/if}%   

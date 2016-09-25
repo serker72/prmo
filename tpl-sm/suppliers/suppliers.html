@@ -1,0 +1,1255 @@
+<script type="text/javascript">
+$(function(){
+	 
+	
+	
+	$("#quick_find").bind("click", function(){
+		$("#dialog_quick_find").dialog("open");
+		return false;
+	});
+	
+	
+	$("#dialog_quick_find").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		height: 550,
+		buttons:{
+			"Закрыть": function(){
+				$("#dialog_quick_find").dialog("close");
+			}
+		}
+	 });
+	 
+	 
+	 $("#quick_find_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#quick_find_full_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#quick_find_inn").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#quick_find_kpp").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#quick_find_contact").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#quick_find_branch").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#quick_find_city").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	
+	$("#quick_find_holding").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+ 	$("#quick_find_subholding").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+
+ 
+	
+	$("#quick_doFind").bind("click",function(){
+		ret=true;
+		
+		if(
+		
+		($("#quick_find_code").val()=="")&&
+		($("#quick_find_full_name").val()=="")&&
+		($("#quick_find_inn").val()=="")&&
+		($("#quick_find_kpp").val()=="")&&
+		
+		($("#quick_find_contact").val()=="")&&
+		($("#quick_find_branch").val()=="")&&
+		($("#quick_find_city").val()=="")  &&
+		($("#quick_find_holding").val()=="") &&
+		($("#quick_find_subholding").val()=="") 
+		
+
+		
+		
+		) ret=ret&&false;
+		
+		
+		if(ret){
+		
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/supplier.php",
+			  type: "POST",
+			  data:{
+				  "action":"quick_find_suppliers",
+				  
+				  "code":$("#quick_find_code").val(),
+				
+				  "full_name":$("#quick_find_full_name").val(),
+				  "inn":$("#quick_find_inn").val(),
+				  "kpp":$("#quick_find_kpp").val(), 
+				  
+				  "contact":$("#quick_find_contact").val(), 
+				  "branch":$("#quick_find_branch").val(), 
+				  "city":$("#quick_find_city").val(),
+				  "holding":$("#quick_find_holding").val(),
+				  "subholding":$("#quick_find_subholding").val()
+
+			  },
+			  beforeSend: function(){
+				$("#quick_suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				 
+				$("#quick_suppliers_found").html(data);
+				
+				
+				 
+				
+				
+			  },
+			  error: function(xhr, status, m){
+				  $("#quick_suppliers_found").html("Ошибка загрузки контрагентов.");	
+			  }	 
+		  });
+		  
+		}else{
+			alert("Укажите хотя бы один критерий поиска!");	
+		}
+		
+		return ret;
+	});
+	
+	
+	VidgetMultiReport('%{$prefix}%supplier_kinds', 'Выберите вид', 'Вид', 'Cнять выбор', '# из # выбрано', "Выбрано: ", 'Вид не выбран', 150 );
+	
+	
+	%{if $quick_find==1}%
+	$("#quick_find").trigger("click");
+	%{/if}%
+});
+</script>
+
+
+<div id="dialog_quick_find" title="Быстрый поиск контрагентов" style="display:none;">
+
+<small><em>Поиск контрагентов возможен по нескольким критериям в каждом поле. Для этого укажите требуемые значения через ;, например, поиск по критерию:<br>
+
+вт;ст
+<br>
+в поле "Полное наименование" позволит найти всех контрагентов, у которых в названии встречаются сочетания букв "вт", либо "ст".</em>
+</small>
+<br>
+<br>
+	
+ <table width="100%" cellpadding="1" cellspacing="0" border="0" class="reptable">
+ <thead>
+    <tr align="center" valign="top">
+    	
+        <th scope="col" width="40">Код</th>
+        <th scope="col" width="30">
+        Утв. зап-ие
+        </th>
+        <th scope="col" width="30">
+        Утв. акт-ть
+        </th>
+        <th scope="col" width="80">Полное наименование</th>
+        <th scope="col" width="30">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        
+        <th scope="col" width="50">Город</th>
+        <th scope="col" width="*">Контакт</th>
+        <th scope="col" width="100">Отрасль</th>   
+           
+         <th scope="col" width="50">Холдинг</th>    
+          <th scope="col" width="50">Субхолдинг</th>    
+        
+
+        
+        <th scope="col" width="50">Отв. сотр-ки</th>         
+        
+        <th scope="col" width="24">Карта</th>
+    </tr>
+    <tr align="center" valign="top"  class="filter">
+    	
+        <td>
+        <input id="quick_find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td width="30">
+       
+        </td>
+        <td width="30">
+       
+        </td>
+        <td>
+        <input id="quick_find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="quick_find_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="quick_find_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="quick_find_city" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+        <td>
+        <input id="quick_find_contact" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+         <td>
+        <input id="quick_find_branch" type="text" size="15" maxlength="128" value="" />
+        </td>
+       
+          <td>
+        <input id="quick_find_holding" type="text" size="10" maxlength="128" value="" />
+        </td>
+       
+       
+         <td>
+        <input id="quick_find_subholding" type="text" size="10" maxlength="128" value="" />
+        </td>
+       
+       
+
+       	 <td>
+         
+         </td>
+         
+         
+        <td>
+        <input type="button" value="Найти" id="quick_doFind" />
+        
+        </td>
+    </tr>
+	</thead>    
+    <tbody id="quick_suppliers_found">
+   
+    </tbody>
+    </table>
+</div>
+
+
+
+<form action="suppliers.php" method="get" id="filter_form">
+
+
+%{include file="every_help_dialog.html" filename="suppliers.htm" prefix="" description="реестр контрагентов"  style="float:right;  margin-right:10px;" is_right=true}%
+
+%{if $can_print}%
+<div style="float:right; margin-right:5px;">
+<a href="#" id="print_s" class="reestr_print reestr_right_button24" data-comment="печать..."></a>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#print_s").bind("click",function(){
+	    if( $('#is_active').prop('checked')) state='&is_active=1';
+		else state='&is_active=0';
+		
+		//filter_form
+		window.open('suppliers.php?'+$("#filter_form").serialize()+state+'&sortmode='+'%{$sortmode}%'+'&print=1'); 		
+		
+	  return false;
+	});
+});
+</script>
+
+%{/if}%
+
+
+
+
+
+<div style="float:right; margin-right:5px;">
+	%{include file="suppliers/mode_reestr.html" prefix="" pagename="supplier.php" is_right=true}%
+	
+</div>
+	
+
+
+ 
+<div style="float:right; margin-right:5px;">
+<a href="#" id="quick_find" class="reestr_pre_find reestr_right_button24" data-comment="быстрый поиск контрагентов..." ></a>
+</div>
+ 
+
+<div style="float:right; margin-right:5px;">
+%{if $can_merge}%
+<a href="suppliers_merge.php" target="_blank" class="reestr_merge reestr_right_button24" data-comment="объединение карт контрагентов..."></a>
+%{else}%
+<a href="#" onclick='alert("У Вас нет прав на данное действие.\nЗа соответствующими правами обратитесь, пожалуйста, к администратору.\nСпасибо."); return false;' class="reestr_merge reestr_inactive reestr_right_button24" data-comment="объединение карт контрагентов..."></a>
+%{/if}%
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+<input type="button" value="Создать карту контрагента..." %{if $can_create}%onclick="location.href='supplier.php';"%{else}% onclick='alert("У Вас нет прав на данное действие.\nЗа соответствующими правами обратитесь, пожалуйста, к администратору.\nСпасибо.");'%{/if}% />
+
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+&nbsp;&nbsp;
+<label for="is_active">Активные контрагенты</label>
+<input type="checkbox" name="is_active" id="is_active" value="1" %{if $is_active==1}% checked="checked"%{/if}%  /> 
+
+</div>
+
+
+<div style="float:left; margin-right:20px;     margin-bottom:15px;   overflow:hidden;">
+    
+     
+    
+    
+        <label for="%{$prefix}%supplier_kinds" class="statuses_label">Виды контрагента:</label> 
+    
+        <select id="%{$prefix}%supplier_kinds" name="%{$prefix}%supplier_kinds[]" multiple="multiple">
+       
+        <option value="1" %{if $supplier_kind_1==1 or $all_supplier_kinds==1}% selected%{/if}% >Покупатель</option>
+        <option value="2" %{if $supplier_kind_2==1 or $all_supplier_kinds==1}% selected%{/if}% >Поставщик</option>
+        <option value="3" %{if $supplier_kind_3==1 or $all_supplier_kinds==1}% selected%{/if}% >Партнер</option>
+        
+        <option value="4" %{if $supplier_kind_4==1 or $all_supplier_kinds==1}% selected%{/if}% >Вид не указан</option>
+         
+       
+        </select>
+        
+        
+        
+        &nbsp;&nbsp;
+        
+        <div id="%{$prefix}%supplier_kinds_caption" class="statuses_caption" style="width:150px !important; white-space:normal !important;">
+        
+        </div>
+    
+    
+    </div>
+
+<br clear="all" />
+<p />
+
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+
+<table  border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+%{foreach from=$view item=col}%    
+
+%{if $col.colname=="code"}%
+	<th scope="col" width="50">Код
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+%{/if}%
+%{if $col.colname=="opf_name"}%     
+    <th scope="col" width="50">ОПФ
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+   </th>
+%{/if}%
+%{if $col.colname=="full_name"}%    
+    <th scope="col" width="80">Полное наименование
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+%{/if}%
+%{if $col.colname=="inn"}%    
+    <th scope="col" width="80">ИНН
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+    
+%{if $col.colname=="kpp"}%    
+    <th scope="col" width="80">КПП
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}% 
+   
+  %{if $col.colname=="country"}%  
+    <th scope="col" width="80">Страна
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=17"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=16"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+ %{/if}%
+ 
+   %{if $col.colname=="city"}%    
+    <th scope="col" width="80">Город
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=15"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=14"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}% 
+    
+   %{if $col.colname=="legal_address"}%      
+    <th scope="col" width="*">Юридический адрес
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}% 
+    
+   %{if $col.colname=="type"}%       
+      <th scope="col" width="80">Тип контрагента
+    
+    </th>
+    %{/if}%
+    
+   %{if $col.colname=="resp"}%       
+     <th scope="col" width="*">Ответственный сотрудник
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    %{/if}%
+    
+    %{if $col.colname=="shema"}%      
+    <th scope="col" width="50">
+    Схема<br />
+ проезда
+   
+    </th>
+    %{/if}%
+    
+    %{if $col.colname=="akt"}%   
+    <th scope="col" width="50">
+    Акты<br />
+ сверки
+   
+    </th>
+    %{/if}%
+    
+   %{if $col.colname=="crea"}%       
+     <th scope="col" width="*">Создал
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=19"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=18"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    %{/if}%
+    
+    
+     %{if $col.colname=="is_upr_nalog"}%   
+    <th scope="col" width="*">
+    Упрощенная форма налогообложения
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="contracts"}%   
+    <th scope="col" width="*">
+  Договоры
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="lim_deb_debt"}%   
+    <th scope="col" width="*">
+    Лимит дебиторской задолженности, руб.
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="times"}%   
+    <th scope="col" width="*">
+  Расписание работы (МСК)
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="chief"}%   
+    <th scope="col" width="*">
+   Генеральный директор
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="main_accountant"}%   
+    <th scope="col" width="*">
+  Главный бухгалтер
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="fa"}%   
+    <th scope="col" width="*">
+  Фактические адреса
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="bd"}%   
+    <th scope="col" width="*">
+   Реквизиты
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="branch_name"}%   
+    <th scope="col" width="*">
+    Отрасль
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="subbranch_name"}%   
+    <th scope="col" width="*">
+   Подотрасль 1
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="subbranch_name1"}%   
+    <th scope="col" width="*">
+   Подотрасль 2
+   
+    </th>
+    %{/if}%
+    
+     %{if $col.colname=="okpo"}%   
+    <th scope="col" width="*">
+  ОКПО
+   
+    </th>
+    %{/if}%
+    
+      
+    %{if $col.colname=="holding"}%   
+    <th scope="col" width="*">
+  Холдинг
+  
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode=21"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=20"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+   
+    </th>
+    %{/if}%
+    
+    %{if $col.colname=="subholding"}%   
+    <th scope="col" width="*">
+  Субхолдинг
+  
+  
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode=23"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=22"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+   
+   
+    </th>
+    %{/if}%
+
+
+%{/foreach}% 
+   
+    <th scope="col" width="30">&nbsp;
+    
+    
+    
+    </th>
+    
+</tr>
+<tr align="center" valign="top" class="filter">
+%{foreach from=$view item=col}%   
+
+ 
+%{if $col.colname=="code"}%   
+	<td width="50">
+    <input type="text" size="5" maxlength="255" value="%{$code}%" name="code" id="code" />
+    
+    </td>
+%{/if}%
+%{if $col.colname=="opf_name"}%       
+    <td width="50">&nbsp;
+    </td>
+  %{/if}%
+%{if $col.colname=="full_name"}%    
+     <td width="80">
+     <input type="text" size="15" maxlength="128" value="%{$full_name}%" name="full_name" id="full_name" />
+    
+    </td>   
+%{/if}%
+%{if $col.colname=="inn"}%       
+    <td width="80">
+    <input type="text" size="15" maxlength="128" value="%{$inn}%" name="inn" id="inn" />
+    
+    </td>  
+ %{/if}%
+%{if $col.colname=="kpp"}%      
+     <td width="80">
+    <input type="text" size="15" maxlength="128" value="%{$kpp}%" name="kpp" id="kpp" />
+    
+    </td>  
+    
+%{/if}%
+%{if $col.colname=="country"}%       
+    
+     <td width="80">
+    <input type="text" size="10" maxlength="128" value="%{$country}%" name="country" id="country" />
+    
+    </td>  
+ %{/if}%
+%{if $col.colname=="city"}%      
+     <td width="80">
+    <input type="text" size="10" maxlength="128" value="%{$city}%" name="city" id="city" />
+    
+    </td>  
+ %{/if}%
+%{if $col.colname=="legal_address"}%     
+    <td width="*">
+    <input type="text" name="legal_address" id="legal_address" size="15" maxlength="128" value="%{$legal_address}%" />
+    
+    </td>
+%{/if}%
+%{if $col.colname=="type"}%       
+      <td width="80">
+    
+    </td> 
+%{/if}%
+%{if $col.colname=="resp"}%       
+    
+      <td width="*">
+    <input type="text" name="resp" id="resp" size="10" maxlength="128" value="%{$resp}%" />
+    
+    </td>
+%{/if}%
+%{if $col.colname=="shema"}%       
+   <td width="50">&nbsp;
+   
+    
+    </td>
+%{/if}%
+%{if $col.colname=="akt"}%       
+     <td width="50">&nbsp;
+   
+    
+    </td>
+ %{/if}%
+%{if $col.colname=="crea"}%      
+     <td width="*">
+    <input type="text" name="crea_name_s" id="crea_name_s" size="10" maxlength="128" value="%{$crea_name_s}%" />
+    
+    </td>
+%{/if}%
+
+
+
+
+
+
+  %{if $col.colname=="is_upr_nalog"}%   
+    <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="contracts"}%   
+     <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="lim_deb_debt"}%   
+     <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="times"}%   
+      <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="chief"}%   
+      <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="main_accountant"}%   
+     <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="fa"}%   
+      <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="bd"}%   
+      <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="branch_name"}%   
+      <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="subbranch_name"}%   
+    <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="subbranch_name1"}%   
+     <td width="*">
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="okpo"}%   
+     <td width="*">
+    
+    
+    </td>
+    %{/if}%
+
+
+
+
+
+
+%{if $col.colname=="holding"}%      
+     <td width="80">
+    <input type="text" size="10" maxlength="128" value="%{$holding}%" name="holding" id="holding" />
+    
+    </td>  
+ %{/if}%
+ 
+ %{if $col.colname=="subholding"}%      
+     <td width="80">
+    <input type="subholding" size="10" maxlength="128" value="%{$subholding}%" name="subholding" id="subholding" />
+    
+    </td>  
+ %{/if}%
+
+
+
+
+
+
+
+
+ %{/foreach}%     
+    <td width="30">
+    <input name="doFilter" type="submit" value="Найти" />
+    
+	
+    </td>   
+</tr>
+
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+%{foreach from=$view item=col}%   
+ 
+%{if $col.colname=="code"}%   
+
+	<td width="50" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%><a name="user_%{$items[rowsec].id}%"></a>%{$items[rowsec].code}%</td>
+    
+ %{/if}%
+%{if $col.colname=="opf_name"}%       
+     <td width="50"  %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].opf_name}%</td>
+ %{/if}%
+%{if $col.colname=="full_name"}%   
+     
+     <td width="80"  %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].full_name}%</td>
+ %{/if}%
+%{if $col.colname=="inn"}%       
+    
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].inn}%</td>
+    
+ %{/if}%
+%{if $col.colname=="kpp"}%       
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].kpp}%</td>
+ %{/if}%
+%{if $col.colname=="country"}%       
+   
+    
+    
+    
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+     
+     
+    %{foreach from=$items[rowsec].cities item=item}%
+	%{$item.country_name}%    
+    <br>
+
+    %{/foreach}%
+     
+     
+    
+    </td>
+
+ %{/if}%
+%{if $col.colname=="city"}%   
+
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    <a href="#" class="reestr_short">
+    
+    %{foreach from=$items[rowsec].cities item=item}%
+	%{$item.name}%    
+    <br>
+
+    %{/foreach}%
+     
+    </td>
+ 
+  %{/if}%
+%{if $col.colname=="legal_address"}%   
+    
+    <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    
+    <a href="#" class="reestr_short">
+    %{$items[rowsec].legal_address|strip_tags|trim|truncate:30:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    </a>
+    
+    <div class="reestr_full reestr_hide">
+    %{$items[rowsec].legal_address}%
+    </div>
+    
+    </td>
+  
+   %{/if}%
+%{if $col.colname=="type"}%   
+    
+     <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    
+    %{if $items[rowsec].is_customer==1}% покупатель <br> %{/if}%
+    
+     %{if $items[rowsec].is_supplier==1}% поставщик <br> %{/if}%
+     
+      %{if $items[rowsec].is_partner==1}% партнер <br> %{/if}%
+    
+    
+    </td>
+  %{/if}%
+%{if $col.colname=="resp"}%   
+    
+    <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    %{foreach from=$items[rowsec].resps item=item}%
+	%{$item.name_s}%    
+    <br>
+
+    %{/foreach}%
+    </td>
+   %{/if}%
+%{if $col.colname=="shema"}%     
+     <td width="50" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    %{if $items[rowsec].can_edit}%
+    <a href="#" onclick="zc=window.open('supplier_shema.php?sup_id=%{$items[rowsec].id}%','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						if(zc==null) alert('Окно файлов не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон.'); return false;"><img src="../../img/shema1.png" width="47" height="30" border="0" alt="Схема проезда..." title="Схема проезда..." /></a>
+  %{/if}%
+    </td>
+    
+    
+ %{/if}%
+%{if $col.colname=="akt"}%       
+    
+    
+    <td width="50" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    %{if $items[rowsec].can_edit}%
+    <a href="#" onclick="zc=window.open('supplier_aktsv.php?sup_id=%{$items[rowsec].id}%','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						if(zc==null) alert('Окно файлов не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон.'); return false;"><img src="../../img/akt.png" width="47" height="30" border="0" alt="Акты сверки..." title="Акты сверки..." /></a>
+  %{/if}%
+    </td>
+    
+ %{/if}%
+%{if $col.colname=="crea"}%       
+     <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    
+     %{$items[rowsec].crea_name_s}%    
+      
+       
+    
+    </td>
+ %{/if}%
+ 
+ 
+ 
+ 
+
+
+  %{if $col.colname=="is_upr_nalog"}%   
+    <td width="*">
+    
+    %{if $items[rowsec].is_upr_nalog}%+%{else}%-%{/if}%
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="contracts"}%   
+     <td width="*">
+     
+     <a href="#" class="reestr_short">
+    %{foreach name=fs from=$items[rowsec].contracts item=it}%
+    %{if $smarty.foreach.fs.first}%
+    
+              %{if $it.is_incoming==1}%  
+   <strong>Входящий дог-р</strong>
+   %{else}%
+   <strong>Исходящий дог-р</strong>
+   %{/if}%
+     %{/if}%
+     %{/foreach}%        
+    %{if $smarty.foreach.fs.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a>
+    
+     
+    <div class="reestr_full reestr_hide"> 
+    %{foreach from=$items[rowsec].contracts item=it}%
+     %{if $it.is_incoming==1}%  
+   <strong>Входящий дог-р</strong>
+   %{else}%
+   <strong>Исходящий дог-р</strong>
+   %{/if}%
+   
+    <span style="font-size:12px;"> № дог-ра:</span> 
+   <strong>%{$it.contract_no}%</strong>
+   
+    <span style="font-size:12px;">отсрочка по дог-ру, дней: </span>
+   <strong>%{$it.contract_prolongation}%</strong>
+   
+    <span style="font-size:12px;"> дни: </span>
+    <strong>%{if $it.contract_prolongation_mode==0}%банковские%{else}%календарные%{/if}%</strong>
+   
+   &nbsp;
+    
+    <span style="font-size:12px;"> дата дог-ра:</span>
+     <strong>%{$it.contract_pdate}%</strong>
+    
+   	 
+    
+   
+   наличие оригинала договора:
+    	 %{if $it.has_dog==1}%+%{else}%-%{/if}%  
+         <br>
+
+   
+    %{/foreach}%
+   </div> 
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="lim_deb_debt"}%   
+     <td width="*">
+     %{$items[rowsec].lim_deb_debt}% 
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="times"}%   
+      <td width="*">
+    
+     %{$items[rowsec].time_from_h|string_format:"%02d"}%:%{$items[rowsec].time_from_h|string_format:"%02d"}% - %{$items[rowsec].time_to_h|string_format:"%02d"}%:%{$items[rowsec].time_to_m|string_format:"%02d"}%
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="chief"}%   
+      <td width="*">
+    
+     %{$items[rowsec].chief}% 
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="main_accountant"}%   
+     <td width="*">
+    
+     %{$items[rowsec].main_accountant}% 
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="fa"}%   
+      <td width="*">
+      
+       <a href="#" class="reestr_short">
+    %{foreach name=fs from=$items[rowsec].fa item=it}%
+    %{if $smarty.foreach.fs.first}%
+    
+            <div style="float:left; margin-right:10px;"><em>Вид: </em><strong>%{$it.form_name}%</strong></div>
+     %{/if}%
+     %{/foreach}%        
+    %{if $smarty.foreach.fs.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a>
+      
+      <div class="reestr_full reestr_hide">
+      %{foreach from=$items[rowsec].fa item=it}%
+    
+    
+            <div style="float:left; margin-right:10px;"><em>Вид: </em><strong>%{$it.form_name}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Почтовый индекс: </em><strong>%{$it.post_index}%</strong></div>
+         
+            <div style="float:left; margin-right:10px;"><em>Город: </em><strong>%{$it.fullname}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Улица: </em><strong>%{$it.street}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Дом: </em><strong>%{$it.house}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Корпус: </em><strong>%{$it.korp}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Строение: </em><strong>%{$it.str}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Офис: </em><strong>%{$it.office}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Квартира: </em><strong>%{$it.flat}%</strong></div>
+            
+            
+             <div style="float:left; margin-right:10px;"><em>Прочее:</em><strong>%{$it.address}%</strong></div>
+   <br clear="all" />
+
+    %{/foreach}%
+    </div>
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="bd"}%   
+      <td width="*">
+        <a href="#" class="reestr_short">
+    %{foreach name=fs from=$items[rowsec].bd item=it}%
+    %{if $smarty.foreach.fs.first}%
+    
+             
+    
+    <em>Банк:</em><strong>%{$it.bank}%</strong><br>
+     %{/if}%
+     %{/foreach}%        
+     %{if $smarty.foreach.fs.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a>
+
+      
+      <div class="reestr_full reestr_hide">
+    %{foreach from=$items[rowsec].bd item=it}%
+    
+    
+      %{if $it.is_basic==1}%
+    <em>основные реквизиты:</em><br />
+    %{/if}%
+    
+    <em>Банк:</em><strong>%{$it.bank}%</strong><br>
+
+    
+    <em>Город банка:</em><strong>%{$it.city}%</strong>
+<br>
+    
+    <em>р/с:</em><strong>%{$it.rs}%</strong>
+<br>
+    
+    <em>к/с:</em><strong>%{$it.ks}%</strong>
+<br>
+    
+    <em>БИК:</em><strong>%{$it.bik}%</strong>
+    
+    <br>
+
+     %{/foreach}%
+    </div>
+    
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="branch_name"}%   
+      <td width="*">
+    	
+       
+       %{$items[rowsec].branch_name}% 
+        
+       
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="subbranch_name"}%   
+    <td width="*">
+   
+      %{$items[rowsec].subbranch_name}% 
+    
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="subbranch_name1"}%   
+     <td width="*">
+    
+   
+      %{$items[rowsec].subbranch_name1}% 
+       
+    </td>
+    %{/if}%
+    
+     %{if $col.colname=="okpo"}%   
+     <td width="*">
+    
+     %{$items[rowsec].okpo}% 
+    </td>
+    %{/if}%
+
+
+
+  %{if $col.colname=="holding"}%   
+     <td width="*">
+     
+     <a href="supplier.php?action=1&id=%{$items[rowsec].holding_id}%" target="_blank">
+     %{$items[rowsec].holding_opf_name}% 
+     %{$items[rowsec].holding_name}% 
+     </a>
+    </td>
+    %{/if}%
+
+
+    %{if $col.colname=="subholding"}%   
+     <td width="*">
+     
+       <a href="supplier.php?action=1&id=%{$items[rowsec].subholding_id}%" target="_blank">
+     %{$items[rowsec].subholding_opf_name}% 
+     %{$items[rowsec].subholding_name}% 
+     </a>
+    </td>
+    %{/if}%
+
+
+  
+
+
+  
+ %{/foreach}%   
+  
+   
+    <td width="48" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+	%{if $items[rowsec].can_edit}%
+   
+    <a href="supplier.php?action=1&id=%{$items[rowsec].id}%" target="_blank" class="reestr_edit reestr_right_button24"  data-comment="Подробно..."></a>
+    
+      
+    %{else}%
+    <a href="#"   class="reestr_edit reestr_inactive reestr_right_button24"  data-comment="Подробно..." onClick="return false;"> </a>
+    
+    %{/if}%
+    
+    %{if $items[rowsec].can_annul}%
+    <a href="#" onclick="if(window.confirm('Вы действительно хотите удалить контрагента %{$items[rowsec].opf_name}% %{$items[rowsec].full_name|escape}%?')) location.href='supplier.php?action=2&id=%{$items[rowsec].id}%'; return false;" class="reestr_delete  reestr_right_button24" data-comment="удалить...">
+    </a>
+    
+    %{else}%
+    <a href="#" onclick="alert('Невозможно удалить контрагента %{$items[rowsec].opf_name}% %{$items[rowsec].full_name}%. Причина: %{$items[rowsec].can_annul_reason}%.'); return false;" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить...">
+     
+    </a>
+    %{/if}%
+    
+    
+   
+    </td>
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям контрагентов не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

@@ -1,0 +1,32 @@
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="has_another_bills" id="has_another_bills" %{if !$can_modify or !$can_use_other_sup}% disabled="disabled"%{/if}% %{if $ship.has_another_bills==1}% checked="checked"%{/if}% /><label for="has_another_bills">позиции из других счетов указанного контрагента</label>
+<script type="text/javascript">
+$(function(){
+	$("#has_another_bills").bind("change",function(){
+		if($("#has_another_bills").prop("checked")) $("#another_supplier_id_selecter").css("display","block");
+		else  $("#another_supplier_id_selecter").css("display","none");
+	});
+});
+</script>
+
+<br />
+
+  <div id="another_supplier_id_selecter" style="float:left; %{if $ship.has_another_bills==1}% display:block; %{else}% display:none;%{/if}%">
+  <select id="another_supplier_id" name="another_supplier_id" style="width:200px; display:none;" %{if !$can_modify}% disabled="disabled"%{/if}%>
+  %{html_options values=$another_supplier_ids selected=$supplier_id output=$another_supplier_names}%
+  </select>
+  
+  <!-- все счета -->
+  <div id="all_bills_by_supplier" style="overflow:scroll; width:250px; height:150px; border:1px solid silver;">
+  %{include file="trust/another_bills.html"}%
+  </div>
+  
+  </div>
+
+</div>
+
+
+
+
+
+

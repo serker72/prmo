@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<link href="/style.css" rel="stylesheet" type="text/css" />
+<title>Компания ЮТА: Управление снабжением</title>
+
+
+<script type="text/javascript" src="/js/jquery-1.6.3.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easing.1.3.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="/js/i18n/ui.datepicker-ru.js"></script>
+
+<script type="text/javascript" src="/js/jquery.columnhover.js"></script>
+<script type="text/javascript" src="/js/jquery.cluetip.js"></script>
+<link href="/css/jquery.cluetip.css" rel="stylesheet" type="text/css" />
+<link href="/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="/js/i18n/jquery-ui-i18n.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+	//минимальная высота контента
+	h=parseInt($(window).height());
+  	hh=h-200;
+	$("#verstka_heighter").attr("height",hh);
+});
+</script>
+
+
+</head>
+
+<body>
+
+
+
+<table width="1000" border="0" cellpadding="5" cellspacing="0" align="center">
+<tr align="left" valign="top">
+	<td width="260">
+    
+    <a href="/"><img src="/img/dis/logo.jpg" width="254" height="101" border="0" /></a>
+    </td>
+    <td width="*" valign="bottom" style=" /*background-color:#ee2e24;*/">
+     
+     <div style="background-color:#ee2e24;">
+     <br />
+
+     </div>
+     
+    </td>
+    
+    <td width="1"><img src="/img/01.gif" width="1" height="83" alt="" border="0" /></td>
+</tr>
+</table>
+
+
+<!-- content -->
+<table width="*" cellpadding="0" cellspacing="0" border="0" align="center" style="min-width:1000px;">
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="20" alt="" id="verstka_heighter" /></td>
+<td width="*" align="center" valign="top" id="content_container">
+
+
+ <form action="" method="get" style="margin-left:-50px;" id="logform">
+	<table width="*" border="0" cellpadding="2" cellspacing="2">
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">
+        <label for="login">Логин</label>
+        </td>
+        <td width="120"><input type="text" size="20" maxlength="5" name="login" id="login" />
+        </td>
+    </tr>
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">
+        <label for="passw">Пароль</label>
+        </td>
+        <td width="120"><input type="password" size="20" maxlength="255" name="passw" id="passw" />
+        </td>
+    </tr>
+    
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">&nbsp;
+        
+        </td>
+        <td width="120" style="white-space:nowrap;">
+        <input type="submit" value="Войти" name="doInp" />
+        
+        &nbsp;&nbsp;
+        <a href="#" rel="nofollow">Забыли пароль?</a>
+        </td>
+    </tr>
+    
+    </table>
+	</form>
+    <script type="text/javascript">
+	$(function(){
+		$("#logform").bind("submit",function(){
+			if($("#login").attr("value").length!=5){
+				$("#login").focus();
+				return false;
+			}
+			if($("#passw").attr("value").length==0){
+				$("#passw").focus();
+				return false;
+			}
+			return true;
+		});
+		$("#content_container").attr("valign","middle");
+		
+		
+	});
+	</script>
+
+
+
+    
+</td>
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+</tr>
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+<td width="*"><img src="/img/01.gif" border="0" width="999" height="1" alt="" /></td>
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+</tr>
+
+
+
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+<td width="*">
+<br />
+<div align="center" style="width:100%; height:1px; border-top:1px solid #e7e7e7;"></div>
+</td>
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+</tr>
+
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+<td width="*"><img src="/img/01.gif" border="0" width="1000" height="1" alt="" /></td>
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+</tr>
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+<td width="*">
+
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" align="center">
+<tr align="left" valign="top">
+
+<td width="50%" style="font-size:10px;">
+
+<!-- online -->
+</td>
+<td width="50%" align="right" style="font-size:10px;">
+Разработка: 
+<br />
+<br />
+<!--LiveInternet counter--><script type="text/javascript"><!--
+document.write("<a href='http://www.liveinternet.ru/click' "+
+"target=_blank><img src='//counter.yadro.ru/hit?t45.1;r"+
+escape(document.referrer)+((typeof(screen)=="undefined")?"":
+";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+";"+Math.random()+
+"' alt='' title='LiveInternet' "+
+"border='0' width='31' height='31'><\/a>")
+//--></script><!--/LiveInternet-->
+
+<br />
+
+
+
+
+<br />
+</td>
+</tr>
+</table>
+
+</td>
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+</tr>
+
+</table>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Реестр поступлений товара</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

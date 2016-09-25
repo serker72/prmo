@@ -1,0 +1,14 @@
+<br />
+ 
+
+<a href="#" onclick=" return false;"class="reestr_delete reestr_inactive reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;"></a>
+	 
+
+<strong>Статус:</strong><br />
+%{if $ship.status_id==3}%
+аннулирована
+%{elseif $ship.status_id==14}%
+не выполнена
+%{elseif $ship.status_id==15}%
+выполнена
+%{/if}%

@@ -1,0 +1,79 @@
+<input type="checkbox" value="1" id="is_in_buh" %{if $is_in_buh==1}%checked="checked"%{/if}% %{if !$can_is_in_buh}%disabled="disabled"%{/if}% /><label for="is_in_buh">счет в бухгалтерии</label>
+
+<a href="#" id="is_in_buh_make"><img %{if !$can_is_in_buh}%src="/img/icons/edit_inactive.png" %{else}%src="/img/icons/edit.png"%{/if}% border="0" width="24" height="24" alt="сохранить" title="сохранить" align="top" /></a>
+
+ <span id="user_in_buh_state"></span>
+
+<br />
+<span id="user_in_buh">%{$user_in_buh}%</span>
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#is_in_buh").bind("change",function(){
+	  if($("#is_in_buh").prop("checked")) state=1;
+	  else state=0;
+	  
+	  
+	  $.ajax({
+				async: true,
+				url: "/js/bill.php",
+				type: "POST",
+				data:{
+					"action":"redraw_is_in_buh_confirmer",
+					state: state
+				},
+				beforeSend: function(){
+				 $("#user_in_buh").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+				},
+				success: function(data){
+				// alert(data);
+				  $("#user_in_buh").html(data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления вопроса.");	
+				}	 
+			});
+			
+	});
+	
+	$("#is_in_buh_make").bind("click", function(){
+		
+		%{if !$can_is_in_buh}%
+		alert("Невозможно внести изменения. Причина: %{$cannot_is_in_buh_reason}%.");
+		
+		%{else}%
+		
+		if($("#is_in_buh").prop("checked")) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/bill.php",
+              type: "POST",
+              data:{
+                  "action":"is_in_buh_save",
+				   "id":"%{$id}%",
+				  state: state
+              },
+              beforeSend: function(){
+                  $("#user_in_buh_state").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+              },
+              success: function(data){
+               // alert(data);
+				 $("#user_in_buh_state").html(data);
+                
+              },
+              error: function(xhr, status){
+                 // alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		
+		%{/if}%
+		
+		return false;
+	});
+});
+</script>

@@ -1,0 +1,172 @@
+%{include file="delivery/navi.html" id=$id step=$step}%
+
+ 
+<script>
+$(function(){
+	$("#do_next").bind("click", function(){
+		$("#step_next").trigger("click");
+		 
+		location.href=$("#step_next").attr("href");
+		 
+	});
+	
+ 	$("a.gydex_delivery_action").bind("click", function(){
+		var can_go=true;
+		
+		
+		
+		%{if $can_edit}%
+		//обработка данных
+		
+		
+		if(can_go&&( ($("input[name=list_id]:checked").val()==0) ||($("input[name=list_id]:checked").val()==null) ||($("input[name=list_id]:checked").val()==undefined)  )){
+			can_go=can_go&&false;
+			alert("Выберите список подписчиков!");	
+		}
+		
+		//выбран выбор сегмента, но не выбран сегмент
+		if(can_go&& (
+			($("input[name=mode_"+$("input[name=list_id]:checked").val()+"]:checked").val()==2)&&
+			($("#segment_id_"+$("input[name=list_id]:checked").val()).val()==0)
+		)){
+			can_go=can_go&&false;
+			alert("Выберите сегмент списка!");	
+		}
+		
+		if(can_go&& (
+			($("input[name=mode_"+$("input[name=list_id]:checked").val()+"]:checked").val()==3)&&
+			($.trim($("#emails_mode_"+$("input[name=list_id]:checked").val()).val()).length==0)
+		)){
+			can_go=can_go&&false;
+			alert("Укажите хотя бы один адрес!");	
+		}
+		
+		if(can_go){
+			
+			
+			
+			$.ajax({
+			  async: false,
+			  url: "js/delivery_campaigns.php",
+			  type: "POST",
+			  data:{
+				  "action":"save_data",
+				  "id":$("#id").val(),
+				  "step":$("#step").val(),
+				  "list_id":$("input[name=list_id]:checked").val(),
+				  "segment_id":$("#segment_id_"+$("input[name=list_id]:checked").val()).val(),
+				  "emails": $("#emails_mode_"+$("input[name=list_id]:checked").val()).val(),
+				  "mode":$("input[name=mode_"+$("input[name=list_id]:checked").val()+"]:checked").val()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				
+				 //window.open('delivery_preview_template.php?id='+$("#id").val(),'template_view');
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			//alert('work');
+		}
+		%{/if}%
+		
+		
+		 
+		
+		return can_go;
+	});
+	
+	$("#crea_form").bind("submit", function(){
+		$("a#step_next").trigger("click");
+		return false;
+	});
+	
+	
+	
+	$("input[name=list_id]").bind("change", function(){
+		list_id=$(this).val();
+		$.each($("div[id^=blist_id_]"),function(k,v){
+			i=$(v).attr("id").replace(/^blist_id_/, '');
+			if(i==list_id) $(v).show(200); else $(v).hide(200);
+		});
+	});
+	
+	$("input[name^=mode_]").bind("change", function(){
+		list_id=$(this).attr("name").replace(/^mode_/,'');
+		mode=$(this).val();
+		
+		$("div[id^=options_"+list_id+"_]").hide(100);
+		$("#options_"+list_id+"_"+mode).show(200);
+		
+	});
+	
+	%{if $list_id}%
+	$("#list_id_%{$list_id}%").trigger("click");
+	%{/if}%
+});
+
+</script>  
+
+
+
+ 
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="step" id="step" value="%{$step}%">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+ 
+<h1>Выберите список подписчиков:</h1> 
+ 
+%{foreach from=$lists item=item}%
+<input type="radio" %{if !$can_edit}% disabled%{/if}%  name="list_id" id="list_id_%{$item.id}%" value="%{$item.id}%" %{if $data.list_id==$item.id}% checked%{/if}% /><label for="list_id_%{$item.id}%">%{$item.name}% (подписчиков: %{$item.s_q}%)</label><br>
+
+
+<div id="blist_id_%{$item.id}%"  style=" padding-left:30px; %{if $data.list_id!=$item.id}%display:none; %{/if}%">
+	<input type="radio" %{if !$can_edit}% disabled%{/if}% name="mode_%{$item.id}%" value="1" id="mode_%{$item.id}%_1" %{if $data.segment_id==0}% checked%{/if}% /><label for="mode_%{$item.id}%_1">Весь список</label><br>
+
+    <input type="radio" %{if !$can_edit}% disabled%{/if}% name="mode_%{$item.id}%" value="2" id="mode_%{$item.id}%_2" %{if $data.segment_id!=0}% checked%{/if}% /><label for="mode_%{$item.id}%_2">Выбранный сегмент</label><br>
+    <div id="options_%{$item.id}%_2" style=" padding-left:30px; %{if $data.segment_id==0}% display:none; %{/if}%">
+    <select %{if !$can_edit}% disabled%{/if}% id="segment_id_%{$item.id}%" style="width:120px;">
+    <option value="0" %{if $data.segment_id==0}% selected%{/if}%>-выберите-</option>
+    %{foreach from=$item.segments item=segment}%
+	    <option value="%{$segment.id}%" %{if $data.segment_id==$segment.id}% selected%{/if}% >%{$segment.name}% (%{$segment.s_q}%)</option>
+    %{/foreach}%
+    </select><br>
+    </div>
+    
+
+	<input type="radio" %{if !$can_edit}% disabled%{/if}% name="mode_%{$item.id}%" value="3" id="mode_%{$item.id}%_3"/><label for="mode_%{$item.id}%_3">Вставьте адреса электронной почты для создания нового сегмента</label><br>
+     <div id="options_%{$item.id}%_3" style="display:none; padding-left:30px; ">
+      <label for="emails_mode_%{$item.id}%">Адреса электронной почты (каждый с новой строки):</label>		
+      <br>
+	  <em>Адреса, которых нет в списке, не будут сохранены в новом сегменте.</em>	
+      <textarea cols="80" rows="5" id="emails_mode_%{$item.id}%"></textarea>
+      
+        
+     </div>  
+</div>
+
+ 
+%{/foreach}%
+	
+ <br>
+ 
+ 
+ 
+<input type="button" id="do_close" value="Отмена" onclick="location.href='%{$list_pagename}%';" />
+<br>
+<br>
+
+
+<input type="button" id="do_next" class="gydex_imp_button"  value="Далее" />
+
+
+
+</form>

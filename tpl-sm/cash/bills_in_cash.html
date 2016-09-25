@@ -1,0 +1,6 @@
+%{section loop=$bills name=bsec}%
+    
+   	№ <a href="ed_bill.php?action=1&id=%{$bills[bsec].id}%" target="_blank">%{$bills[bsec].code}% от %{$bills[bsec].pdate}%</a>%{if !$smarty.section.bsec.last}%,%{/if}%
+    
+    <input type="hidden" id="bill_%{$bills[bsec].id}%" name="bill_%{$bills[bsec].id}%" value="%{$bills[bsec].id}%" />
+    %{/section}%

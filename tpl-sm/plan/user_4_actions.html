@@ -1,0 +1,201 @@
+
+<div style="float:left; margin-right:10px;">
+<input type="button" %{if !$can_modify}% disabled %{/if}% id="add_user4" value="Добавить наблюдателя" />
+</div>
+
+<div id="user4"  style="float:left; margin-right:10px;">
+ 
+%{include file="plan/user4_on_page_set.html" pospos=$nablud}%
+ 
+</div>
+ 
+
+<br clear="all" />
+
+
+<div id="user4_dialog" title="Выберите пользователей" style="display:none;">
+
+
+<div id="user4_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	var dialog_width=1200;
+	var dialog_position='center';
+	
+	 
+	
+	$("#add_user4").bind("click",function(){
+		 
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			
+			
+			
+			var complex_positions=new Array(); var except_users=new Array();
+			
+			$.each($("#user4 table tbody tr td input[type=hidden][id^='new_user4_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				
+				
+				
+				hashed_string=$("#new_user4_id_"+hash).val();
+				 
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);			  
+			  
+			});
+			
+			$.each($("#user3 table tbody tr td input[type=hidden][id^='new_user3_hash_']"), function(key, value){
+				hash=$(value).val();				
+				hashed_string='';				
+				hashed_string=$("#new_user3_id_"+hash).val();
+				//alert(hashed_string);
+				except_users.push(hashed_string);			  
+			  
+			});
+			//except_users.push($("#user_1").val());
+			//except_users.push($("#user_2").val());
+			
+			
+			
+			
+			w=parseInt($(window).width());
+			if(w<1200){
+				 dialog_width=w-10;
+				 dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 
+			}else{
+				dialog_width=1200;
+				dialog_position='center';
+			}
+			
+			$("#user4_dialog").dialog( "option", "position", dialog_position );
+			$("#user4_dialog").dialog( "option", "width", dialog_width );
+			
+			
+			//alert(quantities.length);
+			$.ajax({
+			  async: true,
+			  url: "/js/sched.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_user4",
+				  "sched_id":"%{$bill.id}%",
+				  
+				  "complex_positions[]":complex_positions,
+				  "except_users[]":except_users
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#user4_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#user4_dialog_table").html(data); 
+				
+				  
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			 
+			$("#user4_dialog").dialog("open");
+		 
+	});
+	
+	
+	
+	$("#user4_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: dialog_width,
+		position: dialog_position,
+		height: 620,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				var complex_positions=new Array();
+				 
+				
+				
+				
+				if(can_put) {
+					
+					
+					//перенос данных в таблицу на странице
+					
+					
+					$.each($("#user4_dialog_table table tbody tr td input[type=hidden][id^='user4_hash_']"), function(key, value){
+						
+						
+						hash1=$(value).val();
+						
+						if($("#user4_is_in_"+hash1).prop("checked")){
+							
+						
+							hashed_string='';
+							hashed_string=$("#user4_id_"+hash1).val();
+							 
+							
+							//alert(hashed_string); 
+							complex_positions.push(hashed_string);			  
+						}
+					});
+					
+					
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/sched.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_user4",
+						  "shed_id":"%{$bill.id}%",
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#user4").html(data); 
+						
+						 
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					//alert('zs');
+					$(this).dialog("close"); 
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

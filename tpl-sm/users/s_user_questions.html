@@ -1,0 +1,17 @@
+%{section name=rowsec loop=$items}%
+
+%{if $smarty.section.rowsec.index is div by $qpp}%
+
+%{/if}%
+
+<div style="float:left;  min-width:220px; width:18%; max-width:400px; margin-right:20px;">
+<input type="checkbox" value="%{$items[rowsec].id}%" name="quest_%{$items[rowsec].id}%" %{if $items[rowsec].qu_id!=""}%checked="checked"%{/if}% %{if !$can_edit_questions}% disabled="disabled"%{/if}%  /> 
+<label for="quest_%{$items[rowsec].id}%">%{$items[rowsec].name}%</label>
+ </div>
+
+
+%{if $smarty.section.rowsec.index_next is div by $qpp or $smarty.section.rowsec.last}%
+
+%{/if}%
+
+%{/section}%

@@ -1,0 +1,85 @@
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" />
+<div id="dialog_%{$word}%" title="%{$named}%" style="display:none;">
+
+   
+    
+    <em>Примечание:</em><br>
+	<textarea cols="70" rows="15" id="%{$word}%_note"></textarea>
+    
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 450,
+    height: 350,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 
+		 $("#%{$word}%_note").attr("value","");
+		 
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					$.ajax({
+						async: true,
+						url: "/js/acc.php",
+						type: "POST",
+						data:{
+							"action":"add_%{$word}%",
+							"note": $("#%{$word}%_note").attr("value"),
+							"user_id":%{$user_id}%
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						   alert("%{$named}% добавлены!"); 
+						   $.ajax({
+							  async: true,
+							  url: "/js/acc.php",
+							  type: "POST",
+							  data:{
+								  "action":"redraw_%{$word}%",
+								  "user_id":%{$user_id}%
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								  $("#%{$word}%").html(data);
+								
+							  },
+							  error: function(xhr, status){
+								  
+							  }	 
+						  });
+						  
+						},
+						error: function(xhr, status){
+							alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+						
+					$(this).dialog("close");
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$("#dialog_%{$word}%").dialog("open");
+	});
+	
+});
+</script>

@@ -1,0 +1,18 @@
+<div id="file_%{$factname|replace:".":""}%">
+<input type="hidden" id="upload_file_%{$factname|replace:".":"_"}%" value="%{$realname}%" />
+
+<img src="/img/doc.gif" width="13" height="13" border="0" alt="" /><strong>%{$realname}%</strong>
+
+
+<a href="#" id="delete_%{$factname|replace:".":""}%" class="reestr_delete reestr_button16" data-comment="Удалить файл"></a>
+<script type="text/javascript">
+$(function(){
+    $("#delete_%{$factname|replace:".":""}%").bind("click",function(){
+        if(window.confirm("Вы действительно хотите удалить файл %{$realname}% из комментария?")){
+            $("#file_%{$factname|replace:".":""}%").remove();
+        }
+		return false;
+    });
+});
+</script>
+</div>

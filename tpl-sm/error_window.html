@@ -1,0 +1,51 @@
+ 
+
+
+<div id="error_window_dialog%{$prefix}%" title="Ошибка при сохранении формы" style="display:none;">
+    
+    <img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+    
+    <div style="float:left; width:400px; padding-top:5px; margin-bottom:10px;">
+    <strong>При сохранении формы были обнаружены следующие ошибки:</strong>
+    <p />
+    
+    
+     <div id="error_window_text%{$prefix}%" ></div>
+    </div>
+     
+    
+    
+     
+    
+   
+
+
+</div>
+
+ 
+
+<script type="text/javascript">
+ 
+	
+		$("#error_window_dialog%{$prefix}%").dialog({
+			autoOpen: false,
+			modal: true,
+			width: 500,
+			height: 300,
+			stack: true,
+			dialogClass: 'semi_auth',
+			buttons:{
+				"ОК":function(){
+					//
+					
+					 $("#error_window_dialog%{$prefix}%").dialog("close");
+					
+				}
+			}
+		});
+		
+		
+	
+ 
+</script>
+ 

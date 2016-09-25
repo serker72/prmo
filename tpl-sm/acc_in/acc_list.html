@@ -1,0 +1,402 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $has_header}%
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	 
+});
+</script>
+
+%{include file="annul_dialog.html" prefix=$prefix}%
+
+%{$pages}%
+
+
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+
+
+
+
+<label for="%{$prefix}%acc_statuses" class="statuses_label">Статусы:</label>
+<select id="%{$prefix}%acc_statuses" name="%{$prefix}%acc_statuses[]" multiple="multiple">
+ 
+<option value="4" %{if $status_id_4==1 or $all_statuses==1}% selected%{/if}% >Не выполнен</option>
+<option value="5" %{if $status_id_5==1 or $all_statuses==1}% selected%{/if}% >Выполнен</option>
+<option value="6"  %{if $status_id_6==1 or $all_statuses==1}% selected%{/if}%>Аннулирован</option>
+</select>
+
+<a href="#" id="acc_save_sort_mode%{$prefix}%"   class="statuses_save reestr_save reestr_button24" data-comment="Сохранить"></a>
+
+&nbsp;&nbsp;
+
+<div id="%{$prefix}%acc_statuses_caption" class="statuses_caption">
+
+</div>
+
+<br clear="all"/>
+
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		VidgetMulti('%{$prefix}%acc_statuses');	
+		
+		//сохранение набора
+		$("#acc_save_sort_mode%{$prefix}%").bind("click",function(){
+			 
+			
+			 $('#%{$prefix}%acc_statuses').multiselect("widget").find(":checkbox").each(function(){
+				 //alert(this.label);
+				 if(this.checked){
+					 $.cookie('acc_%{$prefix}%acc_status_id_'+this.value, 1, { expires: 14 });  
+				 }else{
+					$.removeCookie('acc_%{$prefix}%acc_status_id_'+this.value);
+				 }
+			  });
+						  
+			$("#doFilter%{$prefix}%").trigger("click");
+			
+			return false;	
+		});
+		 
+	
+	});
+
+	</script>
+
+
+
+<!--
+&nbsp;&nbsp;
+ 
+
+
+<label for="%{$prefix}%acc_status_id_5">Выполненные поступления</label><input type="checkbox" name="%{$prefix}%acc_status_id_5" id="%{$prefix}%acc_status_id_5" value="5" %{if $acc_status_id_5==1  or $all_statuses==1}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="%{$prefix}%acc_status_id_4"> Невыполненные поступления</label><input type="checkbox" name="%{$prefix}%acc_status_id_4" id="%{$prefix}%acc_status_id_4" value="4" %{if $acc_status_id_4==1 or $all_statuses==1}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="%{$prefix}%acc_status_id_6">Аннулированные поступления</label><input type="checkbox" name="%{$prefix}%acc_status_id_6" id="%{$prefix}%acc_status_id_6" value="6" %{if $acc_status_id_6==1 or $all_statuses==1}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="%{$prefix}%all_acc_status_id_0">Все поступления</label><input type="checkbox" name="%{$prefix}%all_acc_status_id_0" id="%{$prefix}%all_acc_status_id_0" value="0" %{if $all_acc_status_id_0==1 or $all_statuses==1}% checked="checked"%{/if}%  />
+
+
+<a href="#" id="acc_save_sort_mode%{$prefix}%"><img src="/img/icons/save.png" width="24" height="24" alt="Сохранить" align="absmiddle" title="Сохранить" border="0" /></a>
+
+
+    <script type="text/javascript">
+	$(function(){
+		
+			
+		//контроль взаимного состояния выделенных статусов
+		$("#%{$prefix}%all_acc_status_id_0").bind("change", function(){
+			$("input[id^=%{$prefix}%acc_status_id_]").prop("checked", $("#%{$prefix}%all_acc_status_id_0").prop("checked"));
+			
+		});
+		$("input[id^=%{$prefix}%acc_status_id_]").bind("change", function(){
+			var state=true;
+			$.each($("input[id^=%{$prefix}%acc_status_id_]"), function(k,v){
+				state=state&&$(v).prop("checked");
+			});
+			$("#%{$prefix}%all_acc_status_id_0").prop("checked", state);
+		});
+		
+		
+		
+		
+		//сохранение набора
+		$("#acc_save_sort_mode%{$prefix}%").bind("click",function(){
+			$("input[id^=%{$prefix}%acc_status_id_]").each(function(index, element) {
+              if($(element).prop("checked")) $.cookie('acc_'+$(element).attr("id"), 1, { expires: 14 });  
+			  else  $.removeCookie('acc_'+$(element).attr("id"));
+            });
+			
+			
+			return false;	
+		});
+		 
+		//если выделены все статусы - автоматически выделить ВСЕ статусы
+		$("input[id^=%{$prefix}%acc_status_id_]").trigger("change"); 
+		
+		 
+	
+	});
+	</script>
+-->
+<p />
+
+
+<input type="hidden" name="action" value="%{$action}%" />
+<input type="hidden" name="id" value="%{$id}%" />
+<input type="hidden" name="sh_i_id" value="%{$sh_i_id}%" />
+<input type="hidden" name="do_show_acc" value="1" />
+
+<input type="hidden" name="from%{$prefix}%" value="0" />
+<input type="hidden" name="to_page%{$prefix}%" value="%{$to_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	 <th scope="col" width="40">
+    Номер 
+   
+    </th>
+    
+     <th scope="col" width="60">
+    Дата 
+   
+    </th>
+    
+    
+     <th scope="col" width="40">
+    Заданный номер накладной
+   
+    </th>
+    
+    
+    	  <th scope="col" width="80">
+    Заданная дата с/ф 
+   
+    </th>
+   
+    <th scope="col" width="40">
+    Сумма
+   
+    </th>
+    
+      <th scope="col" width="70">
+    Склад
+    
+    </th>
+   
+    <th scope="col" width="70">
+    Поставщик
+    
+    </th>
+    
+    
+    
+    <th scope="col" width="100" >Статус 
+   
+    </th>
+    
+     <th scope="col" width="100" >Утверждение 
+   
+    </th>
+    
+     <th scope="col" width="100">Входящий счет 
+   
+    </th>
+    
+     <th scope="col" width="*">Примечания
+   
+    </th>
+    
+     <th scope="col" width="100" >Создал 
+   
+    </th>
+     <th scope="col" width="50">
+    Файлы
+   
+   
+    </th>
+   <th scope="col" width="24" >&nbsp;
+   <input name="doFilter%{$prefix}%" id="doFilter%{$prefix}%" type="submit" value="Найти" style="width:48px;" />
+   </th>
+   
+   <th scope="col" width="24" >&nbsp;
+   
+   </th>
+   
+   
+   
+</tr>
+
+
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+%{/if}%
+<td width="40" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}%>%{$items[rowsec].id}%&nbsp;</td>
+    
+    
+     <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    
+     <td width="40" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>%{$items[rowsec].given_no}%&nbsp;</td>
+    
+    <td width="80" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].given_pdate}%
+    </td>
+    
+      <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].total_cost}%&nbsp;руб.
+    </td>
+    
+     <td width="70" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].sector_name}%&nbsp;
+    </td>
+   
+   
+    <td width="70" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </a>
+    </td>
+    
+    <td width="100" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}% id="status_%{$items[rowsec].id}%">
+
+%{if $item.status_id==6}%
+     <strong>аннулировано</strong> 
+  
+%{elseif $item.status_id==4}%
+     <strong>не выполнено</strong> 
+  
+    %{else}%
+    <strong>выполнено</strong> 
+   
+%{/if}%
+   
+
+</td>
+   
+    
+    %{include file="acc_in/toggle_confirm.html" filename="acc_in.php" item=$items[rowsec] shorter=1  prefix=$prefix}%
+    
+    
+    <td width="100" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    Входящий счет № %{$items[rowsec].code}% от %{$items[rowsec].o_pdate}%&nbsp;
+    </td>
+    
+    
+     <td align="left" width="*" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>	
+    <a href="#" class="reestr_short">
+   <small> %{section  name=notesec loop=$items[rowsec].notes}%
+    %{if $smarty.section.notesec.first}%
+    
+    %{$items[rowsec].notes[notesec].pdate}%
+     %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note|strip_tags|trim|truncate:30:"":false}%
+    %{/if}%
+     %{/section}%</small>
+     %{if $smarty.section.notesec.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a> 
+   
+   <div class="reestr_full reestr_hide">
+   <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    </div>
+    </td>
+    
+     <td width="100" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}% 
+    </td>
+    
+    <td width="50" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    
+    <a href="acc_in_files.php?acc_id=%{$items[rowsec].id}%" target="_blank"><img src="/img/files.png" border="0" width="47" height="25" alt="файлы" title="файлы" /></a>
+    </td>
+    
+    <td width="24" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+ 
+    
+     <a href="ed_acc_in.php?action=1&id=%{$items[rowsec].id}%" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    
+    %{else}%
+   <a href="#" data-comment="Подробно..."  class="reestr_edit reestr_inactive reestr_right_button24" onClick="return false;"> </a>
+  
+    %{/if}%
+    
+    	
+%{if $items[rowsec].is_confirmed==1}%
+ %{if $can_print}%
+ 
+ 
+ 	
+    <a href="ed_acc_in.php?action=1&id=%{$items[rowsec].id}%&force_print=1" target="_blank" data-comment="печать поступления..." class="reestr_print reestr_right_button24"> </a> 
+    
+ %{else}%
+  
+ 
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати поступления.'); return false;"  data-comment="печать поступления..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+ %{/if}%
+ 
+ 
+ %{else}%
+ 
+  <a href="#" onclick="alert('В данном режиме печать поступления недоступна. Пожалуйста, утвердите поступление.'); return false;" class="reestr_print reestr_inactive reestr_right_button24"></a>
+ 
+ 
+ %{/if}%
+    
+     
+       
+    	
+%{if $items[rowsec].is_confirmed==1}%
+ %{if $can_xls}%
+ 
+ 
+ 	
+    <a href="ed_acc_in.php?action=1&id=%{$items[rowsec].id}%&force_print_xls=1" target="_blank" data-comment="Excel-версия поступления..." class="reestr_xls reestr_right_button24"> </a> 
+    
+ %{else}%
+ 
+ 
+  <a href="#" onclick="alert('У Вас недостаточно прав для получения Excel-версии поступления.'); return false;"  title="Excel-версия поступления..." class="reestr_xls reestr_inactive reestr_right_button24" data-comment="Excel-версия поступления..."></a>
+ %{/if}%
+ 
+ 
+ %{else}%
+ 
+  <a href="#" onclick="alert('В данном режиме Excel-версия поступления недоступна. Пожалуйста, утвердите поступление.'); return false;" class="reestr_xls reestr_inactive reestr_right_button24" data-comment="Excel-версия поступления..."></a>
+ 
+ %{/if}%
+    
+    
+    
+    
+    
+    
+    
+    </td>
+    
+    <td width="24" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+   %{include file="acc_in/toggle_annul.html" shorter=1 prefix=$prefix}%
+    </td>
+    
+   
+%{if $has_header}%
+</tr>
+%{/if}%
+%{/section}%
+
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>Поступлений не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%

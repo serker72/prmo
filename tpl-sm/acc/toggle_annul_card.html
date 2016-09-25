@@ -1,0 +1,110 @@
+%{if $acc.can_annul}%
+<a href="#" id="do_annul">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			
+			usl=true;
+			do_it=false;
+			note='';
+			while(usl){
+					res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
+					if(res==undefined) {
+						break;
+					}
+					if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
+						note=res;
+						usl=false;
+						do_it=true;						
+					}
+			}
+			
+			if(do_it&&window.confirm("Внимание! Вы действительно хотите аннулировать реализацию № %{$acc.id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/acc.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$acc.id}%",
+					  "shorter":0,
+					  "from_card":1,
+					  "note":note
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					 location.reload();
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+
+%{else}%
+
+	%{if $acc.can_restore}%
+    <a href="#" id="do_annul">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			
+			
+			if(window.confirm("Внимание! Вы действительно хотите восстановить реализацию № %{$acc.id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/acc.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$acc.id}%",
+					  "shorter":0,
+					  "from_card":1
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					 location.reload();
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+    %{else}%
+    
+     %{include file="annul_dialog.html"}%
+<a href="#" onclick="
+$('#annul_dialog_text').html('Невозможно аннулировать реализацию № %{$acc.id}%.<br /> Причина: %{$acc.can_annul_reason}%.');
+    $('#annul_dialog').dialog('open');
+	 return false;"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" align="right" align="right" /></a>
+	%{/if}%
+%{/if}%
+
+<strong>Статус:</strong><br />
+%{if $acc.status_id==4}%
+не выполнено
+%{elseif $acc.status_id==5}%
+выполнено
+%{elseif $acc.status_id==6}%
+аннулировано
+%{/if}%

@@ -1,0 +1,350 @@
+%{include file="delivery/navi.html" id=$id step=$step}%
+<script src="/js/jquery.cookie.js"></script> 
+<style>
+
+#view_window{
+	background-color:#f2f2f2;
+	display:none;
+}
+#view_window.shown{
+	display:block;
+	position:fixed;
+	left:0px; top:0px; 
+	width:100%; height:100%;
+	min-width:1000px; min-height:600px;
+	z-index:2000;
+	overflow:auto;
+}
+#view_underwindow{
+	display:none;
+}
+
+#view_underwindow.shown{
+	position:absolute;
+	background-color:rgba(0,0,0,0.5);
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	height: 3047px;
+	
+	overflow:hidden;
+	z-index:1000;	
+	display:block;
+}
+
+</style> 
+ 
+<script>
+$(function(){
+	$("#do_next").bind("click", function(){
+		$("#step_next").trigger("click");
+		 
+		location.href=$("#step_next").attr("href");
+		 
+	});
+	
+	$("#continue").bind("click", function(){
+		 
+		$("#do_next").trigger("click");
+		return false; 
+	});
+	
+	
+	
+	$("#save_text_as_template").click(function(){
+		var ntf='';
+		res=true;
+	 	
+		while(($.trim(ntf)).length==0){
+			ntf=window.prompt("Введите название шаблона", ntf);
+			if(ntf==null){
+				 res=false;
+				 break;
+			}
+		}
+		if(res){
+			$.ajax({
+			  async: true,
+			  url: "js/delivery_templates.php",
+			  type: "POST",
+			  data:{
+				  "action":"save_new_template",
+				  "name": ntf, 
+				  "html_content":CKEDITOR.instances.html_content.getData()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				alert("Шаблон "+ntf+" успешно сохранен.");
+				
+				
+			  },
+			  error: function(xhr, status){
+				 alert("Ошибка сохранения шаблона.");	
+			  }	 
+			});	
+		}
+	});
+	
+	$("#send_test_email").click(function(){
+		
+		
+		var ntf='';
+		
+		try{
+			ntf=$.cookie('test_email');
+		}catch(e){
+				
+		}
+		
+		res=true;
+	 	ntf=window.prompt("Введите тестовый адрес", ntf);
+		if(ntf==null) res=false;
+		
+		if(res) while(($.trim(ntf)).length==0){
+			ntf=window.prompt("Введите тестовый адрес", ntf);
+			if(ntf==null){
+				 res=false;
+				 break;
+			}
+		}
+		if(res){
+			
+			$.cookie('test_email', ntf, { expires: 7 });
+			$.ajax({
+			  async: true,
+			  url: "/js/delivery_test_send.php",
+			  type: "POST",
+			  data:{
+				  "action":"delivery_send_test_email",
+				  "id":$("#id").val(),
+				  "email":ntf,
+				  "html_content":CKEDITOR.instances.html_content.getData()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				alert("Рассылка отправлена на тестовый адрес.");
+				
+				
+			  },
+			  error: function(xhr, status){
+				 alert("Ошибка отправки на тестовый адрес.");	
+			  }	 
+			});	
+		}
+	});
+	  
+	$("#b_preview").click(function(){
+		
+	 	$.ajax({
+		  async: true,
+		  url: "js/delivery_campaigns.php",
+		  type: "POST",
+		  data:{
+			  "action":"save_data",
+			  "id":$("#id").val(),
+			  "step":$("#step").val(),
+			  "html_content":CKEDITOR.instances.html_content.getData()
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+			$("#view_underwindow").addClass("shown");
+		  },
+		  success: function(data){
+			
+			// window.open('delivery_preview_message.php?id='+$("#id").val(),'template_view');
+			$("#preview").attr("src","delivery_preview_message_if.php?id="+$("#id").val());
+			$("#view_window").addClass("shown");
+			
+			
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");
+			$("#view_underwindow").removeClass("shown");	
+		  }	 
+		}); 
+		
+		
+		 
+			
+		
+		 
+	});
+	
+	
+	
+	$("a.gydex_delivery_action").bind("click", function(){
+		var can_go=true;
+		
+		%{if $can_edit}%
+		//обработка данных
+		
+		
+	 
+		
+		if(can_go){
+			 
+			
+			$.ajax({
+			  async: false,
+			  url: "js/delivery_campaigns.php",
+			  type: "POST",
+			  data:{
+				  "action":"save_data",
+				  "id":$("#id").val(),
+				 
+				  "step":$("#step").val(),
+				  "html_content":CKEDITOR.instances.html_content.getData()
+				 
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				
+				 //window.open('delivery_preview_template.php?id='+$("#id").val(),'template_view');
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			//alert('work');
+		}
+		%{/if}%
+		
+		
+		
+		
+		return can_go;
+	});
+	
+	
+	$("#close").click(function(){
+		$("#view_window").removeClass("shown");
+		$("#view_underwindow").removeClass("shown");
+		
+		return false;
+				//window.close();
+			});
+			
+	
+});
+</script>  
+
+
+<div id="view_underwindow"></div>
+
+<div id="view_window">
+		
+        
+         <div class="gydex_delivery_navi">
+        	  <a id="continue" class="gydex_delivery_next gydex_delivery_action1" href="#">Продолжить ></a>
+            
+            
+        
+            <a id="close" class="gydex_delivery_link gydex_delivery_action1" style="float:right;" href="#">Закрыть</a> 
+        	 
+        	 
+       
+        </div>
+        
+         
+        <table width="100%" cellpadding="0" cellspacing="10" border="0"  >
+        <tr align="left" valign="top">
+        <td width="*">
+        	<strong>Ваше сообщение в браузере:</strong><br>
+        
+        
+            <iframe id="preview" style="text-align:left; background-color:white; min-width:630px; width:100%; min-height:550px; height:100%; overflow:auto; border:1px solid gray;" src="delivery_preview_message_if.php?id=%{$data.id}%"></iframe>
+            
+       
+        </td>
+        
+        
+      <!--  <td width="30%">
+        	<strong>Ваше сообщение в мобильном браузере*:</strong><br>
+		 
+            <iframe id="mobile" style="text-align:left; background-color:white; width:330px; height:480px; overflow:auto; border:1px solid gray;" src="delivery_preview_template_if.php?id=%{$data.template_id}%"></iframe>
+			<br>
+			<em>*приблизительно</em><br>
+			<a href="#" id="rotate">поворот</a>
+        
+        </td>
+        -->
+        
+        </tr>
+        </table>
+		
+		 
+
+</div>
+
+
+
+
+<h1>Текст рассылки</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="step" id="step" value="%{$step}%">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+ 
+<input type="hidden" name="template_id" id="template_id" value="%{$data.template_id}%" />
+  
+  
+
+<label for="html_content">Текст сообщения:</label>
+<input type="button" id="b_preview" value="Предварительный просмотр">
+
+
+<input type="button" id="save_text_as_template" value="Сохранить текст как новый шаблон">
+
+
+<input type="button" id="send_test_email" value="Отправить на тестовый адрес">
+
+<br>
+<textarea  id="html_content" name="html_content" cols="100" rows="20" %{if !$can_edit}% disabled="disabled"%{/if}%>%{$data.html_content}%</textarea>
+<br>
+
+ 
+                    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+                    <script type="text/javascript">
+	CKEDITOR.replace( 'html_content',
+					 
+					 {
+						customConfig : '/ckeditor4/config_delivery_template.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash'
+    				  }
+					 );
+	</script> 
+
+
+ 
+
+<br>
+<br>
+  
+
+
+<input type="button" id="do_close" value="Отмена" onclick="location.href='%{$list_pagename}%';" />
+
+<br>
+<br>
+
+
+<input type="button" id="do_next" class="gydex_imp_button"  value="Далее" />
+
+</form>

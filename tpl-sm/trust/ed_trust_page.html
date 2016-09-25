@@ -1,0 +1,33 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs(%{if $do_show_log}%{
+	selected:1}%{/if}%);
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Доверенность</a></li>
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

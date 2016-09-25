@@ -1,0 +1,19 @@
+	<div id="fast_reports1">
+%{foreach from=$fast_menu item=menu}%
+                    <a href="%{$menu.item.url}%"   class=" %{if $menu.item.is_pic==1}% pic %{/if}% %{if $menu.item.is_messenger}% messenger_link %{/if}% %{if $menu.item.is_active}%active%{/if}%" %{if $menu.item.is_pic==1}% style="background-image:url(%{$menu.item.pic}%);" data-comment="%{$menu.item.name|escape}%" %{/if}% >%{if $menu.item.is_pic==1}%%{else}%
+                    %{$menu.item.name}%
+                    %{/if}%</a>
+                    %{/foreach}%
+                    
+                    <div class="clear"></div>
+
+            		<div id="fast_reports_text">
+                    <h1>Уважаемые клиенты!</h1>
+
+<p> Вы можете настроить вкладку отчеты «под себя», т.е. вывести только ту информацию, которая нужна именно Вам. Также Вы можете настроить в программе <span class="gydex">CRM GYDEX</span> любой отчет. Для этого напишите заявку на нашу электронную почту <a href="mailto:support@gydex.ru">support@gydex.ru</a>, либо <a href="http://www.gydex.ru/faq/?do_feedback" target="_blank">воспользуйтесь онлайн-формой</a>.</p>
+
+<p>Напоминаем Вам, что заявки на доработки Вашей <span class="gydex">СRM GYDEX</span> принимаются только от архитектора системы (сотрудника, указанного ответственным за программный продукт в Лицензионном договоре).</p>
+<p class="gydex_works">GYDEX. Просто. Работает!</p>
+					</div>
+                    
+     </div>               

@@ -1,0 +1,43 @@
+ 
+%{foreach name=cf  from=$items.contacts item=adr}%
+%{if $smarty.foreach.cf.first}%
+<h2 style="margin-top:0px;">Контакты из карты контрагента:</h2>
+%{/if}%
+<p>
+<strong>%{$adr.name_s}% %{$adr.login}% %{$adr.position_s}%:</strong><br />
+
+
+
+%{foreach from=$adr.data item=email}%
+<input type="checkbox" value="%{$email.value|escape}%" id="email_files_address_0_%{$email.id}%_%{$adr.id}%">
+<label for="email_files_address_0_%{$email.id}%_%{$adr.id}%">%{$email.value}%</label>
+
+<!--email_files_address_0_%{$email.id}%_%{$adr.id}%-->
+<br />
+
+%{/foreach}%
+</p>
+
+%{/foreach}%
+
+%{foreach name=uf from=$items.users item=adr}%
+ 
+%{if $smarty.foreach.uf.first}%
+ <hr /><h2 style="margin-top:0px;">Сотрудники:</h2>  
+%{/if}%
+<p>
+<strong>%{$adr.name_s}% %{$adr.login}% %{$adr.position_s}%:</strong><br />
+
+
+
+%{foreach from=$adr.data item=email}%
+<input type="checkbox" value="%{$email.value|escape}%" id="email_files_address_1_%{$email.id}%_%{$adr.id}%">
+<label for="email_files_address_1_%{$email.id}%_%{$adr.id}%">%{$email.value}%</label>
+
+<!--email_files_address_1_%{$email.id}%_%{$adr.id}%-->
+<br />
+
+%{/foreach}%
+</p>
+
+%{/foreach}%

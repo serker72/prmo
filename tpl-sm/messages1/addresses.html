@@ -1,0 +1,15 @@
+%{section name=adrsec loop=$adr}%
+<option value="%{$adr[adrsec].id}%" > 
+%{if $sort_mode==1}%
+<!--%{$adr[adrsec].login|escape:"html"}% -->%{$adr[adrsec].name_s|escape:"html"}% 
+
+
+%{elseif $sort_mode==2}%
+  %{$adr[adrsec].name_s|escape:"html"}% <!-- %{$adr[adrsec].login|escape:"html"}% -->
+
+%{/if}%
+
+
+
+</option>
+%{/section}%

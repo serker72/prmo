@@ -1,0 +1,184 @@
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;">   
+
+
+<h1>Звонок</h1>
+
+ 
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+	<strong>Вид звонка:</strong>
+    <br>
+    
+    
+
+    %{if $bill.incoming_or_outcoming==1}%
+    <strong>Исходящий звонок</strong>
+    %{else}%
+    <strong>Входящий звонок</strong>
+    %{/if}%
+ 
+</div>
+
+ 
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+    
+   
+   <strong> Дата звонка: </strong>
+    <br />
+    
+     %{$bill.pdate_beg}% 
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+
+
+    
+    <strong> Время звонка: </strong> <br>
+
+ 	%{$ptime_beg_hr}%:%{$ptime_beg_mr}%
+    
+   
+     
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+ <strong>Сохранен как:</strong>
+ <br>
+
+    %{if $bill.plan_or_fact==1}% 
+    <strong>звонок совершенный</strong>
+    %{else}%
+    <strong>звонок запланированный</strong>
+    %{/if}% 
+   
+</div>
+
+
+ 
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+   
+   <strong> Дата создания: </strong>
+    <br />
+    
+    %{$bill.pdate}% 
+    
+</div>
+
+
+<div style="float:left;  margin-bottom:1.5em; margin-right:20px;">
+
+
+
+     
+  <strong> Сотрудник:</strong>
+   <br />
+    
+     %{$manager_string}%
+     
+
+</div> 
+
+
+
+
+<div style="float:left; margin-right:0px;  margin-bottom:1.5em;" id="toggle_annul">
+<strong>Статус:</strong><br>
+%{$bill.status_name}%
+
+</div>
+
+ 
+<br clear="all" />
+ 
+
+	
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контакт:</h3>
+</div> 
+ 
+ 
+<br clear="all" />
+<p /> 
+ 
+
+<div style="float:left; margin-right:20px;">
+ 
+ 
+ 
+  
+    
+   <strong> Контрагент:</strong> <br>
+   %{$bill.supplier_string}%
+   
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+    
+     <strong>Имя, должность: </strong><br>
+
+    %{$bill.contact_string}%
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+ 
+    <strong> Телефон:</strong><br>
+ %{$bill.contact_value_string}% 
+	
+    
+
+</div>
+
+ 
+
+ <br clear="all" />
+<p />
+   
+<div style="float:left; width:95%; min-width:480px;  margin-right:00px; ">
+
+<strong>Результат звонка:</strong><br>
+ 
+ %{$bill.report}%
+<br>
+ 
+</div>
+
+  
+
+ <br clear="all" />
+<p />
+
+
+ <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 
+
+ 
+ 
+
+ </body>
+ </html>

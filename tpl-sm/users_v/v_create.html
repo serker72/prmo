@@ -1,0 +1,336 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pasp_kogda").datepicker({changeYear:true, yearRange: '1900:2012'});
+	 $("#pasp_bithday").datepicker({changeYear:true, yearRange: '1900:2012'});
+	 
+	 
+	 $.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	 
+});
+</script>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+%{include file="every_help_dialog.html" filename="user_create.htm" prefix="" description="создание карты сотрудника"  style="float:right;  margin-right:10px;"}%
+
+
+<div style="float:left; margin-right:20px;">
+<label for="login">Логин:</label><br>
+<input type="text" size="5" maxlength="5" value="%{$login}%" disabled="disabled" />
+<input type="hidden" name="login" value="%{$login}%" />
+</div>
+
+
+%{if $can_block}%
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_active" id="is_active" value="1" />
+<label for="is_active">Карта пользователя активна</label><br>
+<p />
+</div>
+%{/if}%
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<label for="password">Пароль:</label><br>
+<input type="text" size="20" maxlength="255" name="password" id="password" /><br />
+<small><em>минимальная длина 6 символов; допустимые символы - латинские буквы и цифры</em></small>
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="name_s">Ф.И.О.:</label><br>
+<input type="text" size="40" maxlength="255" name="name_s" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="position_s">Должность:</label><br>
+<input type="text" size="40" maxlength="255" name="position_s" />
+</div>
+
+
+<br clear="all" />
+<p />
+ 
+
+
+
+<input type="hidden" name="group_id" id="group_id" value="2" />
+
+
+ 
+
+
+<br clear="all" />
+<p />
+
+<!--
+<strong>Время работы (МСК):</strong>
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_from_h_s">с:</label>
+<select name="time_from_h_s" style="width:60px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m_s" style="width:60px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_to_h_s">по:</label>
+<select name="time_to_h_s" style="width:60px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m_s" style="width:60px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+<br clear="all" />
+<p />
+
+-->
+ 
+
+<strong>Вопросы, которые курирует сотрудник:</strong><br>
+<div id="questions" style="/*border:1px solid silver; width:450px; height:200px; overflow:scroll;*/">
+%{include file="users/s_user_questions.html"}%
+</div>
+<br clear="all" />
+%{if $can_expand_questions}%
+<br>
+<input type="button" value="Добавить вопросы..." id="show_questions" />
+<div id="questions_dialog" title="Вопросы, которые курируют сотрудники">
+%{include file="users/allquestions.html"}%
+<script type="text/javascript">
+$(function(){
+	
+	
+});
+</script>
+
+</div>
+<script type="text/javascript">
+$(function(){
+  $("#questions_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#questions_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics_page"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				$("#questions").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_questions").bind("click",function(){
+	  $("#questions_dialog").dialog("open");
+  });
+  
+  function RedrawDic(){
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#questions_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_question").bind("click", function(){
+		if($("#new_question").attr("value").length<3){
+			$("#new_question").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"add_question",
+				"question":$("#new_question").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Ваш вопрос добавлен!"); 
+			   $("#new_question").attr("value","");
+			   RedrawDic();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+
+%{/if}%
+
+<p />
+
+ 
+
+<!--
+
+<h4>Паспортные данные:</h4>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_ser">Серия:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_ser" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_no">№:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_no" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_kogda">Дата выдачи:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_kogda" id="pasp_kogda" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_kogda">Дата рождения:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_bithday" id="pasp_bithday" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pasp_kem">Кем выдан:</label><br />
+<textarea cols="30" rows="5" name="pasp_kem" style="height:40px;"></textarea>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="pasp_reg">Адрес регистрации:</label><br />
+<textarea cols="60" rows="5" name="pasp_reg" style="height:40px;"></textarea>
+</div>
+
+<br clear="all" />
+<p />
+-->
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать пользователя" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать пользователя и редактировать права" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='users_s.php';
+}else location.href='users_s.php';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+		//проверка пароля - мин 6 символов, лат буквы+цифры
+		can_submit=true;
+		
+		if($("#password").attr("value").length<6) can_submit=can_submit&&false;
+		
+		reg1=new RegExp("[A-Za-z]+");
+		reg2=new RegExp("[0-9]+");
+		
+		if($("#password").attr("value").search(reg1)==-1) can_submit=can_submit&&false;
+		if($("#password").attr("value").search(reg2)==-1) can_submit=can_submit&&false;
+		
+		
+		if(!can_submit){
+			alert("Пароль должен быть 6 символов и длиннее и состоять только из латинских букв и цифр!");	
+			$("#password").focus();
+		}
+		
+		return can_submit;
+	});
+});
+</script>

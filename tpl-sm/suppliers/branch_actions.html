@@ -1,0 +1,567 @@
+<script type="text/javascript">
+
+	//подгрузка ветви иерархии
+	function load_branches(branch_id){	
+		branch_id=branch_id||0;
+		
+		
+		
+		 
+		
+		$.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"find_branches",
+				
+				 "branch_id":branch_id
+				
+			},
+			beforeSend: function(){
+			 
+				  $("#branchs_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+			  
+			},
+			success: function(data){
+			  
+			  
+			  		$("#branchs_found").html(data);
+			 
+			  
+			  
+			  
+			  
+			},
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	
+	//добавка ветви иерархии
+	function add_branch(branch_id){	
+		branch_id=branch_id||0;
+		
+		nm='';
+		do{
+			if(nm=window.prompt("Введите название отрасли/подотрасли",nm)){}else{ break; }
+		}while((nm.length==0)||(nm==null));
+		 
+		if((nm!=null)&&(nm.length!=0)) $.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"add_branch",
+				
+				"branch_id":branch_id,
+				"name":nm
+				
+			},
+			beforeSend: function(){
+			  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			},
+			success: function(data){
+				load_branches(branch_id);
+			  },
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+		
+		
+		
+	}
+	
+	//удаление ветви иерархии
+	function del_branch(branch_id, parent_id){	
+		 
+		if(window.confirm("Вы действительно хотите удалить отрасль?")){
+			$.ajax({
+				async: true,
+				url: "/js/supplier.php",
+				type: "POST",
+				data:{
+					"action":"del_branch",
+					
+					"branch_id":branch_id 
+					
+				},
+				beforeSend: function(){
+				  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+				},
+				success: function(data){
+					load_branches(parent_id);
+				  },
+				error: function(xhr, status){
+					alert("Ошибка загрузки данных.");	
+				}	 
+			});
+			
+		}
+	}
+	
+	//правка ветви иерархии
+	function edit_branch(branch_id, parent_id){	
+		
+		nm='';
+		do{
+			if(nm=window.prompt("Введите название отрасли/подотрасли",$("label[for=branch_radio_"+branch_id+"]").html())){}else{ break; }
+		}while((nm.length==0)||(nm==null));
+		 
+		if((nm!=null)&&(nm.length!=0)) $.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"edit_branch",
+				
+				"branch_id":branch_id,
+				"name":nm
+				
+			},
+			beforeSend: function(){
+			  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			},
+			success: function(data){
+				load_branches(parent_id);
+			  },
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	function rebuild(){
+	   
+	   
+	   
+	   
+	}
+ 
+	
+$(function(){	
+	
+	
+	
+	
+	
+	$("#branch_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 650 
+	 });
+	
+	$("#branch_select").bind("click",function(){
+		//$("#branch_radio_"+$("#branch_id").val()+"").prop("checked",true);
+		 load_branches(0);
+		 
+		$("#branch_name").val('');
+		$("#branch_name_id").empty();
+		$("#branch_name_parent_id").val(0);
+		
+		$("#branch_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   if(($("#branch_name_id").val()!=null)&&($("#branch_name_id").val()!=undefined)&&($("#branch_name_id").val()!=0)){
+					$("#branch_string").val($("#branch_name_id option:selected").html());
+					$("#branch_id").val($("#branch_name_id").val());
+							
+							 
+			   }else{
+			   
+				   if( ($("input[name=branch_radio]:checked").val()==0)||($("input[name=branch_radio]:checked").val()==null)||($("input[name=branch_radio]:checked").val()==undefined) ){
+						
+						alert("Выберите отрасль!");
+					   return false;  
+			 	}
+				   
+				   
+				   
+				   
+				  
+				 selected_branch=$("input[name=branch_radio]:checked").val()
+					   
+				  
+				  
+				 
+				 
+				  
+				  if($("#branch_id").val()!=selected_branch){
+					 
+					  $("#branch_clear").trigger("click");
+					  //подгружаем все данные по контрагенту
+					  if(selected_branch>0){
+						$.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "GET",
+						  dataType: "json",
+						  data:{
+							  "action":"retrieve_branch",
+							  "id":selected_branch
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							
+							//alert(data.contract_no);
+							$("#branch_string").val(data.name);
+							$("#branch_id").val(data.id);
+							
+							$("#branch_subbranch").val(data.branch_subbranch) 
+							 
+							$("#subbranch_string").val("");
+							$("#subbranch_id").val("");
+							
+							
+							 
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+					  }
+				  }
+			   } 
+			   
+			  $("#branch_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		
+		
+		$("#branch_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	
+	$("#subbranch_select").bind("click",function(){
+		if(($("#branch_id").val()=="")||($("#branch_id").val()==0)||($("#branch_id").val()==undefined)){
+			alert("Для выбора подотрасли необходимо сначала выбрать отрасль!");
+			
+			return false;
+		}	
+		
+		
+		
+		load_branches($("#branch_id").val()); 
+		$("#branch_name").val('');
+		$("#branch_name_id").empty();
+		$("#branch_name_parent_id").val($("#branch_id").val());
+		
+		$("#branch_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   if(($("#branch_name_id").val()!=null)&&($("#branch_name_id").val()!=undefined)&&($("#branch_name_id").val()!=0)){
+					$("#subbranch_string").val($("#branch_name_id option:selected").html());
+					$("#subbranch_id").val($("#branch_name_id").val());
+							
+							 
+			   }else{
+			   
+				   if( ($("input[name=branch_radio]:checked").val()==0)||($("input[name=branch_radio]:checked").val()==null)||($("input[name=branch_radio]:checked").val()==undefined) ){
+						
+						alert("Выберите отрасль!");
+					   return false;  
+			 	}
+				   
+				   
+				   
+				   
+				  
+				 selected_branch=$("input[name=branch_radio]:checked").val()
+					   
+				  
+				  
+				 
+				 
+				  
+				  if($("#subbranch_id").val()!=selected_branch){
+					 
+					  $("#subbranch_clear").trigger("click");
+					  //подгружаем все данные по контрагенту
+					  if(selected_branch>0){
+						$.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "GET",
+						  dataType: "json",
+						  data:{
+							  "action":"retrieve_branch",
+							  "id":selected_branch
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							
+							//alert(data.contract_no);
+							$("#subbranch_string").val(data.name);
+							$("#subbranch_id").val(data.id);
+							
+							 
+						 
+							
+							
+							 
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+					  }
+				  }
+			   } 
+			   
+			  $("#branch_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		
+		
+		$("#branch_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	
+	$("#subbranch_select1").bind("click",function(){
+		if(($("#branch_id").val()=="")||($("#branch_id").val()==0)||($("#branch_id").val()==undefined)){
+			alert("Для выбора подотрасли необходимо сначала выбрать отрасль!");
+			
+			return false;
+		}	
+		
+		
+		
+		load_branches($("#branch_id").val()); 
+		$("#branch_name").val('');
+		$("#branch_name_id").empty();
+		$("#branch_name_parent_id").val($("#branch_id").val());
+		
+		$("#branch_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   if(($("#branch_name_id").val()!=null)&&($("#branch_name_id").val()!=undefined)&&($("#branch_name_id").val()!=0)){
+					$("#subbranch_string1").val($("#branch_name_id option:selected").html());
+					$("#subbranch_id1").val($("#branch_name_id").val());
+							
+							 
+			   }else{
+			   
+				   if( ($("input[name=branch_radio]:checked").val()==0)||($("input[name=branch_radio]:checked").val()==null)||($("input[name=branch_radio]:checked").val()==undefined) ){
+						
+						alert("Выберите отрасль!");
+					   return false;  
+			 	}
+				   
+				   
+				   
+				   
+				  
+				 selected_branch=$("input[name=branch_radio]:checked").val()
+					   
+				  
+				  
+				 
+				 
+				  
+				  if($("#subbranch_id1").val()!=selected_branch){
+					 
+					  $("#subbranch_clear1").trigger("click");
+					  //подгружаем все данные по контрагенту
+					  if(selected_branch>0){
+						$.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "GET",
+						  dataType: "json",
+						  data:{
+							  "action":"retrieve_branch",
+							  "id":selected_branch
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							
+							//alert(data.contract_no);
+							$("#subbranch_string1").val(data.name);
+							$("#subbranch_id1").val(data.id);
+							
+							 
+						 
+							
+							
+							 
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+					  }
+				  }
+			   } 
+			   
+			  $("#branch_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		
+		
+		$("#branch_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	$("#branch_clear").bind("click",function(){
+		
+		//очистка выбранного п-ка
+		
+		
+		$("#branch_string").val("");
+		$("#branch_id").val("");
+		
+		
+		$("#subbranch_string").val("");
+		$("#subbranch_id").val("");
+		
+		
+	});
+	
+	
+	$("#subbranch_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+	
+		$("#subbranch_string").val("");
+		$("#subbranch_id").val("");
+		
+		
+	});
+	
+	
+	$("#subbranch_clear1").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+	
+		$("#subbranch_string1").val("");
+		$("#subbranch_id1").val("");
+		
+		
+	});
+	
+	
+	
+	 $( "#branch_name" ).autocomplete({
+	 source: function(request, response) {
+             
+		    $.ajax({
+                url: "/js/supplier_branch.php",
+                dataType: "json",
+                data: {
+                    term: request.term,
+					"branch_id":$("#branch_name_parent_id").val(), 
+                    foo: "foo22"
+                },
+                success: function(data) {
+                    response(data);
+                }
+            });
+	 },
+	 
+	  minLength: 1,
+	  select: function( event, ui ) {
+	
+		$("#branch_name_id").empty();
+		$("#branch_name_id").html('<option value="'+ui.item.id+'" selected="selected">'+ui.item.value +'</option>');
+		
+	  
+	  }
+	 });
+	
+	   
+	
+	 
+});
+</script>
+
+<div id="branch_dialog" title="Выберите отрасль" style="display:none;">
+	
+  <b>Выберите отрасль с помощью поиска по справочнику:</b>  <br><br>
+  <input type="hidden" id="branch_name_parent_id" value="" />
+
+    
+  <label for="branch_name">Введите фрагмент названия отрасли:</label><br />
+  <input type="text" value="" id="branch_name" size="40" maxlength="255" style="width:750px;" />
+    
+  
+    
+    <p />
+    
+    <label for="branch_name_id">Выберите отрасль:</label><br />
+  <select id="branch_name_id" style="width:750px;" size="5">
+    
+    </select>
+<br>
+<br>
+
+
+
+ 
+
+<b>Или укажите отрасль в списке:</b> <br>
+
+<div id="branchs" > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Наименование</th>
+        
+        <th scope="col" width="96"></th>
+    </tr>
+    	
+       
+        
+    
+    <tbody id="branchs_found">
+    
+    
+  
+    </tbody>
+    </table>
+	
+  
+    </div>
+  
+</div>
+ 

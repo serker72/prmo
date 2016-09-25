@@ -1,0 +1,14 @@
+	<span class="navi">
+            %{section name=itemsec loop=$items}%
+            %{if $last_is_link or ($last_is_link==false and $smarty.section.itemsec.last==false)}%
+            <a href="%{$items[itemsec].filepath}%">
+            %{/if}%
+            <img src="/img/icons/folder.png" width="22" height="16" border="0" /> %{$items[itemsec].itemname}%
+             %{if $last_is_link or ($last_is_link==false and $smarty.section.itemsec.last==false)}%
+            </a> 
+             %{/if}%
+            %{if $items[itemsec].has_symb}%%{$items[itemsec].symb}%%{/if}%
+            
+            %{/section}%
+            %{$aftertext}%
+        </span>

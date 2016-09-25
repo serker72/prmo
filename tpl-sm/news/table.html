@@ -1,0 +1,189 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+
+%{if $has_header}%
+ 
+
+%{include file="every_help_dialog.html" filename="news.html" prefix=$prefix description="Новости отрасли"  style="float:right;  margin-right:0px;" is_right=true}%
+
+ 
+
+
+%{*include file="annul_dialog.html" prefix=$prefix*}%
+
+%{*include file="error_window.html"   prefix=$prefix*}%
+
+
+ 
+
+<script type="text/javascript">
+   
+
+ 
+$(function(){
+	 
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	 $("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	
+	 
+	  
+	 
+});
+
+ 
+</script>
+
+
+
+%{if $can_edit}%
+<!-- ссылка на управление новостями в главной странице -->
+%{include file="index_news.html" can_add_stream=$can_edit}%
+%{/if}%
+
+ 
+
+%{$pages}%
+
+
+<br clear="all"  />
+
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+
+
+  
+ 
+
+
+ 
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+ 
+
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable oddtab">
+<thead>
+<tr align="center" valign="top">
+
+ 
+  
+     
+     <th scope="col" width="100">
+     Дата:
+  
+   
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+ 
+ 
+ 
+ 
+    
+     <th scope="col" width="*">
+  Новость
+    </th>
+    
+     
+    
+       <th scope="col" width="32">&nbsp;</th>
+   
+</tr>
+
+
+<tr align="center" valign="top" class="filter">
+ 
+   
+ 
+    <td width="100" >
+    
+   		
+     	 <nobr><label style="width:20px; display:inline-block;">с:</label><input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /></nobr><br />
+	<nobr><label style="width:20px;  display:inline-block;">по:</label><input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" /></nobr>
+   </td>
+   
+    
+    
+      <td width="*">
+       
+      </td>
+    
+     
+ 
+ 
+   
+    <td width="32"  >
+    <input name="doFilter%{$prefix}%" id="doFilter%{$prefix}%" type="submit" value="Найти" style="width:48px;" />
+    
+    </td>
+    
+</tr>
+</thead>
+<tbody>
+ %{/if}%
+%{section name=rowsec loop=$items}%
+ %{if $has_header or $force_has_rows}%
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+ %{/if}%
+
+       
+         <td width="100"  style="color:%{$items[rowsec].color}% !important;" ><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+  
+    
+    %{$items[rowsec].pdate}% 
+	
+    %{if $items[rowsec].is_new}%<br>
+	<img src="/img/new_m.gif" width="14" height="11" alt="" />
+    %{/if}%
+    
+    </td>
+     
+    
+     <td width="*" align="left"  style="text-align:left; color:%{$items[rowsec].color}% !important;">
+       
+    <div style="margin-top:2px; margin-bottom:15px;"><strong>%{$items[rowsec].title}%</strong></div>
+
+   <div style=" margin-bottom:5px;">
+	%{$items[rowsec].content}% 
+	</div>
+   
+    </td>
+    
+     
+    <td width="48" >
+   	<a class="gydex_edit_t"   href="newsview.php?id=%{$items[rowsec].id}%" target="_blank"></a> 
+            
+   
+    
+    </td>
+    
+     
+%{if $has_header or $force_has_rows}%  
+</tr>
+
+ %{/if}%
+%{/section}%
+ %{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям новостей не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%
+ 

@@ -1,0 +1,270 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+  
+ 
+%{section name=rowsec loop=$items}%
+ 
+%{if $smarty.section.rowsec.first  or (!$smarty.section.rowsec.first and $items[rowsec.index_prev].break)}%
+%{if $print==1 and !$smarty.section.rowsec.first}%
+<br>
+%{/if}%
+
+
+<table  cellpadding="1" cellspacing="0" class="blacktable"  %{if $print==1}% style="width:100%;" border="1"%{else}%  width="100%"%{/if}%>
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40">
+    Код
+      %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+    </th>
+    
+     
+    <th scope="col" width=" %{if $print==0}%*%{else}%80%{/if}%">
+  	Название
+     %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+  
+    </th>
+    
+     <th scope="col" width="40">
+    ОПФ
+     %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+  
+    </th>
+    
+    
+    <th scope="col" width="60">
+   Дата создания
+    %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+     
+    </th>
+    
+   
+      <th scope="col" width="*">
+   Ответственные сотрудники
+      %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+    </th>
+   
+    
+    <th scope="col" width="*">
+    Город(а)
+     %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+  
+    </th>
+    
+    
+     <th scope="col" width="*">
+    Отрасль/подотрасль
+     %{if $print==0}% 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div> 
+     %{/if}%
+  
+    </th>
+    
+   
+     %{if $has_extended}%
+    
+     <th scope="col" width="60">
+    ИНН
+    
+  
+    </th>
+    
+     <th scope="col" width="60">
+    КПП
+    
+  
+    </th>
+    
+   
+     <th scope="col" width="*">
+    Контакты
+     
+    </th>
+    %{/if}%
+    
+    
+     
+    
+ 
+    %{if $print==0}%
+    <th scope="col" width="24">&nbsp;</th>
+    %{/if}%
+     
+   
+</tr>
+
+ 
+</thead>
+<tbody> 
+ %{/if}% 
+ 
+ 
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%" style="page-break-inside:avoid;">
+ 
+	
+    <td width="40" %{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3}%class="item_inactive"%{/if}%>
+        %{if $can_edit and $print==0}%
+    <a href="ed_sched.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" title="Подробно...">
+    %{/if}%
+    %{$items[rowsec].code}%
+    %{if $can_edit  and $print==0}%
+    </a>
+    %{/if}%
+    
+    </td>
+    
+    <td width="%{if $print==0}%*%{else}%80%{/if}%" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+    %{$items[rowsec].full_name}%  
+    
+    </td>
+    
+    
+    
+    
+    <td width="40" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     
+      %{$items[rowsec].opf_name}%  
+     </td>
+    
+     <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%> 
+    
+    
+    
+    %{$items[rowsec].active_first_pdate}% 
+    
+    </td>
+    
+    
+      <td width="*" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    <small>
+     %{foreach from=$items[rowsec].resp_users item=item}%
+     %{$item.name_s}%<br>
+
+     %{/foreach}%
+     </small>
+    </td>
+    
+    
+    
+    <td width="*" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    <small>
+     %{foreach from=$items[rowsec].cities item=item}%
+     %{$item.name}%, %{$item.okrug_name}%, %{$item.region_name}%,  %{$item.country_name}%<br>
+
+     %{/foreach}%
+     </small>
+    </td>
+    
+    <td width="*" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{$items[rowsec].branch_name}% %{if $items[rowsec].subbranch_name!=""}%/%{/if}%
+       %{$items[rowsec].subbranch_name}%  
+    </td>
+    
+    
+     %{if $has_extended}%
+    <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{$items[rowsec].inn}%  
+    </td>
+    
+     <td width="60" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{$items[rowsec].kpp}%  
+    </td>
+    
+     <td width="*" align="left"  %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% style="page-break-inside:avoid;">
+     
+     %{foreach from=$items[rowsec].contacts item=item}%
+     <strong>%{$item.name}%, %{$item.position}%</strong><br>
+       %{foreach from=$item.data item=value}%
+        %{if $print==0}%<img src="%{$value.pc_icon}%" border="0" alt=" %{$value.pc_name}%" title="%{$value.pc_name}%" align="left" vspace="0" hspace="3" />%{/if}%%{$value.value}%
+       <br clear="all">
+
+       %{/foreach}%
+       <br>
+     %{/foreach}%
+     
+    </td>
+    
+    %{/if}%
+     
+    
+    
+     %{if $print==0}%
+    <td width="24" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+    <a href="supplier.php?action=1&id=%{$items[rowsec].id}%" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    
+   
+    
+    %{else}% 
+    <a href="#" onClick="return false;" data-comment="Подробно..." class="reestr_edit reestr_inactive reestr_right_button24"></a>
+    
+   
+    %{/if}%
+   
+    
+   
+    
+    </td>
+    %{/if}%
+    
+    
+     
+  
+</tr>
+
+%{if $smarty.section.rowsec.last or (!$smarty.section.rowsec.last and $items[rowsec].break)}%
+
+ </tbody>
+</table>
+ %{if $print==1 and !$smarty.section.rowsec.last}%
+<div style="page-break-after:always !important;"></div>
+%{/if}%
+
+%{/if}%
+ 
+%{/section}%
+ 
+ 
+<br>
+<strong>Всего клиентов: %{$smarty.section.rowsec.total}% за период с %{$pdate_1}% по %{$pdate_2}%.</strong><br>
+ 
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям контрагентов не найдено.</em><br />
+%{/if}%
+ 

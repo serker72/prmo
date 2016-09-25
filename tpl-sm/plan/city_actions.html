@@ -1,0 +1,507 @@
+
+<div id="supplier_cities" style="border:1px solid silver;  min-width:480px; width:100%; height:50px; overflow:auto;">
+%{include file="plan/cities_table.html" has_header=true}%
+
+
+</div>
+%{if $can_modify}% 
+<input type="button" id="supplier_cities_add" value="Добавить город..." />
+%{/if}%
+
+
+<br clear="all" />
+<p />
+
+
+<div id="supplier_cities_dialog" title="Выберите город">
+	<label for="supplier_cities_country_id">Выберите страну:</label><br />
+  <select id="supplier_cities_country_id" style="width:260px;">
+    <option value="0">-выберите-</option>
+    %{section name=cousec loop=$cous}%
+    <option value="%{$cous[cousec].id}%">%{$cous[cousec].name|escape}%</option>
+    %{/section}%
+    </select>
+    
+   
+     <p />
+    
+    
+    
+    <label for="supplier_cities_district_id">Выберите федеральный округ:</label><br />
+  <select id="supplier_cities_district_id" style="width:260px;">
+    <option value="0">-выберите-</option>
+    %{section name=dissec loop=$dis}%
+    <option value="%{$dis[dissec].id}%">%{$dis[dissec].name|escape}%</option>
+    %{/section}%
+    </select>
+    
+    
+  <input type="button" value="..." id="supplier_cities_viewdistrict"  %{if !$can_expand_cities}% disabled="disabled"%{/if}%  />
+     <p />
+    
+    
+     <label for="supplier_cities_region_id">Выберите регион:</label><br />
+  <select id="supplier_cities_region_id" style="width:260px;">
+    %{section name=regsec loop=$reg}%
+    <option value="%{$reg[regsec].id}%">%{$reg[regsec].name|escape}%</option>
+    %{/section}%
+    </select>
+    
+  <input type="button" value="..." id="supplier_cities_viewregion"  %{if !$can_expand_cities}% disabled="disabled"%{/if}%   />
+     <p />
+    
+    
+    <label for="supplier_cities_name">Введите фрагмент названия города:</label><br />
+  <input type="text" value="" id="supplier_cities_name" size="40" maxlength="255" style="width:500px;" />
+    
+  <input type="button" value="..." id="supplier_cities_viewcity"  %{if !$can_expand_cities}% disabled="disabled"%{/if}%   />
+    
+    <p />
+    
+    <label for="supplier_cities_id">Выберите город:</label><br />
+  <select id="supplier_cities_id" style="width:550px; height:200px;" size="15">
+    
+    </select>
+    
+    
+</div>
+
+
+<div id="supplier_cities_edit_dialog" title="Редактировать справочник городов">
+	<div id="sce_1">
+    	<strong>Федеральные округа:</strong>
+    </div>
+    <div id="sce_2">
+    	<strong><span id="sce_21"></span>, регионы:</strong>
+    </div>
+    <div id="sce_3">
+    	<strong><span id="sce_31"></span>, города:</strong>
+    </div>
+    <div id="sce_items">
+    
+    </div>
+    
+</div>
+
+
+<script type="text/javascript">
+
+ 
+
+function RedrawOkrug(){
+	
+	$("#supplier_cities_id").empty();
+	$("#supplier_cities_region_id").val('0');
+	$("#supplier_cities_district_id").empty();
+	$("#supplier_cities_name").val('');
+	
+	$.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"load_okrug_opt",
+				"country_id":$("#supplier_cities_country_id").val()
+			},
+			beforeSend: function(){
+				//$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+			},
+			success: function(data){
+			   $("#supplier_cities_district_id").html(data);
+			    RedrawRegion();
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления %{$named}%.");	
+			}	 
+		});
+}
+
+function RedrawRegion(){
+	$("#supplier_cities_id").empty();
+	$("#supplier_cities_region_id").empty();
+	$("#supplier_cities_name").val('');
+	
+	$.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"load_region_opt",
+				"district_id":$("#supplier_cities_district_id").val(),
+					"country_id":$("#supplier_cities_country_id").val()
+			},
+			beforeSend: function(){
+				//$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+			},
+			success: function(data){
+			   
+			   $("#supplier_cities_region_id").html(data);
+				 RedrawCities();			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления %{$named}%.");	
+			}	 
+		});
+	
+}
+function RedrawCities(){
+	$("#supplier_cities_id").empty();
+	
+	$("#supplier_cities_name").val('');
+	
+	$.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"load_city_opt",
+				"district_id":$("#supplier_cities_district_id").val(),
+				"region_id":$("#supplier_cities_region_id").val(),
+					"country_id":$("#supplier_cities_country_id").val()
+			},
+			beforeSend: function(){
+				//$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+			},
+			success: function(data){
+			   
+			   $("#supplier_cities_id").html(data);
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления %{$named}%.");	
+			}	 
+		});
+}
+
+function RedrawSupplierCities(){
+	$.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"load_supplier_cities",
+				
+				"supplier_id":"%{$user.id}%"
+			},
+			beforeSend: function(){
+				$("#supplier_cities").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+			},
+			success: function(data){
+			   
+			   $("#supplier_cities").html(data);
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления %{$named}%.");	
+			}	 
+		});
+	
+}
+
+$(function(){
+	//автоподсказка по названию города:
+		
+	 $( "#supplier_cities_name" ).autocomplete({
+	 source: function(request, response) {
+             district_id= $("#supplier_cities_district_id").val();
+			 region_id= $("#supplier_cities_region_id").val();
+			 country_id= $("#supplier_cities_country_id").val();
+			 
+		    $.ajax({
+                url: "/js/supplier_city.php",
+                dataType: "json",
+                data: {
+                    term: request.term,
+                    district_id: district_id, 
+                    region_id:  region_id,
+					country_id: country_id,
+                    foo: "foo22"
+                },
+                success: function(data) {
+                    response(data);
+                }
+            });
+	 },
+	 
+	  minLength: 2,
+	  select: function( event, ui ) {
+	
+		$("#supplier_cities_id").empty();
+		$("#supplier_cities_id").html('<option value="'+ui.item.id+'" selected="selected">'+ui.item.label +'</option>');
+		
+	  
+	  }
+	 });
+	
+	
+	
+	
+	$("#supplier_cities_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 600,
+    height: 550,
+	dialogClass: 'semi_auth',
+    buttons: {
+      "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#supplier_cities_edit_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 500,
+    height: 400,
+    buttons: {
+      "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#supplier_cities_country_id").bind("change", function(){
+		RedrawOkrug();
+		
+	});
+	
+	$("#supplier_cities_district_id").bind("change", function(){
+		RedrawRegion();
+	});
+	
+	$("#supplier_cities_region_id").bind("change", function(){
+		RedrawCities();
+	});
+	
+	$("#supplier_cities_add").bind("click", function(){
+		
+		$("#supplier_cities_id").empty();
+		$("#supplier_cities_region_id").val('0');
+		$("#supplier_cities_district_id").val('0');
+		$("#supplier_cities_name").val('');
+		
+		
+		$("#supplier_cities_dialog").dialog({
+			buttons: {
+			"Добавить город": function() { 
+			    
+				//alert($("#supplier_cities_id").val());
+				
+				if(($("#supplier_cities_id").val()==null)||(parseInt($("#supplier_cities_id").val())==0)){
+					alert("Вы не выбрали город! Для добавления города в карту командировки выберите округ, регион и город из списка городов.");
+					$("#supplier_cities_name").focus();
+				}else {
+					//код вставки города
+					
+					//if many - добавить к имеющимся
+					//else - удалить имеющиеся, добавить этот
+					%{if !$many}%
+					$("tr[id^=city_row_]").remove();
+					%{/if}%
+					
+					$.ajax({
+						async: true,
+						url: "/js/sched.php",
+						type: "POST",
+						data:{
+							"action":"add_city_to_supplier",
+							"city_id":$("#supplier_cities_id").val() 
+							 
+						},
+						beforeSend: function(){
+							 
+						},
+						success: function(data){
+						  
+						  $("#supplier_cities_tbody").append(data);
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+					
+					
+					$(this).dialog("close"); 
+				}
+			  }
+			,
+			"Отмена": function() { 
+				  
+			  $(this).dialog("close"); }
+			}
+		  
+		});
+		
+		$("#supplier_cities_dialog").dialog('open');
+		
+		
+	});
+	
+	$("#supplier_cities_viewdistrict").bind("click", function(){
+		if(parseInt($("#supplier_cities_country_id").val())>0){
+		
+		
+			//правка списка округов
+			$("#sce_2").hide();
+			$("#sce_3").hide();
+			$("#sce_1").show();
+			
+			$("#sce_items").empty();
+			//подгрузим редактируемый список округов
+			$.ajax({
+				async: true,
+				url: "/js/supplier.php",
+				type: "POST",
+				data:{
+					"action":"load_okrug",
+					"country_id":$("#supplier_cities_country_id").val()
+				},
+				beforeSend: function(){
+					$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+				},
+				success: function(data){
+					//alert(data);
+				   $("#sce_items").html(data);
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления %{$named}%.");	
+				}	 
+			});
+			
+			
+			$("#supplier_cities_edit_dialog").dialog({
+	   
+			  buttons: {
+				"Готово": function() { 
+				  //по кнопке готово перерисовать все поля
+				  RedrawOkrug();	  
+				  $(this).dialog("close"); }
+				}
+			
+			});
+			
+			
+			$("#supplier_cities_edit_dialog").dialog('open');
+		}else{
+			 alert("Выберите страну!");
+			 $("#supplier_cities_country_id").focus();
+		}	
+	});
+	
+	
+	$("#supplier_cities_viewregion").bind("click", function(){
+		if(parseInt($("#supplier_cities_country_id").val())>0){
+			
+			$("#sce_21").text($("#supplier_cities_district_id option:selected").text());
+			//правка списка регионов
+			$("#sce_2").show();
+			$("#sce_3").hide();
+			$("#sce_1").hide();
+			
+			$("#sce_items").empty();
+			//подгрузим редактируемый список регионов
+			$.ajax({
+				async: true,
+				url: "/js/supplier.php",
+				type: "POST",
+				data:{
+					"action":"load_region",
+					"district_id":$("#supplier_cities_district_id").val(),
+					"country_id":$("#supplier_cities_country_id").val()
+				},
+				beforeSend: function(){
+					$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+				},
+				success: function(data){
+				   $("#sce_items").html(data);
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления %{$named}%.");	
+				}	 
+			});
+			
+			
+			$("#supplier_cities_edit_dialog").dialog({
+	   
+			  buttons: {
+				"Готово": function() { 
+				  //по кнопке готово перерисовать все поля
+				  RedrawRegion();	  
+				  $(this).dialog("close"); }
+				}
+			
+			});
+			
+			
+			$("#supplier_cities_edit_dialog").dialog('open');
+		}else{
+			 alert("Выберите страну!");
+			 $("#supplier_cities_country_id").focus();
+		}
+	});
+	
+	
+	$("#supplier_cities_viewcity").bind("click", function(){
+		if(parseInt($("#supplier_cities_country_id").val())>0){
+			
+			$("#sce_31").text($("#supplier_cities_district_id option:selected").text()+", "+$("#supplier_cities_region_id option:selected").text());
+			//правка списка регионов
+			$("#sce_3").show();
+			$("#sce_2").hide();
+			$("#sce_1").hide();
+			
+			$("#sce_items").empty();
+			//подгрузим редактируемый список регионов
+			$.ajax({
+				async: true,
+				url: "/js/supplier.php",
+				type: "POST",
+				data:{
+					"action":"load_city",
+					"district_id":$("#supplier_cities_district_id").val(),
+					"region_id":$("#supplier_cities_region_id").val(),
+					"country_id":$("#supplier_cities_country_id").val()
+				},
+				beforeSend: function(){
+					$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+				},
+				success: function(data){
+				   $("#sce_items").html(data);
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления %{$named}%.");	
+				}	 
+			});
+			
+			
+			$("#supplier_cities_edit_dialog").dialog({
+	   
+			  buttons: {
+				"Готово": function() { 
+				  //по кнопке готово перерисовать все поля
+				  RedrawCities();	  
+				  $(this).dialog("close"); }
+				}
+			
+			});
+			
+			
+			$("#supplier_cities_edit_dialog").dialog('open');
+		}else{
+			  alert("Выберите страну!");
+			 $("#supplier_cities_country_id").focus();
+		}
+	});
+	
+});
+</script>
+
+
+
+
+
+
+

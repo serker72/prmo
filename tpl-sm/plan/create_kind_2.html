@@ -1,0 +1,574 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	$("#pdate_beg").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_end").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 
+	
+	$("#pdate_beg").bind("change", ChangeMode);
+	$("#pdate_end").bind("change", ChangeMode);
+	
+	$("#ptime_beg_h").bind("change", ChangeMode);
+	$("#ptime_beg_m").bind("change", ChangeMode);
+	
+	$("#ptime_end_h").bind("change", ChangeMode);
+	$("#ptime_end_m").bind("change", ChangeMode);
+	
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	function ChangeMode(){
+		ev_date=new Date( $("#pdate_end").val().substr(6,4), $("#pdate_end").val().substr(3,2)-1, $("#pdate_end").val().substr(0,2), $("#ptime_end_h").val(), $("#ptime_end_m").val(),0,0);
+		now=new Date();
+		
+		
+		//alert(ev_date); 
+		//если время настоящее или прошлое - то совершенный
+		//если будущее - то запланированный
+		
+		if(ev_date>now){
+			$("#plan_or_fact").val(0);
+			$("#plan_or_fact_0").prop("checked",true);
+			
+			 
+			$("#report").prop("disabled",true);
+			
+			$("input[id^=supplier_not_meet_]").prop("disabled", true);
+			
+			
+			$("textarea[id^=supplier_result_]").each(function(index, element) {
+               
+				id=$(element).attr("id");
+				
+				try{
+					CKEDITOR.instances[id].setReadOnly(true);
+				}catch(e){
+					$(element).prop("disabled", true);	
+				}
+            });
+			
+		}else{
+			$("#plan_or_fact").val(1);
+			$("#plan_or_fact_1").prop("checked",true);
+			
+			$("#remind_do").prop("checked",false);
+			$("#remind_period").val(0);
+			$("#report").prop("disabled",false);
+			
+			
+			
+			$("input[id^=supplier_not_meet_]").prop("disabled", false);
+			
+			//CKEDITOR.instances['TEXTAREA_NAME'].setReadOnly(true);
+			$("textarea[id^=supplier_result_]").each(function(index, element) {
+                id=$(element).attr("id");
+				
+				try{
+					CKEDITOR.instances[id].setReadOnly(false);
+				}catch(e){
+					$(element).prop("disabled", false);	
+				}
+            });
+			
+		}
+		
+		$("#remind_do").prop("disabled",false);
+		$("#remind_period").prop("disabled",false);
+			
+		 
+		
+	}
+	 
+	
+});
+</script>
+<style>
+	.blue{
+		border:2px solid #4346CD;	
+	}
+</style>
+
+ %{include file="every_help_dialog.html" filename="sched_2.html" prefix="" description="Информация о создании командировки" style="float:right" is_right=true}%
+
+
+
+<h1>Запланировать командировку</h1>
+
+<form action="ed_sched.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+<input type="hidden" name="kind_id" value="2">
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+    
+   
+<label for="pdate_beg">
+    Дата начала: 
+    </label> <br>
+
+    
+    <input type="text" value="%{$now}%" id="pdate_beg" name="pdate_beg"  size="10"   maxlength="10" />
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="ptime_beg">Время начала:</label> <br>
+
+    
+     <select name="ptime_beg_h" id="ptime_beg_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$ptime_beg_hr output=$ptime_beg_h}%
+    </select>: 
+    <select name="ptime_beg_m" id="ptime_beg_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$ptime_beg_mr output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+    
+   
+<label for="pdate_end">
+    Дата окончания: 
+    </label> <br>
+
+    
+    <input type="text" value="%{$pdate_end}%" id="pdate_end" name="pdate_end"  size="10"   maxlength="10" />
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="ptime_end">Время окончания:</label> <br>
+
+  
+     <select name="ptime_end_h" id="ptime_end_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$ptime_end_hr output=$ptime_beg_h}%
+    </select>: 
+    <select name="ptime_end_m" id="ptime_end_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$ptime_end_mr output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+ <strong>Вы заносите:</strong>
+
+ 	<input type="hidden" value="%{$plan_or_fact}%" name="plan_or_fact" id="plan_or_fact" /><br>
+	
+    <input disabled type="radio" value="1" id="plan_or_fact_1"  %{if $plan_or_fact==1}% checked%{/if}%   name="plan_or_factt" />
+    <label for="plan_or_fact_1">командировку совершенную</label>
+    <br>
+    
+    
+    <input disabled type="radio" value="0" id="plan_or_fact_0" %{if $plan_or_fact==0}% checked%{/if}% name="plan_or_factt" />
+    <label for="plan_or_fact_0">командировку запланированную</label>
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+
+
+    <label for="pdate">
+    Дата создания: 
+    </label><br />
+    
+    %{$now_time}%
+    <input type="hidden" value="%{$now_date}%" name="pdate" />
+
+</div>
+
+
+
+  
+  
+
+<div style="float:right; margin-right:0px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить.." style="float:right;">
+</a>
+
+<strong>Статус:</strong><br />
+
+создан
+
+
+</div>
+
+<div style="float:right;  margin-right:0px;  ">
+	<a href="#" onclick="alert('В данном режиме копирование командировки недоступно. Пожалуйста, нажмите кнопку Создать командировку и остаться в карте для получения возможности копирования командировки.'); return false;" class="reestr_copy reestr_inactive reestr_right_button24" data-comment="Копировать..."></a>
+
+
+  <a href="#"   onclick="alert('В данном режиме печать командировки недоступна. Пожалуйста, нажмите кнопку Создать командировку и остаться в карте для получения возможности печати командировки.'); return false;" class="reestr_right_button24 reestr_print reestr_inactive"  data-comment="печать командировки..." ></a>
+</div>  
+
+
+<br clear="all" />
+
+
+
+<div style="float:left; margin-right:20px;">
+
+	<label for="manager_select">Сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+   
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  
+
+	
+	<input type="button" id="manager_select" value="..." />
+    <input type="button" id="manager_clear" value="x" />
+	
+    %{include file="plan/manager_actions.html"}%
+    
+</div> 
+<br clear="all" />
+<p />
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">  
+
+   
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Город(а) командировки:</h3>
+    </div>
+     
+    <br clear="all" />
+    <p />
+    
+    
+     
+     
+    %{include file="plan/city_actions.html" many=true can_modify=true}%
+
+
+ 
+</div>
+
+ <br clear="all" />
+<p />
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+   
+
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент(ы) командировки:</h3>
+    </div>
+     
+    <br clear="all" />
+    <p />
+    
+    
+    %{include file="plan/supplier_many_actions.html" many=true can_modify=true}%
+    
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+
+<!--
+<div style="float:left; width:100%; min-width:520px;  margin-right:00px; ">
+
+<label for="report">Результат командировки:</label><br>
+<textarea id="report" name="report" cols="60" rows="5" %{if $plan_or_fact==0}% disabled%{/if}% style="width:940px;">%{$old_doc.report|escape:"html"}%</textarea>
+
+<script type="text/javascript">
+
+	try{
+			$("#report").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%'
+            });
+		
+	}catch(e){}
+	 
+	</script>
+
+</div>
+ 
+
+<br clear="all" />
+<p />
+-->
+
+ 
+<h3>Напомнить мне:</h3>
+ 
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" id="remind_do" name="remind_do" value="1"  %{if $plan_or_fact==0}% checked%{/if}% /><label for="remind_do">напомнить мне</label><br>
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<select name="remind_period" id="remind_period" style="width:200px;">
+<option value="0" selected>-выберите период-</option>
+<option value="1">за 15 минут</option>
+<option value="2">за 30 минут</option>
+<option value="3">за час</option>
+<option value="4">за сутки</option>
+<option value="5">за 3 суток</option>
+<option value="6">за неделю</option>
+<option value="7">за 2 недели</option>
+<option value="8">за месяц</option>
+</select>
+</div>
+
+<br clear="all" />
+<p />
+
+ 
+ 
+ 
+
+
+
+<input type="submit" value="Создать командировку" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать командировку и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='shedule.php';" />
+<br>
+
+<p />
+
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	 
+ 	function doBlink(v){
+		
+		var blr=window.setInterval( function(){
+			$(v).toggleClass("blue");	
+		}, 100);
+		
+		window.setTimeout( function(){
+			window.clearInterval(blr);
+			$(v).removeClass("blue");
+		}, 3000);
+	}
+ 
+	
+	//контроль дат и времен
+	begin_date=new Date( $("#pdate_beg").val().substr(6,4), $("#pdate_beg").val().substr(3,2)-1, $("#pdate_beg").val().substr(0,2), $("#ptime_beg_h").val(), $("#ptime_beg_m").val(),0,0);
+	end_date=new Date( $("#pdate_end").val().substr(6,4), $("#pdate_end").val().substr(3,2)-1, $("#pdate_end").val().substr(0,2), $("#ptime_end_h").val(), $("#ptime_end_m").val(),0,0);
+    
+	if(begin_date>=end_date){
+		sfm_show_error_msg('Дата и время начала командировки должны быть раньше, чем дата и время окончания командировки!');
+		return false;
+	}
+	
+	
+	//контроль времени напоминания относительно начала встречи	
+	if($("#remind_do").prop("checked")){
+		now=new Date();	
+		//дата срабатывания напоминания - это дата начала - определенный интервал времени
+		remind_date=new Date( $("#pdate_beg").val().substr(6,4), $("#pdate_beg").val().substr(3,2)-1, $("#pdate_beg").val().substr(0,2), $("#ptime_beg_h").val(), $("#ptime_beg_m").val(),0,0);
+		 
+		if($("#remind_period").val()==0){
+			alert("Выберите период напоминания!");
+			return false;
+		}else if($("#remind_period").val()==1){
+			remind_date.setMinutes(remind_date.getMinutes()-15);
+			//alert(remind_date); 
+		}else if($("#remind_period").val()==2){
+			remind_date.setMinutes(remind_date.getMinutes()-30);
+		}else if($("#remind_period").val()==3){
+			remind_date.setHours(remind_date.getHours()-1);
+			//alert(remind_date); 
+			 //.setMinutes(remind_date.getMinutes()+30); 
+		}else if($("#remind_period").val()==4){
+			remind_date.setDate(remind_date.getDate()-1); 
+		}else if($("#remind_period").val()==5){
+			 remind_date.setDate(remind_date.getDate()-3); 
+		}else if($("#remind_period").val()==6){
+			 remind_date.setDate(remind_date.getDate()-7); 
+		}else if($("#remind_period").val()==7){
+			  remind_date.setDate(remind_date.getDate()-14); 
+		}else if($("#remind_period").val()==8){
+			remind_date.setMonth(remind_date.getMonth()-1); 
+		}
+		
+		//alert(remind_date+" vs "+begin_date);
+		 
+		if(remind_date<now){
+			alert("Невозможно установить выбранный период напоминания "+$("#remind_period option:selected").text()+", т.к. дата и время напоминания о событии попадают в прошлое. Выберите другой интервал напоминания, либо отключите напоминание.");
+			return false;
+		}
+		 
+		 
+	}
+	 
+	
+	//если мы создаем фактический звонок - то требовать запонение поля Результат звонка
+	/*
+		try{
+			data=CKEDITOR.instances.report.getData();
+		}catch(e){
+			data=$("#report").val();
+		}
+		if(strip_tags($.trim(data)).length<10){
+			 sfm_show_error_msg('Заполните поле Результат командировки (мин. длина 10 симоволов)!');
+			 $("#report").focus();
+		  	return false;		
+		}
+		
+	}*/
+	
+	if($("#plan_or_fact").val()==1){
+		local_can_ret=true;
+		$("textarea[id^=supplier_result_]").each(function(index, element) {
+			id=$(element).attr("id");
+			sid=id.replace(/^supplier_result_/,'');
+			
+			 
+			
+			try{
+				data=CKEDITOR.instances[id].getData();
+			}catch(e){
+				data=$("#"+id).val();
+			}
+			
+			if((strip_tags($.trim(data)).length<10)&&(!$("#supplier_not_meet_"+sid).prop("checked"))){
+				local_can_ret=local_can_ret&&false;		
+			}
+		});
+		if(!local_can_ret) {
+			sfm_show_error_msg('Заполните поле Результат командировки (мин. длина 10 симоволов), либо отметьте галочку "не встречался" для каждого контрагента!');
+			
+			return false;
+		}
+	}
+			
+			
+	
+	
+	//хотя бы 1 город
+	if($("tr[id^=city_row_]").length==0){
+		sfm_show_error_msg('Укажите хотя бы один город командировки!');
+		  	return false;	
+		
+	}
+	//хотя бы 1 контрагент
+	if($("tr[id^=supplier_row_]").length==0){
+		sfm_show_error_msg('Укажите хотя бы одного контрагента командировки!');
+		  	return false;	
+		
+	}
+	
+	
+	
+	//если мы создаем план. встречу - требовать цель!
+	//supplier_note_
+//	if($("#plan_or_fact").val()==0){
+		var can_note=true;
+		$.each($("textarea[id^=supplier_note_]"),function(k,v){
+			if($.trim($(v).val()).length<10){
+				can_note=can_note&&false;
+				if($("textarea[id^=supplier_note_]").length>1) doBlink(v);
+			}
+		});
+		if(!can_note){
+			sfm_show_error_msg('Укажите цель командировки!');
+			return false;	
+		}
+	//}
+	
+	 
+	//проверять доступность выбранного контрагента выбранному сотруднику
+	supplier_ids=new Array();
+	var can_ret=true;
+	$.each($("input[id^=supplier_id_]"), function(k,v){
+		supplier_ids.push($(v).val());
+	});
+	
+	$.ajax({
+		async: false,
+		url: "/js/sched.php",
+		type: "POST",
+		data:{
+			"action":"check_managers_to_supplier",
+			"manager_id": $("#manager_id").val(),
+			"supplier_ids[]": supplier_ids
+		},
+		beforeSend: function(){
+			  
+		},
+		success: function(data){
+		  //alert(data);
+		  if(data!=0){
+			 
+			 al=data.split(';');
+			 names=new Array();
+			 $.each(al, function(k,v){
+				names.push($("#supplier_string_"+v).html()); 
+			 });
+			 
+			 alert("Невозможно сохранить действие, причина: указанный сотрудник "+$("#manager_string").val()+" не имеет доступа к контрагентам: "+names.join(', '));
+			 can_ret=can_ret&&false;
+		  } 
+		},
+		error: function(xhr, status){
+			
+			alert("Ошибка при проверке состояния действия. Пожалуйста, попытайтесь сохранить действие снова.");
+			can_ret=can_ret&&false;	
+		}	 
+	});			
+	if(!can_ret) return false; 
+	
+	return true; 
+}
+
+frmvalidator.addValidation("pdate_beg","req","Выберите дату начала командировки!");
+
+frmvalidator.addValidation("pdate_end","req","Выберите дату окончания командировки!");
+
+frmvalidator.addValidation("manager_id","req","Выберите сотрудника!");
+frmvalidator.addValidation("manager_id","gt=0","Выберите сотрудника!");
+
+//frmvalidator.addValidation("ptime_beg","req","Выберите время звонка!");
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

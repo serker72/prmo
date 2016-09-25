@@ -1,0 +1,128 @@
+<!--<style>
+.changed{
+	border:3px solid red;
+	color:red;	
+	width:50px; height:50px;
+}
+</style> -->
+
+
+<table width="100%" class="blacktable" border="1">
+<thead>
+<tr>
+	<th>Ф.И.О.</th>
+    <th>Логин</th>
+    <th>Должность</th>
+    
+    <th width="50">Встречи</th>
+    <th width="50">Задачи</th>
+    <th width="50">Заметки</th>
+    <th width="50">Звонки</th>
+    <th width="50">Команд- ки</th>
+</tr>    
+</thead>
+<tbody>
+%{foreach from=$items item=user}% 
+<tr>
+	<td>
+     %{if $user.is_active==0}%<span style="color:red !important;">%{/if}%
+      %{$user.name_s}%
+      %{if $user.is_active==0}%</span>%{/if}%
+    </td>
+    <td>
+     %{if $user.is_active==0}%<span style="color:red !important;">%{/if}%
+     %{$user.login}%
+      %{if $user.is_active==0}%</span>%{/if}%
+    </td>
+    <td>
+     %{if $user.is_active==0}%<span style="color:red !important;">%{/if}%
+     %{$user.position_s}%
+      %{if $user.is_active==0}%</span>%{/if}%
+    </td>
+	
+    
+    <td width="50" align="center">
+     
+    <input type="checkbox" id="share_is_in_%{$user.id}%_3" value="%{if $user.rights[3]!=false}%1%{else}%0%{/if}%"  %{if $user.rights[3]!=false}% checked%{/if}% />
+    </td>
+    <td width="50" align="center">
+     
+    <input type="checkbox" id="share_is_in_%{$user.id}%_1" value="%{if $user.rights[1]!=false}%1%{else}%0%{/if}%"  %{if $user.rights[1]!=false}% checked%{/if}% />
+    </td>
+    <td width="50" align="center">
+     
+    <input type="checkbox" id="share_is_in_%{$user.id}%_5" value="%{if $user.rights[5]!=false}%1%{else}%0%{/if}%"  %{if $user.rights[5]!=false}% checked%{/if}% />
+    </td>
+    
+    <td width="50" align="center">
+     
+    <input type="checkbox" id="share_is_in_%{$user.id}%_4" value="%{if $user.rights[4]!=false}%1%{else}%0%{/if}%"  %{if $user.rights[4]!=false}% checked%{/if}% />
+    </td>
+    
+     <td width="50" align="center">
+     
+    <input type="checkbox" id="share_is_in_%{$user.id}%_2" value="%{if $user.rights[2]!=false}%1%{else}%0%{/if}%"  %{if $user.rights[2]!=false}% checked%{/if}% />
+    </td>
+    
+   
+</tr>
+%{/foreach}%
+</tbody>
+</table>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	$("input[id^=share_is_in_0_]").bind("change",function(){
+		//снять все выделение, если выбран супердоступ
+		if($(this).prop("checked")) state=1; else state=0;
+		
+		kind_id=$(this).attr("id").replace(/^share_is_in_([0-9])+_/,'');
+		
+		if(state==1){
+			$.each(	$("input[id^=share_is_in_]"), function(k,v){
+				user_id=$(v).attr("id").replace(/^share_is_in_/,'').replace(/_[0-9]$/,'');
+				//alert(user_id);
+				
+				//alert(kind_id);
+				if(user_id!=0){
+					 $("input[id^=share_is_in_"+user_id+"_"+kind_id+"]").prop("checked", false);
+					 $("input[id^=share_is_in_"+user_id+"_"+kind_id+"]").trigger("change");
+				}
+			});
+		}
+	});
+	
+	$("input[id^=share_is_in_]").bind("change",function(){
+		//съем всех сотрудников, если выбран супердоступ 
+		if($(this).prop("checked")) state=1; else state=0;
+		
+		user_id=$(this).attr("id").replace(/^share_is_in_/,'').replace(/_[0-9]$/,'');
+		if(user_id!=0){
+				//alert(user_id);
+			kind_id=$(this).attr("id").replace(/^share_is_in_([0-9])+_/,'');			
+			if(state==1){
+				$("input[id^=share_is_in_0_"+kind_id+"]").prop("checked",false);
+				$("input[id^=share_is_in_0_"+kind_id+"]").trigger("change");
+				
+			}
+		}
+	});
+	
+	$("input[id^=share_is_in_]").bind("change",function(){
+		if($(this).prop("checked")) state=1; else state=0;
+		
+		if(state!=$(this).val()) $(this).addClass("changed");
+		else $(this).removeClass("changed");
+		
+		 
+	});
+	
+	
+});
+</script>
+
+
+
+ 

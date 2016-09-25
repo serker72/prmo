@@ -1,0 +1,180 @@
+%{section name=rowsec loop=$opfs_total}%
+
+<div style="white-space:nowrap;">
+
+
+<input type="text" size="35" maxlength="255" id="%{$word}%_%{$opfs_total[rowsec].id}%" value="%{$opfs_total[rowsec].name|escape:"html"}%" style="width:250px; background-color:silver;" />
+<br />
+
+
+<input type="checkbox" id="%{$word}%_can_sign_as_dir_pr_%{$opfs_total[rowsec].id}%" value="1" %{if $opfs_total[rowsec].can_sign_as_dir_pr==1}% checked="checked"%{/if}% />
+<label for="%{$word}%_%{$opfs_total[rowsec].id}%">Подпись КП оборуд. в роли директора по продажам</label>
+
+<br />
+
+<input type="checkbox" id="%{$word}%_can_sign_as_manager_%{$opfs_total[rowsec].id}%" value="1" %{if $opfs_total[rowsec].can_sign_as_manager==1}% checked="checked"%{/if}% />
+<label for="%{$word}%_can_sign_as_manager_%{$opfs_total[rowsec].id}%">Подпись КП оборуд. в роли менеджера</label>
+
+<br />
+
+<input type="checkbox" id="%{$word}%_is_ruk_otd_%{$opfs_total[rowsec].id}%" value="1" %{if $opfs_total[rowsec].is_ruk_otd==1}% checked="checked"%{/if}% />
+<label for="%{$word}%_is_ruk_otd_%{$opfs_total[rowsec].id}%">Руководитель отдела (просмотр план/факт всех сотрудников отдела)</label>
+
+<br />
+
+
+<!--<strong>Направления:</strong>
+%{foreach from=$opfs_total[rowsec].dirs item=dir}%
+<input type="checkbox" id="%{$word}%_dir_%{$opfs_total[rowsec].id}%_%{$dir.id}%" value="%{$dir.id}%" %{if $dir.is_in==1}% checked="checked"%{/if}% />
+<label for="%{$word}%_dir_%{$opfs_total[rowsec].id}%_%{$dir.id}%">%{$dir.name}%</label>	
+%{/foreach}%
+
+<br />-->
+
+
+<a href="#" id="edit_%{$word}%_%{$opfs_total[rowsec].id}%" title="редактировать вопрос"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_%{$word}%_%{$opfs_total[rowsec].id}%" border="0" alt="" /></a>
+<a href="#" id="delete_%{$word}%_%{$opfs_total[rowsec].id}%" title="удалить вопрос"><img src="/img/del.gif" width="15" height="15" border="0" alt="" /></a>
+</div>
+
+
+<script type="text/javascript">
+$(function(){
+	$("#edit_%{$word}%_%{$opfs_total[rowsec].id}%").unbind("click");
+	$("#delete_%{$word}%_%{$opfs_total[rowsec].id}%").unbind("click");
+	
+	%{foreach from=$opfs_total[rowsec].dirs item=dir}%
+		$("#%{$word}%_dir_%{$opfs_total[rowsec].id}%_%{$dir.id}%").unbind("change");
+		$("#%{$word}%_dir_%{$opfs_total[rowsec].id}%_%{$dir.id}%").bind("change", function(){
+			 
+			if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+				$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src","/img/icon_save_active_16x16.gif")	;
+			}
+		});
+	%{/foreach}%
+	
+	
+	$("#edit_%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		//
+		
+		
+		/*alert('editing');
+		*/
+		if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			//включаем редактирование
+			$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#%{$word}%_%{$opfs_total[rowsec].id}%").css("background-color","white");
+		}else{
+			//вносим изменения
+			if($("#%{$word}%_can_sign_as_dir_pr_%{$opfs_total[rowsec].id}%").prop("checked")) can_sign_as_dir_pr=1; else can_sign_as_dir_pr=0;
+			
+			if($("#%{$word}%_can_sign_as_manager_%{$opfs_total[rowsec].id}%").prop("checked")) can_sign_as_manager=1; else can_sign_as_manager=0;
+			
+			if($("#%{$word}%_is_ruk_otd_%{$opfs_total[rowsec].id}%").prop("checked")) is_ruk_otd=1; else is_ruk_otd=0;
+			
+			//получим активные направления
+			/*var dirs=new Array();
+			$("input[id^=%{$word}%_dir_%{$opfs_total[rowsec].id}%_]:checked").each(function(index, element) {
+                dirs.push($(element).val());
+            });*/
+			
+			//alert(dirs);
+			$.ajax({
+				async: true,
+				url: "/js/user_v.php",
+				type: "POST",
+				data:{
+					"action":"edit_%{$word}%",
+					"question":$("#%{$word}%_%{$opfs_total[rowsec].id}%").attr("value"),
+					"id":"%{$opfs_total[rowsec].id}%",
+					"can_sign_as_dir_pr":can_sign_as_dir_pr,
+				    "can_sign_as_manager":can_sign_as_manager,
+					"is_ruk_otd":is_ruk_otd/*,
+					"dirs[]":dirs*/
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  //alert(data);
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_v.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#%{$word}%_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования %{$named}%.");	
+				}	 
+			});
+		}
+		
+		return false;
+	});
+	
+	$("#%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#%{$word}%_%{$opfs_total[rowsec].id}%").css("background-color","white");
+		}
+	});
+	
+	//удаление
+	$("#delete_%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		//
+		
+		if(window.confirm("Вы действительно хотите удалить %{$named}% %{$opfs_total[rowsec].name|escape:"html"}%?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_v.php",
+				type: "POST",
+				data:{
+					"action":"delete_%{$word}%",
+					"id":"%{$opfs_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_v.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#%{$word}%_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления %{$named}%.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+});
+</script>
+%{/section}%

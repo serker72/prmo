@@ -1,0 +1,539 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	$("#pdate2_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#storage_id2").bind("click",function(){
+		//alert($(this).val());
+		$.each($("#storage_id2").val(), function(index, value){
+			//множественный выбор
+			if(value==0){
+				$.each($("#storage_id2 option"), function(i, v){
+					if((v.value!=0)) v.selected=true;
+					if(v.value==0) v.selected=false;
+				});
+			}
+		});
+	});
+	
+	$("#sector_id2").bind("click",function(){
+		//alert($(this).val());
+		$.each($("#sector_id2").val(), function(index, value){
+			//множественный выбор
+			if(value==0){
+				$.each($("#sector_id2 option"), function(i, v){
+					if((v.value!=0)) v.selected=true;
+					if(v.value==0) v.selected=false;
+				});
+			}
+		});
+	});
+	
+	touchScroll('as_position_info');
+	touchScroll('as_position_detail_info');
+});
+</script>
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form2">
+<input type="hidden" name="print" value="%{$print2}%" id="print2" />
+<input type="hidden" name="tab_page" value="2" id="tab_page" />
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период:</strong><br />
+
+
+<label for="pdate2_1">с:</label><br />
+<input type="text" value="%{$pdate2_1}%" id="pdate2_1" name="pdate2_1" size="10" maxlength="10" style="width:80px;" />
+
+<p />
+
+<label for="pdate2_2">по:</label><br />
+<input type="text" value="%{$pdate2_2}%" id="pdate2_2" name="pdate2_2" size="10" maxlength="10" style="width:80px;" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="sector_id2">Участок:</label><br />
+
+
+<select id="sector_id2" name="sector_id2[]" multiple="multiple" size="7" style="width:150px;">
+<option value="0">-все участки-</option>
+%{html_options values=$sector_ids selected=$sector_id2 output=$sector_names}%
+</select>
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="storage_id2">Объект:</label><br />
+
+
+<select id="storage_id2" name="storage_id2[]" multiple="multiple" size="7" style="width:150px;">
+<option value="0">-все объекты-</option>
+%{html_options values=$storage_ids selected=$storage_id2 output=$storage_names}%
+</select>
+<br />
+
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:5px;"><br>
+
+<input type="image" name="doSub2" id="doSub2" src="/img/icons/old-zoom-original.png" border="0" alt="Найти" title="Найти" />
+<br />
+
+<em>используйте 
+ctlr+щелчок мыши <br />
+для множественного выбора</em><br />
+</div>
+
+
+<div style="float:right;">
+  
+  %{if $can_print}%
+  
+  <a href="#" id="print_table2"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0" /></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  $("#doSub2").bind("click",function(){
+		 $("#print2").val(0); 
+		 return true;
+	  });
+	  
+	  $("#print_table2").bind("click",function(){
+		 $("#print2").val(1);
+		 
+		 window.open('goods_on_stor.php?'+$("#rep_form2").serialize(), 'goods_on_stor','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1'); 
+		 
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати ведомости.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+  
+</div>
+<br clear="all" />
+
+
+
+
+<div id="info_as_positions_dialog" title="О позиции">
+<div id="as_position_info"></div>
+
+</div>
+
+
+<div id="info_as_positions_detail_dialog" title="О позиции">
+<div id="as_position_detail_info"></div>
+</div>
+
+ <script type="text/javascript">
+  $(function(){
+     $("#info_as_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 1100,
+	  height: 600,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	$("#info_as_positions_detail_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 950,
+	  height: 450,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	
+  });
+  </script>
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		color:#666;	
+	}
+</style>
+
+<em>Примечание: для детализации позиции по участку и объекту необходимо кликнуть по наименованию позиции.</em>
+<p />
+
+
+<script type="text/javascript">
+function good_details(id){
+		var storage_ids=new Array();
+		var sector_ids=new Array();
+		
+		$.each($("#sector_id2 option:selected"),function(k,v){
+			sector_ids.push($(v).val());
+		});
+		
+		$.each($("#storage_id2 option:selected"),function(k,v){
+			storage_ids.push($(v).val());
+		});
+		
+		$.ajax({
+			  async: false,
+			  url: "/js/goods_on_stor.php",
+			  type: "POST",
+			  data:{
+				  "action":"as_by_pos",
+				  "position_id":id,
+				  "pdate1":$("#pdate2_1").val(),
+				  "pdate2":$("#pdate2_2").val(),
+				  "storage_ids[]":storage_ids,
+				  "sector_ids[]":sector_ids
+				  
+			  },
+			  beforeSend: function(){
+				$("#as_position_detail_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+			  },
+			  success: function(data){
+				//alert(data);
+				$("#as_position_info").html(data);
+				 $("#info_as_positions_dialog").dialog("open");
+				
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			  }	 
+			});
+			return false;
+}
+function prihod(id){
+		var storage_ids=new Array();
+		var sector_ids=new Array();
+		
+		$.each($("#sector_id2 option:selected"),function(k,v){
+			sector_ids.push($(v).val());
+		});
+		
+		$.each($("#storage_id2 option:selected"),function(k,v){
+			storage_ids.push($(v).val());
+		});
+		$.ajax({
+			  async: false,
+			  url: "/js/goods_on_stor.php",
+			  type: "POST",
+			  data:{
+				  "action":"as_by_pos_prihod",
+				  "position_id":id,
+				  "pdate1":$("#pdate2_1").val(),
+				  "pdate2":$("#pdate2_2").val(),
+				  "storage_ids[]":storage_ids,
+				  "sector_ids[]":sector_ids
+			  },
+			  beforeSend: function(){
+				$("#as_position_detail_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+			  },
+			  success: function(data){
+				//alert(data);
+				$("#as_position_detail_info").html(data);
+				 $("#info_as_positions_detail_dialog").dialog("open");
+				
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			  }	 
+			});
+			return false;
+		
+}
+function rashod(id){
+		var storage_ids=new Array();
+		var sector_ids=new Array();
+		
+		$.each($("#sector_id2 option:selected"),function(k,v){
+			sector_ids.push($(v).val());
+		});
+		
+		$.each($("#storage_id2 option:selected"),function(k,v){
+			storage_ids.push($(v).val());
+		});
+		
+		$.ajax({
+			  async: false,
+			  url: "/js/goods_on_stor.php",
+			  type: "POST",
+			  data:{
+				  "action":"as_by_pos_rashod",
+				  "position_id":id,
+				  "pdate1":$("#pdate2_1").val(),
+				  "pdate2":$("#pdate2_2").val(),
+				  "storage_ids[]":storage_ids,
+				  "sector_ids[]":sector_ids
+			  },
+			  beforeSend: function(){
+				$("#as_position_detail_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+			  },
+			  success: function(data){
+				//alert(data);
+				$("#as_position_detail_info").html(data);
+				 $("#info_as_positions_detail_dialog").dialog("open");
+				
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			  }	 
+			});
+			return false;
+		});
+}
+
+</script>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="left" valign="top">
+    <th scope="col" width="40"> Код позиции</th>
+	<th scope="col" width="*">Наименование</th> 
+     <th scope="col" width="150" class="small">
+    Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+   
+    </th>
+    <th scope="col" width="40" class="small">
+    ГОСТ/ТУ
+   
+    </th>
+    
+    <th width="40" scope="col" class="small">
+    ед.изм.
+   
+    </th>
+    
+     <th width="40" scope="col" class="small">
+    Длина, мм
+   
+    </th>
+    <th width="40" scope="col" class="small">
+    Ширина, мм
+   
+    </th>
+    <th width="40" scope="col" class="small">
+    Высота/ толщина, мм
+   
+    </th>
+    <th width="40" scope="col" class="small">
+    Диаметр, мм:
+    </th>   
+    
+    <th scope="col" width="50">Входящий остаток на начало периода</th>    
+    <th scope="col" width="50">Приход</th>
+    <th scope="col" width="50">Расход</th>
+    <th scope="col" width="50">Остаток на конец периода</th>    
+  </tr>
+  <tr align="left" valign="top">
+  	
+    
+    <td  width="40"> 
+     <input type="text" size="8" maxlength="255" value="%{$id2}%" name="id2" id="id2" style="width:40px;" />
+    </td>
+	<td  width="*">
+    <input type="text" size="20" maxlength="255" value="%{$name2}%" name="name2" id="name2" />
+    </td> 
+    
+     <td width="150" class="small">
+   
+   
+    <select name="group_id" id="group_id" style="width:150px;">
+    %{section name=groupsec loop=$group}%
+    	<option value="%{$group[groupsec].id}%" %{if $group[groupsec].is_current}%selected="selected"%{/if}%>%{$group[groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="two_group_id" id="group_id2" style="width:150px;">
+    %{section name=two_groupsec loop=$two_group}%
+    	<option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="three_group_id" id="group_id3" style="width:150px;">
+    %{section name=three_groupsec loop=$three_group}%
+    	<option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <script type="text/javascript">
+	$(function(){
+		$("#group_id").bind("click", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("click", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	});
+	</script>
+    
+    </td>
+    
+    
+ 
+    <td  width="40" class="small">
+   <input type="text" size="8" maxlength="255" value="%{$gost_tu2}%" name="gost_tu2" id="gost_tu2" style="width:40px;" />
+   
+    </td>
+    
+    
+    
+    <td width="40"  class="small">
+     <select name="dimension_id2" id="dimension_id2" style="width:40px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+   
+    </td>
+    
+     <td width="40"  class="small">
+     <input type="text" size="4" maxlength="255" value="%{$length2}%" name="length2" id="length2" style="width:40px;" />
+   
+    </td>
+    <td width="40"  class="small">
+    <input type="text" size="4" maxlength="255" value="%{$width2}%" name="width2" id="width2" style="width:40px;" />
+   
+   
+    </td>
+    <td width="40"  class="small">
+    <input type="text" size="4" maxlength="255" value="%{$height2}%" name="height2" id="height2"style="width:40px;" />
+   
+    </td>
+    <td width="40"  class="small">
+   <input type="text" size="4" maxlength="255" value="%{$diametr2}%" name="diametr2" id="diametr2" style="width:40px;" />
+    </td> 
+    
+  
+  	<td  width="50">&nbsp;</td>    
+    <td  width="50">&nbsp;</td>
+    <td  width="50">&nbsp;</td>
+    <td  width="50">&nbsp;</td>    
+  </tr>
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+   <tr align="left" valign="top">
+    <td width="40">%{$items[rowsec].id|string_format:"%05d"}%</td>
+    <td width="*">
+    <a href="#" id="good_details_%{$items[rowsec].id}%">
+    %{$items[rowsec].name}%
+    </a>
+    </td>
+    
+     <td width="150" class="small">%{$items[rowsec].group_name}%</td>
+    
+    <td width="40" class="small">%{$items[rowsec].gost_tu}%</td>
+    <td width="40" class="small">%{$items[rowsec].dim_name}%</td>
+   
+    <td width="40" class="small">
+   
+    %{$items[rowsec].length|default:"-"}%
+    </td>
+    <td width="40" class="small">
+	 %{$items[rowsec].width|default:"-"}%
+    </td>
+    <td width="40" class="small">
+	 %{$items[rowsec].height|default:"-"}%
+    </td>
+	
+ 	<td width="40" class="small">
+    %{$items[rowsec].diametr|default:"-"}%
+    </td>
+    
+    <td width="50" >%{$items[rowsec].begin_ost}%</td>
+    <td width="50"><a href="#" id="prihod_%{$items[rowsec].id}%">%{$items[rowsec].prihod}%</a></td>
+    <td width="50"><a href="#" id="rashod_%{$items[rowsec].id}%">%{$items[rowsec].rashod}%</a></td>
+    <td width="50">
+    %{$items[rowsec].final_ost}%
+    
+    <script type="text/javascript">
+	$(function(){
+		$("#good_details_%{$items[rowsec].id}%").bind("click",function(){
+			return good_details("%{$items[rowsec].id}%");
+		});
+		
+		$("#prihod_%{$items[rowsec].id}%").bind("click",function(){
+			return prihod("%{$items[rowsec].id}%");
+		});
+		
+		$("#rashod_%{$items[rowsec].id}%").bind("click",function(){
+			return rashod("%{$items[rowsec].id}%");
+		});
+		
+		
+		
+	});
+    </script>
+    </td>
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+    
+
+</form>

@@ -1,0 +1,31 @@
+%{foreach from=$codespos item=pos}%
+
+%{section name=possec loop=$pos.codespos}%%{/section}%
+    <tr align="left" valign="top" id="code_row_%{$pos[possec].id}%" >
+    	<td>
+        
+        
+        	<input type="radio" id="name_code_%{$pos.id}%" name="name_code" value="%{$pos.id}%" %{if $pos.is_current==true}% checked="checked"%{/if}%  %{if $pos.count_pos>0}% disabled %{/if}% />
+       
+        
+         <input type="hidden" id="name_name_code_%{$pos.id}%" value="%{$pos.code|escape:"html"}%" />
+        
+         <input type="hidden" id="name_name_name_%{$pos.id}%" value="%{$pos.name|escape:"html"}%" />
+         %{$pos.code}%
+        </td>
+        
+        <td>
+         %{$pos.name}%
+         %{$pos.descr}%
+         <input type="hidden" id="name_descr_%{$pos.id}%" value="%{$pos.descr|escape:"html"}%" />
+         
+        </td>
+      
+       
+    </tr>
+    
+    %{include file="pay/code_row.html" codespos=$pos.codespos}%
+    
+    
+    
+%{/foreach}%

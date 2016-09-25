@@ -1,0 +1,56 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'allaccTab' }  
+  });
+});
+</script>
+
+
+
+<div id="tabs">
+  <ul>
+    %{if $has_accs}%
+    <li><a href="#tabs-2">Реализации товара</a></li>
+   %{/if}%
+  
+    %{if $has_incoming_accs}%
+    <li><a href="#tabs-1">Поступления товара</a></li>
+    %{/if}%
+    
+     %{if $has_demands}%
+    <li><a href="#tabs-3">Требования</a></li>
+    %{/if}%
+   
+  </ul>
+  
+  
+   %{if $has_accs}%
+ <div id="tabs-2">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+ %{/if}%
+  
+  %{if $has_incoming_accs}%
+  <div id="tabs-1">
+    <p>
+    %{$log2}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+   %{if $has_demands}%
+  <div id="tabs-3">
+    <p>
+    %{$log3}%
+    
+    </p>
+  </div>
+   %{/if}%
+ 
+</div>

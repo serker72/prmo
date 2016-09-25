@@ -1,0 +1,202 @@
+<div style="padding:3px 3px;">
+    
+    <h4>Сообщение:</h4>
+    
+    <a href="message_compose.php?resend=%{$id}%" class="message_resend" target="_blank" data-comment="переслать сообщение" ></a>
+    
+    
+    <a href="#" class="message_show" id="showall_%{$id}%" data-comment="показать всю переписку" ></a>
+    
+    <a href="#" class="message_hide" id="hideall_%{$id}%" style="display:none;"  data-comment="скрыть всю переписку" ></a>
+    
+    %{if $can_answer}%
+      <a href="message_compose.php?parent_id=%{$id}%" target="_blank" class="message_rich_answer"    data-comment="Расширенный ответ" ></a>
+    %{/if}%
+     
+    <a href="#" onClick=" show_ans=0; if($.trim($('#answers_block_%{$id}%').html()).length>0) show_ans=1;  window.open('message_print.php?resend=%{$id}%&show_ans='+show_ans, 'message','width=1000,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1'); return false;" class="message_print" target="_blank" data-comment="печать сообщения" ></a> 
+     
+    <br clear="all" />
+    
+    <div style="float:left; margin-right:20px;">
+    <span class="message_cap">От:</span>
+    <a href="info.html?name=%{$s_login|replace:" (Вы)":""}%" target="_blank">
+    %{if $s_user.group_id==3}%
+    %{$s_user.name_d}%
+    %{else}%
+    %{$s_user.name_s}%
+    %{/if}%
+    
+    <!--%{$s_login}%--></a>
+     </div>
+     
+     
+     
+    <div style="float:left; margin-right:0px;">
+    <span class="message_cap">Кому:</span>
+    
+     %{foreach name=rf from=$to_users item=user}%
+    <a href="info.html?name=%{$user.login|replace:" (Вы)":""}%">%{if $user.group_id==3}%
+    %{$user.name_d}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+    
+    %{else}%
+    %{$user.name_s}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+    
+    %{/if}%</a>
+    %{/foreach}%
+    
+    
+    
+  
+  
+    </div>
+
+	<br clear="all" />
+</div>
+<p />
+
+
+
+<div class="message">%{$message}%</div>
+ 
+
+%{section name=filesec loop=$files}%%{/section}%
+%{if $smarty.section.filesec.total>0}%
+ <span class="message_cap">Вложения:</span><p />
+ <div class="message_attaches">
+%{section name=filesec loop=$files}%
+	<a href="attachment.html?id=%{$files[filesec].id}%" class="message_attach"></a>
+    
+    <a href="attachment.html?id=%{$files[filesec].id}%" >%{$files[filesec].orig_filename}%</a>
+    %{$files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+    <br clear="left" />
+
+%{/section}%
+</div>
+<br />
+%{/if}%
+
+
+ 
+
+
+
+%{if $has_showall_block}%
+
+
+ 
+
+<script type="text/javascript">
+$("#hideall_%{$id}%").bind("click",function(){
+	$("#answers_block_%{$id}%").empty();
+	$("#hideall_%{$id}%").css("display","none");
+	$("#showall_%{$id}%").css("display","block");
+	
+	return false;
+});
+
+$("#showall_%{$id}%").bind("click",function(){
+	$("#hideall_%{$id}%").css("display","block");
+	$("#showall_%{$id}%").css("display","none");
+	
+	
+	$.ajax({
+	  async: true,
+	  url: "/js/messages.php",
+	  type: "POST",
+	  data:{
+		  "action":"show_chain_messages",
+		  "id":"%{$id}%"
+	  },
+	  beforeSend: function(){
+			$("#answers_block_%{$id}%").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="" />');	 
+	  },
+	  success: function(data){
+		 $("#answers_block_%{$id}%").html("<h4  style=\"padding:3px 3px 0px 3px;\">Вся переписка:</h4><br clear=\"all\">"+data);
+	  },
+	  error: function(xhr, status){
+		 // alert("Ошибка отправки сообщения.");	
+	  }	
+	});
+	
+	return false;
+});
+</script>
+%{/if}%
+
+<div id="answers_block_%{$id}%">
+%{$answers}%
+</div>
+
+
+%{if $can_answer}%
+<div style="padding:3px 3px;">
+
+   
+    
+        
+   
+    
+    <label for="txt_%{$id}%">Краткий ответ на сообщение:</label><br>
+    <textarea name="txt_%{$id}%" id="txt_%{$id}%" cols="100" rows="5" style="min-width:600px; width:100%; height:70px; margin-bottom:10px;"></textarea>
+    
+    
+    <input type="hidden" name="parent_id_%{$id}%" value="%{$id}%" id="parent_id_%{$id}%" />
+    
+    <input type="hidden" name="to_%{$id}%" value="%{$to_id}%" id="to_%{$id}%" />
+    <input id="answer_%{$id}%" type="button" value="Ответить" />
+	
+    
+    <!--
+    <p />
+    
+     <h4>Расширенный ответ на сообщение:</h4>
+    
+  -->
+    
+    <br clear="all" />
+<script type="text/javascript">
+
+
+
+$("#answer_%{$id}%").bind("click",function(){
+	if($("#txt_%{$id}%").val().length<3){
+		alert("Напишите текст ответа!");	
+		$("#txt_%{$id}%").focus();
+		return false;
+	}
+	
+	$.ajax({
+	  async: true,
+	  url: "/js/messages.php",
+	  type: "POST",
+	  data:{
+		  "action":"answer_message",
+		  "txt":$("#txt_%{$id}%").val(),
+		  "parent_id":$("#parent_id_%{$id}%").val(),
+		  "to":$("#to_%{$id}%").val()
+	  },
+	  beforeSend: function(){
+			
+	  },
+	  success: function(data){
+		 alert("Ваше сообщение отправлено!");
+		 $("#chain__%{$message_id}%").css("display","none");
+		 //$("#main__%{$message_id}%").trigger("click");
+		 
+		  
+		 //перерисовать блок сообщений
+		 location.reload();
+	  },
+	  error: function(xhr, status){
+		  alert("Ошибка отправки сообщения.");	
+	  }	 
+  });	
+	
+	
+});
+
+
+
+</script>
+</div>
+%{/if}%

@@ -1,0 +1,402 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/md5.js"></script>
+
+<script type="text/javascript" src="/js/period_checker.js"></script>
+
+<!-- Add fancyBox main JS and CSS files -->
+<script type="text/javascript" src="/js/fanb/jquery.fancybox.js?v=2.0.6"></script>
+<link rel="stylesheet" type="text/css" href="/js/fanb/jquery.fancybox.css?v=2.0.6" media="screen" />
+
+
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	//$("#pdate").datepicker();
+	$("#supplier_bill_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#valid_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	//$("#pdate_shipping_plan").datepicker();
+	//$("#pdate_payment_contract").datepicker();
+	
+	
+	
+	was_changed=true;
+	
+	//touchScroll('supplier_dialog');
+	touchScroll('suppliers');
+	touchScroll('bdetails');
+	touchScroll('condetails');
+});
+</script>
+<h1 style="float:left;">Создание коммерческого предложения</h1>
+
+
+%{include file="every_help_dialog.html" filename="kp_create.htm" prefix="" description="Cоздание коммерческого предложения"  style="float:right;  margin-right:5px;"}%
+
+
+<br clear="all" />
+
+
+<script type="text/javascript">
+			
+
+</script>
+
+
+
+
+<form action="ed_kp.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="code">Номер:</label><br />
+
+<input type="text" size="7" maxlength="10" value="%{$code}%" id="code" disabled="disabled" />
+<input type="hidden" name="code" value="%{$code}%" />
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Дата создания:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$now}%" disabled="disabled" id="pdate" style="width:60px;" />
+
+<input type="hidden" value="%{$now}%" name="pdate" />
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="valid_pdate">Действ. по:</label><br />
+
+<input type="text" size="10" maxlength="10" value="" id="valid_pdate"  name="valid_pdate" style="width:60px;" />
+
+
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" style="width:270px;" />
+<input type="hidden" value="%{$org_id}%" id="org_id" />
+</div>
+
+
+
+
+<div style="float:right; margin-right:0px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+<strong>Статус:</strong><br />
+
+не утвержден 
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:0px;">
+
+
+<label for="supplier_id">
+Контрагент:</label><br />
+
+
+<input type="text" size="40" maxlength="255" value="" id="supplier_id_string" disabled="disabled" style="width:650px;" />
+<input type="button" id="supplier_select" value="..." />
+<input type="button" id="supplier_clear" value="x" />
+
+<input type="hidden"  value="" name="supplier_id" id="supplier_id" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="supplier_bill_pdate">Заданная дата <br />
+комм. предложения</label><br />
+
+<input type="text" size="10" maxlength="10" value="" name="supplier_bill_pdate" id="supplier_bill_pdate" style="width:60px;" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+
+<label for="contract_no">
+<br />
+
+Договор №:</label>
+<br />
+
+<input type="text" size="10" maxlength="255" value="" id="contract_no_string" disabled="disabled" style="width:100px;" />
+
+<input type="hidden"  value="" name="contract_id" id="contract_id" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="contract_pdate">
+<br />
+
+от:</label><br />
+
+<input type="text" size="10" maxlength="255" value="" id="contract_pdate_string" disabled="disabled" style="width:60px;" />
+<input type="hidden" name="contract_pdate" id="contract_pdate" value="" />
+
+</div>
+
+
+<div style="float:left; margin-right:10px; margin-top:26px;">
+
+
+<input type="button" id="contract_select" value="..."  />
+<input type="button" id="contract_clear" value="x"  />
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:0px;">
+<label for="bdetails_id">
+
+Реквизиты контрагента:</label><br />
+<input type="text" size="40" maxlength="255" id="bdetails_id_string" value="" disabled="disabled" style="width:650px;"  />
+<input type="hidden" name="bdetails_id" id="bdetails_id" value="" />
+<input type="button" id="bdetails_select" value="..." />
+<input type="button" id="bdetails_clear" value="x" />
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+%{include file="kp/supplier_actions.html"}%
+
+
+<!-- конец блока контрагента -->
+
+
+
+
+<strong>Позиции коммерческого предложения</strong> 
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+</td>
+<td width="50%" align="right">
+
+  	 
+        
+     
+      %{if $can_edit_quantities}%
+    
+       
+        <a href="#" id="edit_quantities"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+         <script type="text/javascript">
+        $(function(){
+			
+			function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+			
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#bill_positions_table input[id^=to_ship_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#bill_positions_table input[id^=to_ship_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).attr('id').replace(/^to_ship_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text(), $('#new_span_quantity_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<=0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text()+'. Пожалуйста, введите правильное значение.');
+					}else{
+						
+						usl=false;
+						
+					}
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#new_span_quantity_'+id).html(res);
+					 $('#new_quantity_'+id).val(res);
+					 
+					 //пересчет цен
+					  new_total=roundPlus(res*parseFloat($('#check_new_price_pm_'+id).val()), 2);
+					   new_cost_f=roundPlus(res*parseFloat($('#new_price_f_'+id).val()), 2);
+					 
+					 $('#new_total_'+id).html(new_total);
+					 $('#check_new_total_'+id).val(new_total);
+					 $("#new_cost_f_"+id).html(new_cost_f);
+					 
+					  //пересчитать сумму кп!!!!
+					 var new_summ=0;
+					 $('input[id^=check_new_total_]').each(function(kk, vv) {
+                     	new_summ+=parseFloat($(vv).val());
+                     });
+					 $("#positions_cost").html(roundPlus(new_summ, 2));
+					 
+					 //пересчитать НДС кп!!!!
+					 nds_summ=new_summ-new_summ/((100+parseFloat("%{$NDS}%"))/100);
+					 $("#positions_nds").html(roundPlus(nds_summ, 2)); 
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+       
+    %{else}%
+    
+    	
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций: у Вас недостаточно прав для данного действия.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+        
+    %{/if}%
+      
+      
+      
+     <a href="#" target="_blank" onclick="alert('В данном режиме коммерческого предложения счета недоступна. Пожалуйста, нажмите кнопку Создать коммерческое предложение и перейти к утверждению для получения возможности печати предложения.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать счета..." title="печать счета..." border="0" /></a>
+     
+     
+    
+    
+</td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2">
+
+
+
+%{include file="kp/position_actions.html"}%
+</td>
+</tr>
+</table> 
+<p />
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать коммерческое предложение" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать коммерческое предложение и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='kps.php';
+}else location.href='kps.php';" />
+
+
+</form>
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	//проверить дату действия
+	now=new Date();
+	check=new Date(now.valueOf()+3*30*24*60*60*1000);
+	valid_pdate=new Date($("#valid_pdate").val().substr(6,4), parseInt($("#valid_pdate").val().substr(3,2))-1, $("#valid_pdate").val().substr(0,2)); 
+	
+	
+	if(valid_pdate>check){
+		//alert(check); alert(valid_pdate);
+		sfm_show_error_msg('Дата Действ. по должна быть не позже 3 месяцев с даты создания коммерческого предложения!');
+		return false;	
+	}
+	
+	if(valid_pdate<now){
+		sfm_show_error_msg('Дата Действ. по должна быть позднее, чем дата создания коммерческого предложения!');
+		return false;	
+	}
+	
+	
+	if($("#bill_positions_table tbody tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить коммерческое предложение без позиций! Пожалуйста, укажите позиции!');
+		return false;
+	}
+	
+	
+	if(!PeriodChecker('supplier_bill_pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Дата коммерческого предложения контрагента должна быть не ранее %{$pch_date}%!');
+		return false;	
+	
+	}else{
+		
+		//каскад проверок по закрытым периодам
+		if(!PeriodCheckerByPeriod('supplier_bill_pdate', closed_date )){
+			sfm_show_error_msg('Дата коммерческого предложения контрагента не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		
+		}
+	}
+	
+	
+	
+	
+	return true;
+}
+
+frmvalidator.addValidation("supplier_id","req","Выберите контрагента!");
+
+frmvalidator.addValidation("bdetails_id","req","Выберите реквизиты контрагента!");
+
+frmvalidator.addValidation("contract_id","req","Выберите договор контрагента!");
+
+frmvalidator.addValidation("valid_pdate","req","Укажите дату, по которую действительно коммерческое предложение!");
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

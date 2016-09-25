@@ -1,0 +1,29 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'allaccTab' }  
+  });
+});
+</script>
+
+
+
+<div id="tabs">
+  <ul>
+    %{if $has_invoices}%
+    <li><a href="#tabs-2">Èםגמיסû</a></li>
+   %{/if}%
+  </ul>
+  
+  
+ %{if $has_invoices}%
+ <div id="tabs-2">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+ %{/if}%
+  
+</div>

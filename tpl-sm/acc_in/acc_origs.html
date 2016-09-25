@@ -1,0 +1,239 @@
+
+<table width="400" border="0" cellspacing="0" cellpadding="1">
+  <tr align="left" valign="top">
+    <td width="300">
+    <input type="checkbox" name="has_nakl" id="has_nakl" value="1" onchange="" %{if $acc.has_nakl==1}% checked="checked"%{/if}% %{if $can_confirm_has_nakl==false}% disabled="disabled"%{/if}% /><label for="has_nakl">Наличие оригинала товарной накладной</label>
+<br />
+<span id="has_nakl_confirmer">%{$has_nakl_confirmer}%</span>
+    
+<script type="text/javascript">
+$(function(){
+	$("#has_nakl").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc_in.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#has_nakl_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+    
+    </td>
+    <td>
+    <input type="button" id="has_nakl_save" value="Сохранить" />
+    <span id="has_nakl_state"></span>
+    <script type="text/javascript">
+$(function(){
+	$("#has_nakl_save").bind("click",function(){
+		if($("#has_nakl").prop("checked")) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc_in.php",
+              type: "POST",
+			  timeout: 5000,
+              data:{
+                  "action":"has_nakl_save",
+				  "id":"%{$acc.id}%",
+				  state: state
+              },
+              beforeSend: function(){
+                  $("#has_nakl_state").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+              },
+              success: function(data){
+                 $("#has_nakl_state").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td width="300">
+    
+     <input type="checkbox" name="has_fakt" id="has_fakt" value="1" onchange="" %{if $acc.has_fakt==1}% checked="checked"%{/if}% %{if $can_confirm_has_fakt==false}% disabled="disabled"%{/if}% /><label for="has_fakt">Наличие оригинала счета-фактуры</label>
+<br />
+<span id="has_fakt_confirmer">%{$has_fakt_confirmer}%</span>
+    
+<script type="text/javascript">
+$(function(){
+	$("#has_fakt").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc_in.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#has_fakt_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+    
+    
+    
+    </td>
+    <td>
+     <input type="button" id="has_fakt_save" value="Сохранить" />
+    <span id="has_fakt_state"></span>
+    <script type="text/javascript">
+$(function(){
+	$("#has_fakt_save").bind("click",function(){
+		if($("#has_fakt").prop("checked")) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc_in.php",
+              type: "POST",
+			   timeout: 5000,
+              data:{
+                  "action":"has_fakt_save",
+				   "id":"%{$acc.id}%",
+				  state: state
+              },
+              beforeSend: function(){
+                  $("#has_fakt_state").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+              },
+              success: function(data){
+                 $("#has_fakt_state").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+    
+    
+    
+    </td>
+  </tr>
+ <tr align="left" valign="top">
+    <td width="300">
+    
+    <input type="checkbox" name="has_akt" id="has_akt" value="1" onchange="" %{if $acc.has_akt==1}% checked="checked"%{/if}% %{if $can_confirm_has_akt==false}% disabled="disabled"%{/if}% /><label for="has_akt">Наличие оригинала акта</label>
+<br />
+<span id="has_akt_confirmer">%{$has_akt_confirmer}%</span>
+    
+<script type="text/javascript">
+$(function(){
+	$("#has_akt").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc_in.php",
+              type: "POST",
+			  
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#has_akt_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+    
+    
+    
+    </td>
+    <td>
+    
+    <input type="button" id="has_akt_save" value="Сохранить" />
+    <span id="has_akt_state"></span>
+    <script type="text/javascript">
+$(function(){
+	$("#has_akt_save").bind("click",function(){
+		if($("#has_akt").prop("checked")) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc_in.php",
+              type: "POST",
+			   timeout: 5000,
+              data:{
+                  "action":"has_akt_save",
+				   "id":"%{$acc.id}%",
+				  state: state
+              },
+              beforeSend: function(){
+                  $("#has_akt_state").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+              },
+              success: function(data){
+                 $("#has_akt_state").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+    
+    
+    </td>
+  </tr>
+</table>
+
+
+
+

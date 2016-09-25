@@ -1,0 +1,89 @@
+<form action="organization.php" method="post">
+<h1>Сведения об организации</h1>
+<input type="hidden" name="id" value="%{$org.id}%" />
+
+
+
+<label for="name">Название</label><br />
+<input type="name" value="%{$org.name}%" name="name" size="40" maxlength="255" />
+<p />
+
+<label for="full_name">Полное название</label><br />
+<textarea name="full_name" rows="3" cols="100">%{$org.full_name}%</textarea>
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="inn">ИНН</label><br />
+<input type="name" value="%{$org.inn}%" name="inn" size="30" maxlength="255" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="kpp">КПП</label><br />
+<input type="name" value="%{$org.kpp}%" name="kpp" size="30" maxlength="255" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="okpo">ОКПО</label><br />
+<input type="name" value="%{$org.okpo}%" name="okpo" size="30" maxlength="255" />
+</div>
+
+<br clear="all" />
+<p />
+
+<label for="legal_address">Юридический адрес</label><br />
+<textarea name="legal_address" rows="3" cols="100">%{$org.legal_address}%</textarea>
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="chief">Руководитель</label><br />
+<input type="name" value="%{$org.chief}%" name="chief" size="30" maxlength="255" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="main_accountant">Главный бухгалтер</label><br />
+<input type="name" value="%{$org.main_accountant}%" name="main_accountant" size="30" maxlength="255" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<h2>Реквизиты:</h2>
+
+<div style="float:left; margin-right:20px;">
+<label for="bank">Банк</label><br />
+<input type="name" value="%{$org.bank}%" name="bank" size="30" maxlength="255" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="city">Город банка</label><br />
+<input type="name" value="%{$org.city}%" name="city" size="30" maxlength="255" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="bik">БИК</label><br />
+<input type="name" value="%{$org.bik}%" name="bik" size="30" maxlength="255" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="city">к/с</label><br />
+<input type="name" value="%{$org.city}%" name="city" size="30" maxlength="255" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="rs">р/с</label><br />
+<input type="name" value="%{$org.rs}%" name="rs" size="30" maxlength="255" />
+</div>
+
+<br clear="all" />
+<p />
+
+<input type="submit" name="doInput" value="Внести изменения" />
+
+<input type="button" value="Отмена" onclick="location.href='index.php';" />
+</form>

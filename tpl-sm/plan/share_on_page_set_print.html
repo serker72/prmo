@@ -1,0 +1,43 @@
+<!-- таблица на странице -->
+
+ 
+<table width="100%" cellpadding="1" cellspacing="0" border="1" class="blacktable1" id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="*">Ф.И.О.</th>
+         
+        <th scope="col" width="150" >Права</th>
+        
+        
+         
+        
+    
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+   <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="*">
+        
+      
+        
+        %{$pospos[pospossec].name_s}%
+        </td>
+        
+        <td width="150">
+        %{if $pospos[pospossec].right_id==1}% чтение%{/if}% 
+        %{if $pospos[pospossec].right_id==2}% чтение, запись%{/if}% 
+        
+        
+        
+        </td>
+         
+        
+       
+    </tr>
+   
+    %{/section}%
+    </tbody>
+    </table>
+    

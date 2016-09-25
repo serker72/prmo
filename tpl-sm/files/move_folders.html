@@ -1,0 +1,6 @@
+%{section name=rowsec loop=$items}%
+
+<div style="margin-left:%{$items[rowsec].depth}%em; %{if $items[rowsec].depth==0}% margin-bottom:5px;%{/if}%"><input type="radio" name="move_folder_id" id="move_folder_id_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" %{if $items[rowsec].disabled}% disabled="disabled" %{/if}% /><label for="move_folder_id_%{$items[rowsec].id}%">%{$items[rowsec].filename}%</label></div>
+
+
+%{/section}%

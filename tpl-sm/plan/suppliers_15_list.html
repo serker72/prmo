@@ -1,0 +1,66 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="supplier_row_%{$pos[possec].id}%" >
+    	 
+       
+        <td id="full_name_%{$pos[possec].id}%">
+        <input type="radio" id="supplier_radio_%{$pos[possec].id}%" name="supplier_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_supplier}% checked="checked"%{/if}% %{if !$pos[possec].can_edit}% disabled %{/if}% />
+        <label for="supplier_radio_%{$pos[possec].id}%">
+        
+        %{$pos[possec].full_name}%
+          </label>
+         <input type="hidden" id="is_confirmed_%{$pos[possec].id}%" value="%{$pos[possec].is_confirmed}%" />
+         
+         
+          %{foreach from=$pos[possec].cities item=city}%	 
+            <input type="hidden" id="new_supplier_city_id_%{$pos[possec].id}%_%{$city.id}%" value="%{$city.city_id}%"/>
+            
+            
+           <!-- <span id="new_supplier_city_name_%{$pos[possec].id}%_%{$city.id}%">%{$city.name}%, %{$city.okrug_name}%, %{$city.region_name}%,  %{$city.country_name}%</span><br>
+        -->
+            
+            
+            %{/foreach}%
+         
+        
+        </td>
+         <td id="opf_name_%{$pos[possec].id}%">%{$pos[possec].opf_name}%</td>
+        <td>%{$pos[possec].inn}%</td>
+        <td>%{$pos[possec].kpp}%</td>
+       <td>
+       
+           <small>
+     %{foreach from=$pos[possec].cities item=item}%
+     %{$item.name}%, %{$item.okrug_name}%, %{$item.region_name}%,  %{$item.country_name}%<br>
+
+     %{/foreach}%
+     </small>
+        
+        </td>
+        <td>
+          %{if $do_show_contacts}%
+         %{foreach from=$pos[possec].contacts item=item}%
+     <strong>%{$item.name}%, %{$item.position}%</strong><br>
+      
+     %{/foreach}%
+     		%{/if}%
+          </td>
+        
+        <td>
+        <input type="hidden" id="is_org_%{$pos[possec].id}%" value="%{$pos[possec].is_org}%" />
+         %{if $pos[possec].can_edit}%
+   
+    <a href="supplier.php?action=1&id=%{$pos[possec].id}%" target="_blank" class="reestr_edit  reestr_button16" data-comment="Подробно..."></a>
+    
+      
+    %{else}%
+    <a href="#"  data-comment="Подробно..."  class="reestr_edit reestr_inactive reestr_button16" onClick="return false;"> </a>
+    
+    %{/if}%
+       
+        </td>
+    </tr>
+    
+    
+   
+%{/section}%    
+ 	

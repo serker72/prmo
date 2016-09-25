@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>Доверенность № %{$order.id}%</title>
+<style type="text/css">
+body,td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+}
+table.blacktable{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+table.blacktable tr td, table.blacktable tr th{
+	border: 1px solid black;
+	
+}
+table.blacktable2{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable2, th.blacktable2{
+	border: 2px solid black;
+}
+td p{
+	margin-bottom:0px;
+}
+</style>
+ 
+</head>
+
+<body>
+ 
+	<table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+    <tr align="center" valign="middle">
+    	<td width="70">
+        Номер<br />
+
+доверен-<br />
+
+ности
+        </td>
+        <td width="70">
+       Дата
+выдачи
+
+        </td>
+        <td width="70">
+       Срок
+действия
+
+        </td>
+        <td width="*" colspan="2">
+        Должность и фамилия лица,
+которому выдана доверенность
+        </td>
+        <td width="170">
+       Расписка в получении
+доверенности
+
+        </td>
+    </tr>
+    <tr align="center" valign="middle">
+    	<td width="70">
+        1
+        </td>
+        <td width="70">
+       2
+        </td>
+        <td width="70">
+       3
+
+        </td>
+        <td width="*" colspan="2">
+        4
+        </td>
+        <td width="170">
+       5
+
+        </td>
+    </tr>
+   
+    <tr align="center" valign="middle">
+    	<td width="70">
+        %{$letter.given_no}%
+        </td>
+        <td width="70">
+       %{$letter.pdate}%
+        </td>
+        <td width="70">
+       %{$letter.srok}%
+
+        </td>
+        <td width="*" colspan="2">
+        %{$letter.fio}%
+        </td>
+        <td width="170">&nbsp;
+       
+
+        </td>
+    </tr>
+     <tr align="center" valign="middle">
+     	<td width="280" colspan="4">
+        Поставщик
+        </td>
+     	<td width="*">
+     	Номер и дата наряда
+(заменяющего наряд
+документа) или извещения
+		</td>
+     	<td width="170">
+       		Номер, дата документа,
+подтверждающего
+выполнение поручения
+
+        </td>
+     </tr>
+     <tr align="center" valign="middle">
+     	<td width="280" colspan="4">
+        6
+        </td>
+     	<td width="*">
+     	7
+		</td>
+     	<td width="170">
+       		8
+
+        </td>
+     </tr>
+     <tr align="center" valign="middle">
+     	<td width="280" colspan="4">
+       %{$letter.supplier_name}%
+        </td>
+     	<td width="*">&nbsp;
+     	
+		</td>
+     	<td width="170">&nbsp;
+       		
+        </td>
+     </tr>
+     
+    </table>
+   <br />
+ 
+   <table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+    <tr align="center" valign="middle">
+    	<td width="*">
+        Линия отреза
+
+        </td>
+    </tr>
+   </table>
+  
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="right" valign="middle">
+    	<td width="*">
+        				Типовая межотраслевая форма № М-2<br />
+
+Утверждена постановлением<br />
+
+ Госкомстата России от 30.10.97 № 71а
+
+
+        </td>
+    </tr>
+   </table>
+   
+   
+   
+   <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="right" valign="middle">
+    	<td width="*">&nbsp;
+        				
+        </td>
+        <td width="100" valign="bottom">
+        Форма по ОКУД  <br />
+
+		по ОКПО  
+
+        </td>
+        <td width="70">
+        <table width="70" border="1" cellpadding="1" cellspacing="0" class="blacktable2">
+         <tr align="right" valign="middle">
+    		<td width="*">
+            Коды
+
+        	</td>
+            </tr>
+           <tr align="right" valign="middle" >
+            <td width="*" class="blacktable2">
+            0315001
+
+        	</td>
+            </tr>
+            <tr align="right" valign="middle">
+            
+            <td width="*"  class="blacktable2">
+            99672785
+
+        	</td>
+        </table>
+        </td>
+    </tr>
+   </table>
+     
+   
+   <table width="100%" border="0" cellpadding="1" cellspacing="0">
+   <tr align="left" valign="bottom">
+   		<td width="70">
+        Организация 
+
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+        <p style="font-family:Arial, Helvetica, sans-serif; font-size:11px; font-weight:bold;">
+        %{$letter.organization}%
+        				
+
+        </p>
+        </td>
+   </tr>
+   </table>
+   
+   
+   
+
+    <p style=" text-align:center; font-family:Arial, Helvetica, sans-serif; font-size:16px; font-weight:bold;">
+        Доверенность № %{$letter.given_no}%
+        </p>
+
+    
+    <table width="210" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="70">
+         Дата выдачи 
+
+
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+         %{$letter.pdate}%
+        </td>
+    </tr>
+    </table><br />
+
+     <table width="400" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="210">
+         Доверенность действительна по 
+
+
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+         %{$letter.srok}%
+        </td>
+    </tr>
+    </table>
+    
+    
+     <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="center" valign="bottom">
+    	
+        <td width="*" style="border-bottom:1px solid black;">
+        %{$letter.organization}%						
+
+        </td>
+    </tr>
+    <tr align="center" valign="bottom">
+    	
+        <td width="*" >
+        наименование потребителя и его адрес
+
+        </td>
+    </tr>
+    </table>
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="center" valign="bottom">
+    	
+        <td width="*" style="border-bottom:1px solid black;">
+        %{$letter.organization}%							
+
+        </td>
+    </tr>
+    <tr align="center" valign="bottom">
+    	
+        <td width="*" >
+        наименование плательщика и его адрес
+
+
+        </td>
+    </tr>
+    </table>
+    
+    
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="center" valign="bottom">
+    	
+        <td width="*" >
+        <br />
+
+        Счет № %{$letter.rs}% в  %{$letter.bank}%,Г. %{$letter.city}%, БИК %{$letter.bik}%, корр.сч. %{$letter.ks}%								
+
+		<br />
+
+
+        </td>
+    </tr>
+    </table>
+    <br />
+
+    
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="140">
+         Доверенность выдана: 		
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+         %{$letter.fio}%
+        </td>
+    </tr>
+    </table>
+    
+    
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="70">
+         Паспорт: 
+	
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+         %{$letter.pasp_ser}% %{$letter.pasp_no}%
+        </td>
+    </tr>
+    </table>
+    
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="70">
+         Кем выдан 
+
+	
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+        %{$letter.pasp_kem}%
+        </td>
+    </tr>
+    </table>
+    
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="70">
+        Дата выдачи:
+ 
+	
+        </td>
+        <td width="*" style="border-bottom:1px solid black;">
+        %{$letter.pasp_kogda}%
+        </td>
+    </tr>
+    </table>
+    
+    
+    
+    
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">
+    <tr align="left" valign="bottom">
+    	<td width="*">
+         На получение от %{$letter.supplier_name}%
+        
+									
+        </td>
+      </tr>
+      </table>  
+        
+    <table width="100%" border="0" cellpadding="1" cellspacing="0">     
+      <tr align="left" valign="bottom">
+        <td width="140">
+        
+
+<div style="white-space:nowrap;">материальных ценностей по</div>
+        </td> 
+        <td width="*" style="border-bottom:1px solid black;">
+         %{section name=rowsec2 loop=$our_bills}%
+         счету № %{$our_bills[rowsec2].supplier_bill_no}% от %{$our_bills[rowsec2].supplier_bill_pdate}%%{if $smarty.section.rowsec2.last==false}%, %{/if}% 
+         %{/section}%
+        
+         <!--счету № %{$letter.supplier_bill_no}% от %{$letter.supplier_bill_pdate}% -->
+        </td>
+    </tr>
+    </table>
+    
+    <br />
+	<p style="font-weight:bold; text-transform:uppercase; text-align:center;">
+    ПЕРЕЧЕНЬ ТОВАРНО-МАТЕРИАЛЬНЫХ ЦЕННОСТЕЙ, ПОДЛЕЖАЩИХ ПОЛУЧЕНИЮ
+    </p>
+    <br />
+	
+     %{section name=rowsec loop=$positions}%
+    %{if $smarty.section.rowsec.first or $positions[rowsec].has_break}%
+    
+    <table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="middle">
+    <th scope="col" width="50">
+    <p style="font-weight:bold; font-size:11px;">
+    №
+п/п
+
+    </p>
+    </th>
+     <th scope="col" width="*">
+    <p style="font-weight:bold; font-size:11px;">
+    Наименование
+
+    </p>
+    </th>
+     <th scope="col" width="70">
+    <p style="font-weight:bold; font-size:11px;">
+    Ед. изм.
+
+    </p>
+    </th>
+     <th scope="col" width="150">
+    <p style="font-weight:bold; font-size:11px;">
+    Количество
+(прописью)
+
+    </p>
+    </th>
+    
+    </tr>
+   </thead>
+   <tbody>
+   %{/if}%
+   
+   
+   
+    <tr align="center" valign="middle">
+    <td width="50">
+    %{$smarty.section.rowsec.index_next}%
+    </td>
+     <td width="*">
+     %{$positions[rowsec].position_name}%
+    </td>
+     <td width="70">
+     %{$positions[rowsec].dim_name}%
+    </td>
+    <td width="150">
+    %{$positions[rowsec].summa}% (%{$positions[rowsec].summa_p}%)
+    </td>
+    
+    </tr>
+ 
+ 
+ %{if $smarty.section.rowsec.last  or $positions[rowsec.index_next].has_break}%
+    </tbody>
+    </table>
+%{if !$smarty.section.rowsec.last}%
+<div style="page-break-after:always;">&nbsp;</div>
+%{/if}%    
+%{/if}%    
+       %{/section}%
+    
+    
+    
+
+ 
+<div style="position:relative; z-index:1; width:auto; page-break-inside:avoid !important; height:200px;   /*border: 1px solid red; */">
+ 
+    
+    
+    
+    
+    
+    <p>Подпись лица, получившего доверенность ____________________________ удостоверяем.</p>
+    <br />
+						
+<p>Руководитель предприятия_____________________ (%{$letter.chief}%)						</p>
+<br />
+
+<p>М.П.						</p>
+<br />
+
+<p>Главный бухгалтер____________________________ (%{$letter.main_accountant}%)						</p>
+
+    
+    
+    
+    
+%{if $printmode==2}%
+
+<div style="position:absolute; z-index:-2; width:200px; height:140px; left:130px; top:-10px; /* border: 1px solid red; */  "><img src="%{$org.print_sign_dir}%" border=0 alt="" />
+</div>
+
+<div style="position:absolute;z-index:-2; width:200px; height:140px; left:100px; top:65px;  /*border: 1px solid green;*/ "><img src="%{$org.print_sign_buh}%" border=0 alt="" />
+</div>
+
+<div style="position:absolute; z-index:-1;   width:200px; height:200px; left:10px; top:00px; /* border: 1px solid blue;*/  "><img src="/img/print/%{$org.print_print}%" border=0 alt="" /></div>
+ 
+%{/if}%
+    
+    
+    
+    
+    
+    
+   
+</div>
+ 
+    
+ 
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+%{if $item.status_id==3}%
+<nobr><strong>не утв.</strong></nobr>
+%{elseif $item.is_confirmed_inv==0}%
+    <nobr><strong>корр. не утв.</strong></nobr>
+    %{if $can_confirm_inv}%
+    <input type="button" value="Утвердить" id="confirm_inv%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed==0}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{else}%
+    <nobr><strong>корр. утв.</strong></nobr>
+    
+    %{if  ($can_unconfirm_inv ) or $can_super_confirm_inv}%
+    
+    <input type="button" value="Не утвердить" id="confirm_inv%{$prefix}%_%{$item.id}%" />
+    
+    %{/if}% 
+%{/if}%
+    <br />
+
+    %{$item.confirmed_inv_name}%  %{$item.confirm_inv_pdate}%
+    
+    %{if $can_confirm_inv or $can_super_confirm_inv}%
+    <script type="text/javascript">
+	$(function(){
+		$("#confirm_inv%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			
+			
+			%{if $item.is_confirmed_inv==1}%
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					alert("Невозможно снять утверждение корректировки задолженности по инвентаризационному акту № %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=can_ret&&false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния акта. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			if(can_ret){
+			$.ajax({
+					  async: false,
+					  url: "/js/invcalc.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_binded_docs",
+						  "id": "%{$item.id}%"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						  if(data.length>0){
+							if(!window.confirm("Внимание!\n"+data+"\nПродолжение работы приведет к удалению акта из связанных документов.\nПродолжить?")){
+								 can_ret=can_ret&&false;
+							}
+							  
+						  }
+						  
+						 
+					  },
+					  error: function(xhr, status){
+						  
+						  alert("Ошибка при проверке состояния инвентаризационного акта. Пожалуйста, попытайтесь сохранить акт снова.");
+						 can_ret=can_ret&&false;
+					  }	 
+				  });
+			}
+			//если все в порядке - то делать... иначе
+			if(can_ret){
+			if(window.confirm("Вы уверены, что хотите снять утверждение корректировки задолженности по инвентаризационному акту № %{$item.code}%?")){
+				
+			%{elseif $item.is_confirmed_inv==0}%	
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/invcalc.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					alert("Невозможно утвердить корректировку задолженности по инвентаризационному акту № %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=can_ret&&false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния акта. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			if(can_ret){
+			%{/if}%
+			
+			
+			
+			
+			
+			
+			
+			
+		
+				$.ajax({
+				  async: true,
+				  url: "/js/invcalc.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_confirm_inv",
+					  "id":"%{$item.id}%",
+							"shorter":"%{$shorter}%"
+				  },
+				  beforeSend: function(){
+						$("#item%{$prefix}%_row_%{$items[rowsec].id}%").html('<td colspan="13"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#item%{$prefix}%_row_%{$items[rowsec].id}%").html(data);
+					
+					
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			
+		  
+		  	%{if $item.is_confirmed_inv==1}%
+			}
+			}else{
+				
+			}
+			%{elseif $item.is_confirmed_inv==0}%
+			}
+			%{/if}%
+		 }); 
+		
+	});
+	</script>
+    %{/if}%
+    
+    

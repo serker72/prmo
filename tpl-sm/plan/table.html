@@ -1,0 +1,604 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+
+%{if $has_header}%
+ 
+
+%{include file="plan/pdf_actions.html"}% 
+
+%{include file="every_help_dialog.html" filename="schedule.html;sched_4.html" prefix=$prefix description="Планировщик"  style="float:right;  margin-right:0px;"}%
+
+<div style="float:right; margin-right:5px;">
+	%{include file="suppliers/mode_reestr.html" prefix=$prefix pagename="sched_view4.php"}%
+	
+</div>
+
+%{include file="annul_dialog.html" prefix=$prefix}%
+
+
+
+<script type="text/javascript">
+function ExpiredBlink%{$prefix}%(){
+	//$(".expired%{$prefix}%").toggle(100);
+	if($(".expired%{$prefix}%").css("display")=="block") $(".expired%{$prefix}%").css("display", "none");
+	else $(".expired%{$prefix}%").css("display", "block");
+}
+
+$(function(){
+	 
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	 $("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	 setInterval('ExpiredBlink%{$prefix}%()',700);
+	 
+	 
+ 
+});
+</script>
+
+
+ 
+
+%{$pages}%
+
+
+ 
+
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+
+ <div style="float:left; margin-right:0px;  margin-bottom:10px;  min-height:30px;  ">
+    <label for="%{$prefix}%statuses" class="statuses_label">Статусы:</label>
+    <select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+    <option value="18" %{if $status_id_18==1 or $all_statuses==1}% selected%{/if}% >Создан</option>
+    <option value="2"  %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}%>Утвержден</option>
+    <option value="22" %{if $status_id_22==1 or $all_statuses==1}% selected%{/if}% >Запланирован</option>
+    <option value="10" %{if $status_id_10==1 or $all_statuses==1}% selected%{/if}% >Выполнен</option>
+    <option value="3"  %{if $status_id_3==1 or $all_statuses==1}% selected%{/if}%>Аннулирован</option>
+    </select>
+    
+    <a href="#" id="save_sort_mode%{$prefix}%"  class="statuses_save reestr_save reestr_button24" data-comment="Сохранить"></a>
+    
+    &nbsp;&nbsp;
+    
+    <div id="%{$prefix}%statuses_caption" class="statuses_caption" style="white-space:normal !important; max-width:180px;">
+    
+    </div>
+</div>    
+
+
+ <div style="float:left; margin-right:10px;  margin-bottom:10px;  min-height:30px;   overflow:hidden;">
+    
+    <label for="%{$prefix}%plan_or_fact" class="statuses_label" >План/факт:</label> 
+
+    <select id="%{$prefix}%plan_or_fact" name="%{$prefix}%plan_or_fact[]" multiple="multiple">
+    <option value="0" %{if $plan_or_fact_0==1 or $all_plan_or_fact==1}% selected%{/if}% >План</option>
+    <option value="1"  %{if $plan_or_fact_1==1 or $all_plan_or_fact==1}% selected%{/if}%>Факт</option> 
+    </select>
+    
+     
+    &nbsp;&nbsp;
+    
+
+    
+    <div id="%{$prefix}%plan_or_fact_caption" class="statuses_caption" style="white-space:normal !important; max-width:140px;">
+    
+    </div>
+
+</div>
+
+
+<div style="float:left; margin-right:10px;  margin-bottom:10px; min-height:30px;   overflow:hidden;">
+    <label for="contents%{$prefix}%">Содержание:</label>
+    <input type="text" name="contents%{$prefix}%" id="contents%{$prefix}%" size="30" maxlength="255" value="%{$contents}%" placeholder="введите фрагмент содержания" class="sched_report_field" />
+</div>
+
+
+<br clear="all"/>
+
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		VidgetMulti('%{$prefix}%statuses');	
+		
+		   VidgetMultiReport('%{$prefix}%plan_or_fact', 'Выберите план/факт', 'Все', 'Cнять выбор', '# из # выбрано', "Выбран план/факт: ", 'План/факт не выбран', 150 );
+		
+		//сохранение набора
+		$("#save_sort_mode%{$prefix}%").bind("click",function(){
+			 
+			
+			 $('#%{$prefix}%statuses').multiselect("widget").find(":checkbox").each(function(){
+				 //alert(this.label);
+				 if(this.checked){
+					 $.cookie('%{$prefix}%sched_%{$prefix}%status_id_'+this.value, 1, { expires: 14 });  
+				 }else{
+					$.removeCookie('%{$prefix}%sched_%{$prefix}%status_id_'+this.value);
+				 }
+			  });
+						  
+			$("#doFilter%{$prefix}%").trigger("click");
+			
+			return false;	
+		});
+		 
+	
+	});
+
+	</script>
+ 
+<p />
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+<input type="hidden" name="pdate" value="%{$pdate}%" />
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+
+%{foreach from=$view item=col}%
+
+ 
+%{if $col.colname=="code"}%   
+	<th scope="col" width="40">
+    Номер
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="pdate"}%     
+    
+    <th scope="col" width="60">
+    Дата, время
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+
+%{/if}%
+%{if $col.colname=="incoming_or_outcoming"}%   
+
+    <th scope="col" width="40">
+    Вход/ Исход
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+ 
+ %{/if}%
+%{if $col.colname=="plan_or_fact"}%   
+    
+     <th scope="col" width="40">
+    План/ Факт
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+
+%{/if}%
+%{if $col.colname=="contact"}%   
+    
+    <th scope="col" width="*">
+    Контакт
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+ %{/if}%
+%{if $col.colname=="status"}%       
+     
+      <th scope="col" width="100">
+    Статус
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+        </th>
+        
+   %{/if}%
+%{if $col.colname=="resp"}%        
+           <th scope="col" width="100">
+    Сотрудник 
+   
+   
+    </th>
+  %{/if}%
+  
+  
+%{if $col.colname=="crea"}%     
+     <th scope="col" width="100">
+   Создал
+   
+   
+    </th>
+  %{/if}%
+  
+  %{if $col.colname=="purpose"}%     
+     <th scope="col" width="*">
+   Цель
+   
+   
+    </th>
+%{/if}%
+
+
+%{if $col.colname=="result"}%     
+     <th scope="col" width="*">
+   Результат
+   
+   
+    </th>
+%{/if}%
+
+
+    %{/foreach}%      
+        
+      <th scope="col" width="100">
+    Утв. заполн- ия
+        </th>
+        
+         <th scope="col" width="100">
+    Утв. выполн- ия
+        </th>   
+     
+      
+  
+ 
+   
+    <th scope="col" width="24">&nbsp;</th>
+    
+       <th scope="col" width="24">&nbsp;</th>
+   
+</tr>
+
+
+<tr align="center" valign="top" class="filter">
+	%{foreach from=$view item=col}%
+   
+ 
+%{if $col.colname=="code"}%   
+    <td width="40">
+    <input type="text" size="8" maxlength="255" value="%{$code}%" name="code%{$prefix}%" id="code%{$prefix}%" style="width:40px;" />
+    
+	 
+    </td>
+   %{/if}%
+%{if $col.colname=="pdate"}%    
+    <td width="60">
+    
+     
+     	&nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" /><br />
+	 
+    
+    </td>
+   %{/if}%
+%{if $col.colname=="incoming_or_outcoming"}%    
+    
+     <td width="40">
+    
+    
+    
+    </td>
+  
+  
+  %{/if}%
+%{if $col.colname=="plan_or_fact"}%     
+     <td width="40">
+    
+    
+    
+    </td>
+    
+   %{/if}%
+%{if $col.colname=="contact"}%    
+   
+   <td width="*" >&nbsp;
+   
+   </td>
+   
+   %{/if}%
+%{if $col.colname=="status"}%   
+   
+    <td width="100" >&nbsp;
+   
+   </td>
+   
+  %{/if}%
+%{if $col.colname=="resp"}%    
+   
+    <td width="100">
+    
+    
+       <input type="text" size="40" maxlength="255" value="%{$manager_name}%" name="manager_name%{$prefix}%" id="manager_name%{$prefix}%" style="width:50px;" />
+    
+    
+ 
+    </td>
+    
+ %{/if}%
+%{if $col.colname=="crea"}%   
+
+
+    <td width="100" >
+  
+   
+   
+   </td>
+   
+%{/if}%
+  %{if $col.colname=="purpose"}%     
+  <td width="*" >
+    
+   
+   </td>
+%{/if}%
+
+
+%{if $col.colname=="result"}%     
+     <td width="*" >
+    
+   
+   </td>
+%{/if}%
+    
+    
+  %{/foreach}% 
+  
+    <td width="100" >
+    
+   
+   </td>
+   
+     <td width="100" >
+  
+   
+   
+   </td>
+   
+ 
+   
+     <td width="48" colspan="2">
+       <input name="doFilter%{$prefix}%" id="doFilter%{$prefix}%"  type="submit" value="Найти" style="width:48px;" />
+    
+    </td>
+    
+</tr>
+</thead>
+<tbody>
+ %{/if}%
+%{section name=rowsec loop=$items}%
+ %{if $has_header}%
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+ %{/if}%
+%{foreach from=$view item=col}%	
+
+
+%{if $col.colname=="code"}%   
+    <td width="40"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    
+      %{if $can_edit}%
+   <a href="ed_sched.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" class="reestr_button24" data-comment="Подробно...">
+    %{/if}%
+    %{$items[rowsec].code}%
+    %{if $can_edit}%
+    </a>
+    %{/if}%
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="pdate"}%   
+    
+    <td width="60"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%item_expired%{/if}%" ><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+     
+    %{if $items[rowsec].expired}%
+    <div class="expired%{$prefix}%">
+    %{/if}%
+    
+    
+    %{$items[rowsec].pdate_beg}% %{$items[rowsec].ptime_beg}%<br>
+
+    
+    %{$items[rowsec].pdate_end}% %{$items[rowsec].ptime_end}%
+    
+    
+     %{if $items[rowsec].expired}%
+    </div>
+    %{/if}%
+    
+    
+    </td>
+  %{/if}%
+%{if $col.colname=="incoming_or_outcoming"}%     
+    
+     <td width="40"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+     
+     %{if $items[rowsec].incoming_or_outcoming==0}%
+     вход.
+     %{else}%
+     исход.
+     %{/if}%
+     
+     </td>
+ %{/if}%
+%{if $col.colname=="plan_or_fact"}%      
+    <td width="40"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+     
+     %{if $items[rowsec].plan_or_fact==0}%
+     план.
+     %{else}%
+     факт.
+     %{/if}%
+     
+     </td>
+    
+ %{/if}%
+%{if $col.colname=="contact"}%      
+    
+    <td width="*"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    %{if $items[rowsec].contact_mode==0}%
+    
+    %{$items[rowsec].contact_value}% 
+    
+    %{elseif $items[rowsec].contact_mode==1}%
+    
+    %{$items[rowsec].contact_name}% %{$items[rowsec].contact_value}% 
+    %{/if}%
+    </td>
+    
+   
+  %{/if}%
+%{if $col.colname=="status"}%     
+   
+    
+     <td width="100"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%"  >
+  %{$items[rowsec].status_name}% 
+    </td>
+   
+ %{/if}%
+%{if $col.colname=="resp"}%     
+     <td width="100"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3   or $items[rowsec].manager_is_active==0  }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    <small>%{$items[rowsec].manager_name}% </small>
+    
+    
+    </td>
+  %{/if}%
+%{if $col.colname=="crea"}%     
+    
+    <td width="100"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+  <small>  %{$items[rowsec].cr_name}%  
+    
+     %{$items[rowsec].pdate}%</small>
+    </td>
+   %{/if}%
+   
+   
+   
+%{if $col.colname=="purpose"}%     
+  <td width="*" class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    
+    <a href="#" class="reestr_short">
+    %{$items[rowsec].description|strip_tags|trim|truncate:60:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    
+    <div class="reestr_full reestr_hide">
+    %{$items[rowsec].description}%
+    </div>
+   
+    
+   </td>
+%{/if}%
+
+
+%{if $col.colname=="result"}%     
+     <td width="*"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    
+     <a href="#" class="reestr_short">
+    %{$items[rowsec].report|strip_tags|trim|truncate:60:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    
+    <div class="reestr_full reestr_hide">
+    %{$items[rowsec].report}%
+    </div>
+    
+      
+   
+   </td>
+%{/if}%
+    
+    
+
+%{/foreach}%    
+    
+    <td width="*"   class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%"  >
+    
+    <div id="status_price%{$prefix}%_%{$items[rowsec].id}%">%{include file="plan/toggle_confirm_price.html" filename="sched.php" item=$items[rowsec] shorter=0}%</div>
+    
+    </td>
+    
+    <td width="*"   class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%"  >
+    
+    <div id="status_shipping%{$prefix}%_%{$items[rowsec].id}%">%{include file="plan/toggle_confirm_ship.html" filename="sched.php" item=$items[rowsec] shorter=0}%</div>
+    
+    
+    </td>
+  
+  
+    
+   
+    
+    
+    <td width="24"  class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    %{if $can_edit}%
+    <a href="ed_sched.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    
+     %{if $items[rowsec].is_confirmed}%
+    <a href="ed_sched_pdf.php?action=1&id=%{$items[rowsec].id}%&print=1" target="_blank" data-comment="печать..." class="reestr_print reestr_right_button24"></a>
+    
+     <a href="#" onclick="email_documents_launch('%{$items[rowsec].id}%'); return false;"  data-comment="отправить pdf-документы на электронную почту..."  class="reestr_email reestr_right_button24"> </a>
+    %{else}%
+      <a href="#" onClick="alert('Для печати звонка необходимо утвердить его заполнение!'); return false;" data-comment="печать..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+    
+      <a href="#" onClick="alert('Для отправки на электронную почту звонка необходимо утвердить его заполнение!');  return false;" data-comment="отправить pdf-документы на электронную почту..." class="reestr_email reestr_inactive reestr_button24"></a>
+    %{/if}%
+    
+    
+    %{else}% 
+    <a href="#" onClick="return false;" data-comment="Подробно..." class="reestr_edit reestr_inactive reestr_right_button24"></a>
+    
+    <a href="#" onClick="return false;" data-comment="печать..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+    
+      <a href="#" onClick="return false;" data-comment="отправить pdf-документы на электронную почту..." class="reestr_email reestr_inactive reestr_right_button24"></a>
+    %{/if}%
+   
+    
+     <br />
+
+    
+    </td>
+    
+   
+     <td width="24"   class="%{if $items[rowsec].status_id==1 or $items[rowsec].status_id==3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    %{include file="plan/toggle_annul.html" prefix=$prefix}%
+   
+    
+    </td>
+    
+     
+%{if $has_header}%  
+</tr>
+ %{/if}%
+%{/section}%
+ %{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям записей планировщика не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%
+ 

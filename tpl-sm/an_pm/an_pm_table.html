@@ -1,0 +1,581 @@
+
+%{if $do_it}%
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40" rowspan="2">№ исх. счета
+	 <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    <th scope="col" width="40" rowspan="2">дата
+ <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    <th scope="col" width="40" rowspan="2">№ исх. сч. к-та 
+
+    </th>
+    <th scope="col" width="40" rowspan="2">зад. № с/ф
+
+    </th>
+    
+    <th scope="col" width="60" rowspan="2">Сумма  
+
+    </th>
+    
+     <th scope="col" width="50" rowspan="2">Покупатель 
+ <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+     <th scope="col" width="50" rowspan="2">Статус 
+	 <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{if $not_given==false}%2%{/if}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col" width="*"  %{if !$view_full_version}% colspan=" %{if $not_given}%9%{else}%8%{/if}%"%{else}% colspan=" %{if $not_given}%13%{else}%12%{/if}%"%{/if}%>Позиции с +/- 
+
+    </th>
+     <th scope="col" width="60" rowspan="2">Создал 
+
+    </th>
+ 
+ 
+</tr>
+
+<tr align="center" valign="top">    
+	<th scope="col" width="20">№ п/п
+</th>
+    <th scope="col" width="*">Номенклатура
+</th>
+	<th scope="col" width="20">Ед. изм.
+</th>
+	<th scope="col" width="40">Кол-во
+</th>
+	%{if $view_full_version}%
+    <th scope="col" width="50">Цена без +/-
+	</th>
+    %{/if}%
+    <th scope="col" width="50">Цена c +/-
+	</th>
+     
+     %{if $view_full_version}%
+     <th scope="col" width="50">+/- 
+	</th>
+    %{/if}%
+   
+    %{if $view_full_version}%
+    <th scope="col" width="50">сумма +/-
+	</th>
+    <th scope="col" width="50">дисконт +/-
+	</th>
+    %{/if}%
+    <th scope="col" width="50">К выдаче 
+	</th>
+    
+    %{if $not_given}%
+    <th scope="col" width="20">
+    <input type="checkbox" id="select_all"  />
+    <br />
+	<a href="#" id="pm_edit"><img src="../../img/icons/edit.png" width="24" height="24" alt="редактировать полученный +/-..." title="редактировать полученный +/-..." border="0" /></a>
+	<script type="text/javascript">
+	$(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}	
+		
+		$("#select_all").bind("click",function(){
+			$("input[id^=checked_]").prop("checked",$("#select_all").prop("checked"));
+		});
+		
+		//редактирование пм
+		$("#pm_edit").bind("click", function(){
+			if($("input[id^=checked_]:checked").length==0){
+				alert("Выберите позиции для редактирования полученного +/-!");
+				return false;	
+			}
+			
+			
+			
+			
+			function isTouchDevice1(){
+						try{
+							document.createEvent("TouchEvent");
+							return true;
+						}catch(e){
+							return false;
+						}
+			}
+			
+			
+			//сформировать позиции диалога:
+			
+			var row_ids=new Array();
+			$.each($("input[id^=checked_]"),function(k,v){
+				if($(v).prop("checked")) row_ids.push($(v).val());
+			});
+			
+			
+				var dialog_width=1250;
+			var dialog_position;
+			
+			w=parseInt($(window).width());
+			if(w<1250){
+				 dialog_width=w-10;
+				
+				dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 $("#discount_given_dialog_inner").css("width", dialog_width-50);
+				 $("#discount_given_dialog_inner").css("height", 450);
+					
+				 
+			}else{
+				dialog_width=1250;
+				dialog_position='center';
+				
+					
+			}
+			
+			$("#discount_given_dialog").dialog( "option", "position", dialog_position );
+			$("#discount_given_dialog").dialog( "option", "width", dialog_width );
+			
+			
+			 if(isTouchDevice1()){
+				
+			  $("#discount_given_dialog_inner").css("overflow", "scroll");
+			  touchScrollXY('discount_given_dialog_inner'); 
+			}
+			  
+			
+			
+			$("#discount_given_dialog").dialog('open');
+			
+			
+			//discount_given_dialog_inner
+			$.ajax({
+			  async: false,
+			  url: "/js/an_pm.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "row_ids[]":row_ids
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#discount_given_dialog_inner").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#discount_given_dialog_inner").html(data);
+				
+				
+				
+			  },
+			  error: function(xhr, status, mm){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			function CheckInput(){
+				var res=true;
+				
+				$.each($("input[id^=edit_unf_discount_given_]"), function(k, v){
+					local_res=true;
+					
+					key=$(v).attr("id").replace("edit_unf_discount_given_",'');
+					
+					//1. дублируем проверку ряда
+					//корректность ввода
+					if(isNaN($(this).val())){
+						
+						local_res=local_res&&false;
+						res=res&&false;
+						 
+					}
+					
+					to_give=parseFloat($("#edit_unf_vydacha_"+key).val());
+					value=parseFloat($("#edit_unf_discount_given_"+key).val());
+					given=parseFloat($("#check_unf_discount_given_"+key).val());
+					
+					semi_given=parseFloat($("#check_unf_semi_discount_given_"+key).val());
+					
+					//не можем дать меньше, чем выдано
+					
+					//если к выдаче >=0 - то не можем дать меньше, чем выдано
+					//если к выдаче <=0 - то не можем дать больше, чем выдано
+					
+					if(local_res){
+						if(to_give>=0){
+							if(value<semi_given){
+								 local_res=local_res&&false; 
+								 
+							}
+						}else{
+							if(value>semi_given){
+								 local_res=local_res&&false; 
+								 
+							}
+						}					
+					}
+					
+								
+					
+					if(local_res){
+						
+						if(to_give>=0){
+							if(value>to_give){
+								 local_res=local_res&&false; 
+								 res=res&&false;
+								// alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+given+" до "+to_give+" руб.");
+							}
+							
+						}else{
+							//не можем писать >0 либо < чем к выдаче
+							if((value<to_give)||(value>0)){
+								 local_res=local_res&&false;
+								 res=res&&false; 
+								 //alert("Некорректно введена сумма полученного +/-. Сумма может быть от "+to_give+" до "+given+" руб.");
+							}
+						}
+					}
+					
+					
+					//не можем дать меньше, чем выдано
+					//если к выдаче >=0 - то не можем дать меньше, чем выдано
+					//если к выдаче <=0 - то не можем дать больше, чем выдано
+					
+					if(local_res){
+						if(to_give>=0){
+							if(value<given){
+								 local_res=local_res&&false; 
+								 res=res&&false;
+							}
+						}else{
+							if(value>given){
+								 local_res=local_res&&false; 
+								 res=res&&false;
+							}
+						}					
+					}
+					
+					
+					
+					
+					
+					if(local_res){
+						$(v).removeClass("wrong");
+					}else{
+						$(v).addClass("wrong");
+					}
+						
+				});
+				
+				//2. + должен перевесить -
+				//найти сколько даем: сумма( check_unf_discount_given_ - edit_unf_discount_given_ )
+				if(res){
+					var sum=0;
+					$.each($("input[id^=edit_unf_discount_given_]"), function(k, v){
+						 
+						key=$(v).attr("id").replace("edit_unf_discount_given_",'');	
+						
+						to_give=parseFloat($("#edit_unf_vydacha_"+key).val());
+						value=parseFloat($("#edit_unf_discount_given_"+key).val());
+						given=parseFloat($("#check_unf_discount_given_"+key).val());
+						semi_given=parseFloat($("#check_unf_semi_discount_given_"+key).val());
+								
+						
+						//sum+=(given-value);
+						if(to_give>=0){
+							sum+=(value-semi_given);
+						}else{
+							sum+=(value-semi_given);	
+						}
+						//alert(value-given);
+						
+					});
+					//alert(sum);
+					if(sum<=0){
+						res=res&&false;
+						alert("Внимание!\nСумма формируемого расхода наличных получается равной "+ roundPlus(sum,2)+" руб.\nЭто некорректное значение.\nДля корректировки значения укажите значения в графе Получено таким образом, чтобы сумма формируемого расхода была неотрицательной.");	
+					}
+				}
+				
+				//3. это должны быть позиции счетов одинаковых к-тов
+				if(res){
+					var contra=new Array();
+					$.each($("input[id^=edit_unf_discount_given_]"), function(k, v){
+						 
+						key=$(v).attr("id").replace("edit_unf_discount_given_",'');	
+						
+						value=parseFloat($("#edit_unf_discount_given_"+key).val());
+						given=parseFloat($("#check_unf_discount_given_"+key).val());
+						
+						if(value!=given){
+						//	alert($("#supplier_id_"+key).val());
+							if($.inArray($("#supplier_id_"+key).val(), contra)==-1) contra.push($("#supplier_id_"+key).val());
+						}
+					});
+					
+					//alert(contra);
+					if(contra.length>1){
+						res=res&&false;
+						alert("Внимание!\nВы формируете расход наличных по счетам от разных контрагентов.\nЭто некорректное действие.\nДля формирования расхода наличиных необходимо использовать позиции счетов одного и того же контрагента.");	
+					}
+				}
+				
+				//4. д.быть выбран сотрудник-получатель
+				if(res){
+					if(($("#responsible_user_id").val()==0)||($("#responsible_user_id").val()==null)||($("#responsible_user_id").val()==undefined)){
+						res=res&&false;
+						alert("Выберите сотрудника-получателя платежа.");
+						$("#responsible_user_id").focus();
+					}
+				}
+				
+				return res;
+			}
+			
+			
+			$("#discount_given_dialog").dialog({
+				buttons:{
+					"Готово": function(){
+						
+						 if(CheckInput()){
+							 
+							/* alert("ok");
+							 return;
+							 */
+							 //ajax - вносим изменения, перестраиваем таблицу
+							 
+							 
+							 
+							 //сформировать массив заносимых значений
+							 var complex_positions=new Array();
+							 var total_sum=0; var supplier_id=0;
+							 $.each($("input[id^=edit_unf_discount_given_]"), function(k, v){
+						 
+								key=$(v).attr("id").replace("edit_unf_discount_given_",'');	
+								
+								to_give=parseFloat($("#edit_unf_vydacha_"+key).val());
+								value=parseFloat($("#edit_unf_discount_given_"+key).val());
+								given=parseFloat($("#check_unf_discount_given_"+key).val());
+								semi_given=parseFloat($("#check_unf_semi_discount_given_"+key).val());
+								
+								//sum+=(given-value);
+								
+								
+								
+								
+								if(to_give>=0){
+									sum=(value-semi_given);
+								}else{
+									sum=(value-semi_given);	
+								}
+								if(sum!=0){
+									total_sum+=sum;
+									
+									str=key+';'+sum+';'+$("#bill_id_"+key).val();
+									complex_positions.push(str);
+									
+									supplier_id=$("#supplier_id_"+key).val();
+								}
+							});
+							 
+							// alert(complex_positions);
+							 
+							if((complex_positions.length>0)&&( total_sum!=0)){
+							 $.ajax({
+								async: true,
+								url: "/js/an_pm.php",
+								type: "POST",
+								data:{
+									"action":"transfer_positions",
+									"complex_positions[]":complex_positions,
+									"responsible_user_id":$("#responsible_user_id").val(),
+									"supplier_id":supplier_id,
+									"value":total_sum
+								},
+								beforeSend: function(){
+								  //alert("Загрузка реквизитов.");
+								},
+								success: function(data){
+								  //alert(data);
+								  
+								  $("#discount_given_dialog").dialog('close');
+								  location.reload();
+								},
+								error: function(xhr, status, mm){
+								  // alert("Ошибка загрузки реквизитов.");	
+								}	 
+							  }); 
+							}else{
+								$("#discount_given_dialog").dialog('close');	
+							}
+							 //
+						 }else{
+							alert("Ошибка! Были заданы некорректные значения."); 
+						 }
+						
+						
+						
+						
+						
+						
+					},
+					"Отмена": function(){
+						$("#discount_given_dialog").dialog('close');
+					}
+				}
+			});
+			
+			
+		
+			
+			return false;
+		});
+		
+	});
+	</script>
+    
+</th>
+	%{/if}%
+    <th scope="col" width="50">Получено
+</th>
+<th scope="col" width="50">Сохранено
+</th>
+	
+</tr>
+    
+  
+</tr>
+
+</thead>
+<tbody>
+
+
+%{section name=rowsec loop=$items}%
+%{section name=possec loop=$items[rowsec].subs}%%{/section}%
+<tr align="left" valign="top">
+	<td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    <a href="ed_bill.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">%{$items[rowsec].code}%</a>
+    
+    </td>
+ <td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    <td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    %{$items[rowsec].supplier_bill_no}%
+    
+    </td>
+    <td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    %{section name=acsec loop=$items[rowsec].acc_nos}%
+    
+     <a href="ed_acc.php?action=1&id=%{$items[rowsec].acc_nos[acsec].id}%" target="_blank">%{$items[rowsec].acc_nos[acsec].given_no}%</a><br />
+
+    
+    %{/section}%
+    </td>
+   
+   
+     <td width="60" align="left" rowspan="%{$smarty.section.possec.total}%" style="white-space:nowrap;">
+    %{$items[rowsec].total}%
+    
+    </td>
+    
+    <td width="50" rowspan="%{$smarty.section.possec.total}%" >
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">%{$items[rowsec].supplier_name}%, %{$items[rowsec].supplier_opf}% </a>
+    </td>
+    
+     <td width="50" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    
+    %{if $items[rowsec].status_id==1}%
+    не утвержден
+    %{elseif $items[rowsec].status_id==2}%
+    утвержден
+    %{elseif $items[rowsec].status_id==3}%
+    аннулирован
+    %{elseif $items[rowsec].status_id==9}%
+    не выполнен
+    %{elseif $items[rowsec].status_id==10}%
+    выполнен
+    %{/if}%
+    
+    </td>
+    
+     
+     
+    %{section name=possec loop=$items[rowsec].subs}%
+    %{if $smarty.section.possec.index==0}%
+	%{include file="an_pm/an_pm_row.html"}%
+   %{/if}%
+	%{/section}%
+  
+     
+   
+     <td width="60" rowspan="%{$smarty.section.possec.total}%" class="small">
+    %{$items[rowsec].manager_name}%  
+    </td>
+   
+  
+</tr>
+%{section name=possec loop=$items[rowsec].subs}%
+	 %{if $smarty.section.possec.index>0}%   
+    <tr align="left" valign="top" id="" class="small">
+	%{include file="an_pm/an_pm_row.html"}%
+    </tr>
+    %{/if}%
+	%{/section}%
+
+%{/section}%
+<tr align="center" valign="top">
+<td>
+    <strong>Итог</strong>
+    </td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+     <td>&nbsp;</td>
+    
+    <td style="white-space:nowrap;">%{$total_summ}%</td>
+   
+   
+    %{if $view_full_version}%
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  %{/if}%
+     
+    <td style="white-space:nowrap;">%{*$total_quantity*}%</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+     <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td style="white-space:nowrap;">%{$total_pm}%</td>
+   %{if $not_given}% <td>&nbsp;</td>%{/if}%
+    <td style="white-space:nowrap;" id="total_given">%{$total_marja}%</td>
+    <td>&nbsp;</td>
+     <td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+%{/if}%

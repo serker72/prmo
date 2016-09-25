@@ -1,0 +1,155 @@
+%{if $item.status_id==3}%
+    <strong>аннулирован</strong>
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="deaunnul%{$prefix}%_%{$item.id}%" />
+    %{/if}%
+%{elseif  $item.is_confirmed==0}%
+    <strong>заполнение не утв.</strong>
+    %{if $can_confirm}%
+    <input type="button" value="Утвердить" id="confirm_price%{$prefix}%_%{$item.id}%"   />
+    %{/if}% 
+    %{else}%
+    <strong>заполнение утв.</strong>
+    %{if  ($can_unconfirm) }%
+    
+    <input type="button" value="Не утвердить" id="confirm_price%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed_given==1}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}%  %{$item.confirm_pdate}%
+    
+  
+    <script type="text/javascript">
+	$(function(){
+		 %{if $can_confirm}%
+		$("#confirm_price%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			var can_ret=true;
+			
+			
+			
+			%{if $item.is_confirmed==1}%
+			
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заполения по приходу %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния прихода. Пожалуйста, попытайтесь сохранить приход снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{elseif $item.is_confirmed==0}%
+			
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить заполнение по приходу %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния прихода. Пожалуйста, попытайтесь сохранить приход снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{/if}%
+			
+			if(!can_ret){
+				return false;	
+			}
+			
+			
+			
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm",
+				  "id":"%{$item.id}%",
+				  "shorter":"%{$shorter}%"
+				 
+			  },
+			  beforeSend: function(){
+				$("#pay_item_row%{$prefix}%_%{$item.id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+					//alert(data);
+					//alert("#item_row%{$prefix}%_%{$item.id}%");
+					$("#pay_item_row%{$prefix}%_%{$item.id}%").html(data);
+					
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+		 %{/if}%
+		 
+		 
+		 %{if $item.status_id==3 and $can_restore}%
+		 
+		
+		  
+		  $("#deaunnul%{$prefix}%_%{$item.id}%").bind("click",function(){
+			 
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$item.id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#pay_item_row%{$prefix}%_%{$item.id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   
+					   $("#pay_item_row%{$prefix}%_%{$item.id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+   
+    
+    

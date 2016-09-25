@@ -1,0 +1,100 @@
+ 
+
+
+<div id="expired_dialog" title="Дополнительная авторизация">
+
+<img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+
+<div style="float:left; padding-top:5px; margin-bottom:10px;">
+<strong>Для работы с разделом требуется дополнительная авторизация.</strong><p />
+
+Пожалуйста, введите Ваш пароль для работы в программе: 
+</div>
+<br clear="all" />
+
+
+<div style="float:left; margin-right:20px; margin-left:160px;"> 
+<div style="display:none;">
+<label for="extra_login">Ваш логин:</label><br>
+<input type="text" id="extra_login" value="%{$login}%" size="20" maxlength="255" disabled autocomplete="off" />
+<p />
+</div>
+
+<label for="extra_login">Ваш пароль:</label><br>
+<input type="password" id="extra_passw" value="" size="20" maxlength="255"  autocomplete="off" />
+<p />
+
+</div>
+
+<div id="extra_message" style="color:red; display:none; float:left; padding-top:13px;"></div>
+
+
+</div>
+
+
+
+<br clear="all" />
+
+
+<script type="text/javascript">
+$(function(){
+	
+		$("#expired_dialog").dialog({
+			autoOpen: true,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 500,
+			height: 220,
+			stack: true,
+			
+			buttons:{
+				"ОК":function(){
+					//
+					
+					$.ajax({
+						async: false,
+						url: "/js/semi_auth_check.php",
+						type: "POST",
+						data:{
+							"action":"semi_auth",
+							"name": "%{$name}%",
+							"login":$("#extra_login").val(),
+							"passw":$("#extra_passw").val()
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  if(data!=0){
+							 $("#extra_passw").val('');
+							 $("#extra_message").html(data);
+							 $("#extra_message").show();
+							  
+							 
+						  }else{
+							  $("#extra_message").hide();
+							 $("#expired_dialog").dialog('close');
+							 location.reload();
+						  }
+						},
+						error: function(xhr, status){
+							
+							alert("Ошибка при проверки доступа. Пожалуйста, попытайтесь ввести пароль снова.");
+							can_ret=false;	
+						}	 
+					});
+					
+				}
+			},
+			close: function( event, ui ) {
+				location.href="/";	
+			}
+		});
+		
+					
+	
+	
+});
+</script>
+
+<div>&nbsp;&nbsp;</div>

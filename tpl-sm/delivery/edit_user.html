@@ -1,0 +1,164 @@
+<script type="text/javascript" src="/js/gen_validatorv31.js"></script>
+  
+
+
+<h1>Редактировать подписчика</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+ 
+<input type="hidden" name="list_id" id="list_id" value="%{$data.list_id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+
+
+<div style="overflow:hidden">
+    <div style="float:left; margin-right:20px;">
+
+    <label for="email">Электронная почта:</label><br>
+    <input type="text" value="%{$data.email|escape:"html"}%" name="email" id="email" size="60" maxlength="255" />
+
+<br>
+<br>
+
+ <label for="f">Фамилия:</label><br>
+    <input type="text" value="%{$data.f|escape:"html"}%" name="f" id="f" size="60" maxlength="255" />
+
+<br>
+<br>
+
+ <label for="i">Имя:</label><br>
+    <input type="text" value="%{$data.i|escape:"html"}%" name="i" id="i" size="60" maxlength="255" />
+
+<br>
+<br>
+
+ <label for="o">Отчество</label><br>
+    <input type="text" value="%{$data.o|escape:"html"}%" name="o" id="o" size="60" maxlength="255" />
+
+	</div>
+    
+    <div style="float:left;"  >
+    	<strong>Подписан:</strong><br>
+		%{if $data.is_subscribed}%
+        ДА
+        %{else}%
+        НЕТ<br>
+<br>
+		<strong>Способ отписки:</strong><br>
+		%{$data.unsubscribe_way}%
+<br>
+<br>
+
+		<strong>Причина отписки:</strong><br>
+		%{$data.unsubscribe_reason}%
+        %{/if}%
+        
+        
+        %{if $data.kind_id==1}%<br>
+<br>
+
+         Контакт контрагента <a href="supplier.php?action=1&id=%{$data.supplier_id}%" target="_blank">%{$data.supplier_name}%, %{$data.opf_name}%</a>: %{$data.supplier_contact_name}%
+        %{elseif $data.kind_id==2}%<br>
+<br>
+
+         Контакт сотрудника <a href="user_s.php?action=1&id=%{$data.user_id}%" target="_blank">%{$data.user_name}%</a>
+        %{/if}%
+    
+    </div>
+ 
+</div>
+<br>
+ 
+
+
+<label for="comment">Комментарий:</label><br>
+<textarea id="comment" name="comment">%{$data.comment}%</textarea>
+<br>
+
+ 
+                    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+                    <script type="text/javascript">
+	CKEDITOR.replace( 'comment',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_delivery_template.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash'
+    				  }
+					 );
+	</script> 
+
+
+ 
+
+
+ 
+ 
+<input type="submit" name="doInp" id="doInp" value="Сохранить и перейти к списку подписчиков" />
+<input type="submit" name="doApply" id="doApply" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='%{$list_pagename}%?id=%{$data.list_id}%';" />
+
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+function DoCustomValidation()
+{
+	
+	if(!$("#do_update").prop("checked")){
+		var can=true;
+		
+		$.ajax({
+		  async: false,
+		  url: "js/delivery_lists.php",
+		  type: "POST",
+		  data:{
+			  "action":"check_email_user",
+			  "list_id":$("#list_id").val(),
+			  "email":$("#email").val(),
+			  "current_id":$("#id").val()
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			
+			//alert(data); can=false;
+			
+			if(data==1){
+				
+				can=false;
+			}
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		if(!can){
+			alert('Подписчик с указанной электронной почтой уже существует в этом списке!');	
+			return false;
+		}		
+	}
+	
+	
+	return true; 
+}
+
+ 
+frmvalidator.addValidation("email","req","Укажите адрес электронной почты!");
+frmvalidator.addValidation("email","email","Укажите адрес электронной почты!");
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+ 
+</script>

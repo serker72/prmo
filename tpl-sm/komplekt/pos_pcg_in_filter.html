@@ -1,0 +1,110 @@
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable" id="position_in_filter_table">
+
+<thead>
+<tr align="center" valign="top">
+	 <th scope="col" width="20">&nbsp;</th>  
+    
+    <th scope="col" width="40" >Код</th>
+    <th scope="col" >Наименование</th>
+    <th scope="col">
+     Товарная группа/ <br />
+	подгруппа&nbsp;1&nbsp;ур./ <br />
+	подгруппа&nbsp;2&nbsp;ур.
+    </th>
+    <th scope="col">
+    ГОСТ/ТУ
+   
+    </th>
+    
+    
+     <th width="50" scope="col">
+    Длина, мм
+   
+    </th>
+    <th width="50" scope="col">
+    Ширина, мм
+   
+    </th>
+    <th width="50" scope="col">
+    Высота/ толщина, мм
+   
+    </th>
+    
+    <th width="50" scope="col">
+    Вес
+1 ед., кг
+    </th>
+    <th width="50" scope="col">
+    Объем
+1 ед., м<sup>3</sup>
+    </th>
+    
+    
+    <th width="50" scope="col">
+    Диаметр, мм
+    </th>
+    <th scope="col" >Ед. изм.</th>
+    
+    <th scope="col" >Кол-во</th>
+    
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%	
+<tr align="center" valign="top" onclick="$('#pcg_pos_%{$items[rowsec].id}%').prop('checked',true);" ondblclick="$('#pcg_pos_%{$items[rowsec].id}%').prop('checked',true); ChangeToSel(); $('#pcg_positions_dialog').dialog('close');">
+	 <td width="20">
+    <input type="radio" name="pcg_pos" id="pcg_pos_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+    </td> 
+    
+    <td width="40">
+    %{$items[rowsec].id|string_format:"%05d"}%
+    </td>
+     <td>
+    %{$items[rowsec].name}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].group_name}%
+    </td>
+    <td>
+    %{$items[rowsec].gost_tu}%
+    </td>
+    
+    
+    
+     <td>
+    %{$items[rowsec].length}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].width}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].height}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].weight}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].volume}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].diametr}%
+    </td>
+    
+    <td>
+    %{$items[rowsec].dim_name}%
+    </td>
+    <td>
+    <input type="text" id="pcg_kol_%{$items[rowsec].id}%" value="%{$initial_kol}%" size="3" maxlength="10" disabled="disabled" />
+    <input type="hidden" id="pcg_pos_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+    </td>
+    
+</tr>
+%{/section}%
+</tbody>
+</table>

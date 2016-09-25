@@ -1,0 +1,314 @@
+
+
+
+
+<div id="dialog_holding" title="Быстрый поиск контрагентов" style="display:none;">
+
+<small><em>Поиск контрагентов возможен по нескольким критериям в каждом поле. Для этого укажите требуемые значения через ;, например, поиск по критерию:<br>
+
+вт;ст
+<br>
+в поле "Полное наименование" позволит найти всех контрагентов, у которых в названии встречаются сочетания букв "вт", либо "ст".</em>
+</small>
+<br>
+<br>
+<input type="hidden" value="" id="holding_mode" />
+	
+ <table width="100%" cellpadding="1" cellspacing="0" border="0" class="reptable">
+ <thead>
+    <tr align="center" valign="top">
+    	
+        <th scope="col" width="40">Код</th>
+        <th scope="col" width="30">
+        Утв. зап-ие
+        </th>
+        <th scope="col" width="30">
+        Утв. акт-ть
+        </th>
+        <th scope="col" width="80">Полное наименование</th>
+        <th scope="col" width="30">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        
+        <th scope="col" width="50">Город</th>
+        <th scope="col" width="*">Контакт</th>
+        <th scope="col" width="100">Отрасль</th>   
+        
+        
+        <th scope="col" width="50">Отв. сотр-ки</th>         
+        
+        <th scope="col" width="24">Карта</th>
+    </tr>
+    <tr align="center" valign="top"  class="filter">
+    	
+        <td>
+        <input id="holding_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td width="30">
+       
+        </td>
+        <td width="30">
+       
+        </td>
+        <td>
+        <input id="holding_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="holding_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="holding_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="holding_city" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+        <td>
+        <input id="holding_contact" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+         <td>
+        <input id="holding_branch" type="text" size="15" maxlength="128" value="" />
+        </td>
+       
+       
+       	 <td>
+         
+         </td>
+         
+         
+        <td>
+        <input type="button" value="Найти" id="holding_doFind" />
+        
+        </td>
+    </tr>
+	</thead>    
+    <tbody id="holding_suppliers_found">
+   
+    </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#holding_clear").bind("click",function(){
+		$("#holding_id").val(0);
+		$("#holding_string").val('');
+	});
+	
+	 $("#subholding_clear").bind("click",function(){
+		$("#subholding_id").val(0);
+		$("#subholding_string").val('');
+	});
+	
+	$("#holding_select").bind("click", function(){
+		$("#holding_mode").val('holding');
+		$("#dialog_holding").dialog("open");
+		return false;
+	});
+	
+	$("#subholding_select").bind("click", function(){
+		$("#holding_mode").val('subholding');
+		$("#dialog_holding").dialog("open");
+		return false;
+	});
+	
+	$("#not_in_holding").bind("change",function(){
+		if($(this).prop("checked")){
+			$("#holding_clear").trigger("click");
+			$("#subholding_clear").trigger("click");
+			
+		}
+	});
+	
+	
+	$("#dialog_holding").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		height: 550,
+		buttons:{
+			"Готово": function(){
+				can_ret=true;
+				
+				if(($("input[name=holding_supplier_found]:checked").val()==null)||($("input[name=holding_supplier_found]:checked").val()==undefined)||($("input[name=holding_supplier_found]:checked").val()==0)){
+					
+					can_ret=can_ret&&false;
+					alert("Выберите контрагента!");	
+				}
+				
+				if(can_ret){
+					$("#"+$("#holding_mode").val()+"_clear").trigger("click");
+					
+					$("#not_in_holding").prop("checked",false);
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/supplier.php",
+					  type: "GET",
+					  dataType: "json",
+					  data:{
+						  "action":"retrieve_supplier",
+						  "id":$("input[name=holding_supplier_found]:checked").val()
+						  
+					  },
+					  beforeSend: function(){
+						
+					  },
+					  success: function(data){
+						
+						//alert(data.contract_no);
+						$("#"+$("#holding_mode").val()+"_string").val(data.opf_name+" "+data.full_name);
+						$("#"+$("#holding_mode").val()+"_id").val(data.id);
+						
+						
+						 
+					  },
+					  error: function(xhr, status){
+						 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+						
+					$("#dialog_holding").dialog("close");
+				}
+			},
+			
+			"Закрыть": function(){
+				$("#dialog_holding").dialog("close");
+			}
+		}
+	 });
+	 
+	 
+	 $("#holding_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#holding_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#holding_full_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#holding_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#holding_inn").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quick_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#holding_kpp").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#holding_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#holding_contact").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#holding_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#holding_branch").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#holding_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#holding_city").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#holding_doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+ 
+	
+	$("#holding_doFind").bind("click",function(){
+		ret=true;
+		
+		if(
+		
+		($("#holding_code").val()=="")&&
+		($("#holding_full_name").val()=="")&&
+		($("#holding_inn").val()=="")&&
+		($("#holding_kpp").val()=="")&&
+		
+		($("#holding_contact").val()=="")&&
+		($("#holding_branch").val()=="")&&
+		($("#holding_city").val()=="") 
+		
+		
+		) ret=ret&&false;
+		
+		
+		if(ret){
+		
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/supplier.php",
+			  type: "POST",
+			  data:{
+				  "action":"holding_suppliers",
+				  
+				  "code":$("#holding_code").val(),
+				
+				  "full_name":$("#holding_full_name").val(),
+				  "inn":$("#holding_inn").val(),
+				  "kpp":$("#holding_kpp").val(), 
+				  
+				  "contact":$("#holding_contact").val(), 
+				  "branch":$("#holding_branch").val(), 
+				  "city":$("#holding_city").val()
+			  },
+			  beforeSend: function(){
+				$("#holding_suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				 
+				$("#holding_suppliers_found").html(data);
+				
+				
+				 
+				
+				
+			  },
+			  error: function(xhr, status, m){
+				  $("#holding_suppliers_found").html("Ошибка загрузки контрагентов.");	
+			  }	 
+		  });
+		  
+		}else{
+			alert("Укажите хотя бы один критерий поиска!");	
+		}
+		
+		return ret;
+	});
+	
+	
+	 
+});
+</script>

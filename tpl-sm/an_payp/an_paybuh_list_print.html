@@ -1,0 +1,110 @@
+
+<h1>%{if $is_incoming==1}%Входящие%{else}%Исходящие%{/if}% счета, переданные в бухгалтерию</h1>
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+
+<strong>Контрагент:</strong><br />
+%{if $supplier_name==""}%
+все контрагенты
+%{else}%
+%{$supplier_name}%
+%{/if}%
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период:</strong>
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+
+%{if !($only_not_in_buh==1 or $only_in_buh==0)}%
+  %{if $pdate5_1=="-" and $pdate5_2=="-"}%
+  все периоды
+  %{else}%
+  
+  <strong>с:</strong><br />
+  %{$pdate5_1}%
+  
+  <p />
+      <strong>по:</strong><br />
+      %{$pdate5_2}%
+      
+  %{/if}%
+
+
+%{else}%
+все периоды
+%{/if}%    
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+%{if $only_vyp==1 or  $only_not_vyp==1 or $only_not_payed==1 or $only_in_buh==1 or $only_not_in_buh==1}%
+Вы выбрали:
+%{/if}%
+
+%{if $only_vyp==1}%
+<strong>Только выполненные счета</strong>
+
+<br />
+%{/if}%
+
+%{if $only_not_vyp==1}%
+<strong>Только невыполненные счета</strong>
+
+<br />
+%{/if}%
+
+%{if $only_not_payed==1}%
+<strong>Только неоплаченные счета</strong>
+%{/if}%
+
+
+%{if $only_in_buh==1}%
+<strong>Только счета, переданные в бухгалтерию</strong>
+<br />
+
+%{/if}%
+
+%{if $only_not_in_buh==1}%
+<strong>Только счета, не переданные в бухгалтерию</strong>
+<br />
+
+%{/if}%
+
+
+%{if $bills_payed==1}%
+<strong>Оплаченные счета</strong>
+<br />
+%{/if}%
+
+
+%{if $bills_not_payed==1}%
+<strong>Неоплаченные счета</strong>
+<br />
+%{/if}%
+
+%{if $bills_semi_payed==1}%
+<strong>Частично оплаченные счета</strong>
+
+%{/if}%
+
+</div>
+
+<p />
+<br clear="all" />
+
+
+%{include file="an_payp/an_paybuh_table.html" print=1}%
+
+
+
+
+
+
+

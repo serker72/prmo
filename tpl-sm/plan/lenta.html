@@ -1,0 +1,662 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $has_header}%
+
+
+%{include file="error_window.html"   prefix="_comment" }%
+<br clear="all" />
+ 
+ %{if $can_edit}%<input type="button" value="Новый комментарий..." id="lenta_new_button">
+ <br>
+ <br>
+
+
+ %{/if}%
+
+
+%{if $can_edit}%
+
+
+
+
+
+<script type="text/javascript">
+$(function(){
+	
+	
+	try{
+		
+		$("#lenta_comment").ckeditor({
+               customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '75px'
+            });
+		
+	
+	}catch(e){
+		
+	}
+	
+	
+	//обработчик нового комментария
+	$("#lenta_new_send").bind("click", function(){
+	 	comment="";
+		try{
+			comment=CKEDITOR.instances.lenta_comment.getData();	
+		}catch(e){
+			comment=$("#lenta_comment").val();
+		}	
+		
+		
+		var res=true;
+		var error_fields=new Array();
+		
+		
+		
+		if(strip_tags($.trim(comment)).length<10){
+			// alert('Заполните поле Комментарий (мин. длина 10 символов)!');
+			 
+			//return false;	
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"lenta_comment",
+				"name":"Комментарий",
+				"error":"Заполните поле Комментарий (мин. длина 10 символов)!"
+			});	
+		}
+		
+		
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text_comment").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text_comment").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog_comment").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog_comment").dialog("open");
+		}else{
+
+		
+			files_server=new Array(); files_client=new Array();
+			$.each($("#uploaded_files input[id^=upload_file_]"), function(k,v){
+				id=$(v).attr("id");
+				files_server.push(id.replace(/^upload_file_/, '').replace(/_tmp$/, '.tmp'));
+				files_client.push($(v).val());
+			});
+			
+			//alert(files_server); alert(files_client);
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/sched.php",
+			  type: "POST",
+			  data:{
+				  "action":"add_comment",
+				  "comment": comment,
+				  "id":"%{$id}%",
+				  "files_server[]":files_server,
+				  "files_client[]":files_client
+			  },
+			  beforeSend: function(){
+				 $("#lenta_new_set").prop("disabled", true);	
+			  },
+			  success: function(data){
+				 alert("Комментарий добавлен!"); 
+				
+				if($("#status_id").val()==23){
+					if($("#lenta_commments div[id^=lenta_]").length==0){
+						location.reload();	
+					}
+				}
+				 
+				  
+				$("#lenta_commments").append(data);
+				$("#uploaded_files").empty();
+				
+				try{
+					CKEDITOR.instances.lenta_comment.setData("");
+				}catch(e){
+					$("#lenta_comment").val("");	
+				}
+				
+				$("#lenta_new_set").prop("disabled", false);
+				$("#lenta_new_cancel").trigger("click"); 
+				
+				
+			  },
+			  error: function(xhr, status){
+				  alert("Ошибка добавления комментария.");	
+				   $("#lenta_new_set").prop("disabled", false);
+			  }	 
+		  });
+		
+		}
+	});
+	
+	
+	//обработка ПРАВКИ комментария
+	$("#lenta_edit_send").bind("click", function(){
+	 
+		comment="";
+		try{
+			comment=CKEDITOR.instances.lenta_comment.getData();	
+		}catch(e){
+			comment=$("#lenta_comment").val();
+		}	
+		
+		var res=true;
+		var error_fields=new Array();
+
+		
+		if(strip_tags($.trim(comment)).length<10){
+			// alert('Заполните поле Комментарий (мин. длина 10 символов)!');
+			 
+			//return false;	
+			
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"lenta_comment",
+				"name":"Комментарий",
+				"error":"Заполните поле Комментарий (мин. длина 10 символов)!"
+			});	
+		}
+		
+		files_server=new Array(); files_client=new Array();
+		$.each($("#uploaded_files input[id^=upload_file_]"), function(k,v){
+			id=$(v).attr("id");
+			files_server.push(id.replace(/^upload_file_/, '').replace(/_tmp$/, '.tmp'));
+			files_client.push($(v).val());
+		});
+		
+		//alert(files_server); alert(files_client);
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text_comment").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text_comment").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog_comment").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog_comment").dialog("open");
+		}else{
+
+	
+			$.ajax({
+			  async: true,
+			  url: "/js/sched.php",
+			  type: "POST",
+			  data:{
+				  "action":"edit_comment",
+				  "comment": comment,
+				  "id":"%{$id}%",
+				  "comment_id":$("#lenta_comment_id").val(),
+				  "files_server[]":files_server,
+				  "files_client[]":files_client
+			  },
+			  beforeSend: function(){
+				 $("#lenta_new_set").prop("disabled", true);	
+			  },
+			  success: function(data){
+				/* alert("Комментарий добавлен!"); 
+				 
+				
+				*/
+				$("#uploaded_files").empty();
+				
+				
+				try{
+					CKEDITOR.instances.lenta_comment.setData("");
+				}catch(e){
+					$("#lenta_comment").val("");	
+				}
+				
+				$("#lenta_new_set").prop("disabled", false);
+				$("#lenta_new_cancel").trigger("click"); 
+				
+				
+				//заменить элемент id на результат
+				$("#lenta_"+$("#lenta_comment_id").val()).replaceWith(data);
+				
+			  },
+			  error: function(xhr, status){
+				  alert("Ошибка правки комментария.");	
+				   $("#lenta_new_set").prop("disabled", false);
+			  }	 
+		  });
+		}
+		
+	});
+	
+	$("#lenta_new_button1").bind("click", function(){
+		$("#lenta_new_button").trigger("click");
+	});
+	$("#lenta_new_button").bind("click", function(){
+		
+		try{
+			CKEDITOR.instances.lenta_comment.destroy();
+		}catch(e){}
+		
+		$("#lenta_new_set").appendTo($("#lenta_new"));
+		
+		try{
+			$("#lenta_comment").ckeditor({
+               customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '75px'
+            });
+			/*
+		CKEDITOR.replace( 'lenta_comment',
+					 
+					 {
+						 
+						 	 customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '75px'
+    				  }
+					 );
+		*/
+		}catch(e){}
+	 
+		
+		$("#lenta_new_send").show();
+		$("#lenta_edit_send").hide();
+		$("#uploaded_files").empty();
+		try{
+			CKEDITOR.instances.lenta_comment.setData("");
+		}catch(e){
+			$("#lenta_comment").val("");
+		}
+		
+		$("#lenta_new").show();
+		$("#lenta_new_button").hide();
+		$("#lenta_new_button1").hide();
+		
+		location.href="#lenta_new_set";
+	});
+	
+	$("#lenta_new_cancel").bind("click", function(){
+		
+		try{
+			CKEDITOR.instances.lenta_comment.destroy();
+		}catch(e){
+			
+		}
+		$("#lenta_new_set").appendTo($("#lenta_new"));
+		
+		
+		try{
+			$("#lenta_comment").ckeditor({
+               customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '75px'
+            });
+			
+		}catch(e){}
+	 
+		$("#lenta_new").hide();
+		$("#lenta_new_button").show();
+		$("#lenta_new_button1").show();
+	});
+	
+});
+
+//показать/скрыть комментарий
+function ToggleShow(id){
+	var id=id;
+	$.ajax({
+		  async: true,
+		  url: "/js/sched.php",
+		  type: "POST",
+		  data:{
+			  "action":"toggle_comment",
+			   
+			  "id":"%{$id}%",
+			  "comment_id":id
+		  },
+		  beforeSend: function(){
+			  
+		  },
+		  success: function(data){
+			  if(data==1){
+				 $("#lenta_"+id).removeClass("hidden");
+				 $("#toggle_show_lenta_"+id).text("Скрыть комментарий"); 
+			  }else{
+				 $("#lenta_"+id).addClass("hidden");
+				 $("#toggle_show_lenta_"+id).text("Показать комментарий");  
+			  }
+			  
+			 
+			 
+			
+		  },
+		  error: function(xhr, status){
+			 // alert("Ошибка добавления комментария.");	
+			   
+		  }	 
+	  });
+}
+
+//вызов правки комментария
+function EditLenta(id){
+	
+	try{
+		CKEDITOR.instances.lenta_comment.destroy();
+	}catch(e){}
+	$("#lenta_new_set").appendTo($("#lenta_"+id));
+	$("#lenta_comment_id").val(id);
+	
+	
+	
+	try{
+			$("#lenta_comment").ckeditor({
+               customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '75px'
+            });
+			/*
+	
+		CKEDITOR.replace( 'lenta_comment',
+					 
+					 {
+						 
+						 	 customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '75px'
+    				  }
+					 );
+		*/
+		}catch(e){}
+	
+	$("#lenta_new_send").hide();
+	$("#lenta_edit_send").show();
+	
+	$("#uploaded_files").empty();
+	try{
+		CKEDITOR.instances.lenta_comment.setData($("#lenta_comment_"+id).html());
+	}catch(e){
+		$("#lenta_comment").val($("#lenta_comment_"+id).html());
+	}
+}
+
+</script>
+%{/if}%
+
+
+
+
+
+
+%{if $smarty.section.rowsec.total>4}%
+<div class="comment_block " align="center" id="lenta_hide" style="display:none;">
+<a href="" class="reestr_rup reestr_button24" data-comment="свернуть"></a>
+</div>
+
+<div class="comment_block "  align="center" id="lenta_show">
+<a href="" class="reestr_rdown reestr_button24"  data-comment="развернуть все комментарии"></a>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#lenta_show a").bind("click", function(){
+		$("#lenta_show").hide();
+		$("#lenta_hidden").show(100);
+		$("#lenta_hide").show();	
+		return false;
+	});
+	
+	$("#lenta_hide a").bind("click", function(){
+		$("#lenta_show").show();
+		$("#lenta_hidden").hide(100);
+		$("#lenta_hide").hide();
+		return false;
+	});
+});
+</script>
+%{/if}%
+    
+
+
+
+<div id="lenta_commments">
+
+
+
+%{/if}%
+
+
+
+%{section name=rowsec loop=$items}%
+
+%{if $has_header and $smarty.section.rowsec.total>4 and $smarty.section.rowsec.first}%
+<div id="lenta_hidden" style="display:none;">
+%{/if}%
+
+    <div class="comment_block %{if $items[rowsec].is_shown==0}% hidden %{/if}%" id="lenta_%{$items[rowsec].id}%">
+     	%{if $items[rowsec].is_new}%
+        <a name="new_comment"></a>
+        %{/if}%
+        
+        
+        <a name="lenta_commment_%{$items[rowsec].id}%"></a>
+         
+        
+          
+        <em>Дата:</em>&nbsp;<strong>%{$items[rowsec].pdate}%</strong>
+        %{$items[rowsec].name_s}% 
+        
+        
+        %{if $items[rowsec].can_edit}% 
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="#" id="edit_lenta_%{$items[rowsec].id}%" data-comment="редактировать комментарий" onClick="EditLenta('%{$items[rowsec].id}%'); return false;"  class="reestr_edit16 reestr_button16"></a>
+         	
+        
+        %{/if}%
+        
+        
+        %{if $items[rowsec].can_hide}% 
+        &nbsp;&nbsp;&nbsp;&nbsp;
+         <a href="#" id="toggle_show_lenta_%{$items[rowsec].id}%" title="показать/скрыть комментарий" onClick="ToggleShow('%{$items[rowsec].id}%'); return false;">
+         %{if $items[rowsec].is_shown==1}%
+         Скрыть комментарий
+         %{else}%
+         Показать комментарий
+         %{/if}%
+         </a>
+         
+        %{/if}% 
+        <br />
+    
+        
+       
+        <div id="lenta_comment_%{$items[rowsec].id}%" class="comment">%{$items[rowsec].txt}%</div>
+        <br>
+
+    
+        
+        %{section name=filesec loop=$items[rowsec].files}%%{/section}%
+        %{if $smarty.section.filesec.total>0}%
+        <h4>Файлы:</h4>
+        %{/if}%
+        %{section name=filesec loop=$items[rowsec].files}%
+        <div class="sched_report_file_link">
+        <a href="sched_lenta_file.html?id=%{$items[rowsec].files[filesec].id}%" class="sched_report_file_link">%{$items[rowsec].files[filesec].orig_name}%</a>
+        
+        %{$items[rowsec].files[filesec].size|string_format:"%.3f&nbsp;МБ"}%</div>
+        
+        %{/section}%
+        
+       
+       
+       
+    </div>
+
+
+
+%{if $has_header and $smarty.section.rowsec.total>4 and $smarty.section.rowsec.index==$smarty.section.rowsec.total-5}%
+</div>
+%{/if}%
+ 
+%{/section}%
+
+%{if $has_header}%
+
+</div>
+ 
+ <br clear="all" />
+  %{if $can_edit}%
+  
+    
+  %{if $smarty.section.rowsec.total>0}%
+  
+  <input type="button" value="Новый комментарий..." id="lenta_new_button1">
+ <br>
+ <br>
+ 
+ %{/if}%
+
+  
+
+<div class="common_block" id="lenta_new" style="display:none;"  >
+<fieldset id="lenta_new_set">
+	<a name="lenta_new_set"></a>	
+	<input type="hidden" id="lenta_comment_id" value="" />
+    
+    <strong>Введите комментарий:</strong><br>
+
+    <textarea id="lenta_comment" cols="60" rows="5" style="width:100%; height:75px;"></textarea>
+    <p />
+    
+    
+    
+    
+
+   <strong>Приложите файл:</strong><br />
+
+
+    <input type="file" id="file" /> 
+     
+    <em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  
+    
+    <div id="uploaded_files">
+        
+    </div>
+     <br>
+
+     
+    
+    <script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+    
+    <div id="queue"></div>
+    
+    <script type="text/javascript">
+    $(function(){
+                function AddCode(inname, realname){
+                $.ajax({
+                    async: true,
+                    url: "/js/sched_upload_draw.php",
+                    type: "POST",
+                    data:{
+                        "action":"add_file_entry",
+                        "factname":inname,
+                        "realname":realname
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      
+                       $("#uploaded_files").append(data);
+                       
+                        
+                       //перерисовать блок сообщений
+                                    },
+                    error: function(xhr, status){
+                            
+                    }	 
+                });	
+                
+            }
+            
+            $('#file').uploadifive({
+                    'auto'             : true,
+                    'buttonText' : 'Выберите файл...',
+                'fileTypeDesc' : 'Все файлы',
+                'fileTypeExts' : '*.*', 
+                    'fileSizeLimit' : '192 MB', 
+                    'width'           : 120,
+                    'formData'         : {
+                                           "PHPSESSID" : "%{$session_id}%"
+                                         },
+                    'queueID'          : 'queue',
+                    'uploadScript'     : '/swfupl-js/sched_upload_file.php',
+                    'onUploadComplete' : function(file, data) { 
+                            eval(data)
+							//alert(data)
+                    
+                    }
+                });
+            
+         
+    });
+     </script>
+
+    
+    
+    
+	<input type="button" value="Отправить комментарий" id="lenta_new_send">
+    
+    <input type="button" value="Редактировать комментарий" id="lenta_edit_send">
+    
+    <input type="button" value="Отмена" id="lenta_new_cancel">
+</fieldset>    
+</div>
+
+  
+ 
+%{/if}% 
+
+%{/if}%

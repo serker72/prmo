@@ -1,0 +1,17 @@
+<form action="spec_delivery.php" method="post">
+
+<h1>Состав группы спецрассылок</h1>
+
+
+<div style="border:1px solid silver; width:400px; height:300px; overflow:scroll;">
+%{section name=rowsec loop=$items}%
+<input type="checkbox" name="user_%{$items[rowsec].id}%" %{if $items[rowsec].user_id!==""}% checked="checked"%{/if}% value="%{$items[rowsec].id}%" /><label for="user_%{$items[rowsec].id}%">%{$items[rowsec].name_s}% %{$items[rowsec].login}%</label><br />
+
+
+%{/section}%
+</div>
+<p />
+
+
+<input type="submit" value="Внести изменения" name="doLoad" />
+</form>

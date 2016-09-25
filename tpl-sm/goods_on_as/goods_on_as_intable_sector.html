@@ -1,0 +1,252 @@
+
+
+%{section name=rowsec loop=$items}%
+
+
+    
+    
+    <div style="margin-bottom:5px;"><strong>Участок %{$items[rowsec].name}%:</strong></div>
+
+    
+    <table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+    <thead>
+    <tr align="left" valign="top">
+     <th scope="col" width="200" rowspan="2" style="min-width:200px; width:200px; max-width:200px;">
+    	<strong>Наименование позиции</strong>
+    </th>
+    %{section name=rowsec1 loop=$items[rowsec].storages}%
+    	<th scope="col" width="%{$items[rowsec].td_width}%" colspan="4" style="min-width:80px;">
+    	<strong> %{$items[rowsec].storages[rowsec1].name}%</strong>
+    	</th>
+       
+     %{sectionelse}%
+     <th scope="col" width="*">-</th>
+     %{/section}%
+     <th scope="col" colspan="4" align="right" width="80" style="min-width:80px; width:80px; max-width:80px;">
+     <strong>Итого:</strong>
+     
+     </th>
+    </tr>
+    
+    <tr align="left" valign="top">
+   
+    %{section name=rowsec1 loop=$items[rowsec].storages}%
+    	<th scope="col" width="%{$items[rowsec].td_width/4}%" style="min-width:20px;">
+    	<small>Входящий остаток на начало периода</small>
+    	</th>
+        <th scope="col" width="%{$items[rowsec].td_width/4}%" style="min-width:20px;">
+        <small>Приход</small> 	
+    	
+    	</th>
+        <th scope="col" width="%{$items[rowsec].td_width/4}%" style="min-width:20px;">
+    	<small>Расход</small>
+    	</th>
+        <th scope="col" width="%{$items[rowsec].td_width/4}%" style="min-width:20px;">
+    	<small>Остаток на конец периода</small>
+    	</th>
+     %{sectionelse}%
+     <th scope="col" width="*">-</th>
+     %{/section}%
+    <th scope="col" align="right" width="20" style="min-width:20px;">
+     <small>Входящий остаток на начало периода</small>
+     </th>
+     <th scope="col" align="right" width="20" style="min-width:20px; ">
+     <small>Приход</small>
+     </th>
+     <th scope="col" align="right" width="20" style="min-width:20px;">
+     <small>Расход</small>
+     </th>
+     <th scope="col" align="right" width="20" style="min-width:20px; ">
+     <small>Остаток на конец периода</small>
+     </th>
+     
+     
+     
+    </tr>
+    </thead>
+ 
+    <tbody>
+     %{section name=rowsec2 loop=$items[rowsec].positions}%
+    <tr align="left" valign="top">
+    <td width="200"  style="min-width:200px; width:200px; max-width:200px;">
+     %{$items[rowsec].positions[rowsec2].position_id|string_format:"%05d"}%
+     %{$items[rowsec].positions[rowsec2].name}%,
+     %{$items[rowsec].positions[rowsec2].dimension}%
+    </td>
+     %{section name=rowsec3 loop=$items[rowsec].positions[rowsec2].pos_by_storages}%
+     	<td width="%{$items[rowsec].positions[rowsec2].td_width/4}%" style="min-width:20px;">
+        %{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].begin_ost}%
+        </td>
+        <td width="%{$items[rowsec].positions[rowsec2].td_width/4}%" style="min-width:20px;">
+        <a href="#" id="storage_prihod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%_%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].storage_id}%">%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].prihod}%</a>
+        </td>
+        <td width="%{$items[rowsec].positions[rowsec2].td_width/4}%" style="min-width:20px;">
+        <a href="#" id="storage_rashod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%_%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].storage_id}%">%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].rashod}%</a>
+        </td>
+        <td width="%{$items[rowsec].positions[rowsec2].td_width/4}%" style="min-width:20px;">
+      		
+        %{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].final_ost}%
+        	
+            <script type="text/javascript">
+			$(function(){
+				 
+				 $("#storage_prihod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%_%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].storage_id}%").bind("click", function(){
+						
+						
+						$.ajax({
+						  async: true,
+						  url: "/js/goods_on_stor.php",
+						  type: "POST",
+						  data:{
+							  "action":"as_by_pos_sto_sec_prihod",
+							  "sector_id":"%{$items[rowsec].id}%",
+							  "storage_id":"%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].storage_id}%",
+							  "position_id":"%{$items[rowsec].positions[rowsec2].position_id}%",
+							  "pdate1":$("#pdate2_1").val(),
+					  		  "pdate2":$("#pdate2_2").val()
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							//alert(data);
+							$("#as_position_detail_info").html(data);
+							 $("#info_as_positions_detail_dialog").dialog("open");
+							
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						  }	 
+						});
+					  
+					 
+					  return false;
+				 });
+				 
+				 $("#storage_rashod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%_%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].storage_id}%").bind("click", function(){
+						$.ajax({
+						  async: true,
+						  url: "/js/goods_on_stor.php",
+						  type: "POST",
+						  data:{
+							  "action":"as_by_pos_sto_sec_rashod",
+							  "sector_id":"%{$items[rowsec].id}%",
+							  "storage_id":"%{$items[rowsec].positions[rowsec2].pos_by_storages[rowsec3].storage_id}%",
+							  "position_id":"%{$items[rowsec].positions[rowsec2].position_id}%",
+							  "pdate1":$("#pdate2_1").val(),
+					  		  "pdate2":$("#pdate2_2").val()
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							//alert(data);
+							$("#as_position_detail_info").html(data);
+							 $("#info_as_positions_detail_dialog").dialog("open");
+							
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						  }	 
+						});
+					  
+					 
+					  return false;
+				 });
+		  });
+			</script>
+     	</td>
+     %{sectionelse}%
+     <td width="*">-</td>
+     %{/section}%
+    
+     <td align="right" width="20" style="min-width:20px;">
+   		%{$items[rowsec].positions[rowsec2].begin_ost}%
+   		
+    </td>
+     <td align="right" width="20" style="min-width:20px;">
+   		<a href="#" id="sector_prihod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%">%{$items[rowsec].positions[rowsec2].prihod}%</a>
+   		
+    </td>
+    
+     <td align="right" width="20" style="min-width:20px;">
+   		<a href="#" id="sector_rashod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%">%{$items[rowsec].positions[rowsec2].rashod}%</a>
+   		
+    </td>
+    
+    <td align="right" width="20" style="min-width:20px;">
+   		%{$items[rowsec].positions[rowsec2].final_ost}%
+   		
+        <script type="text/javascript">
+		$(function(){
+			
+			$("#sector_prihod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%").bind("click",function(){
+				$.ajax({
+				  async: false,
+				  url: "/js/goods_on_stor.php",
+				  type: "POST",
+				  data:{
+					  "action":"as_by_pos_sec_prihod",
+					  "position_id":"%{$items[rowsec].positions[rowsec2].position_id}%",
+					  "sector_id":"%{$items[rowsec].id}%",
+					  "pdate1":$("#pdate2_1").val(),
+					  "pdate2":$("#pdate2_2").val()
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#as_position_detail_info").html(data);
+					$("#info_as_positions_detail_dialog").dialog("open");
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+				return false;
+			});
+			
+			$("#sector_rashod_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%").bind("click",function(){
+				$.ajax({
+				  async: false,
+				  url: "/js/goods_on_stor.php",
+				  type: "POST",
+				  data:{
+					  "action":"as_by_pos_sec_rashod",
+					  "position_id":"%{$items[rowsec].positions[rowsec2].position_id}%",
+					  "sector_id":"%{$items[rowsec].id}%",
+					  "pdate1":$("#pdate2_1").val(),
+					  "pdate2":$("#pdate2_2").val()
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#as_position_detail_info").html(data);
+					$("#info_as_positions_detail_dialog").dialog("open");
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+				return false;
+			});
+		});
+		</script>
+    </td>
+    </tr>
+    %{/section}%
+ 
+   </tbody>
+    </table>
+    <div style="margin-bottom:30px;"></div>
+    
+ 
+%{/section}%
+

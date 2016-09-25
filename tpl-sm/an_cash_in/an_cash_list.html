@@ -1,0 +1,130 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	 $("#pdate%{$prefix}%_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate%{$prefix}%_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+});
+</script>
+ 
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="tab_page" value="9" id="tab_page" />
+
+<div class="report_filter_right">
+
+	%{include file="every_help_dialog.html" filename="an_cash_in.htm" prefix=$prefix description="отчет приход наличных"  style="float:right;  margin-right:0px;" is_right=true}%
+
+<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+   <input type="image" src="/img/24.png" value="Вывести" alt="Вывести"  name="doSub%{$prefix}%"  />
+</div>
+
+<a href="an_ds.php?doSub%{$prefix}%=1&tab_page=10" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" ></a>
+
+ 	 
+ 
+
+
+ %{if $can_print}%
+ 
+  <a href="#" id="print_table%{$prefix}%"  class="reestr_print reestr_right_button24" data-comment="Печать..." ></a>
+  
+  
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+		if($("#extended_an%{$prefix}%").prop("checked")) extended_an=1;
+		else extended_an=0;
+		
+		zc=window.open('an_ds.php?tab_page=10&print='+'1'+'&pdate%{$prefix}%_1='+$("#pdate%{$prefix}%_1").val()+'&pdate%{$prefix}%_2='+$("#pdate%{$prefix}%_2").val()+'&extended_an%{$prefix}%='+extended_an+'&doSub%{$prefix}%=1', 'ds','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			 
+			 if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..." ></a>
+ %{/if}%
+	
+   
+	
+</div>
+
+<div class="report_filter_left">
+
+  <div class="report_filter">
+  <div style="float:left; margin-right:20px;">
+  <strong>Период</strong><br />
+  <label for="pdate%{$prefix}%_1">с:</label><br />
+  <input type="text" name="pdate%{$prefix}%_1" id="pdate%{$prefix}%_1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+  
+  <div style="float:left; margin-right:20px;">
+  <br />
+      <label for="pdate%{$prefix}%_2">по:</label><br />
+      <input type="text" name="pdate%{$prefix}%_2" id="pdate%{$prefix}%_2" size="10" maxlength="10" value="%{$pdate2}%" />
+  </div>
+  </div>
+  
+  
+  
+  <div class="report_filter">
+  <br />
+  <input type="checkbox" name="extended_an%{$prefix}%" id="extended_an%{$prefix}%" value="1" %{if $extended_an==1}%checked="checked"%{/if}% />
+  <label for="extended_an%{$prefix}%">Расширенная ведомость</label>
+  
+  </div>
+
+</div> 
+
+<br clear="all" />
+
+
+</form>
+
+
+
+
+<small>
+1. <strong>Фильтр "Период".</strong> По умолчанию в отчет попадают приходы наличных с датами документа за текущий месяц. Вы можете изменить период отчета, установив требуемые даты и нажав кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.<br />
+
+ 
+</small>
+
+
+<p />
+
+
+
+
+
+%{if $do_it}%
+%{include file="an_cash_in/an_cash_table.html"}%
+%{/if}%
+
+
+
+
+
+
+
+
+ 

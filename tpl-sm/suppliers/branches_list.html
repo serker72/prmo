@@ -1,0 +1,55 @@
+
+<tr id="upbranch_row_%{$parent_id}%"></tr>
+ 
+ <tr align="left" valign="top" >
+    <td>&nbsp;</td>
+    <td width="48" >
+    %{if $can_edit_branch}%
+     <a href="#" onClick="add_branch('%{$parent_id}%'); return false;" class="reestr_add16 reestr_button16" data-comment="ƒобавить подотрасль"></a>
+      
+      
+      %{/if}% </td>
+    </tr> 
+ 
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="branch_row_%{$pos[possec].id}%" >
+    	<td %{if $parent_id!=0}% style="padding-left:15px;"%{/if}% >
+        
+        <input type="radio" id="branch_radio_%{$pos[possec].id}%" name="branch_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_branch}% checked="checked"%{/if}% />
+        <label for="branch_radio_%{$pos[possec].id}%">%{$pos[possec].name}%</label>
+        
+       
+        </td>
+        
+       
+      
+        <td width="96">
+        
+        
+        <!--
+        %{if $parent_id==0}% 
+        
+          <a href="#" onClick="load_branches('%{$pos[possec].id}%'); return false;" title="раскрыть подотрасли"><img src="/img/icons/zoom-small.png" width="16" height="16" alt="раскрыть подотрасли"/></a> 
+          
+          %{if $can_edit_branch}% 
+          <a href="#" onClick="add_branch('%{$pos[possec].id}%'); return false;"><img src="/img/icons/add-small.png" width="16" height="16" alt="" title="ƒобавить подотрасль"/></a>
+          %{/if}%
+        %{/if}% 
+        -->
+        
+         %{if $can_edit_branch}% 
+        
+           
+		 <a href="#" onClick="edit_branch('%{$pos[possec].id}%', '%{$parent_id}%'); return false;" data-comment="–едактировать отрасль/подотрасль" class="reestr_edit16 reestr_button16"></a>
+          <a href="#" onClick="del_branch('%{$pos[possec].id}%', '%{$parent_id}%'); return false;" data-comment="”далить отрасль/подотрасль" class="reestr_delete16 reestr_button16"> </a>    
+	 
+   
+        %{/if}%
+      
+        </td>
+</tr>
+<tr id="subbranch_row_%{$pos[possec].id}%" ></tr> 	     
+    
+<tr id="subbranch_row1_%{$pos[possec].id}%" ></tr>     
+%{/section}%    
+<tr id="downbranch_row_%{$parent_id}%" ></tr> 	

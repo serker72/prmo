@@ -1,0 +1,609 @@
+<br />
+
+<div id="positions" style="/*border:1px solid silver; width:650px; height:200px; overflow:scroll;*/">
+
+
+<div style="float:left;">
+<input type="button" id="add_pos" value="Добавить позиции..." %{if !$can_add_positions or !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+%{include file="inv/positions_on_page_set.html" pospos=$positions}%
+
+</div>
+
+<div style="/*width:650px; height:30px; overflow:auto; text-align:right; padding-right:20px; padding-top:5px;*/">
+<span id="positions_cost">%{$total_cost}%</span>
+</div>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	 
+	function ChangeData(){
+		//подгрузка таблицы
+		
+		
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/invent.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_positions",
+			   "sector_id":$("#sector_id").val(),
+			  "pdate":$("#inventory_pdate").val(),
+			  "current_id":0
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+			$("#inv_positions").html('<td width="*" colspan="8"><img src="/img/images/wait.gif" width="32" height="32" alt="" border="0" /></td>'); 
+		  },
+		  success: function(data){
+			$("#inv_positions").html(data);  
+		  },
+		  error: function(xhr, status){
+		//	 alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+	
+	} 
+	 
+	function ToggleChange(selector, oldval,newval){
+		do_it=true;
+		if($("#inv_positions tr").length>0){
+			if(!window.confirm("Изменение данного поля приведет к сбросу текущих позиций распоряжения на инвентаризацию. Вы уверены?")){
+				do_it=false;
+				$(selector).val(oldval);
+			}
+		}
+			
+		if(do_it) ChangeData();
+	}
+	 
+	
+	
+	
+	$("#inventory_pdate").bind("focus", function(){
+		old_inventory_pdate=$("#inventory_pdate").val();
+	});
+	
+	
+	
+	
+	$("#inventory_pdate").bind("change", function(){
+		ToggleChange("#inventory_pdate", old_inventory_pdate,$("#inventory_pdate").val()); 
+	});
+	
+	
+	$("#sector_id").bind("focus", function(){
+		old_sector_id=$("#sector_id").val();
+	});
+	
+ 
+	$("#sector_id").bind("change", function(){
+		ToggleChange("#sector_id", old_sector_id,$("#sector_id").val()); 
+	});
+	
+	
+	
+});
+</script>
+
+
+<div id="info_positions_dialog" title="О позиции">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 650,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+<div id="positions_dialog" title="Поиск позиций номенклатуры">
+	 <strong>Поиск позиции</strong><br />
+    
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="positions_search_set2" style="display:table;">
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" style="width:450px;" size="80" maxlength="255" id="qry2" /></td>
+        <td>&nbsp;</td>
+        <td><a href="#" id="do_ext_search"><img src="/img/icons/plus.png" width="24" height="24" border="0" alt="Расширенный поиск" title="Расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#do_ext_search").unbind("click");
+			$("#do_ext_search").bind("click",function(){
+				
+				$("#qry").val($("#qry2").val());
+				
+				
+				$("#positions_search_set2").css("display","none");
+				$("#positions_search_set").css("display","table");
+				$("#positions_search_set3").css("display","table");
+				$("#qry2").val("");
+				return false;
+			});
+		});
+		</script>
+        
+        </td>
+        
+   </tr>
+    <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        </tr>
+   </table>
+   
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="positions_search_set" style="display:none" >
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" size="40" maxlength="255" id="qry" /></td>
+        <td>
+        <select id="dimension_id" style="width:50px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="length" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="width" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="height" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="weight" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="volume" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="diametr" /></td>
+        
+        <td><a href="#" id="donot_ext_search"><img src="/img/icons/minus.jpg" width="24" height="24" border="0" alt="Скрыть расширенный поиск" title="Скрыть расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#donot_ext_search").unbind("click");
+			$("#donot_ext_search").bind("click",function(){
+				
+				$("#qry2").val($("#qry").val());
+				$("#qry").val("");
+				$("#positions_search_set").css("display","none");
+				$("#positions_search_set3").css("display","none");
+				$("#dimension_id").val("");
+				$("#length").val("");
+				$("#width").val("");
+				$("#height").val("");
+				$("#weight").val("");
+				$("#volume").val("");
+				$("#diametr").val("");
+				
+				$("#tov_grp").val("");
+				$("#group_id2").val("");
+				$("#group_id3").val("");
+				
+				$("#positions_search_set2").css("display","table");
+				return false;
+			});
+		});
+		</script>
+        </td>
+      </tr>
+      <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        <td><small>ед. изм.</small></td>
+        <td><small>Длина, мм</small></td>
+        <td><small>Ширина, мм</small></td>
+        <td><small>Высота/ <br />
+толщина, мм</small></td>
+
+		<td><small>Вес <br />
+1 ед., кг</small></td>
+        <td><small>Объем <br />
+1 ед., м<sup>3</sup></small></td>
+
+        <td><small>Диаметр, мм</small></td>
+      </tr>
+    </table>
+	&nbsp;
+    &nbsp;
+  
+	
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left">
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td><input type="button" value="Найти" id="doSrch"  /></td>
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td>
+         %{include file="every_help_dialog.html" filename="komplekt_find_pos.html" prefix="kfp" description="Информация о поиске позиций номенклатуры"  style="display:inline;"}%
+        
+        </td>
+      </tr>
+    </table>
+
+ 	
+    
+    <br />
+	
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" id="positions_search_set3" style="display:none" >
+  <tr align="left" valign="top">
+    <td>
+    <select id="tov_grp" style="width:150px;">
+    %{html_options values=$tov_group_ids selected=$tov_group_id output=$tov_group_names}%
+    </select>
+    </td>
+    <td>
+    <select id="group_id2" style="width:150px;">
+    
+    </select>
+    </td>
+    <td>
+    <select id="group_id3" style="width:150px;">
+   
+    </select>
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <small>товарная группа</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;1&nbsp;ур.</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;2&nbsp;ур.</small>
+    </td>
+  </tr>
+</table>
+
+    
+    
+	
+    <br clear="all" />
+    
+    <strong>Найденные позиции:</strong><br />
+    <div id="pos_rows" style="border:1px solid silver; width:820px; height:300px; overflow:scroll;">
+    
+    </div>
+    
+</div>
+
+ <script type="text/javascript">
+  $(function(){
+     
+	
+	
+	$("#positions_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 850,
+    height: 540,
+    buttons: {
+        "Добавить выбранное и продолжить поиск": function() { 
+        	
+			var ret1=true;
+			var ids_list=new Array(); var ids_kols=new Array(); var except_ids=new Array();
+			$.each($("#inv_positions input[id^=new_position_id_]"), function(key, value){
+				except_ids.push($(value).val());
+			});
+			
+			
+			$.each($("#position_in_filter_table tbody tr td input[type=hidden][id^=pos_]"), function(key, value){
+				//alert(value.value);
+				
+				
+				//if(  $("#kol_"+value.value).val().length>0){
+				if(  $("#kol_"+$(value).val()).val().length>0){
+					//alert(value.value+" "+key+" "+$("#kol_"+value.value).val());		
+					
+					if($.inArray($(value).val(), except_ids)>-1){
+						ret1=ret1&&false;
+						alert("Невозможно добавить выбранную позицию: такая позиция уже внесена в распоряжение!");
+						$("#kol_"+value.value).focus();
+						return false;	
+					}else if(($("#kol_"+value.value).val().length==0)||($("#kol_"+value.value).val()<=0)||isNaN($("#kol_"+value.value).val().replace("\,","\."))) {
+						ret1=ret1&&false;
+						alert("Неверно указано количество позиции!");
+						$("#kol_"+value.value).focus();
+						return false;	
+					}else{
+						was_changed=was_changed||true;
+						
+						ids_list.push(value.value); 
+						ids_kols.push($("#kol_"+value.value).val().replace("\,","\."));
+					}
+				}
+				
+			});
+			
+			if(ret1&&(ids_list.length>0)){
+				$.ajax({
+				  async: true,
+				  url: "/js/invent.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_to_form",
+					  "ids[]":ids_list,
+					  "kols[]":ids_kols
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					$("#inv_positions").append(data);
+					//как-то вписать номер...
+					var temp_cter=0;
+					$.each($("#inv_positions tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+					});
+					
+					
+					//очистить форму
+					
+					$("#qry2").val("");
+					$("#qry").val("");
+				
+					$("#dimension_id").val("");
+					$("#length").val("");
+					$("#width").val("");
+					$("#height").val("");
+					$("#weight").val("");
+					$("#volume").val("");
+					$("#diametr").val("");
+					
+					$("#tov_grp").val("");
+					$("#group_id2").val("");
+					$("#group_id3").val("");
+					
+					$("#tov_grp").val(0);
+					$("#pos_rows").empty();	
+					$("#group_id2").empty();
+					$("#group_id3").empty();
+					
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			}
+			
+        },
+	   
+	    "Добавить выбранное и закрыть": function() { 
+       	    var ret1=true;
+			var ids_list=new Array(); var ids_kols=new Array();  var except_ids=new Array();
+			$.each($("#inv_positions input[id^=new_position_id_]"), function(key, value){
+				except_ids.push($(value).val());
+			});
+			$.each($("#position_in_filter_table tbody tr td input[type=hidden][id^=pos_]"), function(key, value){
+				//alert($(value).val());
+				
+				if(  $("#kol_"+$(value).val()).val().length>0){
+					
+					//alert($.inArray($(value).val(), except_ids));
+					if($.inArray($(value).val(), except_ids)>-1){
+						ret1=ret1&&false;
+						alert("Невозможно добавить выбранную позицию: такая позиция уже внесена в распоряжение!");
+						$("#kol_"+value.value).focus();
+						return false;	
+					}else if(($("#kol_"+value.value).val().length==0)||($("#kol_"+value.value).val()<=0)||isNaN($("#kol_"+value.value).val().replace("\,","\."))) {
+						ret1=ret1&&false;
+						alert("Неверно указано количество позиции!");
+						$("#kol_"+value.value).focus();
+						return false;	
+					}else{
+						was_changed=was_changed||true;
+						ids_list.push(value.value); 
+						ids_kols.push($("#kol_"+value.value).val().replace("\,","\."));
+					}
+				}
+			});
+			
+			if(ret1&&(ids_list.length>0)){
+				$.ajax({
+				  async: true,
+				  url: "/js/invent.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_to_form",
+					  "ids[]":ids_list,
+					  "kols[]":ids_kols
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					$("#inv_positions").append(data);
+					//как-то вписать номер...
+					var temp_cter=0;
+					$.each($("#inv_positions tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+					});
+					
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+				
+				$(this).dialog("close");
+				$("#qry").val("");
+				$("#tov_grp").val(0);
+				$("#pos_rows").empty();	
+				$("#group_id2").empty();
+				$("#group_id3").empty();
+					
+			}else if(!ret1){
+				
+			}else if(ids_list.length==0){
+				
+				$(this).dialog("close");
+				$("#qry").val("");
+				$("#tov_grp").val(0);
+				$("#pos_rows").empty();	
+				$("#group_id2").empty();
+				$("#group_id3").empty();
+				
+			}
+			
+			
+			
+        
+         },
+		"Закрыть": function(){
+		  $("#qry").val("");
+			$("#tov_grp").val(0);
+			$("#pos_rows").empty();	
+			$("#group_id2").empty();
+			$("#group_id3").empty();
+			
+		 $(this).dialog("close");	
+		}
+      }
+    
+    });
+	
+	$("#add_pos").bind("click", function(){
+		if(($("#sector_id").val()==0)||($("#sector_id").val()==null)){
+			alert("Выберите склад!");
+		}else $("#positions_dialog").dialog("open");
+	});
+	
+	//поиск позиций по филтьру
+	$("#doSrch").bind("click",function(){
+		ret=true;
+		
+		if(($("#qry").val().length>0)||($("#tov_grp").val()!=0)||
+		($("#dimension_id").val()!=0)||
+		($("#length").val().length>0)||
+		($("#width").val().length>0)||
+		($("#height").val().length>0)||
+		($("#diametr").val().length>0)||
+		
+		($("#weight").val().length>0)||
+		($("#volume").val().length>0)||
+		($("#qry2").val().length>0)
+		
+		){
+			//alert("loading");
+			
+			group_id=0;
+			if($("#group_id3").val()>0) group_id=$("#group_id3").val();
+			else if($("#group_id2").val()>0) group_id=$("#group_id2").val();
+			else if($("#tov_grp").val()>0) group_id=$("#tov_grp").val();
+			
+			var qry='';
+			if($("#qry").val().length>0) qry=$("#qry").val();
+			else qry=$("#qry2").val();
+			
+			var except_ids=new Array();
+			$("input[id^=new_pl_position_id_]").each(function(index, element) {
+                //alert($(element).val());
+				except_ids.push($(element).val());
+            });
+			
+			$.ajax({
+              async: true,
+              url: "/js/invent.php",
+              type: "POST",
+              data:{
+                  "action":"find_pos",
+				  "group_id":group_id,
+				  "qry":qry,
+				  "dimension_id":$("#dimension_id").val(),
+				  "length":$("#length").val(),
+				  "width":$("#width").val(),
+				  "height":$("#height").val(),
+				  "diametr":$("#diametr").val(),
+				  
+				  "weight":$("#weight").val(),
+				  "volume":$("#volume").val(),
+				  "except_ids[]":except_ids
+				  
+              },
+              beforeSend: function(){
+                $("#pos_rows").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+              },
+              success: function(data){
+                $("#pos_rows").html(data);
+                
+              },
+              error: function(xhr, status, m){
+                  $("#pos_rows").html("Ошибка загрузки позиций.");	
+              }	 
+          });
+		  
+		  
+		}else ret=ret&&false;
+		
+		return ret;
+	});
+	
+	
+		/*выборка товарной группы*/
+		$("#tov_grp").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#tov_grp").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					//alert(data);
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	
+  });
+  </script>
+ 

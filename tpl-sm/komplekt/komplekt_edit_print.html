@@ -1,0 +1,155 @@
+<!--<div align="right">
+<table width="400" border="0" cellspacing="2" cellpadding="0">
+  <tr align="left" valign="top">
+    <td><div style="font-size:14px;"><strong>"Утверждаю"</strong></div></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr align="right" valign="top">
+    <td align="left"><div style="font-size:14px;"><strong>Генеральный директор</strong></div></td>
+    <td><div style="font-size:14px;"><strong>А.В.&nbsp;Иванов</strong></div></td>
+  </tr>
+</table>
+
+
+
+</div>
+-->
+
+<h1>Заявка № %{$komplekt_ved.id}%</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+Заданный номер:<br />
+<strong>%{$komplekt_ved.code}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Название:<br />
+<strong>Заявка №%{$komplekt_ved.id}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+<strong>%{$komplekt_ved.pdate}%</strong><br />
+<small>создана: %{$created_by}%</small>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Статус:<br />
+<strong>
+%{if $komplekt_ved.status_id==1}%
+не утверждена 
+%{elseif $komplekt_ved.status_id==2}%
+утверждена 
+%{elseif $komplekt_ved.status_id==3}%
+аннулирована
+%{elseif $komplekt_ved.status_id==11}%
+новая
+%{elseif $komplekt_ved.status_id==12}%
+не выполнена
+%{elseif $komplekt_ved.status_id==13}%
+выполнена
+%{/if}%</strong>
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:20px;">
+Контрагент:<br />
+
+<div style="font-size:18px;"><strong>%{$komplekt_ved.supplier_id_string}%</strong></div>
+
+</div>
+
+ 
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<br />
+<strong>Период:</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+с:<br />
+<strong>%{$komplekt_ved.begin_pdate}%</strong>
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+по:<br />
+<strong>%{$komplekt_ved.end_pdate}%</strong>
+
+</div>
+<br clear="all" />
+<p />
+
+<strong>Позиции каталога:</strong><br />
+
+
+%{include file="komplekt/position_block_print.html" action=1}%
+
+<p />
+
+
+
+
+<h3>Примечания:</h3>
+
+        %{include file="komplekt/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$komplekt_ved.id can_edit=$can_notes_edit}%
+   
+   
+<p />    
+
+<div style="font-size:13px;">
+<h3>Утверждение заявки:</h3>
+<div style="float:left; margin-right:10px;">
+%{section name=csec loop=$conf}%
+
+	
+   <strong> %{$conf[csec].name}% (или лицо, его заменяющее):</strong>
+    
+    <span id="confirm_%{$conf[csec].id}%">
+    %{if $conf[csec].u_id!=""}%<strong> %{$conf[csec].position_s}% %{$conf[csec].u_name_s}%   %{$conf[csec].pdate}%</strong> %{else}% <em>не утверждено</em> %{/if}%
+    </span>
+    
+    
+    
+    <br />
+    <br />
+
+    
+    
+
+%{/section}%
+</div>
+<br clear="all" />
+<p />
+
+
+
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+<br />
+    <br />

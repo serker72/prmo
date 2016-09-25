@@ -1,0 +1,63 @@
+<p />
+%{section name=rowsec loop=$items}%%{/section}%
+
+<strong>Всего списано в %{$smarty.section.rowsec.total}% распоряжениях%{if $smarty.section.rowsec.total>0}%:<p />%{else}%.%{/if}%</strong>
+
+
+
+%{if $smarty.section.rowsec.total>0}%
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+<thead>
+	<tr align="left" valign="top">
+    <th scope="col">
+    Документ
+    </th>
+    <th scope="col">
+    №
+    </th>
+    <th scope="col">
+    Дата
+    </th>
+   
+   
+    <th scope="col">
+    Кол-во
+    </th>
+    
+    </tr>
+</thead>
+<tbody>
+%{/if}%
+
+
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+	<td>
+Распоряжение на
+
+%{if $items[rowsec].is_or_writeoff==0}% межсклад %{else}% списание %{/if}%
+	</td>
+    
+	<td>
+<a href="ed_%{if $items[rowsec].is_or_writeoff==0}%is%{else}%wf%{/if}%.php?action=1&id=%{$items[rowsec].id}%" target="_blank">№ %{$items[rowsec].id}%</a>
+	</td>
+    <td>
+
+ 	%{$items[rowsec].pdate}%
+    </td>
+	
+   
+    
+    <td>
+    <strong>%{$items[rowsec].quantity}%</strong>
+    </td>
+    
+  
+</tr>
+%{/section}%
+
+
+%{if $smarty.section.rowsec.total>0}%
+</tbody>
+</table>
+%{/if}%

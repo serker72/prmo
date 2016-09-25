@@ -1,0 +1,102 @@
+
+
+<!-- таблица на странице -->
+<table width="*" cellpadding="1" cellspacing="0" border="1"  id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="80">Дата создания</th>
+        <th scope="col" width="80">№ входящего
+счета поставщика
+</th>
+        <th scope="col" width="80">Дата счета
+поставщика</th>
+        
+        <th scope="col" width="80">Сумма счета </th>
+        
+        <th scope="col" width="80">Ранее оплачено </th>
+        <th scope="col" width="80">Сумма оплаты </th>
+      
+       <th scope="col" width="80">Остаток оплаты по счету </th>
+   
+       
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="80">
+        %{if $pospos[pospossec].kind==0}%
+        <a href="ed_bill_in.php?action=1&id=%{$pospos[pospossec].id}%&from_begin=1" target="_blank">%{$pospos[pospossec].code}%</a>
+       
+         %{elseif $pospos[pospossec].kind==1}%
+         <a href="ed_invcalc.php?action=1&id=%{$pospos[pospossec].id}%&from_begin=1" target="_blank">%{$pospos[pospossec].code}%</a>
+         
+         %{/if}%
+         
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].pdate}%
+        
+       
+        </td>
+        
+        <td width="80">
+         %{if $pospos[pospossec].kind==0}%
+        %{$pospos[pospossec].supplier_bill_no}%
+        %{elseif $pospos[pospossec].kind==1}%
+        %{$pospos[pospossec].given_no}%
+         %{/if}%
+        
+       
+        </td>
+        
+        <td width="80">
+        %{if $pospos[pospossec].kind==0}%
+        %{$pospos[pospossec].supplier_bill_pdate}%
+        %{elseif $pospos[pospossec].kind==1}%
+        %{$pospos[pospossec].invcalc_pdate}%
+         %{/if}%
+       
+        </td>
+        
+         <td width="80">
+        %{$pospos[pospossec].summ}%
+        
+       
+        </td>
+         <td width="80">
+        %{$pospos[pospossec].payed}%
+        
+       
+        </td>
+        
+        
+        
+        <td width="80">
+        <span id="new_span_value_%{$pospos[pospossec].id}%">%{$pospos[pospossec].value}%</span>
+        
+       
+        
+        
+        </td>
+        
+        
+        
+        <td width="80" >
+         %{$pospos[pospossec].summ-$pospos[pospossec].payed-$pospos[pospossec].value}%
+         
+         
+         </td>
+      
+    </tr>
+   
+    %{/section}%
+    </tbody>
+    </table>
+    
+    <div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+

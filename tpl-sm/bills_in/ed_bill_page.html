@@ -1,0 +1,107 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+%{if $from_begin==1}%
+	selected:0
+	
+%{elseif $do_show_log}%	
+	selected:4
+ 
+%{elseif $do_show_acc}%	
+	selected:1	
+%{elseif $do_show_pay}%	
+	selected:2	
+%{elseif $do_show_pm_folder and $has_pm_folder}%	
+	selected:3	
+
+%{elseif $from_begin==0}%
+  	cookie: { expires: 14, name: 'billTab' }
+%{/if}%	
+  });
+  
+});
+</script>
+
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Входящий счет</a></li>
+     
+    
+    %{if $has_acc}%
+    <li><a href="#tabs-6">Поступления товара</a></li>    
+    %{/if}%
+    
+     %{if $has_pays}%
+    <li><a href="#tabs-5">Оплаты</a></li>    
+    %{/if}%
+    
+    %{if $has_pm_folder}%
+    <li><a href="#tabs-7">+/-</a></li>    
+    %{/if}%
+    
+    
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+  
+  
+   %{if $has_acc}%
+   <div id="tabs-6">
+    <p>
+    %{$accs}%
+    </p>
+  </div>
+  %{/if}%
+  
+  
+   %{if $has_pays}%
+   <div id="tabs-5">
+    <p>
+    %{$pays}%
+    </p>
+  </div>
+  %{/if}%
+  
+  
+   %{if $has_pm_folder}%
+    <div id="tabs-7">
+    <p>
+    %{$pm_folder}%
+    </p>
+  </div>
+    %{/if}%
+  
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

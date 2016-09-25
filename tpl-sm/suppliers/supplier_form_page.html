@@ -1,0 +1,77 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+			%{if $show_actions==1}%
+		selected:1
+		%{else}%
+		cookie: { expires: 14, name: 'supplier_Tab' }  
+		%{/if}%	
+  	});
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+
+ 
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+ 
+</style>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Контрагент</a></li>
+   
+    %{if $has_sched}%
+    <li><a href="#tabs-4">Действия по контрагенту</a></li>
+     %{/if}%
+    
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+ 
+  
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+     %{if $has_sched}%
+  <div id="tabs-4">
+    <p>
+    %{$actions}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

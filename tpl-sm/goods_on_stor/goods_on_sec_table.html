@@ -1,0 +1,384 @@
+<script type="text/javascript">
+$(function(){
+	$("#sector_id3").bind("change",function(){
+		//alert($(this).val());
+		
+		$.each($("#sector_id3").val(), function(index, value){
+			
+			//множественный выбор
+			if(value==0){
+				$.each($("#sector_id3 option"), function(i, v){
+					if((v.value!=0)) v.selected=true;
+					if(v.value==0) v.selected=false;
+				});
+				
+			}
+			
+		});
+		
+	});
+	touchScroll('position_info3');
+});
+</script>
+
+
+<form action="%{$pagename}%" method="get" id="rep_form3">
+<input type="hidden" name="print" value="%{$print3}%" id="print3" />
+<input type="hidden" name="tab_page" value="3" id="tab_page" />
+
+
+%{include file="every_help_dialog.html" filename="posonsec.htm" prefix="_sec" description="отчет Товары на объектах (выбор по участку)"  style="float:right;  margin-right:10px;"}%
+
+<div style="float:left; margin-right:0px;">
+<label for="sector_id3">Участок:</label><br />
+
+
+<select id="sector_id3" name="sector_id3[]" multiple="multiple" size="7" style="width:150px;">
+<option value="0">-все участки-</option>
+%{*html_options values=$sector_ids selected=$sector_id3 output=$sector_names*}%
+%{$sector_html}%
+</select>
+<br />
+
+<em>используйте 
+ctlr+щелчок мыши <br />
+для множественного выбора</em><br />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+
+<input type="checkbox" name="only_active_sectors_31" id="only_active_sectors_31" %{if $only_active_sectors_31==1}% checked="checked" %{/if}% value="1" />
+<label for="only_active_sectors_31">только активные участки</label><br /><br />
+
+
+
+<input type="checkbox" name="only_active_storages_31" id="only_active_storages_31" %{if $only_active_storages_31==1}% checked="checked" %{/if}% value="1" />
+<label for="only_active_storages_31">только активные объекты</label><br />
+
+
+<script type="text/javascript">
+$(function(){
+	$("#only_active_sectors_31").bind("change",function(){
+		only_active_sectors=0;
+		if($("#only_active_sectors_31").prop("checked")) only_active_sectors=1;
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/goods_on_stor.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_sectors",
+			  "only_active_sectors":only_active_sectors
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			//  alert(data);
+			$("#sector_id3").html(data);  
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+	});
+});
+</script>
+
+</div>
+
+
+
+
+<div style="float:left; margin-top:15px; margin-right:5px;">
+
+<input type="image" name="doSub3" id="doSub3" src="/img/icons/old-zoom-original.png" border="0" alt="Найти" title="Найти" />
+
+<a href="goods_on_stor.php?tab_page=3&doSub3=1"><img src="/img/icons/old-zoom-deselect.png" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" border="0"  /></a>
+</div>
+
+
+<div style="float:left; margin-top:15px;">
+%{if $can_print}%
+  <a href="#" id="print_table3"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0" /></a>
+  <script type="text/javascript">
+  $(function(){
+	  $("#doSub3").bind("click",function(){
+		 $("#print3").val(0); 
+		 return true;
+	  });
+	  
+	  $("#print_table3").bind("click",function(){
+		 $("#print3").val(1);
+		 
+		 window.open('goods_on_stor.php?'+$("#rep_form3").serialize(), 'goods_on_stor','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1'); 
+		 
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати ведомости.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+</div>
+
+<br clear="all" />
+<p />
+
+<div id="info_positions_dialog3" title="О позиции">
+<div id="position_info3"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog3").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 950,
+	  height: 450,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+    
+</form>    
+
+
+%{if $do_it}%
+
+%{section name=rowsec loop=$items}%
+
+    
+    
+    <div style="margin-bottom:5px;"><strong>Участок %{$items[rowsec].name}%:</strong></div>
+
+    <div> 
+    <table width="*" border="1" cellspacing="0" cellpadding="3" class="fancyTable" id="sector_items_%{$items[rowsec].id}%">
+    <thead>
+    <tr align="left" valign="top">
+     <th scope="col" width="200" style="min-width:200px; width:200px; max-width:200px;">
+    	<strong>Наименование позиции</strong>
+    </th>
+    %{section name=rowsec1 loop=$items[rowsec].sectors}%
+    	<th style="min-width:40px; max-width:40px; width:40px; word-wrap:break-word;">
+    	<strong> %{$items[rowsec].sectors[rowsec1].name}%</strong>
+    	</th>
+     %{sectionelse}%
+     <th  width="*">-</th>
+     %{/section}%
+     <th style="min-width:40px; max-width:40px; width:40px; word-wrap:break-word;">
+     <strong>Итого:</strong>
+     
+     </th>
+    </tr>
+    </thead>
+    <tbody>
+     %{section name=rowsec2 loop=$items[rowsec].positions}%
+    <tr align="left" valign="top">
+    <td width="200"  style="min-width:200px; width:200px; max-width:200px;">
+     %{$items[rowsec].positions[rowsec2].position_id|string_format:"%05d"}%
+     %{$items[rowsec].positions[rowsec2].name}%,
+     %{$items[rowsec].positions[rowsec2].dimension}%
+    </td>
+     %{section name=rowsec3 loop=$items[rowsec].positions[rowsec2].pos_by_sectors}%
+     	<td align="center" style="min-width:40px; max-width:40px; width:40px; word-wrap:break-word;">
+      		<a href="#" id="stat_pos_sector3_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].pos_by_sectors[rowsec3].sector_id}%_%{$items[rowsec].positions[rowsec2].position_id}%">
+        %{$items[rowsec].positions[rowsec2].pos_by_sectors[rowsec3].sum_sector}%
+        	</a>
+            <script type="text/javascript">
+			$(function(){
+				 $("#stat_pos_sector3_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].pos_by_sectors[rowsec3].sector_id}%_%{$items[rowsec].positions[rowsec2].position_id}%").bind("click", function(){
+						
+						return PosInfoS("%{$items[rowsec].positions[rowsec2].pos_by_sectors[rowsec3].sector_id}%",  "%{$items[rowsec].positions[rowsec2].position_id}%", "%{$items[rowsec].id}%");
+						
+					  
+				 });
+		  });
+			</script>
+     	</td>
+     %{sectionelse}%
+     <td width="*">-</td>
+     %{/section}%
+    <td align="right" style="min-width:40px; max-width:40px; width:40px; word-wrap:break-word;">
+   		<a href="#" id="stat_pos3_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%">%{$items[rowsec].positions[rowsec2].s_q}%</a>
+   		<script type="text/javascript">
+			$(function(){
+				 $("#stat_pos3_%{$items[rowsec].id}%_%{$items[rowsec].positions[rowsec2].position_id}%").bind("click", function(){
+					
+					return PosItogoS("%{$items[rowsec].id}%", "%{$items[rowsec].positions[rowsec2].position_id}%");
+					
+					 
+				 });
+		  });
+		</script>
+    </td>
+    </tr>
+    %{/section}%
+   </tbody>
+    </table>
+     </div>
+    <div style="margin-bottom:30px;"></div>
+    
+  <script type="text/javascript">
+	$(function(){
+		CompressTableS('%{$items[rowsec].id}%');
+	});
+	</script>
+    
+%{/section}%
+
+
+
+<script type="text/javascript">
+function CompressTableS(id){
+	wb=800;
+		hb=550;
+		
+		
+		 do_it=($('#sector_items_'+id).width()>wb)||($('#sector_items_'+id).height()>hb);
+		 
+		 if($('#sector_items_'+id).width()>wb){
+			 w=wb;
+		 }else w=parseInt($('#sector_items_'+id).width())+20;
+		 
+		 if($('#sector_items_'+id).height()>hb){
+			h=hb; 
+		 }else h=$('#sector_items_'+id).height();
+		 
+		 if(do_it){   
+		   $('#sector_items_'+id).fixedHeaderTable({
+	   
+			  width:          ''+w+'',
+			  height:         ''+h+'',
+			  themeClass:     'fht-default',
+			  borderCollapse:  true,
+			  fixedColumns:    1, // fixed first columns
+			  fixedColumn:     true, // For backward-compatibility
+			  sortable:        false,
+			  autoShow:        true, // hide table after its created
+			  footer:          false, // show footer
+			  cloneHeadToFoot: false, // clone head and use as footer
+			  autoResize:      false, // resize table if its parent wrapper changes size
+			  create:          null // callback after plugin completes
+ 			});	 
+			
+		 }
+}
+
+function PosInfoS(storage_id, position_id, sector_id){
+	
+	$.ajax({
+						  async: true,
+						  url: "/js/goods_on_stor.php",
+						  type: "POST",
+						  data:{
+							  "action":"find_acc_by_pos_sec",
+							  "sector_id": sector_id, //"%{$items[rowsec].id}%",
+							  "storage_id": storage_id, //"%{$items[rowsec].positions[rowsec2].pos_by_sectors[rowsec3].sector_id}%",
+							  "position_id": position_id//"%{$items[rowsec].positions[rowsec2].position_id}%"
+						  },
+						  beforeSend: function(){
+							$("#position_info3").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+						  },
+						  success: function(data){
+							//alert(data);
+							$("#position_info3").html(data);
+							 $("#info_positions_dialog3").dialog("open");
+							
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						  }	 
+						});	
+						
+						return false;	
+					  
+}
+
+function PosItogoS(sector_id, position_id){
+	
+	
+	$.ajax({
+						  async: true,
+						  url: "/js/goods_on_stor.php",
+						  type: "POST",
+						  data:{
+							  "action":"find_acc_by_pos_sectorscope",
+							  "sector_id":sector_id,  //"%{$items[rowsec].id}%",
+							  "position_id":position_id //"%{$items[rowsec].positions[rowsec2].position_id}%"
+						  },
+						  beforeSend: function(){
+							$("#position_info3").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+						  },
+						  success: function(data){
+							//alert(data);
+							$("#position_info3").html(data);
+							$("#info_positions_dialog3").dialog("open");
+							
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						  }	 
+						});
+						
+						return false;
+}
+
+
+</script>
+
+<script type="text/javascript">
+$(function(){
+	//прокрутка сложных таблиц
+	function isTouchDevice(){
+				try{
+					document.createEvent("TouchEvent");
+					return true;
+				}catch(e){
+					return false;
+				}
+	}
+	
+	
+	  $.each(document.getElementsByClassName('fht-tbody'), function(k,v){	
+
+			if(isTouchDevice()){ //if touch events exist...
+					
+
+					
+					var scrollStartPos=0;
+					var scrollStartPosX=0;
+					
+					v.addEventListener("touchstart", function(event) {
+						scrollStartPos=this.scrollTop+event.touches[0].pageY;
+						scrollStartPosX=this.scrollTop+event.touches[0].pageX;
+
+					},false);
+					
+					v.addEventListener("touchmove", function(event) {
+						this.scrollTop=scrollStartPos-event.touches[0].pageY;
+						this.scrollLeft=scrollStartPosX-event.touches[0].pageX;
+						event.preventDefault();
+					},false);
+					
+					
+				}
+
+	});
+});
+</script>
+
+%{/if}%

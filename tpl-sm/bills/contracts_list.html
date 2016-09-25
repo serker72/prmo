@@ -1,0 +1,44 @@
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">№ договора</th>
+        <th scope="col">отсрочка по дог-ру, дней</th>
+        <th scope="col"> дни</th>
+        
+        <th scope="col"> дата дог-ра</th>
+       
+        
+    </tr>
+    %{section name=possec loop=$pos2}%
+    <tr align="left" valign="top" id="condetails_row_%{$pos2[possec].id}%" style="cursor:pointer;">
+    	<td>
+        <input type="radio" id="condetails_id_%{$pos2[possec].id}%" name="bdetails_radio" value="%{$pos2[possec].id}%" %{if $pos2[possec].id==$current_bank or $pos2[possec].is_current==true}% checked="checked"%{/if}% />
+        %{$pos2[possec].contract_no}%
+        </td>
+        
+        <td>%{$pos2[possec].contract_prolongation}%</td>
+    	<td>
+        %{if $pos2[possec].contract_prolongation_mode==0}%
+        банковские
+        %{else}%
+        календарные
+        %{/if}%
+        </td>
+        
+        <td>%{$pos2[possec].contract_pdate}%</td>
+       
+        
+    </tr>
+    %{/section}%
+    </table>
+    
+    <script type="text/javascript">
+    %{section name=possec loop=$pos2}%
+    $("#condetails_row_%{$pos2[possec].id}%").bind("dblclick",function(){
+			//alert($("#supplier_%{$pos2[possec].id}%").attr("value"));
+			$("#condetails_id_%{$pos2[possec].id}%").prop("checked",true);
+			cbuild();
+			
+		});
+    %{/section}%
+	</script>

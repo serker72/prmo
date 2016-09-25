@@ -1,0 +1,45 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="supplier_row_%{$pos[possec].id}%" >
+    	<td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        <input type="checkbox" id="supplier_check_%{$pos[possec].id}%" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_supplier}% checked="checked"%{/if}% />
+        <label for="supplier_check_%{$pos[possec].id}%">
+        %{$pos[possec].code}%
+        </label>
+        
+         <input type="hidden" id="is_confirmed_%{$pos[possec].id}%" value="%{$pos[possec].is_confirmed}%" />
+         
+         <input type="hidden" id="is_active_%{$pos[possec].id}%" value="%{$pos[possec].is_active}%" />
+         
+         
+        </td>
+         <td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        %{if $pos[possec].is_confirmed}%+%{else}%-%{/if}%
+        </td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        
+          <td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        %{if $pos[possec].is_active}%+%{else}%-%{/if}%
+        </td>
+        
+       
+        <td id="full_name_%{$pos[possec].id}%"  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].full_name}%</td>
+         <td id="opf_name_%{$pos[possec].id}%"  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].opf_name}%</td>
+        <td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].inn}%</td>
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].kpp}%</td>
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].legal_address}%</td>
+        
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        <input type="hidden" id="is_org_%{$pos[possec].id}%" value="%{$pos[possec].is_org}%" />
+        %{if $pos[possec].is_org==0}%
+        <a href="supplier.php?action=1&id=%{$pos[possec].id}%" target="_blank">Карта</a>
+        %{else}%
+        <a href="ed_organization.php?action=1&id=%{$pos[possec].id}%" target="_blank">Карта</a>
+        %{/if}%
+        </td>
+        
+       
+    </tr>
+    <tr align="left" valign="top" id="supplier_contact_row_%{$pos[possec].id}%" >
+    
+    </tr>
+%{/section}%    
+ 	

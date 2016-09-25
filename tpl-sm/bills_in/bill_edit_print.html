@@ -1,0 +1,160 @@
+
+<h1 style="">Входящий счет № %{$bill.code}%</h1>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$bill.pdate}%</strong><br />
+<small>создан: %{$created_by}%</small>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+ Склад:<br />
+%{foreach from=$sectors item=sc}%
+%{if $sc.id==$bill.sector_id}%
+<strong>%{$sc.name}%</strong>
+%{/if}%
+%{/foreach}%
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+Контрагент:<br />
+<strong>%{$bill.supplier_id_string}%</strong>
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Договор №
+%{$bill.contract_no}%
+
+от
+%{$bill.contract_pdate}%
+
+</div>
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+Плановая дата поставки:<br />
+<strong>%{$bill.pdate_shipping_plan}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Фактическая дата поставки:
+<br />
+<strong>%{*$bill.pdate_shipping_fact*}%%{$fact_days}%</strong>
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Дата оплаты по договору:
+<br />
+
+<strong>%{$bill.pdate_payment_contract}%</strong>
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Фактическая дата оплаты:<br />
+
+<strong>%{*$bill.pdate_payment_ind*}%%{$fact_pays}%
+</strong>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:0px;">
+Реквизиты контрагента:<br />
+<strong>%{$bill.bdetails_id_string}%</strong>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+<!-- конец блока контрагента -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<strong>Позиции счета:</strong> 
+
+
+
+%{include file="bills_in/position_actions_print.html" bill=$bill action=1}%
+
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="bills_in/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    
+<p />    
+
+
+
+<div style="float:left; margin-right:10px;">
+Утверждаю цену:
+<span id="is_confirmed_price_confirmer">%{$is_confirmed_price_confirmer}%</span>
+
+
+
+
+<br />
+
+
+Утверждаю приемку:
+<span id="is_confirmed_shipping_confirmer">%{$is_confirmed_shipping_confirmer}%</span>
+
+
+
+</div>
+
+<br clear="all" />
+<p />
+

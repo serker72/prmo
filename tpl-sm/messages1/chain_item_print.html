@@ -1,0 +1,54 @@
+%{section name=ansec loop=$answers}%
+ 
+
+     
+   <h4>Дата: 
+    %{$answers[ansec].pdate}%
+    
+    </h4>
+    
+    
+    
+ <h4>От: 
+    %{if $answers[ansec].s_group_id==3}%
+    %{$answers[ansec].s_name_d}%
+    %{else}%
+    %{$answers[ansec].s_name_s}%
+    %{/if}%
+    
+    
+    </h4>
+    
+    
+  <h4>
+    
+     Кому: 
+    <!--%{if $answers[ansec].r_group_id==3}%
+    %{$answers[ansec].r_name_d}%
+    %{else}%
+    %{$answers[ansec].r_name_s}%
+    %{/if}%--> 
+    
+     %{foreach name=rf from=$answers[ansec].to_users item=user}%
+     %{if $user.group_id==3}%
+    %{$user.name_d}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+    
+    %{else}%
+    %{$user.name_s}%%{if !$smarty.foreach.rf.last}%, %{/if}%
+    
+    %{/if}% 
+    %{/foreach}%
+    
+    
+     </h4>
+ 
+
+ <h4>Сообщение:</h4>
+<p>
+ 
+ %{$answers[ansec].txt}%
+</p>
+<br>
+
+ 
+%{/section}%

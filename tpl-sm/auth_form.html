@@ -1,0 +1,64 @@
+
+    
+    <form action="/login.html" method="post" style="" id="logform">
+	<table width="*" border="0" cellpadding="2" cellspacing="2">
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">
+        <label for="login">Логин</label>
+        </td>
+        <td width="*"><input type="text" size="20" maxlength="5" name="login" id="login" value="%{$login}%" />
+        </td>
+    </tr>
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">
+        <label for="passw">Пароль</label>
+        </td>
+        <td width="*"><input type="password" size="20" maxlength="255" name="password" id="password" />
+        </td>
+    </tr>
+    %{if $error_message!=""}%
+    <tr align="left" valign="top">
+    	<td width="*" colspan="2" align="center">
+        <span class="error_message">%{$error_message}%</span>
+        </td>
+    </tr>
+    %{/if}%
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">&nbsp;
+        
+        </td>
+        <td width="*">
+        <input type="submit" value="Войти" name="doLog" />
+        
+        
+        &nbsp;&nbsp;
+        <a href="forgot.html" rel="nofollow">Забыли пароль?</a>
+        </td>
+    </tr>
+    <tr align="left" valign="top">
+    	<td width="70" align="right" valign="middle">&nbsp;
+        
+        </td>
+        <td width="*">
+        
+        </td>
+    </tr>
+    </table>
+	</form>
+    <script type="text/javascript">
+	$(function(){
+		$("#logform").bind("submit",function(){
+			if($("#login").val().length!=5){
+				$("#login").focus();
+				return false;
+			}
+			/*if($("#password").attr("value").length==0){
+				$("#password").focus();
+				return false;
+			}*/
+			return true;
+		});
+		
+	});
+	</script>
+    

@@ -1,0 +1,96 @@
+%{section name=ansec loop=$answers}%
+<div class="answer_item">
+
+
+
+<div id="" style="float:left; margin-right:10px;">
+<strong>Дата:</strong>
+%{$answers[ansec].pdate}%
+<br>
+
+<strong>От:</strong>
+<a href="info.html?name=%{$answers[ansec].s_login|replace:" (Вы)":""}%" target="_blank">
+%{if $answers[ansec].s_group_id==3}%
+%{$answers[ansec].s_name_d}%
+%{else}%
+%{$answers[ansec].s_name_s}%
+%{/if}%
+
+
+%{$answers[ansec].s_login}%</a>
+<br />
+
+
+<strong>Кому:</strong>
+<a href="info.html?name=%{$answers[ansec].r_login|replace:" (Вы)":""}%" target="_blank">
+%{if $answers[ansec].r_group_id==3}%
+%{$answers[ansec].r_name_d}%
+%{else}%
+%{$answers[ansec].r_name_s}%
+%{/if}%
+
+%{$answers[ansec].r_login}%</a>
+<p />
+
+</div>
+
+%{if $answers[ansec].is_new}%
+<div id="mark_cont_%{$answers[ansec].id}%" style="float:left;"><a href="#" id="mark_%{$answers[ansec].id}%"><img src="/img/new_message.gif" width="13" height="10" border="0" alt="" />пометить прочитанным</a></div>
+%{/if}%
+<br clear="left" />
+
+<strong>Сообщение</strong>:<br>
+<div class="message">%{$answers[ansec].txt}%</div>
+
+%{section name=filesec loop=$answers[ansec].files}%%{/section}%
+%{if $smarty.section.filesec.total>0}%
+<strong>Вложения:</strong><br />
+%{section name=filesec loop=$answers[ansec].files}%
+	<a href="attachment.html?id=%{$answers[ansec].files[filesec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$answers[ansec].files[filesec].orig_filename}%</a>
+    %{$answers[ansec].files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+    <br />
+
+%{/section}%
+%{/if}%
+
+
+<br>
+
+
+
+%{$answers[ansec].subs}%
+
+
+<script type="text/javascript">
+$(function(){
+	$("#mark_%{$answers[ansec].id}%").bind("click",function(){
+		$.ajax({
+		  async: true,
+		  url: "/js/messages.php",
+		  type: "POST",
+		  data:{
+			  "action":"mark_as_read",
+			  "id":"%{$answers[ansec].id}%"
+		  },
+		  beforeSend: function(){
+				
+		  },
+		  success: function(data){
+						
+		  },
+		  error: function(xhr, status){
+			 // alert("Ошибка отправки сообщения.");	
+		  },
+		  complete:function(){
+			 $("#mark_cont_%{$answers[ansec].id}%").remove(); 
+		  }
+	  });
+		
+		return false;
+	});
+});
+</script>
+
+
+</div>
+%{/section}%

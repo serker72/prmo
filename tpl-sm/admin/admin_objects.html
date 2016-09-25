@@ -1,0 +1,37 @@
+
+<form action="%{$filename}%" method="post" id="rights_form">
+
+%{section name=rowsec loop=$ao}%
+%{include file="admin/admin_object.html" obj=$ao[rowsec].obj u=$ao[rowsec].u}%
+%{/section}%
+
+<input type="submit" name="doInp" value="¬нести изменени€" />
+
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#rights_form").bind("submit", function(){
+		return window.confirm("¬ы действительно хотите внести в базу сделанные изменени€?");
+	});
+});
+</script>
+<p />
+
+
+<strong>ќбозначени€ прав:</strong>
+<table width="275" border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <th scope="row">r</th>
+    <td>права на чтение</td>
+  </tr>
+  <tr>
+    <th scope="row">w</th>
+    <td>права на запись</td>
+  </tr>
+  <tr>
+    <th scope="row">x</th>
+    <td>права на администрирование</td>
+  </tr>
+</table><br />

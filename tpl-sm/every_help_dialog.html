@@ -1,0 +1,68 @@
+ <script type="text/javascript" src="/js/touch.js"></script>
+ <div style="%{$style}%">
+  <a href="#" id="every_help_button%{$prefix}%" class="reestr_help %{if $is_right}%reestr_right_button24 %{else}%reestr_button24%{/if}%" data-comment="Справка: %{$description|default:"Справка по текущему разделу"}%"></a> 
+  
+  </div>
+ 
+ 
+<div id="every_help_dialog%{$prefix}%" title="Справка по текущему разделу" style="display:none;">
+     <div id="every_help_dialog_text%{$prefix}%">
+     
+     </div>
+     
+ </div>
+
+<script type="text/javascript">
+	$(function(){
+		if(isTouchDevice()){
+			$("#every_help_dialog_text%{$prefix}%").css("overflow","scroll");
+			$("#every_help_dialog_text%{$prefix}%").css("width","800");
+			$("#every_help_dialog_text%{$prefix}%").css("height","450");
+			touchScrollXY("every_help_dialog_text%{$prefix}%");
+		}
+		$("#every_help_dialog%{$prefix}%").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 900,
+			height: 550,
+			stack: true,
+			title: "%{$description|default:"Справка по текущему разделу"}%",
+			buttons:{
+				"ОК":function(){
+					$("#every_help_dialog%{$prefix}%").dialog("close");
+				}
+			}
+		});
+		
+		$("#every_help_button%{$prefix}%").bind("click",function(){
+			
+			//alert(document.title);
+			$.ajax({
+			  async: true,
+			  url: "/js/help.php",
+			  type: "POST",
+			  data:{
+				  "action":"help",
+				  "file":"%{$filename}%",
+				  "title":document.title,
+				  "description":"%{$description}%"
+			  },
+			  beforeSend: function(){
+				$("#every_help_dialog_text%{$prefix}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			  },
+			  success: function(data){
+				$("#every_help_dialog_text%{$prefix}%").html(data);	
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("Ошибка добавления вопроса.");	
+			  }	 
+		  });
+		  $("#every_help_dialog%{$prefix}%").dialog("open");
+			
+			return false;
+		});
+		
+	});
+	</script>

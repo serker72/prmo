@@ -1,0 +1,241 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	
+	
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#remind_ptime").mask('00:00');
+	
+ 	$("#wo_supplier").bind("change", function(){
+		if($("#wo_supplier").prop("checked")){
+			$("#suppliers_tbody").empty();
+			$("#suppliers_add").prop("disabled",true);	
+		}else{
+			$("#suppliers_add").prop("disabled",false);	
+		}
+	});
+	
+});
+</script>
+
+
+
+
+<h1>Создать заметку</h1>
+
+<form action="ed_sched.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+<input type="hidden" name="kind_id" value="5">
+
+<input type="hidden" id="manager_id" value="%{$manager_id}%">
+
+
+<div style="float:left; margin-right:10px;">
+
+    <label for="topic">Тема:</label><br>
+    <input type="text" value="%{$old_doc.topic|escape:"html"}%" name="topic" id="topic" size="60" maxlength="255" />
+
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+    <label for="pdate">
+    Дата создания: 
+    </label><br />
+    
+  %{$now_time}%
+    <input type="hidden" value="%{$now_date}%" name="pdate" />
+
+</div>
+
+
+ %{include file="every_help_dialog.html" filename="sched_5.html" prefix="" description="Информация о создании заметки" style="float:right" is_right=true}%
+
+
+<div style="float:right;  margin-right:5px; ">
+	 <a href="#" onclick="alert('В данном режиме копирование заметки недоступно. Пожалуйста, нажмите кнопку Создать заметку и остаться в карте для получения возможности копирования заметки.'); return false;" class="reestr_copy reestr_inactive reestr_right_button24" data-comment="Копировать..."></a>
+
+  <a href="#"   onclick="alert('В данном режиме печать заметки недоступна. Пожалуйста, нажмите кнопку Создать заметку и остаться в карте для получения возможности печати звонка.'); return false;" class="reestr_print reestr_inactive reestr_right_button24"  data-comment="печать заметки..."></a>
+</div>  
+
+<br clear="all" />
+<p />
+
+	
+  <div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагенты:</h3>
+</div>
+<div style="float:right; margin-right:00px;"> 
+	 
+<input type="checkbox" id="wo_supplier" name="wo_supplier" value="1" %{if $old_doc.wo_supplier==1}% checked %{/if}% />    
+<label for="wo_supplier">Без контрагента</label>  
+ 
+</div>
+<br clear="all" />
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+  %{include file="plan/supplier_15_actions.html" many=true can_modify=true}%    
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+ 
+
+
+<label for="description">Заметка:</label><br>
+<textarea id="description" name="description">%{$old_doc.description|escape:"html"}%</textarea>
+
+ 
+<script type="text/javascript">
+	
+	try{
+			$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height: '250px'
+            });
+		
+	}catch(e){}
+	
+	
+	 
+	</script>
+
+
+
+
+<br clear="all" />
+ 
+
+
+
+
+
+
+
+
+<h3>Напомнить мне:</h3>
+
+<input type="checkbox" id="remind_do" name="remind_do" value="1" checked /><label for="remind_do">напомнить мне</label><br>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="remind_pdate">
+Дата напоминания: 
+</label><br />
+
+<input type="text" value="%{$now}%" id="remind_pdate" name="remind_pdate"  size="10"   maxlength="10" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+
+
+<label for="remind_ptime">Время напоминания:</label><br />
+<input type="text" value="%{$time}%" name="remind_ptime" id="remind_ptime" size="10" maxlength="5" />
+</div>
+
+
+ <br clear="all" />
+<p />
+
+
+
+
+
+
+<h3>Поделиться заметкой:</h3>
+
+%{include file="plan/share_actions.html" can_modify=true}%
+
+
+
+
+
+ <br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+<input type="submit" value="Создать заметку" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать заметку и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" onclick="location.href='shedule.php';" />
+<br>
+
+<p />
+
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	if($("#remind_do").prop("checked")){
+		if($("#remind_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату напоминания!');
+			return false;
+		}	
+		
+		if($("#remind_ptime").val().length<5){
+			sfm_show_error_msg('Укажите время напоминания!');
+			return false;
+		}				
+	}
+	
+	
+	//хотя бы 1 контрагент
+	if((!$("#wo_supplier").prop("checked"))&&($("tr[id^=our_supplier_row_]").length==0)){
+		sfm_show_error_msg('Укажите хотя бы одного контрагента, либо отметьте галочку Без контрагента!');
+		  	return false;	
+		
+	}
+	
+	
+	
+	return true; 
+}
+
+/*frmvalidator.addValidation("pdate_beg","req","Выберите дату звонка!");
+
+frmvalidator.addValidation("ptime_beg","req","Выберите время звонка!");
+
+frmvalidator.addValidation("contract_id","req","Выберите договор покупателя!");
+
+frmvalidator.addValidation("sector_id","gt=0","Выберите склад!");
+
+
+frmvalidator.addValidation("supplier_bill_no","req","Укажите заданный номер счета!");
+
+//pdate_payment_contract
+frmvalidator.addValidation("pdate_payment_contract","req","Укажите дату оплаты по договору!");
+
+*/
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

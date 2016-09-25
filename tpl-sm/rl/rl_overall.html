@@ -1,0 +1,483 @@
+<h1>Права пользователей на папки: %{$group_name}%</h1>
+<form method="get">
+    <input type="hidden" id="group_id" name="group_id" value="%{$group_id}%" />
+    <input type="hidden" id="storage_id" name="storage_id" value="%{$storage_id}%" />
+    
+    
+    <label for="username">ФИО, логины требуемых пользователей (для запроса данных по нескольким пользователям укажите ФИО или логины через ; )</label><br />
+    <input type="text" name="username" id="username" value="%{$username}%" size="60" maxlength="255" />
+    
+    &nbsp;
+    
+    
+    <input type="submit" name="doShow" value="Показать права" />
+
+
+</form>
+
+ <style>
+ .black{ border:2px solid black;}
+ .blue{border:2px solid blue;}
+ </style>
+
+
+%{if $do_it}%
+%{foreach from=$users item=user name=uc}%%{/foreach}%
+<script type="text/javascript">
+$(function(){
+	var args=new Array();
+	$.each($("td[id^=user_ind_]"), function(k,v){
+		 
+		id=$(v).attr("id");
+		//user_ind_%{$user.id}%_%{$folder.id}%
+		user_id=id.replace(/^user_ind_/,'').replace(/_[0-9]+$/, '');
+		folder_id=id.replace(/^user_ind_[0-9]+_/,'');
+		//alert(id + ' ' +user_id + ' '+folder_id);
+		 
+		args.push(user_id+';'+folder_id);
+		
+	});
+	args.reverse();
+	//alert(args);
+	
+	function LoadData(){
+		itemm=args.pop();
+		if(itemm!=undefined){
+			
+			it=itemm.split(';');
+			var user_id=it[0];
+			var folder_id=it[1];
+			$.ajax({
+				async: true,
+				url: "/js/admin_folders.php",
+				type: "POST",
+				 
+				data:{
+					"action":"load_rights",
+					"user_id":user_id,
+					"folder_id":folder_id,
+					"group_id":$("#group_id").val(),
+					"storage_id":$("#storage_id").val()
+				},
+				beforeSend: function(){
+					$("#user_ind_"+user_id+"_"+folder_id).html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');  
+				},
+				success: function(data){
+					//alert(data); 
+					 $("#user_ind_"+user_id+"_"+folder_id).replaceWith(data);
+					 LoadData();
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления вопроса.");	
+				}	 
+			});	
+		}
+	}
+	
+	%{if $smarty.foreach.uc.total>$num_users}%
+	LoadData();
+	%{/if}%
+});
+</script>
+
+<h2>Общие права на раздел</h2>
+<table border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+	<tr valign="top">
+	<th width="300"></th>
+      <th width="50" style="width:50px;">
+      
+      </th>
+    %{foreach from=$rights item=right}%
+    <th width="50" style="width:50px;">
+    %{$right.object_id}%. /  %{$right.rl_object_id}%.
+    
+    <small>
+    %{$right.name}%
+    </small>
+   
+    </th>
+    %{/foreach}%
+    </tr>
+</thead>
+<tbody>
+%{foreach from=$users item=user name=uc}%
+<tr align="left" valign="top">
+	<td width="300" >
+    <img src="/img/icons/menu_my_profile.png" width="16" height="16" /><strong>%{$user.login}%</strong> %{$user.name_s}%
+    </td>
+      <td width="50" style="width:50px;">
+      
+      </td>
+    %{foreach from=$user.big_rights item=has}%
+    <td width="50" align="center" title="Сотрудник %{$user.login}% %{$user.name_s}%, права  %{$has.object_id}%/%{$has.rl_object_id}%: %{$has.name}%">
+    %{if $has.has==true}%
+    <big><strong>+</strong></big>
+    %{else}%
+    <small>-</small>
+    %{/if}%
+    
+    
+    <input type="hidden" id="has_all_right_%{$user.id}%_%{$has.rl_object_id}%" value="%{if $has.has==true}%1%{else}%0%{/if}%" />
+    
+    </td>
+    %{/foreach}%
+</tr>
+%{/foreach}%
+</tbody>
+</table>
+
+
+<script type="text/javascript">
+$(function(){
+	//обработка всех нажатий.
+	
+	//установка/снятие доступа к папке
+	$("input[id^=has_control_]").bind("change", function(){
+		state=$(this).prop("checked"); id=$(this).attr("id");
+		folder_id=id.replace(/^has_control_/,'');
+	
+		 
+		old_state=$("#old_"+id).val()=="1";
+		
+		
+		if(state!=old_state){
+			$(this).addClass("changed");
+			$("label[for="+id+"]").html("*").addClass("changed");
+		}else{
+			$(this).removeClass("changed");
+			$("label[for="+id+"]").html("").removeClass("changed");
+		}
+		
+		
+		 
+		
+		 
+		
+		//связь с подпапками
+		selector="input[id^=has_right_"+folder_id+"_]";
+		//alert(selector);
+		if(($("#old_has_control_"+folder_id).val()=="1")&&(state==true)){
+			 
+			alert("Внимание! Вы сняли разграничение доступа к папке, не сохранили изменения, а затем восстановили его. При сохранении изменений будут восстановлены первоначальные права доступа к папке (бывшие до снятия Вами разграничения).");
+			
+			 
+			$(selector).prop("checked", false) .prop("disabled", true) .removeClass("changed");
+			//$("label[for="+selector+"]").html("");
+			$.each($(selector), function(k,v){
+				sel_id=$(v).attr("id");
+				$("label[for="+sel_id+"]").html("").removeClass("changed");
+			});
+			 
+		 
+		 }else if(state==false){
+			$(selector).prop("disabled", true).removeClass("changed");
+			 
+			//установить права согласно общим правам
+			
+			//исключение - права на доступ к папке. отмеченность их - искать согласно логической сумме основных прав и наличия прав на промежуточные папки.
+			//активность: нет активности
+			$.each($(selector),function(k,v){
+				
+				sel_id=$(v).attr("id");
+				rl_object_id=sel_id.replace(/^has_right_[0-9]+_[0-9]+_/,'');
+				user_id=sel_id.replace(/^has_right_[0-9]+_/,'').replace(/_[0-9]+$/,'');
+				folder_id=sel_id.replace(/^has_right_/,'').replace(/_[0-9]+_[0-9]+$/,'');
+				
+				
+				$(v).prop("checked", $("#has_all_right_"+user_id+"_"+rl_object_id).val()=="1");
+				
+				
+				//найти все родительские права вплоть до главных прав
+				if( $("#has_inherits_"+folder_id+"_"+user_id+"_"+rl_object_id).val()=="1" ){
+					
+     				has_rights=true;
+					has_rights=has_rights&& ($("#has_all_right_"+user_id+"_"+rl_object_id).val()=="1");
+					 
+					
+					cter=0;
+					parent_id=$("#parent_id_"+folder_id).val();
+					while((!isNaN(parent_id))&&(parseInt(parent_id)>0)&&(cter<500)){
+ 						//alert(parseInt(parent_id));
+    					has_rights=has_rights&&( $("#has_right_"+parent_id+"_"+user_id+"_"+rl_object_id).prop("checked"));
+						
+				
+						parent_id=$("#parent_id_"+parent_id).val();
+						cter++;
+					}
+					
+					$(v).prop("checked", has_rights);
+				}
+			});
+			$.each($(selector), function(k,v){
+				sel_id=$(v).attr("id");
+				$("label[for="+sel_id+"]").html("").removeClass("changed");
+			});
+			
+			//$("label[for="+selector+"]").html("*");
+		}else if(state==true){
+			$(selector).prop("checked", false).prop("disabled", false) .removeClass("changed");
+			 
+			$.each($(selector), function(k,v){
+				sel_id=$(v).attr("id");
+				$("#old_"+sel_id).val("0");
+				$("label[for="+sel_id+"]").html("").removeClass("changed");
+				
+				rl_object_id=sel_id.replace(/^has_right_[0-9]+_[0-9]+_/,'');
+				user_id=sel_id.replace(/^has_right_[0-9]+_/,'').replace(/_[0-9]+$/,'');
+				folder_id=sel_id.replace(/^has_right_/,'').replace(/_[0-9]+_[0-9]+$/,'');
+				
+				
+				//исключение - права на доступ к папке. активность их - искать согласно логической сумме основных прав и наличия прав на промежуточные папки.
+				//отмеченность: нет отмеченности
+				if( $("#has_inherits_"+folder_id+"_"+user_id+"_"+rl_object_id).val()=="1" ){
+					
+     				has_rights=true;
+					has_rights=has_rights&& ($("#has_all_right_"+user_id+"_"+rl_object_id).val()=="1");
+					 
+					
+					cter=0;
+					parent_id=$("#parent_id_"+folder_id).val();
+					while((!isNaN(parent_id))&&(parseInt(parent_id)>0)&&(cter<500)){
+ 						//alert(parseInt(parent_id));
+    					has_rights=has_rights&&( $("#has_right_"+parent_id+"_"+user_id+"_"+rl_object_id).prop("checked"));
+						
+				
+						parent_id=$("#parent_id_"+parent_id).val();
+						cter++;
+					}
+					
+					$(v).prop("disabled", !has_rights);
+				}
+			});
+		}  
+		
+	});
+	
+	//установка/снятие отдельного права пол-ля на папку
+	$("input[id^=has_right_]").bind("change", function(){
+		 
+		state=$(this).prop("checked"); id=$(this).attr("id");
+		old_state=$("#old_"+id).val()=="1";
+		
+		
+		if(state!=old_state){
+			$(this).addClass("changed");
+			$("label[for="+id+"]").html("*").addClass("changed");
+		}else{
+			$(this).removeClass("changed");
+			$("label[for="+id+"]").html("").removeClass("changed");
+		}
+		
+	});
+	
+	//внесение изменений
+	$("#SaveRights").bind("click", function(){
+		$("#SaveRights").prop("disabled", true);
+		//строим массивы измененных папок: на установку доступа, на удаление доступа
+		set_folders=new Array(); del_folders=new Array();
+		$.each($("input[id^=has_control_][class=changed]"), function(k,v){
+			//alert($(v).attr("id"));
+			if($(v).prop("checked")) set_folders.push($(v).attr("id").replace(/^has_control_/,''));
+			else del_folders.push($(v).attr("id").replace(/^has_control_/,''));
+		});
+		//alert(set_folders); alert(del_folders);
+		
+		
+		//строим массивы измененных прав: на установку, на удаление доступа
+		set_rights=new Array(); del_rights=new Array();
+		
+		$.each($("input[id^=has_right_][class=changed]"), function(k,v){
+			sel_id=$(v).attr("id");
+			rl_object_id=sel_id.replace(/^has_right_[0-9]+_[0-9]+_/,'');
+			user_id=sel_id.replace(/^has_right_[0-9]+_/,'').replace(/_[0-9]+$/,'');
+			folder_id=sel_id.replace(/^has_right_/,'').replace(/_[0-9]+_[0-9]+$/,'');
+			
+			elem=folder_id+';'+user_id+';'+rl_object_id;
+			if($(v).prop("checked")) set_rights.push(elem);
+			else del_rights.push(elem);			
+		});
+		
+		//alert(set_rights); alert(del_rights);
+		
+		$.ajax({
+				async: true,
+				url: "/js/admin_folders.php",
+				type: "POST",
+				 
+				data:{
+					"action":"save_changes",
+					 
+					"group_id":$("#group_id").val(),
+					"storage_id":$("#storage_id").val(),
+					"set_folders[]":set_folders,
+					"del_folders[]":del_folders,
+					"set_rights[]":set_rights,
+					"del_rights[]":del_rights
+				},
+				beforeSend: function(){
+					//$("#user_ind_"+user_id+"_"+folder_id).html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');  
+				},
+				success: function(data){
+					alert("Изменения внесены!"+data); 
+					$("#SaveRights").prop("disabled", false);
+					location.reload();
+					 
+				},
+				error: function(xhr, status){
+					alert("Ошибка сохранения данных.");	
+					$("#SaveRights").prop("disabled", false);
+				}	 
+			});	
+		
+	});
+});
+</script>
+
+
+
+<h2>Права на папки</h2>
+
+<input type="button" id="SaveRights" value="Внести изменения" />
+
+<table border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+	<tr valign="top">
+	<th width="300">
+      <a href="#" id="toggle_folder"><img alt="показать/скрыть пользователей" title="показать/скрыть пользователей" src="/img/icons/restore.gif" width="32" height="32" /></a> 
+       <script type="text/javascript">
+	$(function(){
+		var gh=1;
+		$("#toggle_folder").bind("click", function(){
+			
+			 
+			$.each($("tr[id^=user_row_]"), function(k,v){
+				
+				if(gh==1) {
+					$(v).hide();	
+					 
+				}else{
+					$(v).show();
+					 
+				}
+				
+			});
+			if(gh==1) {gh%=0;  $("input[id^=shown_folders_]").val(0); }
+			else { gh=1; $("input[id^=shown_folders_]").val(1); }
+			return false;
+		});
+	});
+	</script>
+      
+      </th>
+    
+      <th width="50" style="width:50px;">
+      разгр- е вкл.
+      </th>
+    %{foreach from=$rights item=right}%
+    <th width="50" style="width:50px;">
+    %{$right.object_id}%. /  %{$right.rl_object_id}%.
+    
+   <small> %{$right.name}%</small>
+    </th>
+    %{/foreach}%
+    </tr>
+</thead>
+<tbody>
+%{foreach from=$folders item=folder}%
+<tr align="left" valign="top">
+	<td width="300" >
+    
+    <img src="/img/icons/folder.png" width="22" height="16" /><strong>%{$folder.prefix}%%{$folder.filename}%</strong> 
+    <input type="hidden" id="shown_folders_%{$folder.id}%" value="1" />
+    
+    <input type="hidden" id="folder_id_%{$folder.id}%" value="%{$folder.id}%" />
+    <input type="hidden" id="parent_id_%{$folder.id}%" value="%{$folder.parent_id}%" />
+    
+     <a href="#" id="toggle_folder_%{$folder.id}%"><img alt="показать/скрыть пользователей" title="показать/скрыть пользователей" src="/img/icons/restore.gif" width="24" height="24" /></a> 
+    <script type="text/javascript">
+	$(function(){
+		 
+		$("#toggle_folder_%{$folder.id}%").bind("click", function(){
+			
+			 
+			$.each($("tr[id^=user_row_%{$folder.id}%_]"), function(k,v){
+				
+				if($("#shown_folders_%{$folder.id}%").val()==1) {
+					$(v).hide();	
+					
+				}else{
+					$(v).show();
+					 
+				}
+				
+			});
+			if($("#shown_folders_%{$folder.id}%").val()==1)  $("#shown_folders_%{$folder.id}%").val(0);
+			else  $("#shown_folders_%{$folder.id}%").val(1);
+			return false;
+		});
+	});
+	</script>
+    </td>
+    
+      <td width="50" style="width:50px; max-width:50px; word-wrap:break-word;">
+      <input type="checkbox" id="has_control_%{$folder.id}%" value="1" %{if $folder.has_control}% checked="checked"%{/if}% /><label for="has_control_%{$folder.id}%"></label>
+      
+      <input type="hidden" id="old_has_control_%{$folder.id}%" value="%{if $folder.has_control}%1%{else}%0%{/if}%" />
+      
+       
+      </td>
+    %{foreach from=$rights item=right name=rf}%
+    <th align="left" width="50" style="width:50px;">
+    %{$right.object_id}%. /  %{$right.rl_object_id}%.
+    <small>%{$right.name}%</small>
+    
+    </th>
+    %{/foreach}%
+  </tr>
+</tr>
+    %{foreach from=$folder.users item=user}%
+    <tr align="left" valign="top" id="user_row_%{$folder.id}%_%{$user.id}%">
+        <td width="300" >
+        <img src="/img/icons/menu_my_profile.png" width="16" height="16" /><strong>%{$user.login}%</strong> %{$user.name_s}%
+        <input type="hidden" id="user_id_%{$user_id}%" value="%{$user.id}%" />
+        </td>
+         <td width="50" style="width:50px;"></td>
+         
+         %{if $smarty.foreach.uc.total>$num_users}%
+       <td colspan="%{$smarty.foreach.rf.total}%" id="user_ind_%{$user.id}%_%{$folder.id}%">
+        
+        </td>
+        %{else}%
+        
+        
+        
+            
+             %{foreach from=$user.rights item=right }%
+            <td align="center" width="50" style="width:50px;" title="Сотрудник %{$user.login}% %{$user.name_s}%, права  %{$right.object_id}%/%{$right.rl_object_id}%: %{$right.name}%">
+            
+             <input type="hidden" id="has_inherits_%{$folder.id}%_%{$user.id}%_%{$right.rl_object_id}%" value="%{$right.has_inherits}%" />
+            
+            <input type="hidden" id="old_has_right_%{$folder.id}%_%{$user.id}%_%{$right.rl_object_id}%" value="%{if $right.has}%1%{else}%0%{/if}%"   />
+            
+            <input type="checkbox" id="has_right_%{$folder.id}%_%{$user.id}%_%{$right.rl_object_id}%" value="1" %{if $right.has}% checked="checked"%{else}%%{/if}%  %{if $right.is_inactive}% disabled="disabled"%{/if}%  title="Сотрудник %{$user.login}% %{$user.name_s}%, права  %{$right.object_id}%/%{$right.rl_object_id}%: %{$right.name}%"  />
+            <label for="has_right_%{$folder.id}%_%{$user.id}%_%{$right.rl_object_id}%"></label>
+           
+            </td>
+            %{/foreach}%
+         
+        %{/if}%
+        
+        
+        
+    </tr>
+    %{/foreach}%
+
+    
+%{/foreach}%
+</tbody>
+</table>
+
+
+
+%{/if}%

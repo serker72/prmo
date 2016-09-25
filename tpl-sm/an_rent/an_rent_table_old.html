@@ -1,0 +1,436 @@
+
+<h2>Доходность</h2>
+
+
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*" class="main">Период
+    
+    </th>
+    
+    %{if $extended_an==1}%
+    <th scope="col" width="*" class="main">Документ движения (регистратор) </th>
+    %{/if}%
+    <th scope="col" width="*" class="main">Реализации
+    
+    </th>
+    <th scope="col" width="*" class="main">Поступления
+    
+    </th>
+    <th scope="col" width="*" class="main">Результат
+    
+    </th>
+</tr>
+</thead>
+<tbody>
+
+%{if $extended_an==1}%
+%{foreach from=$items1 item=date}%
+
+<tr align="center" valign="top">
+	<td class="contract" >%{$date.pdate}%</td>
+ 
+    <td width="*" class="contract" ></td>
+
+     
+    <td class="contract"  width="80" >%{$date.plus}%</td>
+    <td class="contract"   width="80"  >%{$date.dolg}%</td>
+    <td class="contract"   width="80" >%{$date.end_ost}%</td>
+</tr> 
+%{foreach from=$date.docs_on_date item=doc}%
+<tr align="center" valign="top">
+<td   >%{$date.pdate}%</td>
+ %{if $doc.kind==0}%
+	
+ 
+    <td width="*">
+   
+    <a href="ed_acc_in.php?action=1&id=%{$doc.id}%" target="_blank">Поступление № %{$doc.given_no}% от %{$doc.given_pdate}%</a>,
+    
+    
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+     
+   
+    
+    </td>
+
+    
+   
+    <td   width="80"  >0</td>
+ <td  width="80" >%{$doc.value}%</td>    
+    <td   width="80" > %{$doc.end_ost}%</td>
+%{elseif $doc.kind==1}%
+ 
+    <td width="*">
+   
+    <a href="ed_acc.php?action=1&id=%{$doc.id}%" target="_blank">Реализация № %{$doc.given_no}% от %{$doc.given_pdate}%</a>,
+   
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+    </td>
+
+     
+    <td   width="80"  >%{$doc.value}%</td>
+    <td  width="80" >0</td>
+
+    <td   width="80" > %{$doc.end_ost}%</td>    
+              
+ %{/if}% 
+</tr> 
+
+%{/foreach}%
+%{/foreach}%
+%{/if}%
+
+
+<tr align="center" valign="top">
+	<td width="*" >%{$pdate1}%- %{$pdate2}%
+    
+    </td>
+    
+  %{if $extended_an==1}%
+    <td width="*" > </th>
+    %{/if}%
+    
+    <td width="*" >%{$doh_plus}%
+    
+    </td>
+    <td width="*"  >%{$doh_minus}%
+    
+    </td>
+    <td width="*"  >%{$doh_end_ost}%
+    
+    </td>
+</tr>
+</tbody>
+</table>
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+<br />
+
+<h2>Расходы</h2>
+
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40" class="main">Код
+    
+    </th>
+    <th scope="col" width="*" class="main">Расшифировка
+    
+    </th>
+    <th scope="col" width="60" class="main">Сумма расходов
+    
+    </th>
+     
+</tr>
+</thead>
+<tbody>
+%{foreach from=$pcg item=doc1}%
+
+%{if  $doc1.value>0 }%
+<tr align="left" valign="top">
+	<td width="40"  class="contract"  >%{$doc1.code}%
+    
+    </td>
+    <td width="*"  class="contract"  >%{$doc1.name}%
+    
+    </td>
+    <td width="60"  class="contract"   >%{if $doc1.value>0 }% %{$doc1.value}% %{/if}%
+    
+    </td>
+   
+</tr>
+%{if $extended_an==1}%
+%{foreach from=$doc1.docs item=doc}%
+<tr align="left" valign="top">
+	<td width="40" >%{$doc.given_pdate}%
+    
+    </td>
+    
+    <td width="*">
+    %{if $doc.kind==2}%
+ 
+   
+   
+    <a href="ed_pay.php?action=1&id=%{$doc.id}%" target="_blank">Исходящая оплата № %{$doc.code}% от %{$doc.given_pdate}%</a>,
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+     
+     %{if $doc.is_inner_pay==1}%
+     <a href="info.html?name=%{$doc.inu_login}%" target="_blank">
+    %{$doc.inu_name_s}% (%{$doc.inu_login}%)</a>
+    %{/if}%
+     
+%{elseif $doc.kind==3}%
+ 
+    
+   
+    <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">Расход наличных № %{$doc.code}% от %{$doc.given_pdate}%</a>
+   
+   
+%{elseif $doc.kind==4}%
+ 
+    
+   
+    <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">Проценты по расходу наличных № %{$doc.code}% от %{$doc.given_pdate}%</a>
+   
+    
+    %{/if}%
+    
+    
+    </td>
+    <td width="60"  > %{$doc.value}%  
+    
+    </td>
+   
+</tr>
+%{/foreach}%
+%{/if}%
+
+
+%{/if}%
+%{/foreach}%
+</tbody>
+<tfoot>
+<tr align="center" valign="top">
+	<th scope="col" width="40" class="main"> 
+    
+    </th>
+    <th scope="col" width="*" class="main"> 
+    
+    </th>
+    <th scope="col" width="60" class="main"> 
+    <nobr>%{$value_pays}%</nobr>
+    </th>
+     
+</tr>
+</tfoot>
+</table>
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br />
+<h2>Итоговый результат</h2>
+
+
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*" class="main">Период
+    
+    </th>
+    
+    %{if $extended_an==1}%
+    <th scope="col" width="*" class="main">Документ движения (регистратор) </th>
+    %{/if}%
+   
+    <th scope="col" width="200" colspan="4" class="main">Сумма</th>
+</tr>
+<tr align="center" valign="top">
+	<th scope="col" width="*" class="main">%{$pdate1}% - %{$pdate2}%
+    
+    </th>
+    
+    %{if $extended_an==1}%
+    <th scope="col" width="*" class="main">  </th>
+    %{/if}%
+   
+      <th scope="col"  class="main"  width="80"  >Нач. остаток</th>
+    <th scope="col"  class="main" width="80" >Доход</th>
+    <th scope="col"   class="main" width="80"  >Расход</th>
+    <th scope="col"   class="main" width="80" >Кон. остаток</th>
+</tr>
+</thead>
+
+%{if $extended_an==1}%
+<tbody>
+
+%{foreach from=$items item=date}%
+
+<tr align="center" valign="top">
+	<td class="contract" >%{$date.pdate}%</td>
+ 
+    <td width="*" class="contract" ></td>
+
+    <td class="contract"   width="80"  >%{$date.begin_ost}%</td>
+    <td class="contract"  width="80" >%{$date.plus}%</td>
+    <td class="contract"   width="80"  >%{$date.dolg}%</td>
+    <td class="contract"   width="80" >%{$date.end_ost}%</td>
+</tr> 
+%{foreach from=$date.docs_on_date item=doc}%
+<tr align="center" valign="top">
+<td scope="col"  >%{$date.pdate}%</td>
+ %{if $doc.kind==0}%
+	
+ 
+    <td width="*">
+   
+    <a href="ed_acc_in.php?action=1&id=%{$doc.id}%" target="_blank">Поступление № %{$doc.given_no}% от %{$doc.given_pdate}%</a>,
+    
+    
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+     
+   
+    
+    </td>
+
+    <td   width="80"  > %{$doc.begin_ost}% </td>
+   
+    <td   width="80"  >0</td>
+ <td  width="80" >%{$doc.value}%</td>    
+    <td   width="80" > %{$doc.end_ost}%</td>
+%{elseif $doc.kind==1}%
+ 
+    <td width="*">
+   
+    <a href="ed_acc.php?action=1&id=%{$doc.id}%" target="_blank">Реализация № %{$doc.given_no}% от %{$doc.given_pdate}%</a>,
+   
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+    </td>
+
+    <td   width="80"  > %{$doc.begin_ost}% </td>
+    <td   width="80"  >%{$doc.value}%</td>
+    <td  width="80" >0</td>
+
+    <td   width="80" > %{$doc.end_ost}%</td>    
+%{elseif $doc.kind==2}%
+ 
+    <td width="*">
+   
+    <a href="ed_pay.php?action=1&id=%{$doc.id}%" target="_blank">Исходящая оплата № %{$doc.code}% от %{$doc.given_pdate}%</a>,
+    <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">
+     %{$doc.supplier_name}%, %{$doc.supplier_opf}%</a>
+     
+     %{if $doc.is_inner_pay==1}%
+     <a href="info.html?name=%{$doc.inu_login}%" target="_blank">
+    %{$doc.inu_name_s}% (%{$doc.inu_login}%)</a>
+    %{/if}%
+    </td>
+
+    <td   width="80"  > %{$doc.begin_ost}% </td>
+ <td  width="80" >0</td>
+    <td   width="80"  >%{$doc.value}%</td>
+    <td   width="80" > %{$doc.end_ost}%</td>   
+%{elseif $doc.kind==3}%
+ 
+    <td width="*">
+   
+    <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">Расход наличных № %{$doc.code}% от %{$doc.given_pdate}%</a>
+   
+    </td>
+
+    <td   width="80"  > %{$doc.begin_ost}% </td>
+    <td  width="80" >0</td>
+    <td   width="80"  >%{$doc.value}%</td>
+    <td   width="80" > %{$doc.end_ost}%</td>   
+%{elseif $doc.kind==4}%
+ 
+    <td width="*">
+   
+    <a href="ed_cash.php?action=1&id=%{$doc.id}%" target="_blank">Проценты по расходу наличных № %{$doc.code}% от %{$doc.given_pdate}%</a>
+   
+    </td>
+
+    <td   width="80"  > %{$doc.begin_ost}% </td>
+    <td  width="80" >0</td>
+    <td   width="80"  >%{$doc.value}%</td>
+    <td   width="80" > %{$doc.end_ost}%</td>   
+%{elseif $doc.kind==5}%
+ 
+    <td width="*">
+   
+    Входящий остаток на %{$date.pdate}%
+   
+    </td>
+
+    <td   width="80"  > %{$doc.begin_ost}% </td>
+    <td  width="80" >%{$doc.value}%</td>
+    <td   width="80"  >0</td>
+    <td   width="80" > %{$doc.end_ost}%</td>              
+ %{/if}% 
+</tr> 
+
+%{/foreach}%
+%{/foreach}%
+</tbody>
+%{/if}%
+<tfoot>
+ 
+<tr align="center" valign="top">
+<th scope="col" class="main">
+    <strong>Итог</strong>
+    </th>
+   
+    %{if $extended_an==1}%
+    <th scope="col" width="*" class="main">  </th>
+    %{/if}%
+   
+    <th scope="col" class="main" style="white-space:nowrap;"><strong>%{$before_ost}%</strong></th>
+    
+    <th scope="col" width="80" class="main" style="white-space:nowrap;"><strong>%{$total_plus}%</strong></th>
+    <th scope="col" width="80"  class="main" style="white-space:nowrap;"><strong>%{$total_dolg}%</strong></th>
+    <th scope="col" width="80"  class="main" style="white-space:nowrap;"><strong>%{$after_ost}%</strong></th>
+</tr>
+</tfoot>
+</table>
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+<br />
+<strong>Итоговый доход за период c %{$pdate1}% по %{$pdate2}%:&nbsp;&nbsp;&nbsp; %{$doh_end_ost}% руб.</strong>
+<br />
+
+
+<strong>Итоговый доход за период с %{$pdate1}% по %{$pdate2}% с накопительным остатком:&nbsp;&nbsp;&nbsp; %{$after_ost}%  руб.</strong>

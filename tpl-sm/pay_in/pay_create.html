@@ -1,0 +1,394 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('org_bdetails');
+	touchScroll('bdetails');
+	touchScroll('suppliers');
+});
+</script>
+
+
+<form action="ed_pay_in.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$bill_id}%" />
+<input type="hidden" id="id"  name="id" value="" />
+<input type="hidden" id="org_id"    value="%{$org_id}%" />
+
+<div style="float:left; margin-right:20px;">
+<h1>Создание входящей оплаты</h1>
+</div>
+
+%{include file="every_help_dialog.html" filename="pay_in_create.html" prefix="" description="создание входящей оплаты"  style="float:right;  margin-right:00px;" is_right=true}%
+
+
+
+
+<br clear="all" />
+
+<div style="float:left; margin-right:20px;">
+<label for="code">Код:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$code}%" id="code" disabled="disabled" />
+<input type="hidden" name="code" value="%{$code}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Дата создания:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$now}%" name="pdate" id="pdate" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер:</label><br />
+
+<input type="text" size="10" maxlength="255" value="" name="given_no" id="given_no" />
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_pdate">Заданная дата:</label><br />
+
+<input type="text" size="10" maxlength="10" name="given_pdate" id="given_pdate" value="-" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="value">Сумма платежа, руб.:</label><br />
+
+<input type="text" size="20" maxlength="255" value="" name="value" id="value" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+<div style="float:right; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="Аннулировать/Восстановить..."  style="float:right;"  >
+</a>
+
+<strong>Статус:</strong><br />
+
+не выполнена
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:0px;">
+<label for="bdetails_id">
+
+Реквизиты организации:</label><br />
+
+
+<input type="text" size="40" maxlength="255" id="org_bdetails_id_string" value="%{$org_bdetails_id_string|escape}%" disabled="disabled" style="width:670px;"  />
+<input type="hidden" name="org_bdetails_id" id="org_bdetails_id" value="%{$org_bdetails_id}%" />
+<input type="button" id="org_bdetails_select" value="..." />
+<input type="button" id="org_bdetails_clear" value="x" />
+
+</div>
+
+
+<div style="float:right; padding-top:0px; margin-right:00px; min-width:120px; text-align:right;">
+<a href="#" target="_blank" onclick="alert('В данном режиме печать входящей оплаты недоступна. Пожалуйста, нажмите кнопку Создать входящую оплату и перейти к утверждению для получения возможности печати оплаты.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать входящей оплаты..."  ></a>
+</div>
+
+
+<br clear="all" />
+<p />
+
+%{include file="pay_in/org_actions.html"}%
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+
+
+<label for="supplier_id">
+Контрагент:</label><br />
+
+
+<input type="text" size="40" maxlength="255" id="supplier_id_string" disabled="disabled" style="width:398px;" value="%{$supplier_id_string}%" />
+<input type="button" id="supplier_select" value="..." />
+<input type="button" id="supplier_clear" value="x" />
+
+<input type="hidden"  value="%{$supplier_id}%" name="supplier_id" id="supplier_id" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+
+<label for="contract_no">
+Договор №:</label>
+<br />
+
+<input type="text" size="10" maxlength="255" value="%{$contract_no}%" id="contract_no_string" disabled="disabled" style="width:100px;" />
+
+<input type="hidden"  value="%{$contract_id}%" name="contract_id" id="contract_id" />
+</div>
+
+<div style="float:left; margin-right:5px;">
+<label for="contract_pdate">
+от:</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$contract_pdate}%" id="contract_pdate_string" disabled="disabled" style="width:60px;" />
+<input type="hidden" name="contract_pdate" id="contract_pdate" value="%{$contract_pdate}%" />
+
+</div>
+
+
+<div style="float:left; margin-right:10px; margin-top:13px;">
+
+
+<input type="button" id="contract_select" value="..."  />
+<input type="button" id="contract_clear" value="x"  />
+
+</div>
+
+
+<div style="float:left; margin-right:10px; margin-top:13px;">
+<input type="checkbox" value="1" name="is_return" id="is_return" /><label for="is_return">Возврат д/с</label>
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="bdetails_id">
+
+Реквизиты контрагента:</label><br />
+
+
+<input type="text" size="40" maxlength="255" id="bdetails_id_string" value="%{$bdetails_id_string|escape}%" disabled="disabled" style="width:670px;"  />
+<input type="hidden" name="bdetails_id" id="bdetails_id" value="%{$bdetails_id}%" />
+<input type="button" id="bdetails_select" value="..." />
+<input type="button" id="bdetails_clear" value="x" />
+
+</div>
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+%{include file="pay_in/supplier_actions.html"}%
+
+
+<!-- конец блока контрагента -->
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<input name="pay_for_dogovor" id="pay_for_dogovor" type="checkbox" value="1" />
+<label for="pay_for_dogovor">Оплата по договору</label>
+
+
+</div>
+%{* include file="pay_in/pay_for_dogovor_actions.html" *}%
+
+<script type="text/javascript">
+$(function(){
+	$("#pay_for_dogovor").bind("click",function(){
+		$("#pay_for_dogovor").prop("checked",false);
+		alert("Для выбора режима оплаты Вам необходимо задать сумму оплаты и сохранить оплату, нажав кнопку 'Создать входящую оплату и перейти к утверждению'");
+	});
+});
+</script>
+
+
+<div style="float:left; margin-right:20px;">
+<input name="pay_for_bill" id="pay_for_bill" type="checkbox" value="1" />
+<label for="pay_for_bill">Оплата по счету</label>
+
+
+</div>
+%{* include file="pay_in/pay_for_bill_actions.html" *}%
+<script type="text/javascript">
+$(function(){
+	$("#pay_for_bill").bind("click",function(){
+		$("#pay_for_bill").prop("checked",false);
+		alert("Для выбора режима оплаты Вам необходимо задать сумму оплаты и сохранить оплату, нажав кнопку 'Создать входящую оплату и перейти к утверждению'");
+	});
+});
+</script>
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Сделка:</strong>
+<input type="button" id="add_pos" value="Выбрать счета..." />
+<script type="text/javascript">
+$(function(){
+	$("#add_pos").bind("click",function(){
+		
+		alert("Для выбора счетов оплаты Вам необходимо задать сумму оплаты и сохранить оплату, нажав кнопку 'Создать входящую оплату и перейти к утверждению'");
+	});
+});
+</script>
+
+<br />
+
+
+
+<div id="nested_bills">
+%{* include file="pay_in/bills_actions.html" can_modify=true *}%
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" id="doNew" value="Создать входящую оплату" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" id="doNewEdit"  value="Создать входящую оплату и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='all_pay.php';
+}else location.href='all_pay.php';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	
+	
+	
+	
+	//проверка увязки общей суммы с суммой по счетам
+	function CheckSumm(){
+		res=true;
+		
+		
+		if((parseFloat($("#value").val().replace("\,","\."))<=0)||($("#value").val().replace("\,","\.")=='')){
+			alert('Внимание! Вы задали нулевую сумму оплаты. Просьба исправить сумму.');
+			res=res&&false;
+			$("#value").focus();
+			return false;	
+		}
+		
+		return res;
+	}
+	
+	$("#doNew").bind("click",function(){
+		return CheckSumm();
+	});
+	$("#doNewEdit").bind("click",function(){
+		return CheckSumm();
+	});
+	
+});
+</script>
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	if(!PeriodChecker('pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Дата создания должна быть не ранее %{$pch_date}%!');
+		return false;	
+	}else if(!PeriodChecker('given_pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Заданная дата должна быть не ранее %{$pch_date}%!');
+		return false;	
+	
+	}else{
+		
+		//return true;	
+		//каскад проверок по закрытым периодам
+		if(!PeriodCheckerByPeriod('pdate', closed_date )){
+			sfm_show_error_msg('Дата создания не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		}else if(!PeriodCheckerByPeriod('given_pdate', closed_date )){
+			sfm_show_error_msg('Заданная дата не должна попадать в закрытый период '+interval_string+'!');
+			return false;
+		}
+	}
+	
+	if(($("#supplier_id").val()!=$("#org_id").val())&&($("#is_return").prop("checked")==false)){
+		if(($("#contract_id").val()=="")||($("#contract_id").val()==0)||($("#contract_id").val()==undefined)){
+			sfm_show_error_msg('Выберите договор контрагента!');
+			return false;
+		}
+	}
+	
+	
+	 return true;
+}
+
+frmvalidator.addValidation("supplier_id","req","Выберите контрагента!");
+
+frmvalidator.addValidation("bdetails_id","req","Выберите реквизиты контрагента!");
+frmvalidator.addValidation("org_bdetails_id","req","Выберите реквизиты организации!");
+
+frmvalidator.addValidation("supplier_id","gt=0","Выберите контрагента!");
+
+frmvalidator.addValidation("bdetails_id","gt=0","Выберите реквизиты контрагента!");
+frmvalidator.addValidation("org_bdetails_id","gt=0","Выберите реквизиты организации!");
+
+/*frmvalidator.addValidation("contract_id","req","Выберите договор контрагента!");
+frmvalidator.addValidation("contract_id","gt=0","Выберите договор контрагента!");*/
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+
+
+</script>

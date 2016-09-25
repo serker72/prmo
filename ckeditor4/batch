@@ -1,0 +1,7 @@
+#!/bin/sh
+for i in `find . -name "*.js" -type f`
+do
+echo $i
+iconv -f utf-8 -t cp1251 -c "$i" > tmp
+mv -f tmp "$i"
+done

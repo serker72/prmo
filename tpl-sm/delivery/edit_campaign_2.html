@@ -1,0 +1,205 @@
+%{include file="delivery/navi.html" id=$id step=$step}%
+
+ 
+<script>
+$(function(){
+	$("#do_next").bind("click", function(){
+		$("#step_next").trigger("click");
+		 
+		location.href=$("#step_next").attr("href");
+		 
+	});
+	
+	
+	
+	$("#to_is_personal").bind("change", function(){
+		if($(this).prop("checked")) $("#to_field_block").show(200); else  $("#to_field_block").hide(200);
+	});
+	
+	
+	$("a.gydex_delivery_action").bind("click", function(){
+		var can_go=true;
+		
+		%{if $can_edit}%
+		//обработка данных
+		
+		
+		if(can_go&&($("#name").val()=="")){
+			can_go=can_go&&false;
+			alert("Заполните поле Название!");
+			$("#name").focus();	
+		}
+		
+		if(can_go&&($("#from_name").val()=="")){
+			can_go=can_go&&false;
+			alert("Заполните поле От кого: имя!");
+			$("#from_name").focus();	
+		}
+		
+		if(can_go&&($("#from_email").val()=="")){
+			can_go=can_go&&false;
+			alert("Заполните поле От кого: адрес!");
+			$("#from_email").focus();		
+		}
+		
+		 
+		
+		if(can_go){
+			if($("#has_clicks_tracking").prop("checked")) has_clicks_tracking=1; else has_clicks_tracking=0;
+			if($("#has_tracking").prop("checked")) has_tracking=1; else has_tracking=0;
+			if($("#to_is_personal").prop("checked")) to_is_personal=1; else to_is_personal=0;
+			
+			if($("#is_birth").prop("checked")) is_birth=1; else is_birth=0;
+			
+			
+			$.ajax({
+			  async: false,
+			  url: "js/delivery_campaigns.php",
+			  type: "POST",
+			  data:{
+				  "action":"save_data",
+				  "id":$("#id").val(),
+				  "name":$("#name").val(),
+				  "step":$("#step").val(),
+				  "topic":$("#topic").val(),
+				  "from_name":$("#from_name").val(),
+				  "from_email":$("#from_email").val(),
+				  "to_is_personal":to_is_personal,
+				  "to_field":$("#to_field").val(),
+				  "has_tracking":has_tracking,
+				  "has_clicks_tracking":has_clicks_tracking,
+				  "is_birth":is_birth
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				
+				 //window.open('delivery_preview_template.php?id='+$("#id").val(),'template_view');
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			//alert('work');
+		}
+		%{/if}%
+		
+		
+		
+		
+		
+		return can_go;
+	});
+	
+	$("#crea_form").bind("submit", function(){
+		$("a#step_next").trigger("click");
+		return false;
+	});
+	
+});
+</script>  
+
+
+
+<h1>Настройки рассылки</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="step" id="step" value="%{$step}%">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+ 
+ 
+<div style="overflow:hidden;">
+	<div style="float:left; width:50%; margin-right:20px; min-width:450px;"> 
+    <label for="name">Название:</label><br>
+    <em>Для внутреннего использования в GYDEX.Рассылках</em><br>
+    <input type="text" %{if !$can_edit}% disabled%{/if}% value="%{$data.name|escape:"html"}%" name="name" id="name" size="60" maxlength="255" />
+	<br>
+	<br>
+
+	<label for="topic">Тема письма:</label><br>
+    <input type="text"  %{if !$can_edit}% disabled%{/if}% value="%{$data.topic|escape:"html"}%" name="topic" id="topic" size="60" maxlength="255" />
+	<br>
+	<br>
+
+
+	<label for="from_name">Поле "От кого": имя:</label><br>
+    <input type="text" %{if !$can_edit}% disabled%{/if}% value="%{$data.from_name|escape:"html"}%" name="from_name" id="from_name" size="60" maxlength="255" />
+	<br>
+	<br>
+	
+    
+    <label for="from_email">Поле "От кого": адрес:</label><br>
+    <input type="text" %{if !$can_edit}% disabled%{/if}% value="%{$data.from_email|escape:"html"}%" name="from_email" id="from_email" size="60" maxlength="255" />
+	<br>
+	<br>
+
+	 <input type="checkbox" %{if !$can_edit}% disabled%{/if}% value="1" id="is_birth" name="is_birth" %{if $data.is_birth}% checked%{/if}% /><label for="is_birth">Рассылка поздравлений с днем рождения</label><br>
+	 <small><em>Если отмечено, то получатели рассылки, связанные со справочниками сотрудников и контактов контрагентов, получат сообщения в свой день рождения.</em></small>
+     <br>
+
+	
+
+	</div>
+    
+    <div style="float:left; width:45%; margin-right:00px;"> 
+    
+             
+    <h3>Отслеживать статистику</h3> 
+     <div style="overflow:hidden;">
+        
+        <div style="float:left; width:50%; margin-right:20px;"> 
+        <input %{if !$can_edit}% disabled%{/if}% type="checkbox" value="1" id="has_tracking" name="has_tracking" %{if $data.has_tracking}% checked%{/if}% /><label for="has_tracking">Отслеживать просмотр письма</label><br><br>
+    
+    
+    <input   %{if !$can_edit}% disabled%{/if}%   type="checkbox" value="1" id="has_clicks_tracking" name="has_clicks_tracking" %{if $data.has_clicks_tracking}% checked%{/if}% /><label for="has_clicks_tracking">Отслеживать переход по ссылкам</label><br>
+        </div>
+        
+      
+    </div>    
+	<br>
+	
+    
+    
+    
+    <input type="checkbox" %{if !$can_edit}% disabled%{/if}% value="1" id="to_is_personal" name="to_is_personal" %{if $data.to_is_personal}% checked%{/if}% /><label for="to_is_personal">Персонализировать поле "Кому"</label><br>
+	
+    
+    <div id="to_field_block" style="%{if !$data.to_is_personal}% display:none; %{/if}%">
+    <label for="to_field">Поле "Кому":</label><br>
+    <em>Включите имя получателя в сообщение, используя теги подстановки, чтобы сделать сообщение более персональным и помочь обойти спам-фильтры. Например, *|FNAME|* *|LNAME|* покажет "To: Bob Smith" в письме вместо "To: bob@example.com".</em>
+    <input %{if !$can_edit}% disabled%{/if}% type="text" value="%{$data.to_field|escape:"html"}%" name="to_field" id="to_field" size="60" maxlength="255" />
+    
+    
+    
+	<br>
+	<br>
+    
+    
+    
+    
+    
+    </div>
+    
+    </div>
+
+</div> 
+
+
+<br>
+
+
+<input type="button" id="do_close" value="Отмена" onclick="location.href='%{$list_pagename}%';" />
+
+<br>
+<br>
+
+
+<input type="button" id="do_next" class="gydex_imp_button"  value="Далее" />
+
+</form>

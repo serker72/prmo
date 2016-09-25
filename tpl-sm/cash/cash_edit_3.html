@@ -1,0 +1,761 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('org_bdetails');
+	touchScroll('bdetails');
+	touchScroll('suppliers');
+	touchScroll('notes');
+});
+</script>
+
+
+
+
+<form action="ed_cash.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" id="id"  name="id" value="%{$ship.id}%" />
+<input type="hidden" name="current_status_id" value="%{$ship.status_id}%" />
+<input type="hidden" id="kind_id"   value="%{$ship.kind_id}%" />
+
+ 
+
+<div style="float:left; margin-right:20px;">
+<h1 style="">Редактирование расхода наличных</h1>
+</div>
+
+%{include file="every_help_dialog.html" filename="bill_exped.htm" prefix="" description="редактирование расхода наличных"  style="float:right; padding-top:10px;  margin-right:00px;" is_right=true}%
+
+<div style="float:right; padding-top:10px; margin-right:10px;  text-align:right;">
+ 
+<input type="button" value="Файлы..." onclick="location.href='cash_files.php?pay_id=%{$ship.id}%';" style="width:70px;" />
+
+
+ 
+</div>
+
+<div style="float:right; padding-top:10px; margin-right:10px;   text-align:right;">
+
+%{if $ship.is_confirmed==1}%
+ %{if $can_print}%
+ <a href="ed_cash.php?action=1&id=%{$ship.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать расхода наличных..." ></a>
+ %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати расхода наличных.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать расхода наличных..." ></a>
+ %{/if}%
+ 
+ %{else}%
+ <a href="#" onclick="alert('В данном режиме печать расхода наличных недоступна. Пожалуйста, утвердите расход наличных.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать расхода наличных..." ></a>
+ %{/if}%
+
+
+ 
+</div>
+
+
+
+
+<br clear="all" />
+
+<div style="float:left; margin-right:20px;">
+<strong>Код:</strong><br />
+
+%{$ship.code}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+
+%{$ship.pdate}%<br />
+<small>создан: %{$created_by}%</small>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="value">Сумма платежа, руб.:</label><br />
+
+<input type="text" size="20" maxlength="255" value="%{$ship.value}%" name="value_str" id="value_str"   disabled="disabled"  />
+<input type="hidden" size="20" maxlength="255" value="%{$ship.value}%" name="value" id="value"   %{if !$can_modify}% disabled="disabled"%{/if}%  />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+<div style="float:right; margin-right:0px; margin-top:-5px; min-width:120px;" id="toggle_annul">
+%{include file="cash/toggle_annul_card.html"}%
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+ 
+ <div style="float:left; margin-right:20px;">
+ <label for="">Вид:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$kind_name}%" disabled="disabled" style="width:200px;" />
+ </div>
+
+	<div style="float:left; margin-right:20px;">
+<b>Счета:</b><br />
+	
+    <div style="float:left; margin-right:10px;" id="bills">
+ 	%{include file="cash/bills_in_cash.html"}%    
+    </div>
+   
+   
+    %{include file="cash/cash_bills.html" fieldname="cash_exped_"}%
+    
+    <div style="float:left; margin-right: 0px;"  >
+    <input type="button" id="bills_edit" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+    </div>
+    
+</div>
+
+
+<br clear="all" />
+<p />
+
+  <strong>Время работы:</strong><br />
+   
+    <label for="time_from_h">&nbsp;&nbsp;&nbsp;с:</label>
+    <select id="time_from_h" name="time_from_h" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px">
+        %{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+    </select>час. 
+    <select id="time_from_m" name="time_from_m" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px">
+        %{html_options values=$from_ms selected=$from_m output=$from_ms}%
+    </select>мин.
+  <br />
+
+    <label for="time_to_h">по:</label>
+    <select id="time_to_h" name="time_to_h" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px">
+        %{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+    </select>час. 
+    <select id="time_to_m" name="time_to_m" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px">
+        %{html_options values=$to_ms selected=$to_m output=$to_ms}%
+    </select>мин.
+    
+    <p />
+  
+    <label for="cash_exped_time">Общее время работы, час:мин</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_exped_time" value="%{$times}%" disabled="disabled" style="width:100px;"  />
+    
+
+<br clear="all" />
+<p />
+
+    
+    <div style="float:left; margin-right:20px;">
+     <label for="number_pieces"> Кол-во принятых машин:</label><br />
+    <input type="text" size="40" maxlength="255" id="number_pieces" name="number_pieces" %{if !$can_modify}% disabled="disabled"%{/if}% value="%{$ship.number_pieces|escape:"html"}%"  style="width:100px;"  />
+    </div>
+  
+    
+    <br clear="all" />
+    <p />
+    
+    
+   
+    
+   <input type="checkbox" value="1" id="has_chief_bonus" name="has_chief_bonus" %{if $ship.has_chief_bonus==1}% checked="checked"%{/if}%  %{if !$can_modify}% disabled="disabled"%{/if}% />
+    <label for="has_chief_bonus">Премия руководителя:</label>
+        
+    <div id="chief_bonus_block" %{if $ship.has_chief_bonus==0}% style="display:none;" %{/if}%>
+    	<div style="float:left; margin-right:10px;">
+        
+        <input type="radio" name="chief_bonus" id="chief_bonus_500" value="500" %{if $ship.chief_bonus==500 or  $ship.chief_bonus==0}% checked="checked"%{/if}%  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+        <label for="chief_bonus_500">500 руб.</label><br>
+        <input type="radio" name="chief_bonus" id="chief_bonus_1000" value="1000" %{if $ship.chief_bonus==1000}% checked="checked"%{/if}%   %{if !$can_modify}% disabled="disabled"%{/if}%  />
+        <label for="chief_bonus_1000">1000 руб.</label>
+    	</div>
+		
+        <div style="float:left; margin-right:10px;">
+        <label for="chief_bonus_reason">причина:</label><br>
+        <textarea id="chief_bonus_reason" name="chief_bonus_reason" cols="40" rows="2" %{if !$can_modify}% disabled="disabled"%{/if}% >%{$ship.chief_bonus_reason|escape:"html"}%</textarea>
+        </div>
+    
+    </div>
+    
+    
+    <br clear="all" />
+
+
+
+<!-- блок выбора кода оплаты -->
+
+<div style="float:left; margin-right:0px;">
+<label for="code_id">
+
+Код оплаты:</label><br />
+
+
+<input type="text" size="40" maxlength="255" id="code_id_string" value="%{$ship.code_id_string|escape}%" disabled="disabled" style="width:398px;"  />
+<input type="hidden" name="code_id" id="code_id" value="%{$ship.code_id}%" />
+<input type="button" id="code_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="code_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+<br clear="all" />
+<p />
+
+%{include file="cash/code_actions.html"}%
+
+<!-- конец блока выбора кода оплаты -->
+
+
+
+<label for="driver_id">Экспедитор груза:</label><br /> 
+
+<select id="driver_id" name="driver_id" style="width:400px;" %{if !$can_modify}% disabled="disabled"%{/if}% >
+ %{html_options values=$exped_id_ids selected=$ship.driver_id output=$exped_id_vals}%
+</select>
+<br clear="all" />
+<p />
+
+
+
+
+ 
+<label for="responsible_user_id">Сотрудник-получатель платежа:</label><br />
+
+<select id="responsible_user_id" name="responsible_user_id" style="width:400px;" %{if !$can_modify}% disabled="disabled"%{/if}% >
+ %{html_options values=$responsible_user_id_ids selected=$ship.responsible_user_id output=$responsible_user_id_vals}%
+</select>
+<br clear="all" />
+<p />
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="cash/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="cash/d_notes_dialog.html" word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+%{include file="cash/cash_percent.html"}%
+
+
+<div style="float:left; margin-right:10px;">
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1"  %{if $ship.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Подтверждаю затраты</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("change",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_given").prop("disabled",true);
+		
+		 
+		
+		 
+		if((parseInt("%{$bill.is_confirmed}%")==1)&&($("#is_confirmed").prop("checked")==false) ){
+			 
+					  $("#is_confirmed").prop("checked",true);
+					  $("#is_confirmed_given").prop("disabled",false);
+					  return false; 
+					 
+		}
+		
+	 
+		
+		$.ajax({
+              async: true,
+              url: "/js/cash.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 $("#is_confirmed_given").prop("checked",false);
+			 $("#is_confirmed_given").trigger("click");
+			  $("#is_confirmed_given").prop("checked",false);
+		}
+	});
+});
+</script>
+
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_given" name="is_confirmed_given" value="1"  %{if $ship.is_confirmed_given==1}% checked="checked"%{/if}% %{if $can_confirm_given==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_given">Сумма выдана</label>
+ 
+<span id="is_confirmed_given_confirmer">%{$is_confirmed_given_confirmer}%</span>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_given").bind("change",function(){
+		
+		if(	$("#is_confirmed_given").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/cash.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_given_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_given_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к реестру расходов" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='all_pay.php';
+}else location.href='all_pay.php';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	
+	function CheckSumm(){
+		var res=true;
+		
+		//проверка дат
+		
+		
+	 
+		
+		
+		//добавить проверки на утверждение
+		if($("#is_confirmed").prop("checked")&&("%{$ship.is_confirmed}%"=="0")){
+			
+			
+			 
+			//проверка заданного номера
+			/*if(($("#given_no").val()=='-')||($("#given_no").val()=='')){
+				alert("Для утверждения исходящей оплаты необходимо заполнить заданный номер!");
+				$("#given_no").focus(); //trigger("click");
+				res=res&&false;
+				return false;		
+			}
+			*/
+			
+			
+			
+			
+			
+			
+		}
+		
+		if(!$("#is_confirmed").prop("checked")&&("%{$ship.is_confirmed}%"=="1")){
+			$.ajax({
+				async: false,
+				url: "/js/cash.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					"id": "%{$ship.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение расхода наличных. Причина: "+data+"."); 
+					 res=false;
+				  }else{
+					 res=res&&true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния расхода наличных. Пожалуйста, попытайтесь сохранить расход снова.");
+					res=false;	
+				}	 
+			});
+		
+		}
+		
+		
+		 
+		if(parseFloat($("#value").val().replace("\,","\."))<=0){
+			alert('Внимание! Вы задали нулевую сумму оплаты. Просьба исправить сумму.');
+			res=res&&false;
+			return false;	
+		}
+		
+		
+		return res;
+	}
+	
+	$("#doEdit").bind("click",function(){
+		return CheckSumm();
+	});
+	$("#doEditStay").bind("click",function(){
+		return CheckSumm();
+	});
+	
+});
+</script>
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+ 
+
+
+
+%{if $ship.status_id==1}%
+frmvalidator.addValidation("code_id","req","Выберите код оплаты!");
+frmvalidator.addValidation("code_id","gt=0","Выберите код оплаты!");
+frmvalidator.addValidation("responsible_user_id","req","Выберите сотрудника-получателя платежа!");
+frmvalidator.addValidation("responsible_user_id","gt=0","Выберите сотрудника-получателя платежа!");
+
+function DoCustomValidation()
+{
+	
+	ret=true;
+	
+	if(ret) ret=ret&&IsExCorrectTime();
+	if(ret) ret=ret&& IsExCorrectNumberPieces();
+	if(ret) ret=ret&& IsExCorrectDriver();
+	
+	if(ret) ret=ret&& IsExCorrectChief_bonus();
+	
+	if(ret) ret=ret&& IsExCorrectBills();
+	 
+	
+	return ret; 
+}
+
+
+//корректность счетов
+function IsExCorrectBills(){
+	res=true;
+	
+	var bills=new Array();
+	$("input[id^=bill_]").each(function(index, element) {
+        bills.push($(element).val());
+    });
+	
+	if(bills.length==0){
+		alert("Включите в расход наличных хотя бы один счет!");
+		res=false;	
+	}
+	return res;
+}
+ 
+//корректность времен
+function IsExCorrectTime(){
+	res=true;
+	
+	//час с >  часа по
+	//или если час с= час по и минута с<минуты по
+	//иначе - неверно!!!!
+	from_h=parseInt($("#time_from_h").val());
+	from_m=parseInt($("#time_from_m").val());
+	
+	to_h=parseInt($("#time_to_h").val());
+	to_m=parseInt($("#time_to_m").val());
+	
+	if( ( (to_h>from_h) ||
+		((from_h==to_h) && (from_m<to_m)) )
+		){
+			$("#time_from_h").removeClass("wrong");	
+			$("#time_from_m").removeClass("wrong");	
+			$("#time_to_h").removeClass("wrong");	
+			$("#time_to_m").removeClass("wrong");
+			
+		}else{
+			
+			$("#time_from_h").addClass("wrong");	
+			$("#time_from_m").addClass("wrong");	
+			$("#time_to_h").addClass("wrong");	
+			$("#time_to_m").addClass("wrong");	
+			alert("Время работы выбрано некорректно!");	
+			
+			res=res&&false;	
+		}
+	
+	 
+	return res;
+	
+} 
+ 
+
+function IsExCorrectNumberPieces (){
+	res=true;
+	if(
+		($("#number_pieces").val().length==0)||
+		(isNaN($("#number_pieces").val()))||
+		(parseInt($("#number_pieces").val())<=0)||
+		
+		(Math.round($("#number_pieces").val())!=$("#number_pieces").val())
+	){
+		$("#number_pieces").addClass("wrong");	
+		//alert("Некорректо задано количество мест!");
+		$("#number_pieces").focus();
+		res=res&&false;	
+	}else{
+		$("#number_pieces").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+ 
+function IsExCorrectDriver(){
+	res=true;
+	if($("#driver_id").val().length==0){
+		$("#driver_id_string").addClass("wrong");	
+		alert("Не выбран экспедитор!");
+		$("#driver_select").focus();
+		res=res&&false;	
+	}else{
+		$("#driver_id_string").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+
+function IsExCorrectChief_bonus(){
+	res=true;
+	if(
+		$("#has_chief_bonus").prop("checked")&&($("#chief_bonus_reason").val().length<3)
+	){
+		$("#chief_bonus_reason").addClass("wrong");	
+		alert("Введите причину премии руководителя!");
+		$("#chief_bonus_reason").focus();
+		res=res&&false;	
+	}else{
+		$("#chief_bonus_reason").removeClass("wrong");
+	}
+	
+	return res;
+ 
+}
+
+ 
+
+
+function CalcExCashSum(){
+	ret=true;
+	
+ 
+	if(ret) ret=ret&& IsExCorrectNumberPieces();
+	if(ret) ret=ret&& IsExCorrectChief_bonus();
+	
+	if(ret){
+		//считаем сумму
+		sum=0;
+		
+		 
+		//кол-во мест
+		np=parseInt($("#number_pieces").val());
+		sum+=np*1000;
+		
+		  
+		//премия рук-ля
+		if($("#has_chief_bonus").prop("checked")){
+			sum+=parseFloat($("input[id^=chief_bonus_]:checked").val());
+		}
+		
+		
+		$("#value").val(sum);	
+		$("#value_str").val(sum);	
+	}
+}
+
+
+function CalcExWorkTime(){
+	times='';
+	
+	//dateObj = new Date(year, month, date[, hours, minutes, seconds, ms] )
+	
+	date_to=new Date(1970,1,1, $("#time_to_h").val(), $("#time_to_m").val(), 0,0);
+	date_from=new Date(1970,1,1, $("#time_from_h").val(), $("#time_from_m").val(), 0,0);
+	//alert(date_from); alert(date_to);	
+	
+	date_in=date_to.getTime()-date_from.getTime();
+	hours=Math.floor(date_in/1000/60/60);
+	mins=Math.floor( (date_in-hours*1000*60*60)/1000/60);
+	
+	//alert(mins);
+	
+	minss=mins+'';
+	if(minss.length==1) minss='0'+minss;
+	
+	times=hours+':'+minss;
+	
+	$("#cash_exped_time").val(times);
+}
+
+
+$(function(){
+	
+	
+	$("#number_pieces").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectNumberPieces();
+		if(ret) ret=ret&& IsExCorrectChief_bonus();
+		
+		if(ret) CalcExCashSum();
+		return ret;
+	});
+	
+	
+	$("#chief_bonus_reason").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectChief_bonus();
+		return ret;
+		
+		
+	});
+	
+	 
+	$("input[id^=chief_bonus_]").bind("change", function(){
+		ret=true;
+		
+	 
+		if(ret) ret=ret&& IsExCorrectNumberPieces();
+		
+		if(ret) CalcExCashSum();
+		
+		return ret;
+	});
+	
+	$("#has_chief_bonus").bind("change", function(){
+		ret=true;
+		
+	 
+		if(ret) ret=ret&& IsExCorrectNumberPieces();
+		
+		if(ret) CalcExCashSum();
+		
+		return ret;
+		
+	});
+	
+		
+	$("#has_chief_bonus").bind("change", function(){
+		if($("#has_chief_bonus").prop("checked")) $("#chief_bonus_block").show();
+		else  $("#chief_bonus_block").hide(); 
+	});
+	
+	
+	$("#time_from_h").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	
+	$("#time_from_m").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	
+	$("#time_to_h").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	
+	$("#time_to_m").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	 
+	
+});
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+%{/if}%
+
+</script>

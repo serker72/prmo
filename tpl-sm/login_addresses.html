@@ -1,0 +1,72 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+  <div class="content">
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Выберите организацию:</a>
+    </li>
+  </ul>
+	 <div id="tabs-1">
+
+
+	
+    <h1>Выберите организацию:</h1>
+    
+    <form action="/login.html" method="post" style="" id="logform">
+	
+    <table width="600" border="0" cellpadding="5" cellspacing="2">
+    <tr align="left" valign="top">
+    <td colspan="2">
+    <em>Для дальнейшей работы в системе необходимо выбрать организацию. Выберите организацию из списка слева и нажмите Выбрать организацию.</em>
+    </td>
+    </tr>
+    <tr align="left" valign="top">
+    <td width="400">
+    <div style="border:1px solid silver; width:400px; height:350px; overflow:scroll;">
+    %{section name=rowsec loop=$items}%
+     <div class="common_block">
+     
+     <input type="radio" name="org_id" id="org_id_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" %{if $items[rowsec].is_current}% checked="checked"%{elseif $smarty.section.rowsec.index==0 and $items[rowsec].current_id==0}% checked="checked"%{/if}% />
+     <label for="org_id_%{$items[rowsec].id}%">%{$items[rowsec].opf_name}% %{$items[rowsec].full_name}%</label><br />
+     
+     %{$items[rowsec].opf_name}% %{$items[rowsec].full_name}%
+     </div>
+    %{/section}%
+    </div>
+    </td>
+    <td width="*">
+    	
+         <p />
+         <input type="submit" value="Выбрать организацию" name="doAddr" />
+     %{if $error_message!=""}%
+   <br />
+
+        <span class="error_message">%{$error_message}%</span>
+<br />
+      	
+    %{/if}%
+    
+    <p /> 
+    
+    <p /> 
+    <a href="login.html?doOut">Выйти из системы</a> 
+    
+    </td>
+    </tr>
+    </table>
+    
+    
+    
+	</form>
+    
+    
+</div>
+</div><br>
+<br>
+
+</div>    

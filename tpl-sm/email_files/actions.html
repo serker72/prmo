@@ -1,0 +1,159 @@
+<div id="email_files_dialog%{$prefix}%" title="Отправка документов на email" style="display:none;">
+<input id="email_files_id%{$prefix}%" value="" type="hidden" />
+<input id="email_files_name%{$prefix}%" value="" type="hidden" />
+
+
+<b>Выберите адресата:</b>
+
+<div id="email_files_addresses%{$prefix}%" style="border:1px solid silver; min-width:530px; width:100%; height:350px; overflow:auto; z-index:100500 !important;">
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+ 
+	
+	//блок/разблок отгр. док.
+	 
+	//подгрузка адресатов
+	function email_files_GetAddresses%{$prefix}%(file_id,load_name ){
+		$.ajax({
+			async: true,
+			url: "/js/email_files.php",
+			type: "POST",
+			data:{
+				"action":"load_pdf_addresses",
+				"file_id":file_id, //$("#supplier_id").val()
+				"load_name":load_name
+			},
+			beforeSend: function(){
+				$("#email_files_addresses%{$prefix}%").html('<img src="/img/images/wait.gif" alt="подождите, пожалуйста..." border="0" width="32" height="32" />');
+			},
+			success: function(data){
+			  $("#email_files_addresses%{$prefix}%").html(data);
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+	
+	//вызов отправки 
+	function email_files_SendData%{$prefix}%(do_close, do_new_window){
+		res=true;
+		do_close=do_close||0;
+		do_new_window=do_new_window||0;
+		 
+		
+		if(res&&($("input[id^=email_files_address_]:checked").length==0)){
+			res=res&&false;
+			alert("Выберите хотя бы одного адресата!");
+		}
+		
+		
+		
+		
+		
+		if(res){
+			//вызов отправщика	
+			
+			  var addresses=new Array();  
+			  
+			  
+			  
+			 $("input[id^=email_files_address_]:checked").each(function(index, element) {
+                hashed='';
+				
+				kind=$(element).attr("id").replace(/^email_files_address_/,'').replace(/_([0-9]+)_([0-9]+)$/,'');
+				email_id=$(element).attr("id").replace(/^email_files_address_([0-9]+)_/,'').replace(/_([0-9]+)$/,'');
+				
+				contact_id=$(element).attr("id").replace(/^email_files_address_([0-9]+)_([0-9]+)_/,'');
+				
+				
+				//alert(contact_id);
+				hashed=kind+";"+email_id+";"+contact_id+";"+$(element).val();
+				
+				addresses.push(hashed /*$(element).val()*/); 
+            }); 
+			 
+			//alert(addresses);
+			$.when($.ajax({
+				async: true,
+				url: "/js/email_files.php",
+				type: "POST",
+				data:{
+					"action":"email_document",
+					"file_id":$("#email_files_id%{$prefix}%").val(), //$("#supplier_id").val()
+					"load_name":$("#email_files_name%{$prefix}%").val(),
+					"addresses[]":addresses
+				},
+				beforeSend: function(){
+					 
+				},
+				success: function(data){
+				//  $("#email_files_addresses%{$prefix}%").html(data);
+				},
+				error: function(xhr, status){
+					//alert("%{$named}%: Ошибка удаления.");	
+				}	 
+			})).then(function(){
+				
+				alert("Файл отправлен выбранным адресатам.");
+				$("#email_files_dialog%{$prefix}%").dialog("close"); 
+			
+			});
+			 
+		 
+			
+			
+			 
+		//	location.reload();
+		}
+	}
+	
+  
+	
+	//запуск из реестра
+	function  email_documents_launch%{$prefix}%(id, load_name){
+		$("#email_files_id%{$prefix}%").val(id);
+		$("#email_files_name%{$prefix}%").val(load_name); 
+		
+		email_files_GetAddresses%{$prefix}%(id, load_name);
+		
+		  
+		
+		$("#email_files_dialog%{$prefix}%").dialog("open");
+		return false;
+	}
+	
+	
+	
+	$("#email_files_dialog%{$prefix}%").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 600,
+		height: 500,
+		dialogClass: 'semi_auth',
+		buttons: {
+			"Готово": function(){
+				
+				
+					email_files_SendData%{$prefix}%(0,0);
+				 
+				
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+ 
+</script>

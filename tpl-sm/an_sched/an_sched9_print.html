@@ -1,0 +1,149 @@
+%{if $do_it}% 
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;"> 
+
+<h1>Отчет Забытые клиенты</h1>
+ 
+
+
+ 
+%{if $do_other_date==1}%
+ <div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;  min-height:80px;">
+     	<strong>Сравнить на другую дату:</strong>
+    <br>
+    
+    %{$pdate}%
+     
+    </div> 
+%{/if}%
+
+ 
+ %{foreach name=u1 from=$our_suppliers item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Контрагент: </strong><br />
+%{foreach from=$our_suppliers item=item}%
+%{$item.code}% %{$item.full_name}%, %{$item.opf_name}%<br>
+			 
+				%{/foreach}%
+
+%{if $has_holdings}%
+  
+Включая субхолдинги и подчиненные предприятия
+ 
+%{/if}%  
+</div>
+%{/if}% 
+
+ 
+
+
+ 
+
+%{foreach name=u1 from=$our_users item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Ответственный сотрудник: </strong><br />
+%{foreach from=$our_users item=item}%
+%{$item.name_s}%, %{$item.position_s}%<br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}%
+ 
+
+%{foreach name=u1 from=$our_countries item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Страна контрагента: </strong><br />
+%{foreach from=$our_countries item=item}%
+%{$item.name}% <br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}% 
+
+%{foreach name=u1 from=$our_fos item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong>Федеральный округ контрагента: </strong><br />
+%{foreach from=$our_fos item=item}%
+%{$item.name}% <br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}% 
+
+
+%{foreach name=u1 from=$our_cities item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Город контрагента: </strong><br />
+%{foreach from=$our_cities item=item}%
+%{$item.fullname}%<br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}% 
+  
+  
+
+%{foreach name=u1 from=$our_branches item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Отрасль/подотрасль: </strong><br />
+%{foreach from=$our_branches item=item}%
+%{$item.name}%<br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}%  
+
+%{if $view_reasons==1 and $can_view_reasons}%
+<div style="float:left; margin-right:20px; margin-bottom:15px;">
+<strong> Показать причины неактивности </strong> 
+</div>
+%{/if}%  
+
+ 
+<br clear="all" />
+
+ %{if $has_extended}% <br>
+<strong>Расширенная форма</strong>
+
+<br clear="all" />
+
+%{/if}%  
+
+%{if $prefix==1}%
+%{include file="an_sched/table_1.html"}% 
+%{elseif $prefix==2}%
+%{include file="an_sched/table_2.html"}% 
+%{elseif $prefix==3}%
+%{include file="an_sched/table_3.html"}% 
+%{elseif $prefix==4}%
+%{include file="an_sched/table_4.html"}% 
+%{elseif $prefix==5}%
+%{include file="an_sched/table_5.html"}% 
+%{elseif $prefix==6}%
+%{include file="an_sched/table_6.html"}% 
+%{elseif $prefix==7}%
+%{include file="an_sched/table_7.html"}% 
+%{elseif $prefix==9}%
+%{include file="an_sched/table_9.html"}% 
+%{else}%
+%{include file="an_sched/table.html"}%  
+%{/if}%
+
+</body>
+</html>
+%{/if}%

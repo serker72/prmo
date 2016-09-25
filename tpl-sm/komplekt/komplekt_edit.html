@@ -1,0 +1,1257 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#begin_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 $("#end_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 $.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScrollXY('notes');
+	try{
+		touchScrollXY('pos_rows');
+	}catch(e){}
+	try{
+		touchScrollXY('pcg_pos_rows');
+	}catch(e){}
+	 
+});
+
+</script>
+
+
+<h1 style="float:left; margin-right:20px;">Редактирование заявки</h1>
+
+%{include file="every_help_dialog.html" filename="komplekt_edit.htm;komplekt_copy.htm;komplekt_eq.htm" prefix="" description="редактирование заявки"  style="float:right;  margin-right:00px;" is_right=true}%
+
+
+
+<div style="float:right; margin-right:10px;">
+<input type="button" value="Файлы..." onclick="location.href='komplekt_ved_files.php?komplekt_ved_id=%{$komplekt_ved.id}%';" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<form action="ed_komplekt.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$komplekt_ved.id}%" />
+
+
+<input type="hidden" name="current_status_id" value="%{$komplekt_ved.status_id}%" />
+
+%{if $has_any_confirm}%
+<input type="hidden" name="has_any_confirm" id="has_any_confirm" value="%{$has_any_confirm}%" />
+%{/if}%
+
+
+<div style="float:left; margin-right:20px;">
+<label for="name">Заданный номер:</label><br />
+<input type="text" size="20" maxlength="255" name="code" id="code" value="%{$komplekt_ved.code|escape}%" %{if !$can_modify or !$can_edit_given_no}% disabled="disabled"%{/if}% />
+<input type="hidden" id="check_code" value="%{$komplekt_check_code}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="name">Название:</label><br />
+<input type="text" size="50" maxlength="255" id="name" value="Заявка №%{$komplekt_ved.id}%" disabled="disabled" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+%{$komplekt_ved.pdate}%<br />
+<small>создана: %{$created_by}%</small>
+</div>
+
+
+
+
+<div style="float:right; margin-right:0px; min-width:110px;" id="toggle_annul">
+%{include file="komplekt/toggle_annul_card.html"}%
+
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:0px;">
+
+
+<label for="supplier_id">
+Контрагент:</label><br />
+
+
+<input type="text" size="40" maxlength="255" value="%{$komplekt_ved.supplier_id_string}%" id="supplier_id_string" disabled="disabled" style="width:650px;" />
+<input type="button" id="supplier_select" value="..." />
+<input type="button" id="supplier_clear" value="x" />
+
+<input type="hidden"  value="%{$komplekt_ved.supplier_id}%" name="supplier_id" id="supplier_id" />
+</div>
+
+%{include file="komplekt/supplier_actions.html"}%
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<br />
+<strong>Период:</strong>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+
+<label for="begin_pdate">с:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$komplekt_ved.begin_pdate}%" name="begin_pdate" id="begin_pdate" %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="hidden" value="%{$komplekt_ved.begin_pdate_unf}%" id="begin_pdate_check" name="begin_pdate_check" />
+<input type="hidden" value="%{$now}%" id="now_pdate_check" name="now_pdate_check" />
+
+
+<script type="text/javascript">
+$(function(){
+	function CheckByCurrent(){
+		//alert($("#end_pdate").attr("value"));
+		$.ajax({
+			async: false,
+			url: "/js/komplekt.php",
+			type: "POST",
+			data:{
+				"action":"pdate_current_check",
+				"begin_pdate":$("#begin_pdate").attr("value"),
+				"end_pdate":$("#end_pdate").attr("value"),
+				"now_pdate":$("#now_pdate_check").attr("value")
+			},
+			beforeSend: function(){
+			  
+			},
+			success: function(data){
+				//alert(data);
+			
+			  
+			  $("#pdate_check_code").val(data);
+			},
+			error: function(xhr, status){
+			   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			}	 
+		  });
+	}
+	
+	
+	$("#begin_pdate").bind("change",function(){
+		//("#begin_pdate_check").attr("value",data);
+					
+					//вызвать проверку текущей даты. если не укладывается в интервал - предупреждать
+					 CheckByCurrent();
+				 
+	});
+	
+	$("#end_pdate").bind("change",function(){
+		
+					//вызвать проверку текущей даты. если не укладывается в интервал - предупреждать
+					
+					 CheckByCurrent();
+				
+	});
+	
+	CheckByCurrent();
+});
+</script>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="end_pdate">по:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$komplekt_ved.end_pdate}%" name="end_pdate" id="end_pdate" %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="hidden" value="%{$komplekt_ved.end_pdate_unf}%" id="end_pdate_check" name="end_pdate_check" />
+<input type="hidden" id="pdate_check_code" name="pdate_check_code" value="1" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+<br clear="all" />
+<p />
+
+<strong>Позиции каталога:</strong><br />
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+<input type="button" id="add_pos" value="Добавить позиции..." %{if ($can_modify and !$can_add_positions and !$can_over_positions) or (!$can_modify and !$can_over_positions) or $komplekt_ved.is_leading==0}% disabled="disabled"%{/if}% />
+</td>
+<td width="50%" align="right">
+ 
+   
+    
+     %{if $can_modify or $komplekt_ved.is_active!=1}%
+      <a href="#" onclick="alert('Заявка не утверждена. Пожалуйста, утвердите заявку!'); return false;" class="reestr_new reestr_right_button24 reestr_inactive" data-comment="создать новый счет..." ></a> 
+      
+      %{else}%
+      
+      %{if !$can_make_bill}%
+        <a href="#" onclick="alert('У Вас недостаточно прав для создания исходящего счета!'); return false;" class="reestr_new reestr_right_button24 reestr_inactive" data-comment="создать новый счет..."/></a> 
+        
+        %{else}%
+      
+      
+    	<a href="#" id="make_bill" class="reestr_new reestr_right_button24 " data-comment="создать новый счет..."></a>
+        
+        <script type="text/javascript">
+        $(function(){
+			$("#make_bill").bind("click",function(){
+				%{if $not_in_closed_period}%
+				//to_bill_
+				counter=0;  kols=0;
+				$.each($("#position_table input[type=checkbox]:checked"), function(index, value) { 
+				  //alert(index + ': ' + value); 
+				  counter++;
+				  kols=kols+parseFloat(value.value);
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для добавления в счет.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(kols==0){
+					if(!window.confirm("Внимание!\nПо данной заявке все позиции включены в счета. Счет будет создан без позиций. Вы сможете добавить в счет дополнительные позиции при наличии полномочий на данное действие.\nВсе равно продолжить?")){
+						return false;
+					}
+				}
+				
+				
+				url='ed_bill.php?';
+				url=url+"komplekt_ved_id="+"%{$komplekt_ved.id}%";
+				url=url+"&supplier_id="+$("#supplier_id").val();
+				
+				url=url+"&to_back_komplekt=1";
+				url=url+"&from_begin=1";
+				
+				$.each($("#positions tr td input[type=checkbox]"), function(key, value){
+					if($(value).prop("checked")){
+						url=url+"&"+$(value).attr("id")+"="+value.value;
+							
+					}
+				});
+				
+				//alert(url);
+				
+				location.href=url;
+				
+				%{else}%
+				alert("Невозможно создать исходящий счет. Причина: %{$closed_period_reason}%");
+				
+				%{/if}%
+				return false;
+			});
+		});
+        </script>
+        %{/if}%
+    %{/if}%
+    
+    
+    
+    %{if $can_edit_position_names}%
+    %{if $komplekt_ved.is_leading==0}%
+     <a href="#" onclick="alert('Невозможно сменить наименование позиций, т.к. заявка является скопированной из другой организации. Для смены наименований отредактируйте родительскую заявку.'); return false;" class="reestr_folder reestr_right_button24 reestr_inactive" data-comment="сменить наименование..." ></a>
+     
+    %{elseif $komplekt_ved.status_id!=3}%
+    <a href="#" id="edit_position_names" class="reestr_folder reestr_right_button24 " data-comment="сменить наименование..."></a>
+      %{include file="komplekt/position_change_dialog.html"}%
+      <script type="text/javascript">
+        
+		//функция замены найденной позиции
+		function ChangeToSel(){
+			var ck=0; var new_id=null;
+			$.each($("input[id^=pcg_pos_]"), function(k,v){
+				ck++;
+				if($(v).prop("checked")){
+					new_id=$(v).val();
+						
+				}
+			});
+			
+			if((ck>0)&&(new_id!=null)){
+				//полный аджакс: сменим позицию, перезагрузим заявку
+				
+				//выполнить проверку, есть ли такой ряд. если такой ряд есть - то в него прибавить наше количество $("#pcg_begin_kol").val()
+				
+				var row_it=null;
+				$.each($("#positions input[type=hidden][id^=resolve_]"),function(k,v){
+					id=$(v).attr('id').replace(/^resolve_/,'');	
+					
+					
+					if(id==new_id){
+						row_it=id;	
+					}
+				});
+				
+				var is_made=false;
+				if(row_it!=null){
+					//alert('row exists: '+row_it);
+					
+					if(window.confirm("Внимание! Выбранная Вами позиция уже сушествует в заявке. Количества исходной и существующей позиции будут сложены. Продолжить?")){
+						is_made=true;
+					}
+					
+				}else{
+				//если такого ряда нет - то выполнить замену в нашем ряду: ajax удалить и вставить заново
+					is_made=true;
+				
+				}
+				
+				if(is_made){
+					//проверить связанные документы. если откажется - ничего не делать!
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/komplekt.php",
+					  type: "POST",
+					  data:{
+						  "action":"check_binded_docs",
+						  "position_id":$("#pcg_begin_id").val(),
+						  "komplekt_ved_id":"%{$komplekt_ved.id}%"
+						  
+					  },
+					  beforeSend: function(){
+						
+					
+					  },
+					  success: function(data){
+						  
+						  if(data==1){
+							if(!window.confirm("Внимание! По данной заявке есть связанные документы. Изменение наименования приведет к смене наименования во всех связанных документах. Хотите продолжить?")){
+								is_made=false;
+								
+							}
+						  }
+						  
+						  if(is_made){
+							//внесем изменения...
+							//alert('doing');  
+							$.ajax({
+								async: false,
+								url: "/js/komplekt.php",
+								type: "POST",
+								data:{
+									"action":"change_komplekt_position",
+									"position_id":$("#pcg_begin_id").val(),
+									"komplekt_ved_id":"%{$komplekt_ved.id}%",
+									"kol":$("#pcg_begin_kol").val(),
+									"new_position_id":new_id,
+									"storage_id":"%{$komplekt_ved.storage_id}%"
+									
+								},
+								beforeSend: function(){
+								  
+							  
+								},
+								success: function(data){
+									//$("#debug_it").html(data);
+									alert("Изменения внесены."+data);
+									location.reload();
+								}
+								
+							});
+							
+						  }
+						  
+						  //if(is_made) 
+					  }
+					});
+					
+					
+				}
+				
+				
+				
+				
+				
+				
+				
+			}else{
+				alert("Позиция не выбрана: изменений не внесено.");	
+			}
+				
+		}
+				
+		
+		$(function(){
+			$("#edit_position_names").bind("click",function(){
+				
+				
+				
+				counter=0; 
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для смены наименования.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(counter>1){
+					alert("Внимание! Во избежание ошибок в утвержденной или частично утвержденной заявке можно единовременно поменять только одну позицию.");
+					return false;
+				}
+				
+				
+				
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				  
+				  id=$(value).attr('id').replace(/^to_bill_/,'');
+				  $("#pcg_begin_kol").val($('#kol_'+id).text());
+				  $("#pcg_begin_storage_id").val($('#storage_id_'+$("#resolve_"+id).val()+'_'+id).val());
+				  $("#pcg_begin_id").val(id);
+				  $("#pcg_positions_dialog").dialog("open");
+				  
+				  
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+    
+    
+    %{else}%
+     <a href="#" onclick="alert('Невозможно сменить наименование позиций, т.к. заявка аннулирована. Восстановите заявку для смены наименования позиций.'); return false;"  class="reestr_folder reestr_right_button24 reestr_inactive" data-comment="сменить наименование..." /></a>
+    %{/if}%
+    
+    %{else}%
+    <a href="#" onclick="alert('Невозможно сменить наименование позиций: у Вас недостаточно прав для данного действия.'); return false;"  class="reestr_folder reestr_right_button24 reestr_inactive" data-comment="сменить наименование..."></a>
+    %{/if}%
+    
+    
+    
+    
+    
+    %{if $can_edit_quantities}%
+     %{if $komplekt_ved.is_leading==0}%
+      
+   
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций. Причина: заявка скопирована из другой организации. Отредактируйте количества позиций в родительской заявке.'); return false;"  class="reestr_edit reestr_right_button24 reestr_inactive" data-comment="редактировать количество..."  ></a>
+     %{else}%  
+        <a href="#" id="edit_quantities" class="reestr_edit reestr_right_button24 " data-comment="редактировать количество..." ></a>
+         <script type="text/javascript">
+        $(function(){
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).attr('id').replace(/^to_bill_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#name_'+id).text()+', '+$('#dim_name_'+id).text(), $('#kol_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					//проверять связанные документы (счета). проверять превышение по счетам
+					//если в связ докум СД=0 то свободно
+					//если в СД>0
+						//если НОВ КОЛ>СТАР КОЛ - не давать, писать сообщения об аннуляции
+						//если НОВ КОЛ<СТАР КОЛ - проверять на 10% - д.быть не менее 0.1*СТАР КОЛ
+							
+					
+					if((res.length==0)||(res<0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#name_'+id).text()+', '+$('#dim_name_'+id).text()+'. Пожалуйста, введите правильное значение.');
+					}else{
+						var sd=0;
+						$.ajax({
+							async: false,
+							url: "/js/komplekt.php",
+							type: "POST",
+							data:{
+								"action":"check_position_count_in_bills",
+								"kvid":$("#id").val(),
+								"position_id": id
+							},
+							beforeSend: function(){
+								
+							},
+							success: function(data){
+							  sd=data;
+							  //alert(data);
+							   
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});		
+						//alert(sd);
+						
+						if(parseFloat(sd)>0){
+							//есть во вход док	
+							if(parseFloat(res)<parseFloat(sd)){
+								//в рамках 10%:
+								if(parseFloat(res)<  (parseFloat(sd)-(parseFloat(%{$PPUP}%)-1)*parseFloat(sd))    ){
+									//получается, превышение более 10%
+									alert('Внимание! Позиция '+$('#name_'+id).text()+' содержится в утвержденных связанных счетах в количестве '+(sd)+' '+$('#dim_name_'+id).text()+'. Введенное количество '+res+' '+$('#dim_name_'+id).text()+' создаст превышение количества в счетах более чем на 10% от количества в заявке. Введите другое количество.');
+								}else usl=false;
+							}else usl=false;
+						}else{
+							//нет во вход док
+							usl=false;
+						}
+						
+						
+					}
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#kol_'+id).html(res);
+					 $('#pos_'+id).val(res);
+					 %{if $has_primary_confirm==false}%
+					 //менять кол-во в первоначальной ячейке
+					 $('#kol_init_'+id).html(res);
+					 %{/if}%
+					 
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+     %{/if}%  
+    %{else}%
+    
+   
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций. Причина: %{$cannot_edit_quantities_reason}%.'); return false;" class="reestr_edit reestr_right_button24 reestr_inactive" data-comment="редактировать количество..." ></a>
+       
+    
+    %{/if}%
+    
+    
+    %{if $can_re}%
+    	%{if $komplekt_ved.is_active==1}%
+        
+        <a href="#" id="view_re" class="reestr_re reestr_right_button24 " data-comment="рентабельность заявки..." ></a>
+        %{include file="komplekt/re_actions.html"}%
+        
+        
+        %{else}%
+        
+         <a href="#"   onclick="alert('В данном режиме просмотр рентабельности по заявке недоступен. Пожалуйста, утвердите заявку для получения возможности просмотра рентабельности.'); return false;" class="reestr_re reestr_right_button24 reestr_inactive " data-comment="рентабельность заявки..." ></a>
+        
+        
+        %{/if}%
+    %{else}%
+    
+  
+    %{/if}%
+    
+    
+    
+    
+    
+    
+    
+    
+     %{if $can_sync}%
+    	%{if $komplekt_ved.is_active==1 and $supplier.is_org==1 and $supplier.id!=$org.id and ($komplekt_ved.is_leading==-1 or $komplekt_ved.is_leading==1) }%
+        
+        <a href="#" id="syncro" class="reestr_syncro reestr_right_button24  " data-comment="копирование заявки..."  ></a>
+        %{include file="komplekt/syncro_actions.html"}%
+        
+        
+        %{else}%
+        
+         <a href="#"   onclick="alert('В данном режиме копирование заявки недоступно.'); return false;"class="reestr_syncro reestr_right_button24 reestr_inactive " data-comment="копирование заявки..." ></a>
+        
+        
+        %{/if}%
+    %{else}%
+      <a href="#"   onclick="alert('У Вас недостаточно прав для копирования заявки.'); return false;" class="reestr_syncro reestr_right_button24 reestr_inactive " data-comment="копирование заявки..."  ></a>
+  
+    %{/if}%
+     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+     
+     %{if $can_print}%
+    
+     <a href="#" id="print_form" class="reestr_print reestr_right_button24  " data-comment="печать заявки..."  ></a>
+     
+     
+      <div id="is_print_dialog" title="Выберите форму для печати" style="display:none;">
+      <strong>Выберите форму для печати:</strong><br />
+
+    	<input type="checkbox" id="do_print_small" value="1" />Сокращенная форма заявки<br />
+		<input type="checkbox" id="do_print_full" value="1" %{if $can_print_full}% %{else}% disabled="disabled" %{/if}% />Полная форма заявки<br />
+    </div>
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		//ed_is.php?action=1&id=%{$bill.id}%&print=1
+		$("#is_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 150,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					if($("#do_print_small").prop("checked")){
+						
+						
+						zc=window.open('ed_komplekt.php?action=1&id=%{$komplekt_ved.id}%&print=1&printmode=0','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати распоряжения на межсклад.');
+						
+					}
+					
+					if($("#do_print_full").prop("checked")){
+						zc=window.open('ed_komplekt.php?action=1&id=%{$komplekt_ved.id}%&print=1&printmode=1','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.');
+						
+					}
+					
+					$("#is_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#is_print_dialog").dialog("close");
+				}
+				
+			}
+		});
+		
+		$("#print_form").bind("click", function(){
+			$("#is_print_dialog").dialog("open");
+			
+			return false;
+		});
+		
+	});
+	</script>
+    
+     
+     
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати заявки.'); return false;" class="reestr_print reestr_right_button24 reestr_inactive " data-comment="печать заявки..."  ></a>
+ %{/if}%
+ 
+ 	
+ %{if $can_eq}%
+   %{if $komplekt_ved.is_active==0}%
+   <a href="#" onclick="alert('Для выравнивания позиций необходимо утвердить заявку!'); return false;" class="reestr_eq reestr_right_button24 reestr_inactive " data-comment="выровнять позиции с фактически полученными..."  ></a>
+   %{else}% 
+      <a href="#" id="make_eq" class="reestr_eq reestr_right_button24   " data-comment="выровнять позиции с фактически полученными..." ></a>
+     <div id="eq_indicator" style="display:inline;">
+     
+     </div>
+     
+     
+     <div id="eq_dialog" title="Выравнивание позиций" style="display:none;">
+     	<div id="eq_dialog_info"></div>
+     
+     </div>
+     
+      <script type="text/javascript">
+        $(function(){
+			
+			$("#eq_dialog").dialog({
+			  autoOpen: false,
+			  dialogClass: 'semi_auth',
+			  modal: true,
+			  width: 900,
+			  height: 600,
+			  buttons: {
+				  "Закрыть": function(){
+				   $(this).dialog("close");	
+				  }
+				}
+			 });
+			
+			
+			var args=new Array();
+			/*var targs = new Array(); //массив с текущей строкой
+			*/
+			
+				//итерация выравнивания
+			function EqIteration(){
+				$.ajax({
+							async: false,
+							url: "/js/komplekt.php",
+							type: "POST",
+							data:{
+								"action":"togglemass_scan_eq",
+								"id":$("#id").val(),
+								'not_cut_html':'1',
+								"args[]": args
+							},
+							beforeSend: function(){
+								$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+								//console.log('scanning complete');
+								
+								$("#eq_dialog_info").html(data);
+								$("#eq_dialog").dialog({
+									 buttons: {
+									  "Выровнять позиции": function(){
+										 $("#eq_dialog").dialog("close");	
+										  DoEq(args);
+										 
+									  },
+									  "Прекратить выравнивание": function(){
+									   $("#eq_dialog").dialog("close");	
+									   alert("Выравнивание позиций завершено.");
+										//location.reload();
+									   
+									  }
+									}
+								});
+								//console.log('opening dialog');
+								$("#eq_dialog").dialog("open");
+								
+							},
+							error: function(xhr, status){
+								alert("Ошибка запроса данных.");	
+							}	 
+						 
+					}); 
+				
+			}
+			
+			
+			//вызываем из диалога - выравнивание выбранных данных
+			function DoEq(args){
+				// console.log('eq: '+targs);
+				
+				 $.ajax({
+					async: false,
+					url: "/js/komplekt.php",
+					type: "POST",
+					data:{
+						"action":"togglemass_eq",
+						"id":$("#id").val(),
+						"args[]": args
+					},
+					beforeSend: function(){
+						$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+					},
+					success: function(data){
+					  //alert(data);
+					   //$("#eq_indicator").html(data); 
+					  // console.log('eq complete: '+targs);
+					   //EqIteration();
+					   EqUsl();	
+					   
+					},
+					error: function(xhr, status){
+						alert("Ошибка выравнивания позиции.");	
+					}	 
+				});
+											  
+				
+			}
+			
+			//функция выравнивания услуг - вызывается из выр-ия позиций, если оно было закончено
+			function EqUsl(){
+				//console.log('eq usl');
+				$.ajax({
+						async: false,
+						url: "/js/komplekt.php",
+						type: "POST",
+						data:{
+							"action":"toggle_scan_eq_usl",
+							"id":$("#id").val() 
+						},
+						beforeSend: function(){
+							$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+						},
+						success: function(data){
+							if(data!="") if(window.confirm("Внимание! В связанных с заявкой счетах обнаружены не выровненные услуги. Выполнить выравнивание услуг?")){
+								   $.ajax({
+									  async: false,
+									  url: "/js/komplekt.php",
+									  type: "POST",
+									  data:{
+										  "action":"toggle_eq_usl",
+										  "id":$("#id").val() 
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										//alert(data);
+										 //$("#eq_indicator").html(data); 
+									  },
+									  error: function(xhr, status){
+										  alert("Ошибка выравнивания услуг.");	
+									  }	 
+								  });
+							   }
+							   
+							   	alert("Выравнивание позиций завершено.");
+								location.reload();
+							
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления вопроса.");	
+						}	 
+					});
+			}
+			
+			/*
+			//итерация выравнивания
+			function EqIteration(){
+				v=args.pop();
+				if(v!=undefined){
+					//console.log('iteration: '+v);
+				
+					targs=new Array();
+					targs.push(v);	
+					// console.log('scanning: '+v);
+					$.ajax({
+							async: false,
+							url: "/js/komplekt.php",
+							type: "POST",
+							data:{
+								"action":"toggle_scan_eq",
+								"id":$("#id").val(),
+								'not_cut_html':'1',
+								"args[]": targs
+							},
+							beforeSend: function(){
+								$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+								//console.log('scanning complete');
+								
+								$("#eq_dialog_info").html("Внимание!<br>"+data);
+								$("#eq_dialog").dialog({
+									 buttons: {
+									  "Выровнять позицию": function(){
+										 $("#eq_dialog").dialog("close");	
+										  DoEq(targs);
+										 
+									  },
+									  "Прекратить выравнивание": function(){
+									   $("#eq_dialog").dialog("close");	
+									   alert("Выравнивание позиций завершено.");
+										//location.reload();
+									   
+									  }
+									}
+								});
+								//console.log('opening dialog');
+								$("#eq_dialog").dialog("open");
+								
+							},
+							error: function(xhr, status){
+								alert("Ошибка запроса данных.");	
+							}	 
+						 
+					});
+				
+				}else{
+					EqUsl();	
+				}
+				
+			}
+			
+			//вызываем из диалога - выравнивание выбранных данных
+			function DoEq(targs){
+				// console.log('eq: '+targs);
+				
+				 $.ajax({
+									  async: false,
+									  url: "/js/komplekt.php",
+									  type: "POST",
+									  data:{
+										  "action":"toggle_eq",
+										  "id":$("#id").val(),
+										  "args[]": targs
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										//alert(data);
+										 //$("#eq_indicator").html(data); 
+										// console.log('eq complete: '+targs);
+										 EqIteration();
+									  },
+									  error: function(xhr, status){
+										  alert("Ошибка выравнивания позиции.");	
+									  }	 
+								  });
+											  
+				
+			}
+			
+			
+			
+			*/
+			
+			$("#make_eq").bind("click",function(){
+				args=new Array();
+				
+				counter=0;  
+				$.each($("#position_table input[type=checkbox][id^=to_bill_]:checked"), function(index, value) { 
+				  //alert(index + ': ' + value); 
+				  counter++;
+				  
+			   
+				  args.push($(value).attr("id").replace(/^to_bill_/,"")+";"+$("#kol_"+$(value).attr("id").replace(/^to_bill_/,"")).html()+";"+$("#storage_id").val()+";"+$("#sector_id").val()+";"+$("#id").val());
+				  
+				  
+				  				  
+				});
+				
+				//alert(args);
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для выравнивания.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(window.confirm("Вы уверены, что хотите выровнять выбранные позиции с фактически полученными?")){
+					
+					EqIteration();
+					
+					
+					
+					
+					
+				}
+				return false;
+			});
+		});
+      </script>
+     %{/if}%
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для выравнивания позиций!'); return false;" class="reestr_eq reestr_right_button24 reestr_inactive " data-comment="выровнять позиции с фактически полученными..." ></a>
+ %{/if}%
+   
+</td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2">
+%{include file="komplekt/position_block.html" action=1}%
+</td>
+</tr>
+</table>
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="komplekt/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$komplekt_ved.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="komplekt/d_notes_dialog.html" word="notes" named="Примечания" user_id=$komplekt_ved.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+%{if ($komplekt_ved.status_id==1 or $komplekt_ved.status_id==11) and $has_marker and $can_edit_quantities}%
+<div style="width: 550px; border:1px solid silver; padding:5px 5px; overflow:auto;">
+    <img src="/img/voskl.png" width="64" height="64" alt="" border="0" align="left" hspace="5" />
+     <strong>Внимание!</strong><br />
+
+     По данной заявке есть утвержденные документы.
+     <br />
+Вы имеете право редактировать количества позиций в исключительном случае.<br />
+При снятии утверждения заявки у Вас есть 10 минут на редактирование и утверждение, иначе изменения не будут сохранены. Время сброса изменений: %{$marker.expire_ptime}%
+     
+  </div>
+    <p />
+%{/if}%
+
+
+
+
+
+<strong>Утверждение заявки:</strong><br />
+<div style="float:left; margin-right:10px;">
+<script type="text/javascript">
+function redraw_is_active_confirmer(id){
+	if(	$("#conf_"+id).prop("checked")) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/komplekt.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_active_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#confirm_"+id).html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');
+              },
+              success: function(data){
+                $("#confirm_"+id).html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+}
+</script>
+
+
+%{section name=csec loop=$conf}%
+
+	<input type="checkbox" id="conf_%{$conf[csec].id}%" %{if $conf[csec].is_active}%name="conf_%{$conf[csec].id}%"%{else}% disabled="disabled" %{/if}% %{if $conf[csec].is_selected}% checked="checked"%{/if}% />
+    %{if $conf[csec].is_active}%
+    <input type="hidden" name="ethalon_%{$conf[csec].id}%" value="1" />
+    %{/if}%
+    <input type="hidden" id="was_selected_%{$conf[csec].id}%" value="%{if $conf[csec].is_selected}%1%{else}%0%{/if}%" />
+    
+    
+    %{$conf[csec].name}% (или лицо, его заменяющее)
+    
+    <span id="confirm_%{$conf[csec].id}%">
+    %{if $conf[csec].u_id!=""}% %{$conf[csec].position_s}% %{$conf[csec].u_name_s}%  %{$conf[csec].pdate}% %{/if}%
+    </span>
+    
+    <script type="text/javascript">
+$(function(){
+	$("#conf_%{$conf[csec].id}%").bind("click",function(){
+		redraw_is_active_confirmer("%{$conf[csec].id}%");
+		
+	});
+});
+</script>
+    
+    <br />
+
+    
+    
+    
+
+%{/section}%
+</div>
+<br clear="all" />
+<p />
+
+
+
+<div style="float:right;">
+
+<input type="checkbox" id="cannot_eq" name="cannot_eq" value="1" %{if !$can_super_neq and !$can_neq}% disabled="disabled"%{elseif !$can_super_neq and $can_neq and !($has_primary_confirm and $komplekt_ved.is_active==0)}% %{/if}% %{if $komplekt_ved.cannot_eq==1}% checked="checked"%{/if}% title="на заявку не распространяется автовыравнивание" /><label for="cannot_eq" title="на заявку не распространяется автовыравнивание" >без автовыравнивания</label><br />
+
+
+<input type="checkbox" id="cannot_an" name="cannot_an" value="1" %{if !$can_super_an and !$can_an}% disabled="disabled"%{elseif !$can_super_an and $can_an and !($has_primary_confirm and $komplekt_ved.is_active==0)}% %{/if}%  %{if $komplekt_ved.cannot_an==1}% checked="checked"%{/if}% title="на заявку не распространяется автоаннулирование" /><label for="cannot_an" title="на заявку не распространяется автоаннулирование" >без автоаннулирования</label>
+</div>
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку заявок" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='komplekt.php';
+}else location.href='komplekt.php';" />
+
+
+</form>
+%{if $can_modify}%
+<script type="text/javascript">
+
+function DoCustomValidation()
+{
+	var can_ret=true;
+	
+	if($("#positions tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить заявку без позиций! Пожалуйста, укажите позиции заявки!');
+		can_ret=can_ret&&false;
+		//return false;
+	} //else return true;
+	
+	
+	
+	return can_ret;
+}
+
+ var frmvalidator  = new Validator("crea_form");
+
+ frmvalidator.addValidation("begin_pdate","req","Укажите начальную дату действия заявки!");
+ frmvalidator.addValidation("begin_pdate","minlen=10","Укажите начальную дату действия заявки!");
+ 
+  frmvalidator.addValidation("end_pdate","req","Укажите конечную дату действия заявки!");
+ frmvalidator.addValidation("end_pdate","minlen=10","Укажите конечную дату действия заявки!");
+  frmvalidator.addValidation("supplier_id","req","Выберите контрагента!");
+  frmvalidator.addValidation("supplier_id","gt=0","Выберите контрагента!");
+
+ 
+ %{if $can_modify}% 
+  frmvalidator.addValidation("pdate_check_code","lt=1","Внимание! Минимальный срок выполнения заявки - 3 календарных дня, не считая дня подачи заявки. Заявка может быть сохранена только с датой начала действия - сегодня или завтра.");
+ %{/if}% 
+ 
+
+ frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+ 
+</script>
+%{else}%
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+		var can_ret=true;
+		
+		
+		//проверка закрытия периодов заявки
+		$.ajax({
+			async: false,
+			url: "/js/komplekt.php",
+			type: "POST",
+			data:{
+				"action":"check_save",
+				id: "%{$komplekt_ved.id}%"
+			},
+			beforeSend: function(){
+				
+			},
+			success: function(data){
+			  if(data!=0){
+				 
+				 alert("Невозможно сохранить заявку. Причина: "+data+"."); 
+				 can_ret=can_ret&&false;
+			  }else{
+				 can_ret=can_ret&&true;
+			  }
+			},
+			error: function(xhr, status){
+				alert("Ошибка при проверке состояния заявки. Пожалуйста, попытайтесь сохранить заявку снова.");
+				can_ret=can_ret&&false;	
+			}	 
+		});	
+		
+		
+		
+	  //проверка возможности снятия галочек...
+	  %{if !$can_unconrim_inspite_of_binded_docs}%
+		
+		var was_unchecked=false; var only_nos_was_unchecked=true;
+		if(can_ret){
+			//проверить снятия галочек
+			$.each($("input[id^='conf_']"),function(k,v){
+				role_id=parseInt($(v).attr('id').replace('conf_',''));
+				//
+				
+				if(!$(v).prop("disabled")&&!$(v).prop("checked")&&($("#was_selected_"+role_id).val()==1)){
+					//can_ret=can_ret&&false;	
+					//alert(role_id);
+					was_unchecked=was_unchecked||true;
+					if(role_id!=6){
+						only_nos_was_unchecked=only_nos_was_unchecked&&false;
+					}
+				}
+			});
+			
+			
+			
+		}
+		if(was_unchecked){
+			//выполнить проверку на наличие утв. док.
+			//если нет - продолжить, если есть - стоп и вывести список док-тов	
+			$.ajax({
+				async: false,
+				url: "/js/komplekt.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$komplekt_ved.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  //$("#confirm_%{$conf[csec].id}%").html(data);
+				  if(data!=0){
+					 //есть связанные документы... здесь нужно проверить, была ли снята именно галочка НОС и только НОС!!! если это так - до дать снять.
+					 if(only_nos_was_unchecked){
+						//Исключительный случай для НОС
+						//нужно создать "Образ заявки" на случай отката состояния...
+						alert("Внимание!\nПо данной заявке есть утвержденные документы.\nВы имеете право редактировать количества позиций в исключительном случае.\nПри снятии утверждения заявки у Вас есть 10 минут на редактирование и утверждение, иначе изменения не будут сохранены.");
+						
+						//alert('Исключительный случай для НОС!'); 
+					 }else{
+					 	can_ret=can_ret&&false;	
+					 	alert("Невозможно снять утверждение заявки. Причина: "+data+"\nДля снятия утверждения заявки необходимо снять утверждения всех связанных документов."); 
+					 }
+				  }
+				},
+				error: function(xhr, status){
+					can_ret=can_ret&&false;	
+					alert("Ошибка при проверке состояния заявки. Пожалуйста, попытайтесь сохранить заявку снова.");	
+				}	 
+			});
+		}
+		
+	  %{/if}%
+	  
+	  return can_ret;
+	});
+});
+</script>
+%{/if}%

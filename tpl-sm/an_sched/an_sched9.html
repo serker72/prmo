@@ -1,0 +1,590 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 	$("#pdate%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	
+	
+	  function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_newcli.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	function SelectSupplierGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_supplier.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.code|escape:"html"}% %{$item.full_name|escape:"html"}%, %{$item.opf_name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	
+	function SelectCityGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_city.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_cities item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.fullname|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	
+	
+	function SelectBranchGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_branch.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_branches item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	 
+	
+	function SelectCntryGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_country.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					//alert(data.results[0].);
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_countries item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			} 
+		 }
+		 );  
+	}
+	
+	function SelectFoGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_fo.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					//alert(data.results[0].);
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_fos item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+				
+				
+			}
+		 }
+		 );  
+	}
+	
+	
+	 
+	
+	SelectGo2("user%{$prefix}%");
+ 	SelectSupplierGo2("supplier%{$prefix}%");
+	SelectCityGo2("city%{$prefix}%");
+	 
+	SelectBranchGo2("branch%{$prefix}%");
+	
+	
+	SelectCntryGo2("country%{$prefix}%");
+	SelectFoGo2("fo%{$prefix}%");
+	
+	
+	$("#country%{$prefix}%")
+    .on("change", function(e) { 
+	
+		//alert(JSON.stringify({val:e.val, added:e.added, removed:e.removed}) );
+		
+		if($.inArray("1",  e.val)!=-1){
+			//разблокировать фо	
+			$("#fo%{$prefix}%").select2("enable", true);
+		}else{
+			//заблокировать, очистить ФО
+			 $("#fo%{$prefix}%").select2("val", ""); 
+			 //$("#fo%{$prefix}%").select2("enable", false);
+				
+		}
+	});
+		
+	/*if($.inArray("1",  $("#country%{$prefix}%").select2("val"))==-1){
+		$("#fo%{$prefix}%").select2("val", ""); 
+		$("#fo%{$prefix}%").select2("enable", false);	
+	}*/
+	
+	$("#fo%{$prefix}%")
+    .on("change", function(e) { 
+		if(e.val.length>0){
+			//выбрать россию!
+			$("#country%{$prefix}%").select2("data",  {id: 1, text: "Россия"} ); 	
+		}else{
+			
+		}
+	});
+	
+	$("#do_other_date%{$prefix}%").bind("change", function(){
+		if($(this).prop("checked")) $("#pdate%{$prefix}%").prop("disabled",false);
+		else $("#pdate%{$prefix}%").prop("disabled",true);
+	});
+	
+	
+	function ControlDate(){
+		can_ret=true;
+		//контроль даты
+		if($("#do_other_date%{$prefix}%").prop("checked")){
+			if(can_ret&&($("#pdate%{$prefix}%").val().length==0))	{
+				alert("Укажите корректную дату сравнения (ранее текущей даты)!");	
+				can_ret=can_ret&&false;
+			}
+			
+			newd=new Date($("#pdate%{$prefix}%").val().substr(6,4), parseInt($("#pdate%{$prefix}%").val().substr(3,2))-1, $("#pdate%{$prefix}%").val().substr(0,2), 23,59,59);
+			
+			nowd=new Date();
+			
+			//alert(newd+' vs '+nowd);
+			if(can_ret&&(newd>nowd)){
+				alert("Укажите корректную дату сравнения (ранее текущей даты)!");	
+				can_ret=can_ret&&false;
+				
+			}
+		}
+		return can_ret;
+	}
+	
+	$("#rep_form%{$prefix}%").bind("submit", function(){
+		
+		can_ret=true;
+		can_ret=can_ret&& ControlDate();
+		
+		return can_ret; 
+	});
+	
+	
+	 $("#print_table%{$prefix}%").bind("click",function(){
+ 
+			
+			can_ret=true;
+		can_ret=can_ret&& ControlDate();
+				 
+		 	if(can_ret) window.open('an_sched.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize(), 'an_sched');
+		   
+		 return false; 
+	  });
+	
+	
+	
+});
+</script>
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" /> 
+ 
+
+
+
+
+
+<div class="report_filter_right">
+ 
+        
+  
+      <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+
+     <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти"  />
+     </div>
+    
+    <a href="an_sched.php?doSub%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+
+  
+
+  
+  %{if $can_print}%
+  
+   
+  
+  
+  <a href="#" id="print_table%{$prefix}%"   class="reestr_print reestr_right_button24" data-comment="Печать..."></a>
+  
+  
+  %{else}%
+ <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."</a>
+ %{/if}%
+  
+ 	
+    
+    %{include file="every_help_dialog.html" filename="an_sched.html;an_sched_9.html" prefix=$prefix description="отчет Планировщик"  style="display:inline-block;  margin-right:0px;" is_right=true}%      
+</div> 
+ 
+
+ 
+<div class="report_filter_left">
+	
+    <div class="report_filter">
+     	<label for="do_other_date%{$prefix}%">Сравнить на другую дату:</label>
+    <br>
+    
+    <input type="checkbox" id="do_other_date%{$prefix}%" name="do_other_date%{$prefix}%" %{if $do_other_date==1}% checked%{/if}% />
+    <label for="pdate%{$prefix}%"></label><input type="text" id="pdate%{$prefix}%" name="pdate%{$prefix}%" value="%{$pdate}%" size="10" maxlength="10" class="sched_report_field" %{if $do_other_date!=1}% disabled%{/if}%  />
+    
+    
+      %{if $can_view_reasons}%
+    
+      <br>
+
+       <br>
+
+      <input type="checkbox" value="1" name="view_reasons%{$prefix}%" id="view_reasons%{$prefix}%" %{if $view_reasons==1}% checked%{/if}% >
+    	<label for="view_reasons%{$prefix}%">Причины неактивности</label>
+    
+     
+    %{/if}%
+     
+     
+    </div> 
+     
+    
+    
+    
+     
+      <div class="report_filter">
+    <label for="supplier%{$prefix}%">Контрагент:</label><br />
+    <input type="text" value="%{$supplier}%" id="supplier%{$prefix}%" name="supplier%{$prefix}%" size="30" maxlength="512" style="width:150px;"  />
+    
+     
+    <br>
+  
+  <input type="checkbox" id="has_holdings%{$prefix}%" name="has_holdings%{$prefix}%" value="1" %{if $has_holdings}% checked%{/if}%>
+  <label for="has_holdings%{$prefix}%">Включая субхолдинги <br>
+и подчиненные предприятия</label>
+    </div>
+    
+    
+    
+     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="report_filter">
+    <label for="user%{$prefix}%">Ответственный сотрудник:</label><br />
+    <input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:150px;"  />
+    </div>
+     
+     
+     
+    <div class="report_filter">
+    <label for="country%{$prefix}%">Страна контрагента:</label><br />
+    <input type="text" value="%{$country}%" id="country%{$prefix}%" name="country%{$prefix}%" size="30" maxlength="512" style="width:150px;" class="sched_report_field"  />
+    </div>
+    
+      <div class="report_filter">
+    <label for="fo%{$prefix}%">Фед. округ контрагента:</label><br />
+    <input type="text" value="%{$fo}%" id="fo%{$prefix}%" name="fo%{$prefix}%" size="30" maxlength="512" style="width:150px;" class="sched_report_field"  />
+    
+    
+        <div   class="statuses_report_caption">
+		Только для России            
+        </div>
+    </div>
+    
+     
+
+    
+    <div class="report_filter">
+    <label for="city%{$prefix}%">Город контрагента:</label><br />
+    <input type="text" value="%{$city}%" id="city%{$prefix}%" name="city%{$prefix}%" size="30" maxlength="512" style="width:150px;"  />
+    </div>
+     
+      
+     
+     <div class="report_filter">
+    <label for="branch%{$prefix}%">Отрасль/подотрасль:</label><br />
+    <input type="text" value="%{$branch}%" id="branch%{$prefix}%" name="branch%{$prefix}%" size="30" maxlength="512" style="width:150px;"  />
+    </div>
+     
+     
+	
+     
+      
+</div>     
+ 
+ <br clear="all" />
+ 
+
+  
+ 
+</form>
+ 
+ 
+<br>
+
+
+<small>
+1. В отчет попадают доступные Вам контрагенты-покупатели, по которым не было необходимой активности.
+<br>
+<br>
+2. Блок <strong>Сравнить на другую дату</strong> позволяет сравнить наличие активности по контрагентам-покупателям на выбранную дату (ранее, чем сегодня) и на сегодняшний день.
+<br>
+<br>
+
+ 
+ 
+ </small> 
+
+
+%{if $do_it}%
+
+%{if $prefix==1}%
+%{include file="an_sched/table_1.html"}% 
+%{elseif $prefix==2}%
+%{include file="an_sched/table_2.html"}% 
+%{elseif $prefix==3}%
+%{include file="an_sched/table_3.html"}% 
+%{elseif $prefix==4}%
+%{include file="an_sched/table_4.html"}% 
+%{elseif $prefix==5}%
+%{include file="an_sched/table_5.html"}% 
+%{elseif $prefix==6}%
+%{include file="an_sched/table_6.html"}% 
+%{elseif $prefix==7}%
+%{include file="an_sched/table_7.html"}% 
+%{elseif $prefix==8}%
+%{include file="an_sched/table_8.html"}% 
+%{elseif $prefix==9}%
+%{include file="an_sched/table_9.html"}% 
+%{else}%
+%{include file="an_sched/table.html"}%  
+%{/if}%
+
+%{/if}%

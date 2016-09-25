@@ -1,0 +1,162 @@
+ 
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<input type="hidden" name="action" value="%{$action}%" />
+<input type="hidden" name="id" value="%{$id}%" />
+<input type="hidden" name="do_show_log" value="1" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="100">Дата 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+	<th scope="col" width="80">Пользователь
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col" width="100">Действие
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col" width="80">Затронутый пользователь
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>    
+    <th scope="col" width="100">Затронутый объект системы
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    <th scope="col" width="80">Затронутая группа пользователей
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col" width="80">IP-адрес
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col" width="*" style="min-width:300px;">Установленное значение
+    </th>
+    <th scope="col" width="80">&nbsp;</th>
+</tr>
+<tr align="center" valign="top" class="filter">
+	<td width="100">
+	 
+    
+    </td>
+	<td width="80">
+    <input type="text" size="5" maxlength="50" value="%{$user_subj_login}%" name="user_subj_login" id="user_subj_login" />
+    
+    </td>
+    <td width="100">
+    <select name="description" id="description" style="width:100px;">
+    %{section name=acsec loop=$ac}%
+    	<option value="%{$ac[acsec].description|escape:"html"}%" %{if $ac[acsec].is_current}%selected="selected"%{/if}%>%{$ac[acsec].description|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    </td>
+     <td width="80">
+    <input type="text" size="5" maxlength="50" value="%{$user_obj_login}%" name="user_obj_login" id="user_obj_login" />
+    
+    
+    </td>    
+    <td width="100">
+    <select name="object_id" id="object_id" style="width:100px;">
+    %{section name=obsec loop=$ob}%
+    	<option value="%{$ob[obsec].id}%" %{if $ob[obsec].is_current}%selected="selected"%{/if}%>%{$ob[obsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    </td>
+   
+    <td width="80">
+    <select name="user_group_id" id="user_group_id" style="width:80px;">
+    %{section name=ugsec loop=$ug}%
+    	<option value="%{$ug[ugsec].id}%" %{if $ug[ugsec].is_current}%selected="selected"%{/if}%>%{$ug[ugsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    </td>
+    <td width="80">
+    <input type="text" size="10" maxlength="40" value="%{$ip}%" name="ip" id="ip" />
+    
+    </td>
+    <td  width="*"style="min-width:300px;" >&nbsp;</td>
+    <td width="80">
+    <input name="doFilter" type="submit" value="Найти" />
+    </td>
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="100">%{$items[rowsec].pdate}%</td>
+    <td width="80">
+    <a href="info.html?name=%{$items[rowsec].s_login}%" target="_blank">
+   
+     %{$items[rowsec].s_name_s}% 
+    %{$items[rowsec].s_login}%
+    
+   
+    </a>
+    </td>
+    <td width="100">%{$items[rowsec].description}%</td>
+    <td width="80">
+    
+    %{if $items[rowsec].o_login!=""}%
+    
+     <a href="info.html?name=%{$items[rowsec].o_login}%" target="_blank">
+    
+     %{$items[rowsec].o_name_s}% 
+    %{$items[rowsec].o_login}%
+    
+    
+    </a>
+   
+    
+    %{else}%-%{/if}%
+    
+    
+    </td>
+    
+    <td width="100">%{if $items[rowsec].ob_name!=""}%%{$items[rowsec].ob_name}%%{else}%-%{/if}%</td>
+    
+    <td width="80">%{if $items[rowsec].gr_name!=""}%%{$items[rowsec].gr_name}%%{else}%-%{/if}%</td>
+    <td width="80">%{$items[rowsec].ip}%</td>
+    <td  width="*" style="min-width:300px;">%{if $items[rowsec].value!=""}%%{$items[rowsec].value}%%{else}%-%{/if}%</td>
+    <td width="80">
+<!--    %{$items[rowsec].affected_object_id}% -->
+    &nbsp;</td>
+</tr>
+%{/section}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям событий не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

@@ -1,0 +1,121 @@
+%{if $bill.can_annul}%
+<a href="#" id="do_annul" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;">
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			%{if $bill.binded_to_annul!=""}%
+			if(!window.confirm("Внимание! С данным документом связаны следующие документы: %{$bill.binded_to_annul}%. При аннулировании документа  они также будут аннулированы. Продолжить?")) return false;
+			%{/if}%
+			
+			usl=true;
+			do_it=false;
+			note='';
+			while(usl){
+					res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
+					if(res==undefined) {
+						break;
+					}
+					if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
+						note=res;
+						usl=false;
+						do_it=true;						
+					}
+			}
+			
+			if(do_it&&window.confirm("Внимание! Вы действительно хотите аннулировать счет № %{$bill.code}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/bill_in.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$bill.id}%",
+					  "shorter":0,
+					  "from_card":1,
+					  "note":note
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					  location.reload();
+					
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+
+%{else}%
+
+%{if $bill.can_restore}%
+    <a href="#" id="do_annul" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;">
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			
+			
+			if(window.confirm("Внимание! Вы действительно хотите восстановить счет № %{$bill.code}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/bill_in.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$bill.id}%",
+					  "shorter":0,
+					  "from_card":1
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					 location.reload();
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+    %{else}%
+    
+     %{include file="annul_dialog.html"}%
+    
+<a href="#" onclick="
+$('#annul_dialog_text').html('Невозможно аннулировать счет № %{$bill.code}%.<br /> Причина: %{$bill.can_annul_reason}%.');
+    $('#annul_dialog').dialog('open');
+ return false;" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;"></a>
+	%{/if}%
+%{/if}%
+
+<strong>Статус:</strong><br />
+%{if $bill.status_id==1}%
+не утвержден 
+%{elseif $bill.status_id==2}%
+утвержден 
+%{elseif $bill.status_id==3}%
+аннулирован
+%{elseif $bill.status_id==9}%
+не выполнен
+%{elseif $bill.status_id==10}%
+выполнен
+%{elseif $bill.status_id==20}%
+частично оплачен
+%{elseif $bill.status_id==21}%
+оплачен
+%{/if}%

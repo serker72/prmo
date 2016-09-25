@@ -1,0 +1,55 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==2}%	
+	selected: 1
+%{/if}%	
+  
+  });
+});
+</script>
+
+%{include file="admin_records/admin_dialog.html"}%
+
+
+<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Справочная информация</a></li>
+   %{if $has_spec_docs}% 
+    <li><a href="#tabs-3">Спецдокументы</a></li>
+    %{/if}% 
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+   %{if $has_spec_docs}%
+  <div id="tabs-3">
+    <p>
+    %{$log3}%    
+    </p>
+  </div>
+   %{/if}%
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

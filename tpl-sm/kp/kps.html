@@ -1,0 +1,32 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'allkpTab' }  
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+   
+    
+     %{if $has_kps}%
+    <li><a href="#tabs-2">Коммерческие предложения</a></li>
+    %{/if}%
+    
+    
+  
+  </ul>
+  
+   %{if $has_kps}%
+  <div id="tabs-2">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+ %{/if}%
+</div>

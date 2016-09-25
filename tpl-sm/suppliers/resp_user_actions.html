@@ -1,0 +1,191 @@
+
+
+<div style="float:left; margin-right:10px;">
+<input type="button" %{if  !$can_edit_resp}% disabled %{/if}% id="add_resp" value="Добавить ответственного" />
+</div>
+
+
+<div id="resp" style="float:left; margin-right:10px;">
+ 
+%{include file="suppliers/resp_on_page_set.html" pospos=$resp_users}%
+ 
+</div>
+ 
+
+<br clear="all" />
+
+
+<div id="resp_dialog" title="Выберите пользователей" style="display:none;">
+
+
+<div id="resp_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	var dialog_width=1200;
+	var dialog_position='center';
+	
+	 
+	
+	$("#add_resp").bind("click",function(){
+		 
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			
+			
+			
+			var complex_positions=new Array(); 
+			
+			$.each($("#resp table tbody tr td input[type=hidden][id^='new_resp_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				
+				
+				
+				hashed_string=$("#new_resp_id_"+hash).val();
+				 
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);			  
+			  
+			});
+			
+			 
+			
+			
+			w=parseInt($(window).width());
+			if(w<1200){
+				 dialog_width=w-10;
+				 dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 
+			}else{
+				dialog_width=1200;
+				dialog_position='center';
+			}
+			
+			$("#resp_dialog").dialog( "option", "position", dialog_position );
+			$("#resp_dialog").dialog( "option", "width", dialog_width );
+			
+			
+			//alert(quantities.length);
+			$.ajax({
+			  async: true,
+			  url: "/js/supplier.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_resp",
+				  "supplier_id":"%{$user.id}%",
+				  
+				  "complex_positions[]":complex_positions 
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#resp_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#resp_dialog_table").html(data); 
+				
+				  
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			 
+			$("#resp_dialog").dialog("open");
+		 
+	});
+	
+	
+	
+	$("#resp_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: dialog_width,
+		position: dialog_position,
+		height: 620,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				var complex_positions=new Array();
+				 
+				
+				
+				
+				if(can_put) {
+					
+					
+					//перенос данных в таблицу на странице
+					
+					
+					$.each($("#resp_dialog_table table tbody tr td input[type=hidden][id^='resp_hash_']"), function(key, value){
+						
+						
+						hash1=$(value).val();
+						
+						if($("#resp_is_in_"+hash1).prop("checked")){
+							
+						
+							hashed_string='';
+							hashed_string=$("#resp_id_"+hash1).val();
+							 
+							
+							//alert(hashed_string); 
+							complex_positions.push(hashed_string);			  
+						}
+					});
+					
+					
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/supplier.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_resp",
+						  "supplier_id":"%{$user.id}%",
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#resp").html(data); 
+						
+						 
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					//alert('zs');
+					$(this).dialog("close"); 
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

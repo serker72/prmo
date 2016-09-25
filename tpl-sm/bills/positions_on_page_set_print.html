@@ -1,0 +1,156 @@
+<!-- таблица на странице -->
+
+
+<table width="720" cellpadding="1" cellspacing="0" border="1" class="blacktable" id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">№ п/п</th>
+        <th scope="col" width="20">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+       
+        <th scope="col" width="80">Цена с НДС</th>
+        <th scope="col"  %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+        <th scope="col"  %{if $cannot_view_pm}% style="display:none;"%{/if}%>Дисконт +/-</th>
+        
+     
+       <th scope="col" width="80"  %{if $cannot_view_pm}% style="display:none;"%{/if}%>Итоговая цена</th> 
+        <th scope="col" width="80"  %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего</th>
+       <!-- <th scope="col" width="80">&nbsp;</th> -->
+       
+       <th scope="col" width="100">Заявка</th>
+        
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        <td width="20">
+        %{$pospos[pospossec].id|string_format:"%05d"}%
+        </td>
+        <td width="60%">
+        %{$pospos[pospossec].position_name}%
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].id}%" name="new_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].id}%" />
+        
+       
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].id}%" name="new_dimension_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="80">
+        %{$pospos[pospossec].quantity}%
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].id}%" name="new_quantity_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity}%"  />
+    	</td>
+        
+        
+       
+        <td width="80">
+        %{$pospos[pospossec].price}%
+        <input type="hidden" id="new_price_%{$pospos[pospossec].id}%" name="new_price_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].price}%" />
+        </td>
+        <td style="white-space:nowrap;  %{if $cannot_view_pm}% display:none;%{/if}%">
+        
+        %{if $pospos[pospossec].has_pm}%
+        
+        %{if $pospos[pospossec].plus_or_minus==0}%
+        +
+         %{elseif $pospos[pospossec].plus_or_minus==1}%
+        -
+        %{/if}%
+        
+        %{$pospos[pospossec].value}%
+        
+        %{if $pospos[pospossec].rub_or_percent==0}%
+        руб.
+         %{elseif $pospos[pospossec].rub_or_percent==1}%
+        %
+        <br />
+
+        <small>(%{$pospos[pospossec].value_from_percent}%)</small>
+        
+        
+        %{/if}%
+        
+        
+        %{/if}%
+        
+        <input type="hidden" name="new_has_pm_%{$pospos[pospossec].id}%" id="new_has_pm_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].has_pm}%" />
+        
+        <input type="hidden" name="new_plus_or_minus_%{$pospos[pospossec].id}%" id="new_plus_or_minus_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].plus_or_minus}%" />
+        
+        <input type="hidden" name="new_rub_or_percent_%{$pospos[pospossec].id}%" id="new_rub_or_percent_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].rub_or_percent}%" />
+        
+        <input type="hidden" name="new_value_%{$pospos[pospossec].id}%" id="new_value_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].value}%" />
+        
+        
+        
+        </td>
+        
+        
+        <td style="white-space:nowrap;  %{if $cannot_view_pm}% display:none;%{/if}%">
+        
+        %{if $pospos[pospossec].has_pm}%
+        
+       
+        
+        %{$pospos[pospossec].discount_value}%
+        
+        %{if $pospos[pospossec].discount_rub_or_percent==0}%
+        руб.
+         %{elseif $pospos[pospossec].discount_rub_or_percent==1}%
+        %
+        <br />
+
+        <small>(%{$pospos[pospossec].discount_value_from_percent}%)</small>
+        %{/if}%
+        
+        
+        %{/if}%
+        
+       
+        
+        </td>
+        
+        <td width="80"  %{if $cannot_view_pm}% style="display:none;"%{/if}%>
+        <span id="new_price_pm_%{$pospos[pospossec].id}%">%{$pospos[pospossec].price_pm}%</span>
+        </td>
+        <td width="80"  %{if $cannot_view_pm}% style="display:none;"%{/if}%>
+        <span id="new_cost_%{$pospos[pospossec].id}%">%{$pospos[pospossec].cost}%</span>
+        </td>
+        <td width="80">
+        <span id="new_nds_proc_%{$pospos[pospossec].id}%">%{$pospos[pospossec].nds_proc}%</span>
+        </td>
+        
+         <td width="80">
+        <span id="new_nds_summ_%{$pospos[pospossec].id}%">%{$pospos[pospossec].nds_summ}%</span>
+        </td>
+        
+        
+        <td width="80">
+        <span id="new_total_%{$pospos[pospossec].id}%">%{$pospos[pospossec].total}%</span>
+        
+        </td>
+       
+        
+         <td width="100">
+       	<span id="new_komplekt_ved_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].komplekt_ved_name|default:"-"}%</span>
+        
+       
+        </td>
+        
+    </tr>
+   
+    %{/section}%
+    </tbody>
+    </table>
+    

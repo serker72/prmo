@@ -1,0 +1,197 @@
+
+
+<!-- таблица на странице -->
+<input type="hidden" id="not_changed_pos" value="%{if $not_changed_pos}%1%{else}%0%{/if}%" />
+<table width="*" cellpadding="1" cellspacing="0" border="0" class="blacktable1" id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="80">Дата создания</th>
+        <th scope="col" width="80">№ исходящего
+счета поставщика
+</th>
+        <th scope="col" width="80">Дата счета
+поставщика</th>
+        
+        <th scope="col" width="80">Сумма счета</th>
+        
+        <th scope="col" width="80">Ранее оплачено</th>
+        <th scope="col" width="80">Сумма оплаты</th>
+      
+       <th scope="col" width="80">Остаток оплаты по счету</th>
+   
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="80">
+       
+       <input type="hidden" id="new_hash_%{$pospos[pospossec].hash}%" name="new_hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+       
+       
+        %{if $pospos[pospossec].kind==0}%
+        <a href="ed_bill.php?action=1&id=%{$pospos[pospossec].id}%&from_begin=1" target="_blank">%{$pospos[pospossec].code}%</a>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].hash}%" name="new_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].id}%" />
+         %{elseif $pospos[pospossec].kind==1}%
+         <a href="ed_invcalc.php?action=1&id=%{$pospos[pospossec].id}%&from_begin=1" target="_blank">%{$pospos[pospossec].code}%</a>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].hash}%" name="new_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].id}%" />
+        
+        %{/if}%
+        <input type="hidden" id="new_kind_%{$pospos[pospossec].hash}%" name="new_kind_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].kind}%" />
+        
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].pdate}%
+        
+       
+        </td>
+        
+        <td width="80">
+         %{if $pospos[pospossec].kind==0}%
+        %{$pospos[pospossec].supplier_bill_no}%
+        %{elseif $pospos[pospossec].kind==1}%
+        %{$pospos[pospossec].given_no}%
+         %{/if}%
+       
+        </td>
+        
+        <td width="80">
+        %{if $pospos[pospossec].kind==0}%
+        %{$pospos[pospossec].supplier_bill_pdate}%
+        %{elseif $pospos[pospossec].kind==1}%
+        %{$pospos[pospossec].invcalc_pdate}%
+         %{/if}%
+        </td>
+        
+         <td width="80">
+        %{$pospos[pospossec].summ}%
+        
+       
+        </td>
+         <td width="80">
+        <a href="#" id="new_payed_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].payed}%</a>
+        
+       
+        </td>
+        
+        
+        
+        <td width="80" >
+        <span id="new_span_value_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].value}%</span>
+        
+        <input type="hidden" name="new_value_%{$pospos[pospossec].hash}%" id="new_value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].value}%" />
+        
+        
+        
+        </td>
+         <td width="80" >
+         %{$pospos[pospossec].summ-$pospos[pospossec].payed-$pospos[pospossec].value|string_format:"%.2f"}%
+         
+         
+         </td>
+        
+        
+        
+        <td width="24">
+        
+       %{if $can_modify}%
+       %{if $can_del_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%"  class="reestr_delete  reestr_right_button24" data-comment="удалить позицию..."></a>
+         %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%"  class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..."></a>
+        %{/if}%
+       
+       
+        
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%"  class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..."></a>
+        %{/if}%
+        </td>
+    </tr>
+   
+    %{/section}%
+    </tbody>
+    </table>
+    
+    <div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+<script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			var bill_ids=new Array(); 
+			 var values=new Array();
+			
+			var complex_positions=new Array();
+			
+			
+			function BuildRows(){
+			 
+			  complex_positions=new Array();
+			  $.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_kind_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val();
+				complex_positions.push(hashed_string);	
+			  });
+			}
+    		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].hash}%").bind("click",function(){
+				
+				%{if $can_modify}%
+				%{if $can_del_positions}%
+				if(window.confirm('Вы действительно хотите удалить оплату счета?')){ 
+					$('#new_row_%{$pospos[pospossec].hash}%').remove();
+					BuildRows();
+					
+					ControlSumm();
+						  
+				}
+				%{else}%
+				alert("У Вас недостаточно прав, чтобы удалить оплату счета.");
+				%{/if}%
+				%{else}%
+				alert("Невозможно удалить утвержденную оплату счета.");
+				%{/if}%
+				return false;
+			});
+			
+			$("#new_payed_%{$pospos[pospossec].hash}%").bind("click", function(){
+			  $.ajax({
+				  async: true,
+				  url: "/js/pay_in.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_bills_pos",
+					  "id":"%{$pospos[pospossec].id}%",
+					  "kind":"%{$pospos[pospossec].kind}%",
+					  "except_id":$("#id").val()
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+		  });
+			
+    	%{/section}%
+	
+	});
+      </script>

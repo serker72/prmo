@@ -1,0 +1,224 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+ <link href="/js/select2/select2.css" rel="stylesheet"/>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	  $("#pdate2_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	function SelectGo2(name){
+	 $("#"+name).select2(
+	 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_supplier_select2.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				 var data = new Array();
+				
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.full_name|escape:"html"}%'});
+				%{/foreach}%
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	SelectGo2("supplier_name2");
+});
+</script>
+ 
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="sortmode2" value="%{$sortmode2}%" />
+
+<input type="hidden" name="tab_page" value="3" />
+
+
+<div class="report_filter_right">
+    %{include file="every_help_dialog.html" filename="an_pm_given.htm" description="отчет +/- выдано"  prefix="_given" style="float:right;  margin-right:00px;" is_right=true}%
+    
+
+<div class="reestr_zoom reestr_right_button24" data-comment="Найти">	
+       <input type="image" src="/img/24.png" value="Вывести" alt="Вывести"  name="doSub2"    />
+</div>
+    
+
+		
+	<a href="an_pm.php?doSub2=1&tab_page=3" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" /></a>
+
+ %{if $can_print}%
+  
+  
+  <a href="#" id="print_table2"  class="reestr_print reestr_right_button24" data-comment="Печать..." ></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  $("#print_table2").bind("click",function(){
+			//alert($("#supplier_id").serialize());
+			if($("#only_payed2").prop("checked")){
+			 only_payed2=1;
+		 }else{
+			 only_payed2=0;
+		 }
+		 
+		 if($("#only_not_payed2").prop("checked")){
+			 only_not_payed2=1;
+		 }else{
+			 only_not_payed2=0;
+		 }
+		 
+		 if($("#only_semi_payed2").prop("checked")){
+			 only_semi_payed2=1;
+		 }else{
+			 only_semi_payed2=0;
+		 }
+			
+		 
+		 
+		 	 window.open('an_pm.php?tab_page=3&print='+'1'+'&supplier_name2='+encodeURI($("#supplier_name2").val())+'&pdate2_1='+$("#pdate2_1").val()+'&pdate2_2='+$("#pdate2_2").val()+'&sortmode2='+'%{$sortmode2}%'+'&only_payed2='+only_payed2+'&only_not_payed2='+only_not_payed2+'&only_semi_payed2='+only_semi_payed2+'&doSub2=1'+'&given_no_2='+$("#given_no_2").val()+'&supplier_bill_no_2='+$("#supplier_bill_no_2").val(), 'pm','width=1200,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"    class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..." ></a>
+ %{/if}%
+
+
+    <br clear="all" />
+   <!-- <a href="files.php?tab_page=tabs-4" target="_blank" style="float:right;  margin-right:0px; margin-top:5px;"><img src="/img/files.png" width="47" height="25" alt="Файлы" title="Файлы" border="0" /></a>-->
+
+	<input type="button" value="Файлы" style="width:47px; padding-left:4px;" onClick="window.open('files.php?tab_page=tabs-4');" />
+</div>
+
+<div class="report_filter_left">
+    
+    <div class="report_filter">
+    <div style="float:left; margin-right:20px;">
+    <strong>Период</strong><br />
+    <label for="pdate2_1">с:</label><br />
+    <input type="text" name="pdate2_1" id="pdate2_1" size="10" maxlength="10" value="%{$pdate2_1}%" /></div>
+    
+    <div style="float:left; margin-right:00px;">
+    <br />
+        <label for="pdate2_2">по:</label><br />
+        <input type="text" name="pdate2_2" id="pdate2_2" size="10" maxlength="10" value="%{$pdate2_2}%" />
+    </div>
+    </div>
+    
+    
+    <div class="report_filter">
+    <label for="supplier_name2">Покупатель:</label><br />
+    <input type="text" value="%{$supplier_name2}%" id="supplier_name2" name="supplier_name2" size="40" maxlength="512" style="width:250px;" />
+    </div>
+    
+    
+    <div class="report_filter">
+    
+    <input type="checkbox" value="1" id="only_payed2" name="only_payed2" %{if $only_payed2==1}% checked="checked"%{/if}% />
+    <label for="only_payed2"> оплаченные счета</label><br />
+    
+    <input type="checkbox" value="1" id="only_not_payed2" name="only_not_payed2" %{if $only_not_payed2==1}% checked="checked"%{/if}% />
+    <label for="only_not_payed2">неоплаченные счета</label><br />
+    
+    <input type="checkbox" value="1" id="only_semi_payed2" name="only_semi_payed2" %{if $only_semi_payed2==1}% checked="checked"%{/if}% />
+    <label for="only_semi_payed2">частично оплаченные счета</label><br />
+    </div>
+    
+    
+     
+    
+    <div class="report_filter">
+    <div style="float:left; margin-right:20px;">
+    
+    <label for="given_no_2">Зад. № с/ф:</label><br />
+    <input type="text" value="%{$given_no_2}%" id="given_no_2" name="given_no_2" size="10" maxlength="512" />
+    </div>
+    
+    
+    <div style="float:left; margin-right:00px;">
+    
+    <label for="supplier_bill_no_2">№ исх. счета. п-ка:</label><br />
+    <input type="text" value="%{$supplier_bill_no_2}%" id="supplier_bill_no_2" name="supplier_bill_no_2" size="10" maxlength="512" />
+    </div>
+    </div>
+
+</div>
+
+<br clear="all" />
+<p />
+<div style="">
+<small>
+<span style="color:red;">
+<strong>
+1. В отчет попадают все утвержденные исходящие счета и их позиции, которые были полностью реализованы (количество позиции в счете совпадает с количеством позиций в реализациях), и по позициям которых +/- к выдаче совпадает с полученным +/-, либо +/- получен частично.<br />
+ </strong>
+</span><br />
+
+<br />
+
+2. <strong>Фильтр "Период"</strong>. По умолчанию отчет формируется изо всех документов по п.1 за все время работы программы. 
+При выборе периода и нажатии кнопки
+ <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />
+ программа отбирает исходящие счета по датам выдачи +/-.
+ 
+ <br />
+
+3. <strong>Фильтр "Покупатель"</strong>.
+Вы можете осуществлять отбор исходящих счетов по нескольким контрагентам-покупателям.
+<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента.
+Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию.
+При необходимости отобрать в отчет счета по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов.
+<br />
+После выбора всех необходимых контрагентов нажмите кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.
+
+
+</small>
+</div>
+<p />
+
+%{include file="an_pm/an_pm_table.html"}%
+
+</form>
+
+
+
+
+
+%{$pages}%

@@ -1,0 +1,162 @@
+<h1>Права пользователей</h1>
+
+<form action="admin_users.php" method="post" id="rights_form">
+<div style="border:1px solid #000080; width:780px; height:400px; overflow:scroll;">
+<table width="*" cellspacing="1" cellpadding="3" border="1">
+<!-- группы объектов -->
+<tr align="center" valign="top">
+	<th scope="col" width="160" colspan="2" rowspan="2">
+    Группы+пользователи/ Группы+объекты
+    </th>
+    %{section name=obgsec loop=$obg}%
+    <th scope="col" width="80" colspan="%{$obg[obgsec].objects_count}%">
+    <div id="obgrp_%{$obg[obgsec].id}%" title="%{$obg[obgsec].name|escape}%|%{$obg[obgsec].description|escape}%">%{$obg[obgsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obgrp_%{$obg[obgsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </th>
+  
+    %{/section}%
+</tr>
+<!-- объекты -->
+<tr align="center" valign="top">
+    %{section name=objsec loop=$obj}%
+    <td width="80">
+    <div id="obj_%{$obj[objsec].id}%" title="%{$obj[objsec].name|escape}%|%{$obj[objsec].description|escape}%">%{$obj[objsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obj_%{$obj[objsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    %{/section}%
+</tr>
+<!-- группы пользователей + пользователи -->
+%{section name=usec loop=$u}%
+<tr align="left" valign="top">
+	<!-- группы пользователей -->
+    %{* if $u[usec].to_change *}%
+    <td width="80" >
+    <!-- rowspan="%{$u[usec].users_count}%" --> 
+    <div id="ug_%{$u[usec].id}%" title="%{$u[usec].g_name|escape}%|%{$u[usec].g_description|escape}%">%{$u[usec].g_name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#ug_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    %{* /if *}%
+    
+    <!-- пользователи -->
+    <th scope="row" width="80">
+    <div id="u_%{$u[usec].id}%" title="%{$u[usec].login|escape}%|%{if $u[usec].group_id==3}%%{$u[usec].name_d|escape}%%{else}%%{$u[usec].name_s|escape}%%{/if}%">%{$u[usec].login}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#u_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    
+    <!-- права пользователей по объектам -->
+   %{section name=rsec loop=$u[usec].rights_arr}%
+	<td width="*" align="center">
+    	%{section name=rrsec loop=$u[usec].rights_arr[rsec]}%
+        	%{if $u[usec].rights_arr[rsec][rrsec].has_access}%<b>
+            %{else}%
+            <span style="color:silver;">
+            %{/if}%
+            %{$u[usec].rights_arr[rsec][rrsec].letter}%
+            %{if $u[usec].rights_arr[rsec][rrsec].has_access}%</b>
+            %{else}%
+            </span>
+            %{/if}%
+            
+        %{/section}%
+    </td>
+    %{/section}%
+</tr>
+
+<!-- повтор горизонтального заголовка -->
+
+%{if $smarty.section.usec.index!=0 and $smarty.section.usec.index is div by 1}%
+
+<!-- группы объектов -->
+<tr align="center" valign="top">
+	<th scope="col" width="160" colspan="2" rowspan="2">
+    Группы+пользователи/ Группы+объекты
+    </th>
+    %{section name=obgsec loop=$obg}%
+    <th scope="col" width="80" colspan="%{$obg[obgsec].objects_count}%">
+    <div id="obgrp_%{$obg[obgsec].id}%" title="%{$obg[obgsec].name|escape}%|%{$obg[obgsec].description|escape}%">%{$obg[obgsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obgrp_%{$obg[obgsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </th>
+  
+    %{/section}%
+</tr>
+<!-- объекты -->
+<tr align="center" valign="top">
+    %{section name=objsec loop=$obj}%
+    <td width="80">
+    <div id="obj_%{$obj[objsec].id}%" title="%{$obj[objsec].name|escape}%|%{$obj[objsec].description|escape}%">%{$obj[objsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obj_%{$obj[objsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    %{/section}%
+</tr>
+%{/if}%
+
+%{/section}%
+</table>
+</div>
+<br />
+<input type="submit" value="Внести изменения" />
+
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#rights_form").bind("submit", function(){
+		return window.confirm("Вы действительно хотите внести в базу сделанные изменения?");
+	});
+});
+</script>
+<p />
+
+
+<strong>Обозначения прав:</strong>
+<table width="275" border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <th scope="row">r</th>
+    <td>права на чтение</td>
+  </tr>
+  <tr>
+    <th scope="row">w</th>
+    <td>права на запись</td>
+  </tr>
+  <tr>
+    <th scope="row">x</th>
+    <td>права на администрирование</td>
+  </tr>
+</table><br />

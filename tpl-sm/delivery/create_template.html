@@ -1,0 +1,77 @@
+<script type="text/javascript" src="/js/gen_validatorv31.js"></script>
+  
+
+
+
+<h1>Создать шаблон</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+ 
+ 
+
+ 
+
+    <label for="name">Название:</label><br>
+    <input type="text" value="" name="name" id="name" size="60" maxlength="255" />
+
+ 
+
+
+
+ 
+
+<p />
+<br />
+	
+  
+ 
+
+
+<label for="html_content">Содержимое:</label><br>
+<textarea id="html_content" name="html_content"></textarea>
+<br>
+
+ 
+                    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+                    <script type="text/javascript">
+	CKEDITOR.replace( 'html_content',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_delivery_template.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash'
+    				  }
+					 );
+	</script> 
+
+
+
+
+
+ 
+<input type="submit" value="Создать шаблон" name="doInp" />
+
+
+<input type="submit" name="doApply"  id="doApply" value="Создать шаблон и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" onclick="location.href='%{$list_pagename}%';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+ 
+frmvalidator.addValidation("name","req","Укажите название шаблона!");
+
+ 
+</script>

@@ -1,0 +1,101 @@
+<form action="an_fill.php" method="get" id="an_fill_form%{$prefix}%">
+<input type="hidden" name="tab_page" value="1" />
+
+
+
+
+<div id="fielddefs" style="float:left; margin-right:20px;">
+%{section name=rowsec1 loop=$qsts}%
+
+%{if $smarty.section.rowsec1.index is div by $per_page}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+
+<input type="checkbox" value="1" id="%{$qsts[rowsec1].fieldname}%%{$prefix}%" name="%{$qsts[rowsec1].fieldname}%%{$prefix}%" %{if $qsts[rowsec1].is_checked}%checked="checked"%{/if}% /> 
+<label for="">%{$qsts[rowsec1].caption}%</label>
+<br />
+
+
+%{if $smarty.section.rowsec1.index_next is div by $per_page or $smarty.section.rowsec1.last}%
+</div>
+%{/if}%
+
+%{/section}%
+</div>
+
+
+%{include file="every_help_dialog.html" filename="an_fill.htm" prefix=$prefix description="отчет Заполненность данными - контрагенты"  style="float:right;  margin-left:00px;" is_right=true}%
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+<input type="image" name="doSub%{$prefix}%" value="Найти"   alt="Найти" src="/img/24.png"   />
+</div>
+
+<a href="an_fill.php?doSub%{$prefix}%=1&tab_page=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить фильтры" ></a>
+
+%{if $can_print}%
+<a href="#" id="print_an_fill%{$prefix}%"  class="reestr_print reestr_right_button24" data-comment="Печать отчета" ></a>
+%{/if}%
+<br clear="all" />
+
+
+<script type="text/javascript">
+$(function(){
+	%{if $can_print}%
+	$("#print_an_fill%{$prefix}%").bind("click",function(){
+		/*quests_fill_only='';
+		quests_unfill_only='';
+		if($("#quests_fill_only%{$prefix}%").prop("checked")) quests_fill_only='&quests_fill_only=1';
+		if($("#quests_unfill_only%{$prefix}%").prop("checked")) quests_unfill_only='&quests_unfill_only=1';*/
+		
+		
+		window.open('an_fill.php?print=1&'+$("#an_fill_form%{$prefix}%").serialize()+'&doSub%{$prefix}%=1', 'users_quests','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		
+		 return false; 
+	});
+	%{/if}%
+	
+	$("#quests_select_all%{$prefix}%").bind("change", function(){
+		$("#fielddefs input[type=checkbox]").prop("checked", $(this).prop("checked"));
+	});
+	
+});
+</script>
+
+
+<br />
+<!--<br />
+<small><em>Примечания.<br />
+
+1. Из отчета автоматически исключаются контрагенты, у которых заполнены все выбранные Вами поля.<br />
+</em></small>-->
+
+
+</div>
+<br clear="all" />
+<p />
+
+<input type="checkbox" id="quests_select_all%{$prefix}%" value="1" /><strong>Все поля</strong><br />
+<br />
+
+<input type="checkbox" id="quests_fill_only%{$prefix}%" name="quests_fill_only%{$prefix}%" value="1" %{if $quests_fill_only==1}% checked="checked"%{/if}% /><strong>Показать заполненные данные</strong><br />
+
+
+<!--<input type="checkbox" id="quests_unfill_only%{$prefix}%" name="quests_unfill_only%{$prefix}%" value="1" %{if $quests_unfill_only==1}% checked="checked"%{/if}% /><strong>Только незаполненные</strong><br />-->
+
+
+
+
+
+</form>
+
+
+
+%{if $do_it}%
+%{include file="an_fill/an_fill_table.html"}%
+%{/if}%

@@ -1,0 +1,187 @@
+
+<h1 style="">Исходящая оплата № %{$ship.code}%</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+Код:<br />
+
+<strong>%{$ship.code}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$ship.pdate}%</strong><br />
+<small>создана: %{$created_by}%</small>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+Сумма платежа, руб.:<br />
+
+<strong>%{$ship.value}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:0px;">
+
+Реквизиты организации:<br />
+
+<strong>%{$ship.org_bdetails_id_string}%</strong>
+</div>
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+
+Код оплаты:<br />
+
+<strong>%{$ship.code_id_string}%</strong>
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;"><br />
+
+<input type="checkbox" id="is_inner_pay" name="is_inner_pay" value="1" %{if $ship.is_inner_pay==1}% checked="checked"%{/if}%   disabled="disabled"    /><label for="is_inner_pay">Внутренний платеж</label>
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+<div id="inner_user_id_block" %{if $ship.is_inner_pay==0}% style="display:none;"%{/if}%>
+<div style="float:left; margin-right:20px;">
+	<label for="inner_user_id">Сотрудник-получатель:</label><br />
+	<select id="inner_user_id" name="inner_user_id" style="width:400px"  disabled="disabled"  >
+    %{html_options values=$inner_user_id_ids selected=$ship.inner_user_id output=$inner_user_id_vals}%
+    </select>
+
+</div>
+<br clear="all" />
+<p />
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+
+Контрагент:<br />
+
+
+<strong>%{$ship.supplier_id_string}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Договор №:
+<br />
+
+<strong>%{$ship.contract_no}%</strong>
+</div>
+
+<div style="float:left; margin-right:5px;">
+от:<br />
+
+<strong>%{$ship.contract_pdate}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:10px; margin-top:13px;">
+<input type="checkbox" value="1" name="is_return" id="is_return"  disabled="disabled" %{if $ship.is_return==1}% checked="checked"%{/if}% /><label for="is_return">Возврат д/с</label>
+</div>
+
+
+
+<br clear="all" />
+<p />
+<div style="float:left; margin-right:0px;">
+
+
+Реквизиты контрагента:<br />
+
+
+<strong>%{$ship.bdetails_id_string}%</strong>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<input name="pay_for_dogovor" id="pay_for_dogovor" type="checkbox" value="1" %{if $ship.pay_for_dogovor==1}% checked="checked"%{/if}% %{if !$can_modify}% disabled="disabled"%{/if}% />
+<label for="pay_for_dogovor">Оплата по договору</label>
+
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<input name="pay_for_bill" id="pay_for_bill" type="checkbox" value="1" %{if $ship.pay_for_bill==1}% checked="checked"%{/if}% %{if !$can_modify}% disabled="disabled"%{/if}% />
+<label for="pay_for_bill">Оплата по счету</label>
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Сделка:</strong>
+
+
+<br />
+
+
+
+<div id="nested_bills">
+%{include file="pay/bills_actions_print.html" action=1}%
+</div>
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="pay/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+   
+<p />    
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Утверждаю
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+
+
+</div>
+<br clear="all" />
+<p />
+

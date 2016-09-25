@@ -1,0 +1,1143 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+	 
+	 
+	 
+	
+	$("#exp_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	//$("#pdate_end").datepicker({changeYear:true, yearRange: '2012:+00'});
+	 
+	$("#new_pdate_beg_").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	//$("#ptime_beg").mask('00:00');
+	
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#remind_ptime").mask('00:00');
+	
+	$("#has_exp_pdate").bind("change", function(){
+		$("#exp_pdate_fields").prop("disabled", !$("#has_exp_pdate").prop("checked"));
+		if($("#has_exp_pdate").prop("checked")) {
+			$("#exp_pdate").focus();
+			$("#exp_pdate").trigger("click");
+			$("#exp_ptime_h").val("00");
+			$("#exp_ptime_m").val("00");
+			
+		}
+	});
+	
+	$("#wo_supplier").bind("change", function(){
+		if($("#wo_supplier").prop("checked")){
+			$("#suppliers_tbody").empty();
+			$("#suppliers_add").prop("disabled",true);	
+		}else{
+			$("#suppliers_add").prop("disabled",false);	
+		}
+	});
+	
+	 
+	
+%{if $field_rights.can_stop}%
+var flag_stop=false;
+$("#doStop").bind("click", function(){
+	 
+	if($("#lenta_commments div[id^=lenta_comment_]").length<=parseInt($("#lenta_len").val())){
+		
+		 
+		
+		
+		if(!flag_stop){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			$("#task_comment_dialog_caption").html("Укажите причину приостановки задачи (мин. длина 10 символов):");
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						$("#status_change_comment").val($("#task_comment").val());
+						$("#task_comment_dialog").dialog('close');
+						
+						if($.trim($("#task_comment").val()).length<10){
+							
+							flag_stop=false;
+							$("#doStop").trigger("click");
+						}else{
+							
+							flag_stop=true;
+							$("#doStop").trigger("click");
+						}
+						
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	}else flag_stop=true;
+	return flag_stop;
+	
+});
+
+%{/if}%
+
+%{if $field_rights.can_remake}%
+var flag_remake=false;
+$("#doRemake").bind("click", function(){
+	
+	
+	 
+	if($("#lenta_commments div[id^=lenta_comment_]").length<=parseInt($("#lenta_len").val())){
+		 
+		
+		if(!flag_remake){
+		
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			$("#task_comment_dialog_caption").html("Укажите причину отправки задачи на доработку (мин. длина 10 символов):");
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						$("#status_change_comment").val($("#task_comment").val());
+						$("#task_comment_dialog").dialog('close');
+						
+						if($.trim($("#task_comment").val()).length<10){
+							
+							flag_remake=false;
+							$("#doRemake").trigger("click");
+						}else{
+							
+							flag_remake=true;
+							$("#doRemake").trigger("click");
+						}
+						
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+		}
+		
+		//res=false; 
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	}else flag_remake=true;
+	return flag_remake;
+	
+});
+
+%{/if}%
+
+%{if $field_rights.can_move_srok and $bill.has_exp_pdate}%
+var flag_move=false;
+$("#doMoveSrok").bind("click", function(){
+	
+	
+	if(!flag_move){
+			 
+		 
+			$("#task_move_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+					 	
+						can_go=true; 
+							
+						$("#task_move_dialog").dialog('close');
+						
+						if(can_go&&($("#new_pdate_beg_").val()=="")){
+							alert("Укажите новую дату!");
+							can_go=can_go&&false;
+						}
+						
+						if(can_go&&($("#new_pdate_beg_").val()==$("#exp_pdate").val())){
+							alert("Укажите новую дату, отличную от старой даты!");
+							can_go=can_go&&false;
+						}
+						
+						if(can_go&&(($("#new_ptime_beg_h_").val()=="")||($("#new_ptime_beg_h_").val()==null)||($("#new_ptime_beg_h_").val()==undefined))){
+							alert("Укажите новое время, час.!");
+							can_go=can_go&&false;
+						}
+						
+						if(can_go&&(($("#new_ptime_beg_m_").val()=="")||($("#new_ptime_beg_m_").val()==null)||($("#new_ptime_beg_m_").val()==undefined))){
+							alert("Укажите новое время, мин.!");
+							can_go=can_go&&false;
+						}
+						
+						if(!can_go ){
+							
+							flag_move=false;
+							$("#doMoveSrok").trigger("click");
+						}else{
+							
+							$("#new_pdate_beg").val($("#new_pdate_beg_").val());
+							$("#new_ptime_beg_h").val($("#new_ptime_beg_h_").val());
+							$("#new_ptime_beg_m").val($("#new_ptime_beg_m_").val());
+								
+							flag_move=true;
+							$("#doMoveSrok").trigger("click");
+						}
+						 
+						
+					},
+					"Отмена":function(){
+						  $("#task_move_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_move_dialog").dialog("open");
+		
+	}
+	
+	 
+	
+	return flag_move;
+	
+});
+
+%{/if}%
+
+
+
+
+%{if $bill.status_id==24}%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days").html($days)	;
+	
+	$("#work_hours").html($hours)	;
+	
+	$("#work_mins").html($mins)	;
+	
+	$("#work_secs").html($secs);
+	$("#working_times").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%
+
+
+%{if $move_srok}%
+
+	$("#task_movea_dialog").dialog({
+		buttons:{
+			"Да":function(){
+				 
+				 
+				$.ajax({
+				  async: true,
+				  url: "/js/sched.php",
+				  type: "POST",
+				  data:{
+					  "action":"apply_srok",
+					  "comment": $("#a_comment").val(),
+					  "res":1,
+					  "id":$("#id").val(),
+					  "new_pdate_beg": $("#anew_pdate_beg_").val(),
+					  "new_ptime_beg_h":$("#anew_ptime_beg_h_").val(),
+					  "new_ptime_beg_m":$("#anew_ptime_beg_m_").val()
+				  },
+				  beforeSend: function(){
+					 
+				  },
+				  success: function(data){
+					// alert(data);
+					 $("#task_movea_dialog").dialog('close');
+					 location.reload();
+					
+				  },
+				  error: function(xhr, status){
+					  alert("Ошибка изменения срока задачи.");	
+					   
+				  }	 
+			  });
+				 
+				
+			},
+			"Нет":function(){
+				
+				  can_go=true;
+				  
+				  if($.trim($("#a_comment").val()).length<10){
+					can_go=can_go&&false;
+					alert("Укажите комментарий!");
+					$("#a_comment").focus();	  
+				  }
+				if(can_go){
+					
+				  $.ajax({
+					  async: true,
+					  url: "/js/sched.php",
+					  type: "POST",
+					  data:{
+						  "action":"apply_srok",
+						  "comment": $("#a_comment").val(),
+						  "id":$("#id").val(),
+						  "res":0,
+						  "new_pdate_beg": $("#anew_pdate_beg_").val(),
+						  "new_ptime_beg_h":$("#anew_ptime_beg_h_").val(),
+						  "new_ptime_beg_m":$("#anew_ptime_beg_m_").val()
+					  },
+					  beforeSend: function(){
+						 
+					  },
+					  success: function(data){
+						 
+						 $("#task_movea_dialog").dialog('close');
+						 location.reload();
+						
+					  },
+					  error: function(xhr, status){
+						  alert("Ошибка изменения срока задачи.");	
+						   
+					  }	 
+				  });
+				}
+			 }
+		}
+	});
+	
+	$("#task_movea_dialog").dialog("open");
+%{/if}%
+
+	
+
+
+	
+});
+</script>
+<style>
+#working_times{
+	font-weight:bold;
+	color:#e9510f;	
+}
+.working_times_blue{
+	color:#105fa6 !important;
+}
+</style>
+
+ %{include file="every_help_dialog.html" filename="sched_1.html" prefix="" description="Информация о редактировании задачи" style="float:right" is_right=true}%
+
+
+ %{include file="plan/comment_dialog.html" }%
+ 
+  
+ 
+ %{include file="plan/move_dialog.html" }%
+ 
+ 
+ %{include file="plan/move_apply_dialog.html" }% 
+
+
+
+
+
+
+
+<h1>Задача</h1>
+
+<form action="ed_sched_task.php" method="post" id="crea_form">
+
+
+%{if $field_rights.can_begin}%
+<div style="float:left; margin-right:10px; ">
+<input type="submit" name="doDo" id="doDo" value="Приступить к выполнению" />
+</div>
+%{/if}%
+
+%{if $field_rights.can_stop}%
+<div style="float:left; margin-right:10px; ">
+<input type="submit" name="doStop" id="doStop" value="Приостановить задачу" />
+</div>
+%{/if}%
+
+
+
+%{if $field_rights.can_defer}%
+<div style="float:left; margin-right:10px; ">
+<input type="submit" name="doDefer" id="doDefer" value="Отложить задачу" />
+</div>
+%{/if}%
+
+
+%{if $field_rights.can_remake}%
+<div style="float:left; margin-right:10px; ">
+<input type="submit" name="doRemake" id="doRemake" value="Отправить на доработку" />
+</div>
+%{/if}%
+
+%{if $field_rights.can_move_srok and $bill.has_exp_pdate}%
+<div style="float:left; margin-right:10px; ">
+<input type="submit" name="doMoveSrok" id="doMoveSrok" value="Перенести срок..." />
+</div>
+%{/if}%
+
+
+%{if $field_rights.can_subtask}%
+<div style="float:left; margin-right:10px; ">
+<input class="subtask_button" onClick="location.href='ed_sched_task.php?kind_id=1&action=0&task_id=%{$bill.id}%';" type="button" value="Создать подзадачу..." />
+</div>
+%{/if}%
+
+
+
+<div style="float:right; margin-right:0px; min-width:110px;" id="toggle_annul">
+%{include file="plan/toggle_annul_card_1.html"}%
+
+</div>
+
+<div style="float:right;  margin-right:10px; ">
+  %{if $bill.is_confirmed==1}%
+  <a href="ed_sched_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
+  %{else}%
+  <a href="#" onClick="alert('Для печати задачи необходимо утвердить ее заполнение!'); return false;" class="reestr_print reestr_right_button24 reestr_inactive" data-comment="печать..."  ></a>
+  %{/if}%
+</div>  
+
+<div style="float:right;  margin-right:10px; ">
+ 	%{if $bill.is_confirmed==1}%
+    <a href="#" id="email_documents" class="reestr_email reestr_right_button24"  data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="plan/pdf_actions.html" mode=0}%
+    %{else}%
+    <a href="#" onClick="alert('Для отправки на электронную почту задачи необходимо утвердить ее заполнение!'); return false;" class="reestr_email reestr_right_button24 reestr_inactive" data-comment="отправить pdf-документы на электронную почту..."></a>
+    %{/if}%
+</div>
+
+
+ %{if $can_create and $bill.status_id!=3}%
+      <a href="#" onclick="window.open('ed_sched_task.php?kind_id=%{$bill.kind_id}%&copyfrom=%{$bill.id}%'); return false;" class="reestr_copy reestr_right_button24 " data-comment="Копировать..." style="float:right; margin-right:10px;"></a>
+    %{elseif !$can_create}%
+     <a href="#" onclick="alert('У Вас недостаточно прав для копирования задачи.'); return false;" class="reestr_copy reestr_right_button24 reestr_inactive" data-comment="Копировать..." style="float:right; margin-right:10px;"></a>
+    %{elseif $bill.status_id==3}%
+     <a href="#" onclick="alert('Невозможно копировать аннулированную задачу. Восстановите задачу для ее копирования.'); return false;" class="reestr_copy reestr_right_button24 reestr_inactive" data-comment="Копировать..." style="float:right; margin-right:10px;"></a> 
+    %{/if}%
+
+
+<div style="float:right; margin-right:20px; margin-left:0px; ">
+    <strong>Общее время выполнения задачи:</strong><br>
+   
+    <div id="working_times"> 
+    <span id="work_days">%{$bill.times.days|default:"0"}%</span> д.
+    
+    <span id="work_hours">%{$bill.times.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins">%{$bill.times.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs">%{$bill.times.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf" type="hidden" value="%{$bill.working_time_unf|default:"0"}%" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+<input type="hidden" name="action" value="1">
+ 
+ <input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+<input type="hidden" name="status_change_comment" id="status_change_comment" value="" />
+
+
+
+<input type="hidden" name="new_pdate_beg" id="new_pdate_beg" value="%{$bill.new_pdate_beg}%" />
+
+<input type="hidden" name="new_ptime_beg_h" id="new_ptime_beg_h" value="%{$new_ptime_beg_hr}%" />
+
+<input type="hidden" name="new_ptime_beg_m" id="new_ptime_beg_m" value="%{$new_ptime_beg_mr}%" />
+
+ 
+
+
+
+<div style="float:left; margin-right:10px;">
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+    <label for="topic">Название задачи:</label><br>
+    <input type="text" %{if !$field_rights.topic}% disabled%{/if}% value="%{$bill.topic|escape:"html"}%" name="topic" id="topic" size="40" maxlength="255" />
+
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+   <strong>  Дата создания: </strong>
+     <br />
+    
+    %{$bill.pdate}%
+    
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<br>
+
+   <input type="checkbox" %{if !$field_rights.can_exp_date}% disabled%{/if}%  name="has_exp_pdate" id="has_exp_pdate" %{if $bill.has_exp_pdate}% checked %{/if}% value="1" />
+   <label for="has_exp_pdate">Крайний срок</label> 
+   
+</div>
+
+<fieldset %{if !$field_rights.can_exp_date or !$bill.has_exp_pdate}% disabled%{/if}% id="exp_pdate_fields" style="float:left;">
+<div style="float:left; margin-right:20px;">   
+   
+	<label for="exp_pdate">Дата: 
+    </label> <br>
+
+    
+    <input  type="text" value="%{$bill.pdate_beg}%" id="exp_pdate" name="exp_pdate"  size="10"   maxlength="10" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="exp_ptime">Время :</label> <br>
+
+    
+     <select name="exp_ptime_h" id="exp_ptime_h" style="width:60px">
+        %{html_options values=$ptime_beg_h  selected=$ptime_beg_hr  output=$ptime_beg_h}%
+    </select>: 
+    <select name="exp_ptime_m" id="exp_ptime_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$ptime_beg_mr   output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+</fieldset>	
+  
+<div style="float:left; margin-right:10px;">
+
+    <label for="priority">Приоритет:</label><br>
+    <select  %{if !$field_rights.priority}% disabled%{/if}%  name="priority" id="priority" style="width:150px;">
+    	<option %{if $bill.priority==2}% selected%{/if}%  value="2">высокий</option>
+        
+        <option %{if $bill.priority==1}% selected%{/if}%  value="1">средний</option>
+        
+        <option %{if $bill.priority==0}% selected%{/if}% value="0">низкий</option>
+    </select>
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+ 
+
+
+
+
+<div style="float:left; margin-right:20px;">
+	<label for="user_1">Постановщик задачи:</label><br>
+    <select %{if !$field_rights.topic or !$can_change_user1}% disabled%{/if}%  %{if $can_change_user1}% name="user_1"%{/if}% id="user_1" style="width:300px;">
+    <option value="0" %{if $bill.user_1==0}% selected%{/if}%>-выберите-</option>
+    %{foreach from=$users1 item=item}%
+    	<option value="%{$item.id}%" %{if $item.id==$bill.user_1}% selected%{/if}% %{if $item.is_active==0}% class="item_inactive"%{/if}%>%{$item.name_s}%, %{$item.position_s}%</option>
+    %{/foreach}%
+        
+
+        
+    </select>
+
+	%{if !$can_change_user1}%
+    <input type="hidden" name="user_1" value="%{$bill.user_1}%" />
+    %{/if}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<br>
+
+ <input type="checkbox" %{if !$field_rights.can_do_check}% disabled%{/if}%  %{if $bill.do_check}% checked%{/if}% name="do_check" id="do_check" value="1" />
+   <label for="do_check">Принять задачу после утверждения выполнения</label> 
+</div>   
+
+<div style="float:left; margin-right:20px;">
+ 
+ 
+
+	<label for="user_2">Ответственный:</label><br>
+    <select  %{if !$field_rights.can_modify_2}% disabled%{/if}%  name="user_2" id="user_2" style="width:300px;">
+    <option value="0" %{if $bill.user_2==0}% selected%{/if}%>-выберите-</option>
+    %{foreach from=$users2 item=item}%
+    	<option value="%{$item.id}%"  %{if $bill.user_2==$item.id}% selected%{/if}% %{if $item.is_active==0}% class="item_inactive"%{/if}% >%{$item.name_s}%, %{$item.position_s}%</option>
+    %{/foreach}%
+        
+
+        
+    </select>
+    
+    %{if $field_rights.can_delegate}%<br>
+
+    <input type="button" id="doDelegate" value="Делегировать" onClick="$('#delegate').show(); $('#delegate').attr('name','delegate');" /><br>
+
+     <select  %{if !$field_rights.can_delegate}% disabled%{/if}%     id="delegate" style="width:300px; display:none;">
+    
+    %{foreach from=$delegates item=item}%
+
+    	<option value="%{$item.id}%"  %{if $bill.user_2==$item.id}% selected%{/if}% >%{$item.name_s}%, %{$item.position_s}%</option>
+    %{/foreach}%
+        
+    </select>
+    <br>
+
+    %{/if}%
+
+   
+    
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+	<h4>Соисполнители:</h4>
+	
+	%{include file="plan/user_3_actions.html" can_modify=$field_rights.can_modify_3}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+	<h4>Наблюдатели:</h4>
+	
+	%{include file="plan/user_4_actions.html" can_modify=$field_rights.can_modify_4}%
+</div>
+
+
+<br clear="all" />
+<p />
+  
+
+
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагенты:</h3>
+</div>
+<div style="float:right; margin-right:00px;"> 
+	 
+<input type="checkbox" id="wo_supplier" name="wo_supplier" value="1"  %{if !$field_rights.can_modify_suppliers}% disabled="disabled"%{/if}% %{if $bill.wo_supplier==1}% checked%{/if}% />    
+<label for="wo_supplier">Без контрагента</label>  
+ 
+</div>
+<br clear="all" />
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+  %{include file="plan/supplier_15_actions.html" many=true can_modify=$can_modify_suppliers }%    
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+   
+<div style="float:left; width:100%; min-width:520px;  margin-right:30px; ">
+<label for="description">Описание задачи:</label><br>
+<textarea id="description"  %{if !$field_rights.description}% disabled%{/if}%  name="description">%{$bill.description|escape}%</textarea>
+
+<div id="alt_description" style="width:100%; height:75px; overflow:auto; border:1px solid silver; display:none;">%{$bill.description}%</div>
+ 
+<script type="text/javascript">
+	 
+	try{
+			$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%'
+            });
+		
+	}catch(e){
+		//alert(e);
+		$("#description").hide();
+		$("#alt_description").show();
+	}				 
+	</script>
+</div>
+   
+%{$files}% 
+
+<br clear="all" />
+ 
+
+
+
+ 
+%{$lenta}%
+
+
+<input type="hidden" id="lenta_len" value="%{$lenta_len|default:"0"}%" />
+
+
+
+<h3>Напомнить мне:</h3>
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" id="remind_do" name="remind_do" value="1" %{if $bill.remind_do==1}%checked%{/if}% %{if !$can_modify_rep }% disabled="disabled"%{/if}% /><label for="remind_do">напомнить мне</label>
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="remind_pdate">
+Дата напоминания: 
+</label><br />
+
+<input type="text" %{if !$can_modify_rep }% disabled="disabled"%{/if}% value="%{$bill.remind_pdate}%" id="remind_pdate" name="remind_pdate"  size="10"   maxlength="10" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+
+
+<label for="remind_ptime">Время напоминания:</label><br />
+ 
+
+<select %{if !$can_modify_rep }% disabled="disabled"%{/if}%  name="remind_ptime_h" id="remind_ptime_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$remind_ptime_hr output=$ptime_beg_h}%
+    </select>: 
+    <select  %{if !$can_modify_rep  }% disabled="disabled"%{/if}%  name="remind_ptime_m" id="remind_ptime_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$remind_ptime_mr output=$ptime_beg_m}%
+    </select>
+     
+
+
+</div>
+
+
+ <br clear="all" />
+<p />
+
+
+
+
+
+
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if ($bill.is_confirmed and !$field_rights.can_unconfirm) or (!$bill.is_confirmed and !$field_rights.can_confirm)  }% disabled%{/if}%  /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) {
+			$("#is_confirmed_done").prop("disabled",true);
+			$("#is_fulfiled").prop("disabled",true);
+		}
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/sched.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 $("#is_confirmed_done").prop("checked",false);
+			 $("#is_confirmed_done").trigger("click");
+			  $("#is_confirmed_done").prop("checked",false);
+			  
+			  $("#is_fulfiled").prop("checked",false);
+			 $("#is_fulfiled").trigger("click");
+			  $("#is_fulfiled").prop("checked",false); 
+		}
+	});
+});
+</script>
+
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_done" name="is_confirmed_done" value="1" onchange="" %{if $bill.is_confirmed_done==1}% checked="checked"%{/if}% %{if (!$bill.is_confirmed_done and !$field_rights.can_confirm_done) or ($bill.is_confirmed_done and !$field_rights.can_unconfirm_done)  or ($bill.is_confirmed_done and  $field_rights.can_unconfirm_done and $bill.do_check==1 and $bill.is_fulfiled==1)}% disabled%{/if}%  /><label for="is_confirmed_done">Утверждаю выполнение</label>
+ 
+
+<span id="is_confirmed_done_confirmer">%{$is_confirmed_done_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_done").bind("click",function(){
+		
+		if(	$("#is_confirmed_done").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		if(state==0) {
+			 $("#is_fulfiled").prop("disabled",true);
+		}
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/sched.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_done_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_done_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		if(state==0){
+		 
+			  
+			  $("#is_fulfiled").prop("checked",false);
+			 $("#is_fulfiled").trigger("click");
+			  $("#is_fulfiled").prop("checked",false); 
+		}
+		
+	});
+});
+</script>
+
+<br>
+
+
+
+<input type="checkbox" id="is_fulfiled" name="is_fulfiled" value="1" onchange="" %{if $bill.is_fulfiled==1}% checked="checked"%{/if}% %{if ($bill.is_fulfiled and !$field_rights.can_unconfirm_fulfil) or (!$bill.is_fulfiled and !$field_rights.can_confirm_fulfil)}% disabled%{/if}%  /><label for="is_fulfiled">Работа принята</label>
+ 
+
+<span id="is_fulfiled_confirmer">%{$is_fulfiled_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_fulfiled").bind("click",function(){
+		
+		if(	$("#is_fulfiled").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/sched.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_fulfiled_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_fulfiled_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+
+
+
+<br clear="all">
+<p />
+
+
+
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку задач" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='shedule.php';
+}else location.href='shedule.php';" />
+
+ 
+ %{if $field_rights.can_subtask}%
+<input class="subtask_button" onClick="location.href='ed_sched_task.php?kind_id=1&action=0&task_id=%{$bill.id}%';" type="button" value="Создать подзадачу..." />
+%{/if}%
+
+ 
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	%{if $can_modify_rep}%
+	if($("#remind_do").prop("checked")){
+		if($("#remind_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату напоминания!');
+			return false;
+		}	
+		
+		/*if($("#remind_ptime").val().length<5){
+			sfm_show_error_msg('Укажите время напоминания!');
+			return false;
+		}		*/		
+	}
+	%{/if}%
+	
+	%{if $field_rights.can_exp_date}%
+	
+	if($("#has_exp_pdate").prop("checked")){
+		if($("#exp_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату крайнего срока!');
+			return false;	
+		}
+		
+		if(($("#exp_ptime_h").val()==null)||($("#exp_ptime_h").val()==undefined)||($("#exp_ptime_h").val()=='')){
+			sfm_show_error_msg('Укажите время крайнего срока!');
+			return false;	
+		}
+		
+		if(($("#exp_ptime_m").val()==null)||($("#exp_ptime_m").val()==undefined)||($("#exp_ptime_m").val()=='')){
+			sfm_show_error_msg('Укажите время крайнего срока!');
+			return false;	
+		}
+	}
+	%{/if}%
+	 
+	
+	
+	%{if $field_rights.topic}%
+	//постановщик может быть задействован в других ролях 1 раз
+	
+	count_of_roles=0; id=$("#user_1").val();
+	if(id==$("#user_2").val()) count_of_roles++;
+	$.each($("input[id^=new_user4_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	$.each($("input[id^=new_user3_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	if(count_of_roles>1){
+		sfm_show_error_msg('Постановщик может быть включен в задачу только в еще одну из ролей: Ответственный, Соисполнитель, Наблюдатель!');
+			return false;
+	}
+	
+	%{/if}%
+	
+	%{if $field_rights.can_modify_2}%
+	count_of_roles=0; id=$("#user_2").val();
+	//if($("#user_1").val()==id) count_of_roles++;
+	$.each($("input[id^=new_user4_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	$.each($("input[id^=new_user3_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	if(count_of_roles>0){
+		sfm_show_error_msg('Ответственный не может быть включен в другие роли: Соисполнитель, Наблюдатель!');
+			return false;
+	}
+	%{/if}%
+	
+	%{if $field_rights.can_modify_3}%
+	//для каждого соисп-ля...
+	flag=true;
+	$.each($("input[id^=new_user3_id_]"), function(k,v){
+		//if($(v).val()==id) count_of_roles++;
+		id=$(v).val();
+		
+		count_of_roles=0;
+		if($("#user_2").val()==id) count_of_roles++;
+		$.each($("input[id^=new_user4_id_]"), function(kk,vv){
+			if($(vv).val()==id) count_of_roles++;
+		});
+		
+		if(count_of_roles>0) flag=flag&&false;
+	});
+	
+	if(!flag){
+		sfm_show_error_msg('Соисполнитель не может быть включен в другие роли: Ответственный, Наблюдатель!');
+			return false;
+	}
+	%{/if}%
+	
+	
+	%{if $field_rights.can_modify_4}%
+	
+	//для каждого набл-ля
+	flag=true;
+	$.each($("input[id^=new_user4_id_]"), function(k,v){
+		//if($(v).val()==id) count_of_roles++;
+		id=$(v).val();
+		
+		count_of_roles=0;
+		if($("#user_2").val()==id) count_of_roles++;
+		$.each($("input[id^=new_user3_id_]"), function(kk,vv){
+			if($(vv).val()==id) count_of_roles++;
+		});
+		
+		if(count_of_roles>0) flag=flag&&false;
+	});
+	
+	if(!flag){
+		sfm_show_error_msg('Наблюдатель не может быть включен в другие роли: Ответственный, Соисполнитель!');
+			return false;
+	}
+	%{/if}%
+	
+	
+	%{if $field_rights.can_confirm}%
+	/*if($("#user_1").val()==$("#user_2").val()){
+		sfm_show_error_msg('В полях Постановщик задачи и Ответственный не может быть выбран один и тот же сотрудник!');
+			return false;
+	}*/
+	
+	
+	
+	
+	
+	
+	try{
+		data=CKEDITOR.instances.description.getData();
+	}catch(e){
+		data=$("#description").val();
+	}
+	if(strip_tags($.trim(data)).length<10){
+		 sfm_show_error_msg('Введите описание задачи (мин. длина 10 симоволов)!');
+		 
+		return false;	
+	}
+	
+	%{/if}%
+	
+	%{if $field_rights.can_modify_suppliers}%
+	if((!$("#wo_supplier").prop("checked"))&&($("tr[id^=our_supplier_row_]").length==0)){
+		sfm_show_error_msg('Укажите хотя бы одного контрагента, либо отметьте галочку Без контрагента!');
+		  	return false;	
+		
+	}
+	
+	%{/if}%
+	
+	return true; 
+}
+
+
+%{if $field_rights.topic}%
+frmvalidator.addValidation("topic","req","Укажите название задачи!");
+%{/if}%
+
+%{if $field_rights.topic}%
+frmvalidator.addValidation("user_1","gt=0","Укажите постановщика задачи!");
+%{/if}%
+
+%{if $field_rights.can_modify_2}%
+frmvalidator.addValidation("user_2","gt=0","Укажите ответственного задачи!");
+%{/if}%
+
+%{if $field_rights.can_delegate}%
+frmvalidator.addValidation("delegate","gt=0","Выберите сотрудника для делегирования!");
+%{/if}%
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+

@@ -1,0 +1,346 @@
+
+<style>
+p{
+	font-size:11px;
+}
+table{
+	border-collapse:collapse;
+}
+td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:11px;
+}
+th{
+	font-weight:normal;
+}
+td.ten, th.ten, .ten{
+	font-size:11px;
+}
+table.blacktable{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable, th.blacktable{
+	border: 1px solid black;
+}
+table.blacktable tr td, table.blacktable tr th{
+	border: 1px solid black;
+	font-size:11px;
+	
+}
+table.blacktable2{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable2, th.blacktable2, tr.blacktable2{
+	border: 2px solid black;
+	font-size:11px;
+}
+td p{
+	margin-bottom:0px;
+}
+ .colon{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:11px;
+ }
+ 
+ .title{
+	font-family:Arial, Helvetica, sans-serif;
+	 font-size:11pt;
+ }
+ .header{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:11px;
+ }
+</style>
+
+
+
+<p style="font-size:20px; font-weight:bold; text-align:center;">
+
+АКТ СВЕРКИ
+
+</p>
+
+<p style="text-align:center;">
+взаимных расчетов <br />
+
+между  %{$opf.name}% %{$org.full_name}%<br />
+
+и %{section name=rowsec loop=$items}%
+%{$items[rowsec].opf_name}% %{$items[rowsec].full_name}%
+%{/section}%
+</p>
+
+
+<div style="float:right;">
+<p>
+г. Москва
+</p>
+</div>
+
+
+<div style="float:left;">
+<p>
+%{$pdate}%
+</p>
+</div>
+
+<br clear="all" />
+
+
+<p>
+Мы, нижеподписавшиеся, главный бухгалтер %{$opf.name}%&nbsp;%{$org.full_name}% <span style="text-decoration:underline;"> %{$org.main_accountant}% </span>, с одной стороны, и главный бухгалтер %{section name=rowsec loop=$items}%
+%{$items[rowsec].opf_name}%&nbsp;%{$items[rowsec].full_name}% <span style="text-decoration:underline;"> %{$items[rowsec].main_accountant}% </span>
+%{/section}%, с другой стороны, составили настоящий акт сверки в том, что состояние
+взаимных расчетов по данным учета следующее:
+
+</p>
+
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+<script type="text/javascript">
+$(function(){
+	$("table.blacktable").attr('border','1');
+});
+</script>
+
+
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*" class="main">Организация
+    %{if $extended_an==0}%
+    <strong> %{$opf.name}% %{$org.full_name}%</strong>
+    %{/if}%
+    </th>
+  %{if $extended_an==1}%  <th scope="col" class="main"> <strong> %{$opf.name}% %{$org.full_name}%</strong></th>%{/if}%
+    <th scope="col" width="200" colspan="4" class="main">Сумма взаиморасчетов</th>
+</tr>
+<tr align="center" valign="top">
+	<th scope="col" class="main">Контрагент</th>
+	%{if $extended_an==1}%<th scope="col" class="main">&nbsp;</th>%{/if}%
+    <th scope="col" rowspan="2" width="80" class="main">Нач. остаток, руб.</th>
+    <th scope="col" rowspan="2" width="80" class="main">Поступления, руб.</th>
+    <th scope="col" rowspan="2" width="80" class="main">Оплаты, руб.</th>
+    <th scope="col" rowspan="2" width="80" class="main">Кон. остаток, руб.</th>
+</tr>    
+
+
+<tr align="center" valign="top">
+	<th scope="col" class="main">Период
+</th>
+	%{if $extended_an==1}%
+    <th scope="col" class="main">Документ движения (регистратор)
+</th>
+%{/if}%
+</tr>
+    
+  
+</tr>
+
+</thead>
+<tbody>
+
+
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<th align="left" scope="col" width="*">
+   <!-- контрагент -->
+     <strong> %{$items[rowsec].full_name}%, %{$items[rowsec].opf_name}%</strong>
+    
+    </th>
+   %{if $extended_an==1}%
+     <th scope="col" width="*">
+ 
+    </th>
+    %{/if}%
+    <th scope="col"  width="80"> <strong> %{$items[rowsec].before_ost}%</strong>
+    </th>
+   
+    <th scope="col"  width="80"><strong>%{$items[rowsec].dolg}%</strong>
+    
+    </th>
+    <th scope="col"  width="80" >
+    <strong>%{$items[rowsec].plus}%</strong>
+   
+    </th>
+    <th scope="col"  width="80" >
+     <strong> %{$items[rowsec].after_ost}%</strong>
+   
+    </th>
+    
+   
+  
+</tr>
+%{if $extended_an==1}%
+<!-- детализация контрагента -->
+	
+ 	%{if $by_contract==0}%
+       
+
+       %{foreach from=$items[rowsec].subs item=document}%
+        %{include file="an_supplier/an_supplier_list_sverka_row.html"}%
+        %{/foreach}%
+    %{else}%    
+        %{section name=subsec loop=$items[rowsec].subs}%
+       <tr align="center" valign="top">
+       <th align="left" scope="col" width="*" >
+        <!-- договор -->
+            
+          <strong>
+            %{if $items[rowsec].subs[subsec].id==0}%
+             Общие документы
+            %{else}%
+          
+             %{if $items[rowsec].subs[subsec].is_incoming==1}%Вх.%{else}%Исх.%{/if}%
+             
+              %{if $items[rowsec].subs[subsec].is_basic==1}%осн.%{/if}%
+             
+             договор № %{$items[rowsec].subs[subsec].contract_no}% от %{$items[rowsec].subs[subsec].contract_pdate}%
+             
+            %{/if}%     
+             </strong>
+        
+        </th>
+       %{if $extended_an==1}%
+         <th scope="col" width="*">
+     
+        </th>
+        %{/if}%
+        <th scope="col"  width="80"> <strong> %{$items[rowsec].subs[subsec].before_ost}%</strong>
+        </th>
+       
+        <th scope="col"  width="80"><strong>%{$items[rowsec].subs[subsec].dolg}%</strong>
+        
+        </th>
+        <th scope="col"  width="80" >
+        <strong>%{$items[rowsec].subs[subsec].plus}%</strong>
+       
+        </th>
+        <th scope="col"  width="80" >
+         <strong> %{$items[rowsec].subs[subsec].after_ost}%</strong>
+       
+        </th>
+        </tr>
+        %{foreach from=$items[rowsec].subs[subsec].docs item=document}%
+        %{include file="an_supplier/an_supplier_list_sverka_row.html"}%
+        %{/foreach}%
+        %{/section}%
+        
+    %{/if}%
+	
+%{/if}%
+%{/section}%
+<tr align="center" valign="top">
+<th scope="col" class="main">
+    <strong>Итог</strong>
+    </th>
+   %{if $extended_an==1}% <th scope="col" class="main">&nbsp;</th>%{/if}%
+    <th scope="col" class="main" style="white-space:nowrap;"><strong>%{$before_ost}%</strong></th>
+    
+    <th scope="col" width="80" class="main" style="white-space:nowrap;"><strong>%{$total_dolg}%</strong></th>
+    <th scope="col" width="80"  class="main" style="white-space:nowrap;"><strong>%{$total_plus}%</strong></th>
+    <th scope="col" width="80"  class="main" style="white-space:nowrap;"><strong>%{$after_ost}%</strong></th>
+</tr>
+</tbody>
+</table>
+<br />
+<br />
+<br />
+
+
+<div style="page-break-inside: avoid !important;">
+
+<table width="100%" border="0" cellpadding="10" cellspacing="2"  style="page-break-inside: avoid !important;" >
+<tr align="left" valign="top">
+<td width="50%">
+	По данным 
+    %{$opf.name}%&nbsp;%{$org.full_name}% <br />
+
+    <strong>на %{$pdate2}% 
+    
+    %{if $after_ost_unf<0}%
+    задолженность в пользу 
+    %{section name=rowsec loop=$items}%
+%{$items[rowsec].opf_name}%&nbsp;%{$items[rowsec].full_name}%
+	%{/section}%
+    <span style="white-space:nowrap;">%{$after_ost_abs}%  
+    руб.</span>
+    
+    %{elseif  $after_ost_unf>0}%
+    задолженность в пользу 
+    %{$opf.name}%&nbsp;%{$org.full_name}%
+     <span style="white-space:nowrap;">%{$after_ost_abs}%  
+    руб.</span>
+    %{else}%
+    задолженность между контрагентами отсутствует.
+    %{/if}%
+    
+    </strong>
+    
+    <br />
+<br />
+<br />
+	От %{$opf.name}%&nbsp;%{$org.full_name}% <br />
+    главный бухгалтер <br />
+<br />
+<br />
+__________________________&nbsp;(%{$org.main_accountant}%)<br /><br />
+
+	М.П.
+</td>
+<td width="50%">
+По данным 
+    %{section name=rowsec loop=$items}%
+%{$items[rowsec].opf_name}%&nbsp;%{$items[rowsec].full_name}%<br />
+
+    <strong>на %{$pdate2}%
+    
+     %{if $after_ost_unf<0}%
+    задолженность в пользу 
+   
+%{$items[rowsec].opf_name}%&nbsp;%{$items[rowsec].full_name}%
+	
+    <span style="white-space:nowrap;">%{$after_ost_abs}%  
+    руб.</span>
+    
+    %{elseif $after_ost_unf>0}%
+    задолженность в пользу 
+    %{$opf.name}%&nbsp;%{$org.full_name}%
+     <span style="white-space:nowrap;">%{$after_ost_abs}%  
+    руб.</span>
+    %{else}%
+    задолженность между контрагентами отсутствует.
+    %{/if}%
+    
+    
+    </strong>
+    
+    <br />
+<br />
+<br />
+	От %{$items[rowsec].opf_name}%&nbsp;%{$items[rowsec].full_name}% <br />
+    главный бухгалтер <br />
+<br />
+<br />
+__________________________&nbsp;(%{$items[rowsec].main_accountant}%)
+	%{/section}%<br /><br />
+
+	М.П.
+</td>
+</tr>
+</table>
+
+
+</div>
+
+

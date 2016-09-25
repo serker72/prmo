@@ -1,0 +1,794 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+	
+	$("s_beg").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_end").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_beg").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+ 
+	
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+ 
+ 
+	
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="sched_4.html" prefix="" description="Информация о редактировании звонка" style="float:right" is_right=true}%
+
+
+
+
+<div style="float:right; margin-right:10px;">
+
+<input type="button" value="Файлы..." onclick="location.href='sched_files.php?bill_id=%{$bill.id}%';" />
+
+</div>
+
+
+
+<h1>Запланировать звонок</h1>
+
+<form action="ed_sched.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+ 
+
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+
+<div style="float:left; margin-right:10px;">
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+	<strong>Вид звонка:</strong>
+    <br>
+    
+    <input type="hidden" value="%{$bill.incoming_or_outcoming}%" name="incoming_or_outcoming" id="incoming_or_outcoming" />
+	
+    
+
+    %{if $bill.incoming_or_outcoming==1}%
+    <strong>Исходящий звонок</strong>
+    %{else}%
+    <strong>Входящий звонок</strong>
+    %{/if}%
+ 
+</div>
+
+ 
+
+
+<div style="float:left; margin-right:10px;">
+    
+    <label for="pdate_beg">
+    Дата звонка: 
+    </label><br />
+    
+    <input type="text" %{if !$can_modify}% disabled="disabled"%{/if}% value="%{$bill.pdate_beg}%" id="pdate_beg" name="pdate_beg"  size="10"   maxlength="10" />
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="ptime_beg">Время звонка:</label> <br>
+
+    <!--<input type="text" value="%{$time}%" name="ptime_beg" id="ptime_beg" size="10" maxlength="5" />
+    
+    -->
+     <select %{if !$can_modify}% disabled="disabled"%{/if}%  name="ptime_beg_h" id="ptime_beg_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$ptime_beg_hr output=$ptime_beg_h}%
+    </select>: 
+    <select  %{if !$can_modify}% disabled="disabled"%{/if}%  name="ptime_beg_m" id="ptime_beg_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$ptime_beg_mr output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+ <strong>Сохранен как:</strong>
+
+ 	<input type="hidden" value="%{$bill.plan_or_fact}%" name="plan_or_fact" id="plan_or_fact" /><br>
+	
+    
+    %{if $bill.plan_or_fact==1}% 
+    <strong>звонок совершенный</strong>
+    %{else}%
+    <strong>звонок запланированный</strong>
+    %{/if}% 
+   
+</div>
+
+
+ 
+
+<div style="float:left; margin-right:10px;">
+    <label for="pdate">
+    Дата создания: 
+    </label><br />
+    
+    %{$bill.pdate}%
+    
+</div>
+
+
+<div style="float:right; margin-right:0px; min-width:110px;" id="toggle_annul">
+%{include file="plan/toggle_annul_card.html"}%
+
+</div>
+
+<div style="float:right;  margin-right:10px; ">
+   %{if $bill.is_confirmed==1}%
+  <a href="ed_sched_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать..."></a>
+  %{else}%
+  <a href="#" onClick="alert('Для печати звонка необходимо утвердить его заполнение!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+  %{/if}%
+</div>
+
+<div style="float:right;  margin-right:10px; ">
+ 	%{if $bill.is_confirmed==1}%
+    <a href="#" id="email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="plan/pdf_actions.html" mode=0}%
+    %{else}%
+    <a href="#" onClick="alert('Для отправки на электронную почту звонка необходимо утвердить его заполнение!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+    %{/if}%
+</div>
+
+
+  %{if $can_create and $bill.status_id!=3}%
+      <a href="#" onclick="window.open('ed_sched.php?kind_id=%{$bill.kind_id}%&copyfrom=%{$bill.id}%'); return false;" class="reestr_copy reestr_right_button24" data-comment="Копировать..." style="float:right; margin-right:10px;"></a>
+    %{elseif !$can_create}%
+     <a href="#" onclick="alert('У Вас недостаточно прав для копирования звонка.'); return false;" class="reestr_copy reestr_right_button24 reestr_inactive" data-comment="Копировать..." style="float:right; margin-right:10px;"></a>
+    %{elseif $bill.status_id==3}%
+     <a href="#" onclick="alert('Невозможно копировать аннулированный звонок. Восстановите звонок для его копирования.'); return false;" class="reestr_copy reestr_right_button24 reestr_inactive" data-comment="Копировать..." style="float:right; margin-right:10px;"></a> 
+    %{/if}%
+    
+  
+
+<br clear="all" />
+
+
+
+<div style="float:left; margin-right:20px;">
+
+	<label for="manager_select">Сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$bill.manager_id}%"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+   
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  
+
+	
+	<input type="button" id="manager_select" value="..."  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+    <input type="button" id="manager_clear" value="x"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+	
+    %{include file="plan/manager_actions.html"}%
+    
+</div> 
+
+<br clear="all" />
+<p />
+
+
+	
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контакт:</h3>
+</div> 
+ 
+<div style="float:left; margin-right:20px;"> 
+  <input type="button" %{if !$can_modify}% disabled="disabled"%{/if}% id="supplier_select" value="..." />
+    <input type="button" %{if !$can_modify}% disabled="disabled"%{/if}% id="supplier_clear" value="x" /> 
+    
+</div>
+<br clear="all" />
+<p /> 
+    
+%{include file="plan/supplier_actions.html"}%
+
+<div style="float:left; margin-right:5px;">
+ 
+ 
+ 
+ 
+	<input type="hidden"  %{if !$can_modify }% disabled%{/if}% id="supplier_id" name="supplier_id" value="%{$bill.supplier_id}%" />
+    <input type="hidden"   %{if !$can_modify }% disabled%{/if}%   id="contact_id" name="contact_id" value="%{$bill.contact_id}%" />
+    <input type="hidden"   %{if !$can_modify }% disabled%{/if}%  id="ccontact_value" name="ccontact_value" value="%{$bill.ccontact_value}%" />
+    
+    
+    <label for="supplier_string">Контрагент:</label><br>
+    <input type="text" id="supplier_string" value="%{$bill.supplier_string|escape}%" disabled size="40" maxlength="255" style="width:300px;" />
+    
+   
+    
+   
+</div>
+<div style="float:left; margin-right:20px; padding-top:15px;">
+ <a href="#" onClick=" if(($('#supplier_id').val()!='')&&($('#supplier_id').val()!='')) window.open('supplier.php?action=1&id='+$('#supplier_id').val()+'&show_actions=1'); return false;" class="reestr_edit reestr_button24" style="display:inline-block !important; float:none;"  data-comment="перейти во вкладку Действия по контрагенту"></a> 
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+
+    
+    <label for="supplier_string">Имя, должность:</label><br>
+
+    <input type="text" id="contact_string" value="%{$bill.contact_string|escape}%" disabled size="40" maxlength="255" style="width:300px;" /><br>
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+ 
+    <label for="supplier_string">Телефон:</label><br>
+    <input type="text" id="contact_value_string" value="%{$bill.contact_value_string}%" disabled size="40" maxlength="255" style="width:300px;" /><br>
+	
+    
+
+</div>
+
+ 
+
+ <br clear="all" />
+<p />
+
+
+
+
+
+
+<div id="description_block" style="float:left; width:100%; min-width:480px;  margin-right:0px; %{if $bill.incoming_or_outcoming==1 and $bill.plan_or_fact==0}% %{else}% display:none;%{/if}% ">
+
+<label for="description">Цель звонка:</label><br>
+<textarea id="description" name="description" cols="60" rows="5" style="width:940px;" %{if !$can_modify}% disabled="description"%{/if}%>%{$bill.description|escape}%</textarea>
+
+ 
+<script type="text/javascript">
+	try{
+			$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height:'25px'
+            });
+		
+	}catch(e){}
+	
+	 
+	</script>
+ <br clear="all" />
+<p />
+
+</div>
+
+
+
+
+
+
+
+
+
+
+   
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+
+<label for="report">Результат звонка:</label><br>
+<textarea id="report" name="report" cols="60" rows="5" style="width:940px;" %{if !$can_modify_rep}% disabled="disabled"%{/if}%>%{$bill.report|escape}%</textarea>
+
+ 
+<script type="text/javascript">
+	try{
+			$("#report").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height:'100px'
+            });
+		
+	}catch(e){}
+	
+	 
+	</script>
+
+</div>
+ 
+
+<br clear="all" />
+<p />
+
+
+
+
+
+<h3>Напомнить мне:</h3>
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" id="remind_do" name="remind_do" value="1" %{if $bill.remind_do==1}%checked%{/if}% %{if !$can_modify_rep or $bill.incoming_or_outcoming==0}% disabled="disabled"%{/if}% /><label for="remind_do">напомнить мне</label>
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="remind_pdate">
+Дата напоминания: 
+</label><br />
+
+<input type="text" %{if !$can_modify_rep or $bill.incoming_or_outcoming==0}% disabled="disabled"%{/if}% value="%{$bill.remind_pdate}%" id="remind_pdate" name="remind_pdate"  size="10"   maxlength="10" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+
+
+<label for="remind_ptime">Время напоминания:</label><br />
+ 
+
+<select %{if !$can_modify_rep  or $bill.incoming_or_outcoming==0}% disabled="disabled"%{/if}%  name="remind_ptime_h" id="remind_ptime_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$remind_ptime_hr output=$ptime_beg_h}%
+    </select>: 
+    <select  %{if !$can_modify_rep  or $bill.incoming_or_outcoming==0}% disabled="disabled"%{/if}%  name="remind_ptime_m" id="remind_ptime_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$remind_ptime_mr output=$ptime_beg_m}%
+    </select>
+     
+
+
+</div>
+
+
+ <br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_done").prop("disabled",true);
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/sched.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 $("#is_confirmed_done").prop("checked",false);
+			 $("#is_confirmed_done").trigger("click");
+			  $("#is_confirmed_done").prop("checked",false);
+		}
+	});
+});
+</script>
+
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_done" name="is_confirmed_done" value="1" onchange="" %{if $bill.is_confirmed_done==1}% checked="checked"%{/if}% %{if $can_confirm_done==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_done">Утверждаю выполнение</label>
+ 
+
+<span id="is_confirmed_done_confirmer">%{$is_confirmed_done_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_done").bind("click",function(){
+		
+		if(	$("#is_confirmed_done").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/sched.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_shipping_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_done_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_done_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+
+
+
+<br clear="all">
+
+<p />
+
+
+
+
+
+
+ 
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку звонков" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='shedule.php';
+}else location.href='shedule.php';" />
+
+
+
+</form>
+%{if $can_modify}%
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	if($("#remind_do").prop("checked")){
+		if($("#remind_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату напоминания!');
+			return false;
+		}	
+		
+		 			
+	}
+	 
+		if( ($("#supplier_id").val()==0) || ($("#supplier_id").val()=="") || ($("#supplier_id").val()==null) || ($("#supplier_id").val()==undefined) ){
+			sfm_show_error_msg('Укажите контрагента!');
+			return false;
+		}
+		
+		if( ($("#contact_id").val()==0) || ($("#contact_id").val()=="") || ($("#contact_id").val()==null) || ($("#contact_id").val()==undefined) ){
+			sfm_show_error_msg('Укажите контакт контрагента!');
+			return false;
+		}
+		
+		if( ($("#ccontact_value").val()==0) || ($("#ccontact_value").val()=="") || ($("#ccontact_value").val()==null) || ($("#ccontact_value").val()==undefined) ){
+			sfm_show_error_msg('Укажите контакт контрагента!');
+			return false;
+		}
+	 
+	
+ 
+	if($("#plan_or_fact").val()==1){
+		
+		ev_date=new Date( $("#pdate_beg").val().substr(6,4), $("#pdate_beg").val().substr(3,2)-1, $("#pdate_beg").val().substr(0,2), $("#ptime_beg_h").val(), $("#ptime_beg_m").val(),0,0);
+		now=new Date();
+		
+		if(ev_date>now){
+			sfm_show_error_msg('Некорректно указаны дата и время звонка: фактически совершенный звонок не может быть позднее текущего времени и даты.');
+			return false;	
+		}
+		
+	}
+	 
+	 
+	
+		
+		//проверка доступности  утверждения цены
+		if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked"))){
+			 
+			 
+			  //если мы создаем запланиированный, исходящий звонок - то требовать запонение поля Цель звонка
+			 if(($("#plan_or_fact").val()==0)&&($("#incoming_or_outcoming").val()==1)){
+				
+				try{
+					data=CKEDITOR.instances.description.getData();
+				}catch(e){
+					data=$("#description").val();
+				}
+				
+				 
+				if($.trim(strip_tags(data)).length<10){
+					 sfm_show_error_msg('Заполните поле Цель звонка (мин. длина 10 симоволов)!');
+					 $("#description").focus();
+					return false;		
+				}
+				
+			}
+			 
+			 
+			$.ajax({
+				async: false,
+				url: "/js/sched.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить заполнение звонка. Причина: "+data+""); 
+					return false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния звонка. Пожалуйста, попытайтесь сохранить звонок снова.");
+					return false;
+				}	 
+			});
+			
+			 
+		}
+		 
+		//проверять доступность выбранного контрагента выбранному сотруднику
+	supplier_ids=new Array();
+	var can_ret=true;
+
+	supplier_ids.push($("#supplier_id").val());
+
+	
+	$.ajax({
+		async: false,
+		url: "/js/sched.php",
+		type: "POST",
+		data:{
+			"action":"check_managers_to_supplier",
+			"manager_id": $("#manager_id").val(),
+			"supplier_ids[]": supplier_ids
+		},
+		beforeSend: function(){
+			  
+		},
+		success: function(data){
+		  //alert(data);
+		  if(data!=0){
+			 
+			/* al=data.split(';');
+			 names=new Array();
+			 $.each(al, function(k,v){
+				names.push($("#supplier_string_"+v).html()); 
+			 });*/
+			 
+			 alert("Невозможно сохранить действие, причина: указанный сотрудник "+$("#manager_string").val()+" не имеет доступа к контрагенту: "+$("#supplier_string").val());
+			 can_ret=can_ret&&false;
+		  } 
+		},
+		error: function(xhr, status){
+			
+			alert("Ошибка при проверке состояния действия. Пожалуйста, попытайтесь сохранить действие снова.");
+			can_ret=can_ret&&false;	
+		}	 
+	});			
+	if(!can_ret) return false; 	
+		
+	
+	 
+	return true; 
+}
+
+frmvalidator.addValidation("pdate_beg","req","Выберите дату звонка!");
+
+ frmvalidator.addValidation("manager_id","req","Выберите сотрудника!");
+frmvalidator.addValidation("manager_id","gt=0","Выберите сотрудника!");
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{else}%
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	var can_ret=true;
+	//проверка доступности снятия утверждения отгрузки
+		if(can_ret&&(%{$bill.is_confirmed_done}%==1)&&($("#is_confirmed_done").prop("checked")==false)){
+			
+			
+			 
+			$.ajax({
+				async: false,
+				url: "/js/sched.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение выполнения звонка. Причина: "+data+"\n"); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния звонка. Пожалуйста, попытайтесь сохранить звонок снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+		
+		
+		//проверка доступности  утверждения отгрузки
+		if(can_ret&&(%{$bill.is_confirmed_done}%==0)&&($("#is_confirmed_done").prop("checked"))){
+			
+			try{
+		data=CKEDITOR.instances.report.getData();
+	}catch(e){
+		data=$("#report").val();
+	}
+
+	// alert(CKEDITOR.instances.report.getData());
+			if($.trim(data).length<10){
+				 sfm_show_error_msg('Заполните поле Результат звонка (мин. длина 10 симоволов)!');
+				 $("#report").focus();
+				can_ret=can_ret&&false;		
+			}
+		}
+		if(can_ret&&(%{$bill.is_confirmed_done}%==0)&&($("#is_confirmed_done").prop("checked"))){
+			 
+			$.ajax({
+				async: false,
+				url: "/js/sched.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить выполнение звонка. Причина: "+data+""); 
+					 can_ret=can_ret&&false;
+				  }else{
+					 //can_ret=true;
+					  
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния звонка. Пожалуйста, попытайтесь сохранить звонок снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+		 
+		
+		}
+		
+	
+	
+	
+	
+	//проверка доступности снятия утверждения цены
+		if(can_ret&&(%{$bill.is_confirmed}%==1)&&($("#is_confirmed").prop("checked")==false)){
+			
+			
+			
+			$.ajax({
+				async: false,
+				url: "/js/sched.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заполнения звонка. Причина: "+data+""); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния звонка. Пожалуйста, попытайтесь сохранить звонок снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+		
+		
+
+	return can_ret; 
+}
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{/if}%

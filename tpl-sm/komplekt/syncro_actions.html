@@ -1,0 +1,100 @@
+
+<script type="text/javascript">
+$(function(){
+	$("#syncro").bind("click", function(){
+		
+		if(!window.confirm("Вы уверены, что хотите скопировать заявку в организацию "+$("#supplier_id_string").val()+"?")) return false;
+		
+		
+		//проверка наличия уже связанных утв. документов
+		var docs_list='';
+		
+		 $.ajax({
+		  async: false,
+		  url: "/js/komplekt.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"check_out_docs",
+			  "id":$("#id").val()
+		  },
+		  beforeSend: function(){
+			
+		  },
+		  success: function(data){
+			 docs_list=data;
+			
+		  },
+		  error: function(xhr, status){
+			 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+		  }	 
+		});
+		
+		//если есть исх. счет по заявке - то спросить про стандартную схему
+		if(docs_list.length>0){
+			if(!window.confirm("Внимание!\nОбнаружены связанные с заявкой документы в базе организации "+$("#supplier_id_string").val()+": "+docs_list+"\nКопирование заявки приведет к снятию утверждения этих документов и приведения их содержания к исходному виду.\nВы уверены?")) return false;
+		}
+		
+		
+		
+		
+		//проверка наличия связ исх. счетов
+		var bills_list='';
+		var is_standart=0;
+		
+		 $.ajax({
+		  async: false,
+		  url: "/js/komplekt.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"check_out_bills",
+			  "id":$("#id").val()
+		  },
+		  beforeSend: function(){
+			
+		  },
+		  success: function(data){
+			 bills_list=data;
+			
+		  },
+		  error: function(xhr, status){
+			 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+		  }	 
+		});
+		
+		//если есть исх. счет по заявке - то спросить про стандартную схему
+		if(bills_list.length>0){
+			if(window.confirm("Обнаружены связанные с заявкой исходящие счета: "+bills_list+"\nКопировать их по стандартной схеме (0,5%)?")) is_standart=1;	
+		}
+		
+		
+		//главный запрос - запуск скрипта копирования заявки
+		 $.ajax({
+		  async: true,
+		  url: "/js/komplekt.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"syncro_komplekt",
+			  "id":$("#id").val(),
+			  "is_standart":is_standart
+		  },
+		  beforeSend: function(){
+			
+		  },
+		  success: function(data){
+			 alert("Копирование завершено. В организации "+$("#supplier_id_string").val()+" созданы следующие документы: "+data+".\nПожалуйста, заполните в них недостающие поля и утвердите документы.");
+			
+		  },
+		  error: function(xhr, status){
+			 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+		  }	 
+		});
+		
+		
+		
+		return false;
+	});	
+});
+</script>

@@ -1,0 +1,90 @@
+<!-- таблица в диалоге -->
+<strong>Позиции в реализации:</strong>   
+
+
+
+<!-- 1= меняем распоряжение, счет 0=не меняем -->
+<input type="hidden" id="pos_change_low_mode" value="%{$pos_change_low_mode}%" />
+<input type="hidden" id="pos_change_high_mode" value="%{$pos_change_high_mode}%" />
+
+<!-- поле для хранения результатов выбора 
+<input type="hidden" id="upper_choice_was_made" value="0" />
+<input type="hidden" id="lower_choice_was_made" value="0" />
+-->
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по реализации</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+        <th scope="col" width="80">Цена с НДС</th>
+        <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+        <th scope="col" width="80">Итоговая цена</th>
+        <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма	с учетом скидки</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего, руб.</th>
+          <th scope="col" width="100">Заявка</th>
+        
+    </tr>
+    </thead>
+   <tbody>
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity>0}%
+   %{include file="acc/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+   </tbody>
+   </table>
+   
+   <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+   
+   
+   
+ 	<strong>Доступные позиции в распоряжении на отгрузку:</strong>   
+    
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по распоряжению</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+        <th scope="col" width="80">Цена с НДС</th>
+        <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+        <th scope="col" width="80">Итоговая цена</th>
+        <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего, руб.</th>
+          <th scope="col" width="100">Заявка</th>
+        
+    </tr>
+    </thead>
+   <tbody>
+
+    
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity==0}%
+   
+     %{include file="acc/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+    </tbody>
+    </table>
+    
+	

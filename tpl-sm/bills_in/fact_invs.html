@@ -1,0 +1,17 @@
+
+%{section name=rowsec loop=$items}%
+
+ <a href="ed_invcalc.php?action=1&id=%{$items[rowsec].id}%" target="_blank">%{$items[rowsec].code}% </a> от %{$items[rowsec].invcalc_pdate}%
+     
+     
+    %{$items[rowsec].real_debt}% руб., по счету: 
+    
+    
+    %{section name=rowsec2 loop=$items[rowsec].osnovanie}%
+    %{$items[rowsec].osnovanie[rowsec2].value}% руб.<br />
+
+    %{/section}%
+
+
+%{/section}%
+

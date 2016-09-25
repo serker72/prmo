@@ -1,0 +1,91 @@
+ 
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="100">
+    Контрагент
+    </th>
+     <th scope="col" width="100">
+    Город(а) контрагента
+    </th>
+    
+       <th scope="col" width="100">
+   Контакт(ы) контрагента
+    </th>
+    
+    <th scope="col" width="*">
+    Цель
+    </th>
+    
+    %{if $bill.kind_id==2}%
+     <th scope="col" width="35%">
+    Результат
+    </th>
+    %{/if}%
+     
+    </tr>
+    </thead>
+ <tbody id="suppliers_tbody">
+ 
+%{section name=supsec loop=$suppliers}%
+  <tr align="left" valign="top" id="supplier_row_%{$suppliers[supsec].id}%">
+    	
+    
+    <td width="*">
+    
+      %{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}% 
+    </td>
+    
+    <td width="*">
+     <small>
+    %{foreach from=$suppliers[supsec].cities item=city}%	 
+  
+    
+    <span id="supplier_city_name_%{$suppliers[supsec].id}%_%{$cities[citisec].id}%">%{$city.name}%, %{$city.okrug_name}%, %{$city.region_name}%,  %{$city.country_name}%</span><br>
+
+    
+    
+    %{/foreach}%
+     </small>
+    </td>
+    
+     <td width="*">
+     <small>
+     %{foreach from=$suppliers[supsec].contacts item=contact}%	 
+   
+    
+    <span id="supplier_contact_name_%{$suppliers[supsec].id}%_%{$contact.id}%">%{$contact.name}%, %{$contact.position}%</span><br>
+
+    
+    
+    %{/foreach}%
+     </small>
+    </td>
+    
+    
+    
+    <td width="*">
+    	%{$suppliers[supsec].note}%
+    
+    
+    </td>
+    
+    
+       %{if $bill.kind_id==2}%
+    <td width="35%">
+    %{if $suppliers[supsec].not_meet}%
+    не встречался
+    %{/if}%
+    %{$suppliers[supsec].result}%
+    </td>
+    %{/if}%
+     
+    
+   </tr> 
+%{/section}%
+ 
+</tbody>
+</table>
+ 
+

@@ -1,0 +1,41 @@
+<table width="100%" class="reptable">
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="sched_reminder_id_%{$item.r_id}%" value="%{$item.r_id}%" />
+         %{$item.full_title}%, напомнить %{$item.r_pdate}%
+         
+          
+</td>
+
+<td width="180">         
+         
+           	<input type="radio" name="next_remind_%{$item.r_id}%" id="next_remind_%{$item.r_id}%_0" value="0" checked><label for="next_remind_%{$item.r_id}%_0">напомнить еще раз через:</label><br>
+
+            <select   id="remind_period_%{$item.r_id}%" style="width:100px;">
+           
+                <option value="1" selected>15 минут</option>
+                <option value="2">30 минут</option>
+                <option value="3">час</option>
+                <option value="4">сутки</option>
+            </select>
+         
+       
+</td>
+<td width="180">
+         
+         	<input type="radio" name="next_remind_%{$item.r_id}%" id="next_remind_%{$item.r_id}%_1" value="1"><label for="next_remind_%{$item.r_id}%_1">больше не напоминать</label>
+             
+</td> 
+    
+    
+<td width="24">
+ <a href="ed_sched.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 

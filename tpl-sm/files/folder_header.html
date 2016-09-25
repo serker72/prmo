@@ -1,0 +1,303 @@
+
+
+%{if $folder_id==0}%
+<h4>Вы находитесь в основной папке.</h4>
+%{else}%
+<br>
+
+
+<h4>Текущая папка: &nbsp;&nbsp;&nbsp;&nbsp;%{$navi}%</h4>
+<br>
+
+
+%{/if}%
+
+
+%{if $can_create_folder}%
+
+<a href="#" id="do_make_folder%{$prefix}%"  class="reestr_button24" data-comment="создать папку..."><img src="/img/make_folder.png" width="157" height="33" alt="создать папку..."  border="0" /></a>
+
+
+%{/if}%
+
+%{if $can_move_folder}%
+
+&nbsp;&nbsp;
+<a href="#" id="do_move%{$prefix}%" class="reestr_button24" data-comment="переместить выбранные файлы и папки..."><img src="/img/move_files.png" width="157" height="33" alt="переместить выбранные файлы и папки..."  border="0" /></a>
+
+%{/if}%
+
+
+
+<p />
+
+<div id="folder_dialog%{$prefix}%" title="Редактирование папки">
+	<label for="folder_name%{$prefix}%">Название папки:</label><br />
+    <input type="text" id="folder_name%{$prefix}%" size="50" maxlength="512" value="" />
+    
+    <p />
+    
+    <label for="folder_txt%{$prefix}%">Описание папки:</label><br />
+    <textarea id="folder_txt%{$prefix}%" cols="50" rows="7"></textarea>
+    
+	
+</div>
+
+<style type="text/css">
+	div#folder_move_dialog_roller%{$prefix}%{
+		overflow:auto;
+		width:280px;
+		height:400px;
+	}
+
+</style>
+<div id="folder_move_dialog%{$prefix}%" title="Выберите папку для перемещения">
+
+	<div id="folder_move_dialog_roller%{$prefix}%"></div>
+    
+    
+
+</div>
+
+
+<script type="text/javascript">
+
+%{if $can_edit_folder}%
+
+function EditFolder%{$prefix}%(id, name, txt){
+	$("#folder_name%{$prefix}%").val(name);
+	$("#folder_txt%{$prefix}%").val(txt);
+	
+	 $("#folder_dialog%{$prefix}%").dialog({
+			 buttons:{
+				  "Внести изменения": function(){
+					  if($("#folder_name%{$prefix}%").val().length>0) {
+						  $.ajax({
+							  async: true,
+							  url: "/js/%{$pagename}%",
+							  type: "POST",
+							  data:{
+								  "action":"edit_folder",
+								  "id":id,
+								  "filename": $("#folder_name%{$prefix}%").val(),
+								  "txt": $("#folder_txt%{$prefix}%").val()
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								  $("#folder_dialog%{$prefix}%").dialog("close");
+								 // location.reload();
+								  location.href="%{$this_pagename}%?folder_id=%{$folder_id}%&tab_page=%{$tab_page}%";
+											  },
+							  error: function(xhr, status){
+								  //alert("error!");
+								  location.reload();
+							  }	 
+						  });	
+					  		
+					  		
+							
+							
+							
+					  }else{
+							alert("Заполните название папки!"); 
+							$("#folder_name%{$prefix}%").focus(); 
+					  }
+				  },
+				  
+				  "Отмена": function(){
+					  $("#folder_dialog%{$prefix}%").dialog("close");
+					  
+				  }
+			  }
+		  });
+		
+		 $("#folder_dialog%{$prefix}%").dialog("open");	 
+	
+}
+
+%{/if}%
+
+$(function(){
+	$("#folder_dialog%{$prefix}%").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 370,
+		height: 320,
+		stack: true
+	});
+	
+	$("#folder_move_dialog%{$prefix}%").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 350,
+		height: 500,
+		stack: true,
+		buttons:{
+			"Переместить": function(){
+				
+				if($("input[id^=move_folder_id_]:checked").length==0){
+					alert('Выберите папку для перемещения!');
+					
+					
+				}else{
+					
+					var selected_folders=new Array();
+					var selected_files=new Array();
+					
+					var uri='';
+					
+					$.each($("input[id^=check_file%{$id_prefix}%]:checked"), function(k,v){
+						uri=uri+'&check_file[]='+$(v).val();
+					});
+					
+					
+					$.each($("input[id^=fcheck_file%{$id_prefix}%]:checked"), function(k,v){
+						uri=uri+'&fcheck_file[]='+$(v).val();
+					});
+					
+					//alert('%{$this_pagename}%?action=4&move_folder_id='+$("input[id^=move_folder_id_]:checked").val()+'&folder_id=%{$folder_id}%&tab_page=%{$tab_page}%'+uri);
+					$(this).dialog('close');
+					
+					location.href='%{$this_pagename}%?action=4&move_folder_id='+$("input[id^=move_folder_id_]:checked").val()+'&folder_id=%{$folder_id}%&tab_page=%{$tab_page}%'+uri;
+					
+				}
+				
+			},
+			"Отмена": function(){
+				$(this).dialog('close');
+			}
+		}
+	});
+	
+	try{
+		touchScrollXY('folder_move_dialog_roller%{$prefix}%');
+	}catch(e){}
+	
+	
+	%{if $can_move_folder}%
+	$("#do_move%{$prefix}%").bind("click", function(){
+		
+		if(($("input[id^=check_file%{$id_prefix}%]:checked").length==0)&&($("input[id^=fcheck_file%{$id_prefix}%]:checked").length==0)){
+			alert("Выберите файлы или папки для перемещения!");
+			return false;	
+		}
+		
+		var selected_folders=new Array();
+		
+		selected_folders.push(%{$folder_id}%);
+		
+		
+		$.each($("input[id^=fcheck_file%{$id_prefix}%]:checked"), function(k,v){
+			selected_folders.push($(v).val());	
+		});
+		
+		//alert(selected_folders);
+		$.ajax({
+			async: true,
+			url: "/js/%{$pagename}%",
+			type: "POST",
+			data:{
+				"action":"load_folders",
+				"selected_folders[]":selected_folders,
+				"storage_id":"%{$storage_id}%"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data, m,v){
+			   // alert(data+m+v)
+				
+				$("#folder_move_dialog_roller%{$prefix}%").html(data);
+				$("#folder_move_dialog%{$prefix}%").dialog('open');
+				
+			},
+			error: function(xhr, status){
+				//alert("error!");
+				//location.reload();
+			}	 
+		});
+		
+		
+		return false;
+	});
+	
+	%{/if}%
+	
+	
+	
+	
+	
+	
+	%{if $can_create_folder}%
+	
+	$("#do_make_folder%{$prefix}%").bind("click", function(){
+		 $("#folder_name%{$prefix}%").val('');
+		 $("#folder_txt%{$prefix}%").val('');
+		 
+		 
+		 $("#folder_dialog%{$prefix}%").dialog({
+			 buttons:{
+				  "Создать папку": function(){
+					  if($("#folder_name%{$prefix}%").val().length>0) {
+						  $.ajax({
+							  async: true,
+							  url: "/js/%{$pagename}%",
+							  type: "POST",
+							  data:{
+								  "action":"make_folder",
+								  "parent_id":"%{$folder_id}%",
+								  "storage_id":"%{$storage_id}%",
+								  "filename": $("#folder_name%{$prefix}%").val(),
+								  "txt": $("#folder_txt%{$prefix}%").val()
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data, m,v){
+								  //alert(data+m+v)
+								  $("#folder_dialog%{$prefix}%").dialog("close");
+								  //location.reload();
+								  
+								  alert("Вы создали папку "+$("#folder_name%{$prefix}%").val()+".\nДля того, чтобы открыть доступ в нее другим сотрудникам, нажмите кнопку 'Поделиться' у данной папки, отметьте необходимые права и нажмите одну из кнопок: 'Сохранить и остаться' или  'Сохранить и выйти'.");
+								  
+								  //alert("Вы создали папку "+$("#folder_name%{$prefix}%").val()+"\nПожалуйста, обратитесь к администраторам программы для назначения прав доступа к папке.");
+								  
+								  location.href="%{$this_pagename}%?folder_id=%{$folder_id}%&tab_page=%{$tab_page}%";
+								  
+											  },
+							  error: function(xhr, status){
+								  //alert("error!");
+								  location.reload();
+							  }	 
+						  });	
+					  		
+					  		
+							
+							
+							
+					  }else{
+							alert("Заполните название папки!"); 
+							$("#folder_name%{$prefix}%").focus(); 
+					  }
+				  },
+				  
+				  "Отмена": function(){
+					  $("#folder_dialog%{$prefix}%").dialog("close");
+					  
+				  }
+			  }
+		  });
+		
+		 $("#folder_dialog%{$prefix}%").dialog("open");
+		
+		return false;
+	});
+
+	%{/if}%
+});
+</script>
+

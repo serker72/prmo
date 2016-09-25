@@ -1,0 +1,95 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+  
+  
+  try{
+  $("#tabs").tabs('select', "#%{$tab_page}%");
+  }catch(e){}
+});
+</script>
+
+
+%{include file="admin_records/admin_dialog.html"}%
+
+%{include file="files_share/share_dialog.html"}%
+
+<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+<div id="tabs">
+  <ul>
+  	%{if $has_faq}% 
+    <li><a href="#tabs-5">Справочная информация</a></li>
+    %{/if}%
+  
+  
+     %{if $has_files}% 
+    <li><a href="#tabs-1">Файлы и документы</a></li>
+    %{/if}% 
+    
+     %{if $has_letters}% 
+    <li><a href="#tabs-3">Письма</a></li>
+    %{/if}% 
+    
+     %{if $has_pmfiles}% 
+    <li><a href="#tabs-4">Файлы +/-</a></li>
+    %{/if}% 
+    
+    
+    %{if $has_spec}% 
+    <li><a href="#tabs-6">Спецдокументы</a></li>
+    %{/if}%
+    
+     
+  </ul>
+  
+  
+    %{if $has_faq}% 
+  <div id="tabs-5">
+    <p>
+    %{$log_faq}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+   %{if $has_files}% 
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+  
+    %{if $has_letters}%
+  <div id="tabs-3">
+    <p>
+    %{$log3}%    
+    </p>
+  </div>
+   %{/if}%
+   
+   
+     %{if $has_pmfiles}% 
+    <div id="tabs-4">
+    <p>
+    %{$log4}%    
+    </p>
+  </div>
+    %{/if}% 
+  
+  
+   %{if $has_spec}% 
+    <div id="tabs-6">
+    <p>
+    %{$log_spec}%    
+    </p>
+  </div>
+    %{/if}% 
+
+</div>

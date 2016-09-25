@@ -1,0 +1,242 @@
+
+    
+    <tr align="left" valign="top" >
+    	%{if $pay_mode==1}%
+        <td width="24">
+        <input type="radio" name="choosen_bill" value="%{$pospos[pospossec].position_id}%" id="choosen_bill_%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].value!=0}% checked="checked"%{/if}% />
+        
+        <input type="hidden" name="choosen_kind" value="%{$pospos[pospossec].kind}%" id="choosen_bill_%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].value!=0}% checked="checked"%{/if}% />
+        </td>
+        %{/if}%
+        
+        <td width="40">
+        %{if $pospos[pospossec].kind==0}%
+        <a href="ed_bill.php?action=1&id=%{$pospos[pospossec].position_id}%&from_begin=1" target="_blank">%{$pospos[pospossec].code}%</a>
+        <input type="hidden" id="position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        %{elseif $pospos[pospossec].kind==1}%
+        <a href="ed_invcalc.php?action=1&id=%{$pospos[pospossec].position_id}%&from_begin=1" target="_blank">%{$pospos[pospossec].code}%</a>
+        <input type="hidden" id="position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        
+        %{/if}%
+        <input type="hidden" id="kind_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].kind}%" />
+        
+        
+        <input type="hidden" id="hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        </td>
+        <td width="40">
+        %{$pospos[pospossec].pdate}%
+        
+        </td>
+        <td width="40">
+        %{if $pospos[pospossec].kind==0}%
+        %{$pospos[pospossec].supplier_bill_no}%
+        %{elseif $pospos[pospossec].kind==1}%
+        %{$pospos[pospossec].given_no}%
+        %{/if}%
+        </td>
+        
+         <td width="40">
+          %{if $pospos[pospossec].kind==0}%
+        %{$pospos[pospossec].supplier_bill_pdate}%
+         %{elseif $pospos[pospossec].kind==1}%
+        %{$pospos[pospossec].invcalc_pdate}%
+        %{/if}%
+        </td>
+        
+        <td width="*">
+          %{if $pospos[pospossec].kind==0}%
+         %{$pospos[pospossec].pdate_payment_contract}%
+          %{elseif $pospos[pospossec].kind==1}%
+        -
+        %{/if}%
+        </td>
+        <td width="*" style="min-width:250px !important;">
+       <small> %{$pospos[pospossec].fact_pays}%</small>
+        </td>
+        
+        
+        
+        <td width="40" id="summ_%{$pospos[pospossec].hash}%">
+        %{$pospos[pospossec].summ}%
+        
+        </td>
+        
+        <td width="40" >
+        <a href="#" id="payed_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].payed}%</a>
+        
+        </td>
+        
+        
+        <td width="80">
+       %{if $pay_mode==1}% 
+       <span id="span_value_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].value}%</span>
+       <input type="hidden" id="value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].value}%" size="10" maxlength="20"  />
+       %{elseif $pay_mode==0}%
+        <input type="text" id="value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].value}%" size="10" maxlength="20"  />
+        %{/if}%
+       
+        </td>
+        
+        <td width="80" id="ostatok_%{$pospos[pospossec].hash}%">
+<span id="ost_value_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].summ-$pospos[pospossec].payed-$pospos[pospossec].value|string_format:"%.2f"}%</span>
+        
+        
+        
+        
+         <script type="text/javascript">
+		$(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+			  if(isNaN(x) || isNaN(n)) return false;
+			  var m = Math.pow(10,n);
+			  return Math.round(x*m)/m;
+			}
+			
+			%{if $pay_mode==1}% 
+			  //обработка выбора счета
+			  //choosen_bill_
+			  $("#choosen_bill_%{$pospos[pospossec].hash}%").bind("change",function(){
+				  
+				  
+				  
+				  if($("#choosen_bill_%{$pospos[pospossec].hash}%").prop("checked")){
+				  	
+					var what_to_add=$("#value").val().replace("\,","\.");
+					
+					if(
+					(parseFloat($("#summ_%{$pospos[pospossec].hash}%").html())-parseFloat($("#payed_%{$pospos[pospossec].hash}%").html()))<what_to_add){
+					   what_to_add= roundPlus(parseFloat($("#summ_%{$pospos[pospossec].hash}%").html())-parseFloat($("#payed_%{$pospos[pospossec].hash}%").html()),2);
+					}
+					
+					
+					$("#value_%{$pospos[pospossec].hash}%").val(what_to_add);
+					$("#span_value_%{$pospos[pospossec].hash}%").html(what_to_add);
+							
+					$.each($("input[id^='choosen_bill_']"), function(k, v){
+						
+						if($(v).attr('id')=='choosen_bill_%{$pospos[pospossec].hash}%'){
+							//alert('g');
+							
+						
+						}else{
+							//alert($(v).val());
+							//получить хэш, подставить ноль
+							hash=$(v).attr('id').replace('choosen_bill_','');
+							//alert(hash);
+							$("#value_"+hash).val(0);
+					    	$("#span_value_"+hash).html(0);
+						}
+						//
+					});
+					$.each($("input[id^='choosen_bill_']"), function(k, v){
+						hash=$(v).attr('id').replace('choosen_bill_','');
+						
+						$("#value_"+hash).trigger("change");
+					});	
+				  }
+			  });
+			%{/if}%
+			
+			
+			//проверка добавки цены
+			$("#value_%{$pospos[pospossec].hash}%").bind("change",function(){
+				ret=true;
+				
+				if($("#value_%{$pospos[pospossec].hash}%").val().length==0){
+					alert("Заполните поле Сумма!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))||(parseFloat($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))<0)){
+					alert("Неверное значение в поле Сумма!");
+					
+					ret=ret&&false;
+				}
+				
+				//не можем написать сумму больше, чем в остатке
+				if(!isNaN($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))&&(parseFloat("%{$pospos[pospossec].summ-$pospos[pospossec].payed}%")>=0)){
+						
+						if(parseFloat($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))>parseFloat("%{$pospos[pospossec].summ-$pospos[pospossec].payed}%")){
+							alert("Вы не можете перечислить оплату по счету, большую чем "+roundPlus(parseFloat("%{$pospos[pospossec].summ-$pospos[pospossec].payed}%"),2)+" руб.");
+							ret=ret&&false;	
+						}
+					
+				}else if(!isNaN($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))&&(parseFloat("%{$pospos[pospossec].summ-$pospos[pospossec].payed}%")<0)){
+						if(parseFloat($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))>0){
+							alert("По данному счету выполнены все оплаты.");
+							ret=ret&&false;	
+						}
+				}
+				
+				
+				
+				if(!ret) {
+					$("#value_%{$pospos[pospossec].hash}%").addClass("wrong");
+					$("#value_%{$pospos[pospossec].hash}%").focus();
+				}else{
+					//peres4et	
+					$("#value_%{$pospos[pospossec].hash}%").removeClass("wrong");
+						
+					$("#ost_value_%{$pospos[pospossec].hash}%").html(roundPlus(parseFloat($("#summ_%{$pospos[pospossec].hash}%").html())-parseFloat($("#payed_%{$pospos[pospossec].hash}%").html())-parseFloat($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\.")),2));
+				}
+				
+				//проверка итоговой цены
+				
+				
+				//если оплата по счету - то давать выбрать только один счет
+				//выбрать - значит задать ненулевую оплату
+				if(($("#pay_for_bill").prop("checked"))&&(isNaN($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))||(parseFloat($("#value_%{$pospos[pospossec].hash}%").val().replace("\,","\."))!=0))){
+					//проверить, выбраны ли еще какие-нибудь счета
+					var no_pos=true;
+					$.each($("input[id^=value_]"), function(key, value){
+						if((parseFloat($(value).val())!=0)&&( $(value).attr("id")!="value_%{$pospos[pospossec].hash}%" )){
+							no_pos=no_pos&&false;	
+						}
+					});
+					
+					if(!no_pos){
+						alert("Вы можете выбрать только один счет в режиме 'Оплата по счету'!");
+						ret=ret&&false;
+					}
+					
+				}
+				
+				
+				
+				return ret;
+			});
+			
+			
+			$("#payed_%{$pospos[pospossec].hash}%").bind("click", function(){
+			  $.ajax({
+				  async: true,
+				  url: "/js/pay_in.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_bills_pos",
+					  "id":"%{$pospos[pospossec].id}%",
+					  "kind":"%{$pospos[pospossec].kind}%",
+					  "except_id":$("#id").val()
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+		  });
+			
+			
+		});
+		</script>
+        
+        </td>
+    
+    </tr>

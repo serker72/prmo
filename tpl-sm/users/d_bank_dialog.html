@@ -1,0 +1,109 @@
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" />
+<div id="dialog_%{$word}%" title="%{$named}%">
+
+    <em>Банк:</em><br>
+    <input type="text" size="40" maxlength="255" id="%{$word}%_bank" /><p>
+
+    
+    <em>Город банка:</em><br>
+<input type="text" size="40" maxlength="255" id="%{$word}%_city" /><p>
+
+    
+    <em>р/с:</em><br>
+<input type="text" size="40" maxlength="255" id="%{$word}%_rs" /><p />
+
+    
+    <em>к/с:</em><br>
+<input type="text" size="40" maxlength="255" id="%{$word}%_ks" /><p>
+
+    
+    <em>БИК:</em><br>
+<input type="text" size="40" maxlength="255" id="%{$word}%_bik" />
+    
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 450,
+    height: 350,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 $("#%{$word}%_bank").attr("value","");
+ 		 $("#%{$word}%_bik").attr("value","");
+		 $("#%{$word}%_city").attr("value","");
+		 $("#%{$word}%_rs").attr("value","");
+		 $("#%{$word}%_ks").attr("value","");		 		 		 
+		 
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					$.ajax({
+						async: true,
+						url: "/js/user_d.php",
+						type: "POST",
+						data:{
+							"action":"add_%{$word}%",
+							"bank": $("#%{$word}%_bank").attr("value"),
+							"bik": $("#%{$word}%_bik").attr("value"),
+							"city": $("#%{$word}%_city").attr("value"),
+							"rs": $("#%{$word}%_rs").attr("value"),
+							"ks": $("#%{$word}%_ks").attr("value"),
+							"user_id":%{$user_id}%
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						   alert("%{$named}% добавлены!"); 
+						   $.ajax({
+							  async: true,
+							  url: "/js/user_d.php",
+							  type: "POST",
+							  data:{
+								  "action":"redraw_%{$word}%",
+								  "user_id":%{$user_id}%
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								  $("#%{$word}%").html(data);
+								
+							  },
+							  error: function(xhr, status){
+								  
+							  }	 
+						  });
+						  
+						  // $("#new_opf").attr("value","");
+						  // RedrawDic();
+						  // location.reload();
+						},
+						error: function(xhr, status){
+							alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+						
+					$(this).dialog("close");
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$("#dialog_%{$word}%").dialog("open");
+	});
+	
+});
+</script>

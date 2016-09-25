@@ -1,0 +1,174 @@
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="250" class="main">Организация
+    %{if $extended_an==0}%
+    <strong> %{$opf.name}% %{$org.full_name}%</strong>
+    %{/if}%
+    </th>
+  %{if $extended_an==1}%  <th scope="col" class="main" width="*"> <strong> %{$opf.name}% %{$org.full_name}%</strong></th>%{/if}%
+    <th scope="col" width="320" colspan="4" class="main">Сумма оплаты</th>
+</tr>
+<tr align="center" valign="top">
+	<th scope="col" class="main" width="250">Банк</th>
+	%{if $extended_an==1}%<th scope="col" class="main">&nbsp;</th>%{/if}%
+   
+ 
+ 	<th scope="col" width="80" rowspan="2" class="main">Нач. остаток</th>
+    <th scope="col" width="80" rowspan="2" class="main">Приход</th>
+    <th scope="col" width="80" rowspan="2" class="main">Расход</th>
+    
+    <th scope="col" width="80" rowspan="2" class="main">Кон. остаток</th>
+   
+</tr>    
+
+
+<tr align="center" valign="top">
+	<th scope="col" class="main" width="250">Период
+</th>
+	%{if $extended_an==1}%
+    <th scope="col" class="main">Документ движения (регистратор)
+</th>
+%{/if}%
+</tr>
+    
+  
+</tr>
+
+</thead>
+<tbody>
+
+
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<th align="left" scope="col" width="250">
+   <!-- банк -->
+     <strong> %{$items[rowsec].bank}%, р/с %{$items[rowsec].rs}% %{if $items[rowsec].is_basic==1}% (основные реквизиты)%{/if}%</strong>
+    
+    </th>
+   %{if $extended_an==1}%
+     <th scope="col" width="*">
+ 
+    </th>
+    %{/if}%
+   
+   <th scope="col"  width="80" >
+   <strong>%{$items[rowsec].begin_ost}%</strong>
+   
+   </th>
+   
+    <th scope="col"  width="80" >
+    <strong>%{$items[rowsec].plus}%</strong>
+   
+    </th>
+   
+   
+    <th scope="col"  width="80" >
+    <strong>%{$items[rowsec].minus}%</strong>
+   
+    </th>
+ 
+ 	<th scope="col"  width="80" >
+   <strong>%{$items[rowsec].after_ost}%</strong>
+   
+   </th>
+  
+</tr>
+
+%{section name=datesec loop=$items[rowsec].dates}%
+<tr align="center" valign="top">
+	<td width="250" %{if $extended_an==1}% style="background-color:#ddd;" %{/if}%>
+    <strong> %{$items[rowsec].dates[datesec].pdate}%</strong>
+    </td>
+    
+     %{if $extended_an==1}% <td %{if $extended_an==1}% style="background-color:#ddd;" %{/if}%>&nbsp;</td>%{/if}%
+    
+    <td width="80" %{if $extended_an==1}% style="background-color:#ddd;" %{/if}% >
+    <strong> %{$items[rowsec].dates[datesec].begin_ost}%</strong>
+    </td >
+    
+    <td width="80" %{if $extended_an==1}% style="background-color:#ddd;" %{/if}% >
+    <strong> %{$items[rowsec].dates[datesec].plus}%</strong>
+    </td  >
+    
+    <td width="80" %{if $extended_an==1}% style="background-color:#ddd;" %{/if}% >
+    <strong> %{$items[rowsec].dates[datesec].minus}%</strong>
+    </td >
+    
+     <td width="80" %{if $extended_an==1}% style="background-color:#ddd;" %{/if}% >
+   <strong> %{$items[rowsec].dates[datesec].after_ost}%</strong>
+    </td >
+    
+</tr>    
+
+
+%{if $extended_an==1}%
+
+<!-- детализация даты -->
+%{section name=subsec loop=$items[rowsec].dates[datesec].subs}%
+<tr align="center" valign="top">
+	<td width="250">
+    %{$items[rowsec].dates[datesec].subs[subsec].given_pdate}%
+    </td>
+    <td>
+  	
+    %{if $items[rowsec].dates[datesec].subs[subsec].is_incoming==1}%
+	<a href="ed_pay_in.php?action=1&id=%{$items[rowsec].dates[datesec].subs[subsec].id}%" target="_blank">Входящая оплата № %{$items[rowsec].dates[datesec].subs[subsec].code}% (заданный № %{$items[rowsec].dates[datesec].subs[subsec].given_no}%)</a>, 
+    %{else}%
+    <a href="ed_pay.php?action=1&id=%{$items[rowsec].dates[datesec].subs[subsec].id}%" target="_blank">Исходящая оплата № %{$items[rowsec].dates[datesec].subs[subsec].code}% (заданный № %{$items[rowsec].dates[datesec].subs[subsec].given_no}%)</a>, 
+    %{/if}%
+    
+    <a href="supplier.php?action=1&id=%{$items[rowsec].dates[datesec].subs[subsec].supplier_id}%" target="_blank">
+    %{$items[rowsec].dates[datesec].subs[subsec].supplier_name}%, %{$items[rowsec].dates[datesec].subs[subsec].supplier_opf}%</a>
+    %{if $items[rowsec].dates[datesec].subs[subsec].is_inner_pay==1}%
+     <a href="info.html?name=%{$items[rowsec].dates[datesec].subs[subsec].inu_login}%" target="_blank">
+    %{$items[rowsec].dates[datesec].subs[subsec].inu_name_s}% (%{$items[rowsec].dates[datesec].subs[subsec].inu_login}%)</a>
+    %{/if}%
+	
+    </td>
+   
+  
+  	 <td width="80" >
+     %{$items[rowsec].dates[datesec].subs[subsec].begin_ost}%
+    </td >
+    
+  
+    <td width="80" >
+     %{$items[rowsec].dates[datesec].subs[subsec].plus}%
+    </td >
+    
+    <td width="80" >
+     %{$items[rowsec].dates[datesec].subs[subsec].minus}%
+    </td >
+   
+    <td width="80" >
+     %{$items[rowsec].dates[datesec].subs[subsec].after_ost}%
+    </td 
+    
+></tr>
+%{/section}%
+%{/if}%
+
+%{/section}%
+%{/section}%
+<tr align="center" valign="top">
+<th scope="col" class="main" width="250">
+    <strong>Итого по всем р/с</strong>
+    </th>
+   %{if $extended_an==1}% <th scope="col" class="main">&nbsp;</th>%{/if}%
+   
+   
+   <th scope="col" width="80"  class="main"><strong>%{$begin_ost}%</strong></th>
+   
+    <th scope="col" width="80"  class="main"><strong>%{$total_plus}%</strong></th>
+    
+    <th scope="col" width="80"  class="main"><strong>%{$total_minus}%</strong></th>
+    
+    <th scope="col" width="80"  class="main"><strong>%{$after_ost}%</strong></th>
+</tr>
+</tbody>
+</table>
+<div style=" padding-right:0px; padding-top:0px;">
+<em>Все цены указаны в рублях РФ.</em>
+</div>

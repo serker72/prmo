@@ -1,0 +1,98 @@
+ 
+
+<b>Позиции, подлежащие выравниванию:</b>
+<br><br>
+
+
+<table width="100%" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+<th width="50">
+Код
+</th>
+<th width="150">
+Наименование
+</th>
+<th width="50">
+Кол-во
+</th>
+<th width="*">
+Примечания
+</th>
+</tr>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+%{if $item.delta>0}%
+<tr align="left" valign="top">
+<td width="50">
+%{$item.code}%
+</td>
+
+<td width="150">
+%{$item.name}%
+</td>
+<td width="50">
+%{$item.quantity}%
+</td>
+<td width="*">
+%{$item.comments}%
+</td>
+
+</tr>
+%{/if}%
+%{/foreach}%
+</tbody>
+</table>
+<br>
+<br>
+<br>
+
+
+<b>Позиции, не подлежащие выравниванию:</b>
+<br>
+<br>
+
+
+<table width="100%" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+<th width="50">
+Код
+</th>
+<th width="150">
+Наименование
+</th>
+<th width="50">
+Кол-во
+</th>
+<th width="*">
+Примечания
+</th>
+</tr>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+%{if $item.delta<=0}%
+<tr align="left" valign="top">
+<td width="50">
+%{$item.code}%
+</td>
+
+<td width="150">
+%{$item.name}%
+</td>
+<td width="50">
+%{$item.quantity}%
+</td>
+
+<td width="*">
+%{$item.comments}%
+</td>
+
+</tr>
+%{/if}%
+%{/foreach}%
+</tbody>
+</table>
+ 

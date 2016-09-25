@@ -1,0 +1,306 @@
+<tr align="left" valign="top" >
+    	<td width="80">
+        <span id="val_position_code_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].position_id|string_format:"%05d"}%</span>
+        
+        </td>
+        <td width="60%">
+        <span id="val_position_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        
+        <input type="hidden" id="hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        
+        
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+         <td width="80">
+        <input type="text" id="quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%" size="4" maxlength="20" />
+    	</td>
+        
+        <td width="80">
+        %{$pospos[pospossec].quantity}%
+        </td>
+       
+        <td width="80">
+        %{$pospos[pospossec].max_quantity}%
+       
+        <input type="hidden" id="max_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].max_quantity}%" />
+        
+        
+        <input type="hidden" id="max_bill_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].max_bill_quantity}%" />
+        
+         <input type="hidden" id="is_usl_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].is_usl}%" />
+        
+        
+        <input type="hidden" id="max_komplekt_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].max_komplekt_quantity}%" />
+        
+        </td>
+        <td width="80">
+       
+        %{$pospos[pospossec].price}%
+        <input type="hidden" id="price_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price}%" />
+        </td>
+        <td style="white-space:nowrap; %{if $cannot_view_pm}% display:none;%{/if}%">
+       <input type="checkbox" id="do_pm_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].has_pm}% checked="checked"%{/if}% style="display:none;" />
+       
+       
+        
+        <input type="hidden"  id="plus_or_minus_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].plus_or_minus}%" />
+        
+        %{if $pospos[pospossec].has_pm}%
+        %{if $pospos[pospossec].plus_or_minus==0}%+%{/if}%
+        %{if $pospos[pospossec].plus_or_minus==1}%-%{/if}%
+        %{/if}%
+       
+        
+      
+        
+       %{if $pospos[pospossec].has_pm}%
+       %{$pospos[pospossec].value}%
+       %{/if}%
+         <input type="hidden" id="value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].value}%"   />
+       
+      %{if $pospos[pospossec].has_pm}%
+        %{if $pospos[pospossec].rub_or_percent==0}%руб.%{/if}%
+        %{if $pospos[pospossec].rub_or_percent==1}%%%{/if}%
+      %{/if}%
+        
+        
+        
+         <input type="hidden"  id="rub_or_percent%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].rub_or_percent}%" />
+        
+        </td>
+        <td width="80">
+        <span id="price_pm_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].price_pm}%</span>
+        </td>
+        <td width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>
+        <span id="cost_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].cost}%</span>
+        </td>
+        
+        <td width="80">
+        <span id="nds_proc_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_proc}%</span>
+        </td>
+        
+         <td width="80">
+        <span id="nds_summ_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_summ}%</span>
+        </td>
+        
+        
+        <td width="80">
+        <span id="total_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].total}%</span>
+        
+		<script type="text/javascript">
+		$(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+			  if(isNaN(x) || isNaN(n)) return false;
+			  var m = Math.pow(10,n);
+			  return Math.round(x*m)/m;
+			}
+			
+			function RecalcPrices(){
+				//cena +-
+				cenapm=parseFloat($("#price_%{$pospos[pospossec].hash}%").attr("value"));
+				if($("#do_pm_%{$pospos[pospossec].hash}%").attr("checked")){
+					slag=0;
+					
+					
+					if($("#rub_or_percent_%{$pospos[pospossec].hash}%").val()==0){
+						slag=parseFloat($("#value_%{$pospos[pospossec].hash}%").attr("value"));	
+					}else{
+						slag=parseFloat($("#price_%{$pospos[pospossec].hash}%").attr("value"))*parseFloat($("#value_%{$pospos[pospossec].hash}%").attr("value"))/100.0;	
+					}
+					
+					if($("#plus_or_minus_%{$pospos[pospossec].hash}%").val()==0){
+							
+					}else{
+						slag=-1.0*slag;
+					}
+					
+					cenapm=cenapm+slag;
+					
+					
+				}
+				$("#price_pm_%{$pospos[pospossec].hash}%").html(roundPlus(cenapm,2));	
+				
+				//peres4et nds summ
+				$("#nds_summ_%{$pospos[pospossec].hash}%").html(roundPlus(cenapm*parseInt($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))-cenapm*parseInt($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))/1.18,2));
+				
+				
+				
+				//st-t'
+				$("#cost_%{$pospos[pospossec].hash}%").html(roundPlus(parseFloat($("#price_%{$pospos[pospossec].hash}%").attr("value"))*parseInt($("#quantity_%{$pospos[pospossec].hash}%").attr("value")),2));
+				
+				//vsego
+				$("#total_%{$pospos[pospossec].hash}%").html(roundPlus(cenapm*parseInt($("#quantity_%{$pospos[pospossec].hash}%").attr("value")),2));
+				
+			}
+			
+			$("#plus_or_minus_%{$pospos[pospossec].hash}%").bind("change",function(){
+				RecalcPrices();
+			});
+			
+			$("#rub_or_percent_%{$pospos[pospossec].hash}%").bind("change",function(){
+				RecalcPrices();
+			});
+			
+			
+			//режим +/- активировать
+			$("#do_pm_%{$pospos[pospossec].hash}%").bind("click",function(){
+				if($("#do_pm_%{$pospos[pospossec].hash}%").attr("checked")){
+					$("#plus_or_minus_%{$pospos[pospossec].hash}%").attr("disabled",false);
+					$("#value_%{$pospos[pospossec].hash}%").attr("disabled",false);
+					$("#rub_or_percent_%{$pospos[pospossec].hash}%").attr("disabled",false);		
+				}else{
+					$("#plus_or_minus_%{$pospos[pospossec].hash}%").attr("disabled",true);
+					$("#value_%{$pospos[pospossec].hash}%").attr("disabled",true);
+					$("#rub_or_percent_%{$pospos[pospossec].hash}%").attr("disabled",true);
+				}
+				//пересчет ст-тей
+				
+				RecalcPrices();
+			});
+			
+			//
+			
+			//проверка количества
+			$("#quantity_%{$pospos[pospossec].hash}%").bind("change",function(){
+				ret=true;
+				
+				if($("#quantity_%{$pospos[pospossec].hash}%").attr("value").length==0){
+					alert("«аполните поле  оличесто!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))||(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))<0)){
+					alert("Ќеверное значение в поле  оличество!");
+					ret=ret&&false;
+				}
+				
+				
+				%{if $pospos[pospossec].is_usl==0}%
+				
+				%{if $can_exclude_positions==1}%
+				if(!isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))&&(roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value")),3)>roundPlus(parseFloat("%{$pospos[pospossec].max_quantity}%")*parseFloat("%{$PPUP}%"),3))){
+					//сделать проверку на ЅќЋ№Ў≈
+					
+					
+					//три проверки: распор€жение, счет, за€вка
+					// max_quantity - это счет...
+					
+					//сравнение с распор€жением
+					
+					alert(" оличество позиции %{$pospos[pospossec].position_name}% "+roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").val()),3)+" %{$pospos[pospossec].dim_name}% превышает максимальное доступное количество по распор€жению ("+roundPlus(parseFloat("%{$pospos[pospossec].max_quantity}%")*parseFloat("%{$PPUP}%"),3)+")!\n оличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+					ret=ret&&false;
+				
+				}else if(!isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))&&(roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value")),3)>roundPlus(parseFloat("%{$pospos[pospossec].max_bill_quantity}%")*parseFloat("%{$PPUP}%"),3))){
+					
+					//сравнение со счетом	
+					alert(" оличество позиции %{$pospos[pospossec].position_name}% "+roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").val()),3)+" %{$pospos[pospossec].dim_name}% превышает максимальное доступное количество по cчету ("+roundPlus(parseFloat("%{$pospos[pospossec].max_bill_quantity}%")*parseFloat("%{$PPUP}%"),3)+")!\n оличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+					ret=ret&&false;
+					
+				}else if(!isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))&&(roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value")),3)>roundPlus(parseFloat("%{$pospos[pospossec].max_komplekt_quantity}%")*parseFloat("%{$PPUP}%"),3))){
+					
+					//сравнение с за€вкой	
+					alert(" оличество позиции %{$pospos[pospossec].position_name}% "+roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").val()),3)+" %{$pospos[pospossec].dim_name}% превышает максимальное доступное количество по за€вке ("+roundPlus(parseFloat("%{$pospos[pospossec].max_komplekt_quantity}%")*parseFloat("%{$PPUP}%"),3)+")!\n оличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+					ret=ret&&false;
+					
+				}
+				
+				%{else}%
+				if(!isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))&&(roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value")),3)>roundPlus(parseFloat("%{$pospos[pospossec].max_quantity}%"),3))){
+					
+					alert(" оличество позиции %{$pospos[pospossec].position_name}% "+roundPlus(parseFloat("%{$pospos[pospossec].max_quantity}%"),3)+" %{$pospos[pospossec].dim_name}% превышает максимальное доступное количество по распор€жению на отгрузку!");
+					ret=ret&&false;
+				
+				}
+				%{/if}%
+				%{/if}%
+				
+				
+				
+				
+				/*if(!isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))&&(parseInt($("#quantity_%{$pospos[pospossec].hash}%").attr("value"))<parseInt("%{$pospos[pospossec].max_quantity}%"))){
+					
+					
+				}*/
+				
+				if(!ret) {
+					$("#quantity_%{$pospos[pospossec].hash}%").addClass("wrong");
+					$("#quantity_%{$pospos[pospossec].hash}%").focus();
+				}else{
+					//peres4et	
+					$("#quantity_%{$pospos[pospossec].hash}%").removeClass("wrong");
+					RecalcPrices();
+				}
+				return ret;
+			});
+			
+			//проверка цены
+			$("#price_%{$pospos[pospossec].hash}%").bind("change",function(){
+				ret=true;
+				
+				if($("#price_%{$pospos[pospossec].hash}%").attr("value").length==0){
+					alert("«аполните поле ÷ена!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#price_%{$pospos[pospossec].hash}%").attr("value"))||(parseFloat($("#price_%{$pospos[pospossec].hash}%").attr("value"))<0)){
+					alert("Ќеверное значение в поле ÷ена!");
+					ret=ret&&false;
+				}
+				
+				
+				
+				if(!ret){
+					 $("#price_%{$pospos[pospossec].hash}%").focus();
+					 $("#price_%{$pospos[pospossec].hash}%").addClass("wrong");
+				}else{
+					//peres4et	
+					$("#price_%{$pospos[pospossec].hash}%").removeClass("wrong");
+					RecalcPrices();
+				}
+				return ret;
+			});
+			
+			//проверка добавки цены
+			$("#value_%{$pospos[pospossec].hash}%").bind("change",function(){
+				ret=true;
+				
+				if($("#value_%{$pospos[pospossec].hash}%").attr("value").length==0){
+					alert("«аполните поле +/-!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#value_%{$pospos[pospossec].hash}%").attr("value"))||(parseFloat($("#value_%{$pospos[pospossec].hash}%").attr("value"))<0)){
+					alert("Ќеверное значение в поле +/-!");
+					ret=ret&&false;
+				}
+				
+				
+				
+				if(!ret) {
+					$("#value_%{$pospos[pospossec].hash}%").addClass("wrong");
+					$("#value_%{$pospos[pospossec].hash}%").focus();
+				}else{
+					//peres4et	
+					$("#value_%{$pospos[pospossec].hash}%").removeClass("wrong");	
+					RecalcPrices();
+				}
+				return ret;
+			});
+			
+		});
+		</script>
+        </td>
+         <td width="100">
+        <span id="komplekt_ved_name_komplekt_ved_id_%{$pospos[pospossec].hash}%">
+          %{$pospos[pospossec].komplekt_ved_name}%
+          </span>
+          
+          <input type="hidden" id="komplekt_ved_id_%{$pospos[pospossec].hash}%" name="komplekt_ved_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].komplekt_ved_id}%" />
+       
+        </td>
+    
+    </tr>

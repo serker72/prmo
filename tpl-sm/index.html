@@ -1,0 +1,2384 @@
+<script src="js/hc/highcharts.js"></script>
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0" >
+<tr align="left" valign="top" >
+<td width="*"  style="vertical-align:top; padding:5px 20px 5px 5px; min-width:725px; ">
+		
+     <div class="fast_block" style="white-space:nowrap;">
+     	
+     
+         
+          
+          
+           %{if $has_new_position}%
+         
+     
+     <div class="fast_button">
+         <a href="/position.php" class=" fast_position">
+         
+         <div class="ico"></div>
+         Новая позиция</a>
+          
+          </div>
+    %{/if}%
+    
+    
+    		 
+           %{if $has_new_tovgr}%
+         
+     
+     <div class="fast_button">
+         <a href="catalog.php?do_open_newgroup=1" class=" fast_tovgr">
+         
+         <div class="ico"></div>
+         Новая товарная группа</a>
+          
+          </div>
+    %{/if}%
+    
+    
+      %{if $has_new_supplier}%
+         
+     
+     <div class="fast_button">
+         <a href="supplier.php" class=" fast_supplier">
+         
+         <div class="ico"></div>
+         Новый контрагент</a>
+          
+          </div>
+    %{/if}%
+    
+    		 
+         %{if $has_new_komplekt}%
+         
+     
+     <div class="fast_button">
+         <a href="ed_komplekt.php" class=" fast_kp">
+         
+         <div class="ico"></div>
+         Новая заявка</a>
+          
+          </div>
+    %{/if}%
+    
+    
+     %{if $has_new_pay}%
+         
+     
+     <div class="fast_button">
+         <a href="ed_pay.php" class=" fast_pay">
+         
+         <div class="ico"></div>
+         Новая исходящая оплата</a>
+          
+          </div>
+    %{/if}%
+      
+     
+      %{if $has_new_pay_in}%
+         
+     
+     <div class="fast_button">
+         <a href="ed_pay_in.php" class=" fast_pay_in">
+         
+         <div class="ico"></div>
+         Новая входящая оплата</a>
+          
+          </div>
+    %{/if}%  
+    
+    
+    
+     %{if $has_new_plan}%
+         
+     
+     <div class="fast_button">
+         <a href="ed_sched.php?action=0&kind_id=3" class=" fast_meet">
+         
+         <div class="ico"></div>
+         Новая встреча</a>
+          
+          </div>
+          
+     <div class="fast_button">
+         <a href="ed_sched_task.php?action=0&kind_id=1" class=" fast_task">
+         
+         <div class="ico"></div>
+         Новая задача</a>
+          
+          </div>
+          
+     <div class="fast_button">
+         <a href="ed_sched.php?action=0&kind_id=5" class=" fast_note">
+         
+         <div class="ico"></div>
+         Новая заметка</a>
+          
+          </div>
+          
+          
+     <div class="fast_button">
+         <a href="ed_sched.php?action=0&kind_id=4" class=" fast_call">
+         
+         <div class="ico"></div>
+         Новый звонок</a>
+          
+          </div>
+          
+     <div class="fast_button">
+         <a href="ed_sched.php?action=0&kind_id=2" class=" fast_kom">
+         
+         <div class="ico"></div>
+         Новая командировка</a>
+          
+          </div>                    
+    %{/if}%
+    
+      %{if $has_new_supplier}%
+         
+     
+     <div class="fast_button">
+         <a href="suppliers.php?quick_find" target="_blank" class=" fast_quickfind">
+         
+         <div class="ico"></div>
+         Найти контакт/ контрагента</a>
+          
+          </div>
+    %{/if}%
+
+          
+          <div class="clear"></div>
+     
+     </div>  
+     
+     
+     
+     
+   
+     
+     
+        
+</td>
+<td width="240" align="right"  style="vertical-align:top;">
+
+	%{$calendar}%  
+    
+   
+    
+    
+</td>
+</tr>
+
+<tr align="left" valign="top" >
+<td width="*" colspan="2"  style="vertical-align:top; padding:5px 25px 5px 5px;">
+	
+    
+    
+      %{if !$has_plan}% 
+    <h2>Запланированные действия</h2> 
+    <div class="fast_block">
+    
+    <em>GYDEX.В работе!</em>
+    %{else}%
+    
+    <script type="text/javascript">
+	$(function(){
+		$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	 	$("#sched_begin").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+		$("#sched_end").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+		
+		$("#sched_period").bind("change", function(){
+			if($("#sched_period").val()==6){
+				$("#sched_period_dates").css("display","inline");
+			}else{
+				$("#sched_period_dates").css("display","none");
+			}
+		});
+		
+		 
+	  	VidgetMultiReport('kinds', 'Выберите вид', 'Все виды', 'Cнять выбор', '# из # выбрано', "Выбраны виды: ", 'Виды не выбраны', 200 );
+		VidgetMultiReport('states', 'Выберите состояния', 'Все состояния', 'Cнять выбор', '# из # выбрано', "Выбраны состояния: ", 'Состояния не выбраны', 200 );
+	 
+	});
+	</script>
+    
+    <form action="index.php" method="get">
+       <h2>Действия пользователя</h2> 
+      	
+        
+       <div style="float:left; margin-right:20px;  margin-bottom:15px; overflow:hidden;">
+      		
+              <label for="states" class="statuses_report_label">Состояния:</label><br>
+
+            <select id="states" name="states[]" multiple="multiple">
+            <option value="1" %{if $status_id_1==1 or $all_states==1}% selected%{/if}% >Запланированные</option>
+            <option value="2" %{if $status_id_2==1 or $all_states==1}% selected%{/if}% >Выполненные</option>
+             
+            </select>
+            
+            
+            
+           <br clear="all" />
+
+            
+            <div id="states_caption" class="statuses_report_caption"  style="width:190px !important;">
+            
+            </div>	
+      
+       </div>   
+       
+       
+       <div style="float:left; margin-right:20px;  margin-bottom:15px; overflow:hidden;">
+             <label for="kinds" class="statuses_report_label">Виды:</label><br>
+
+            <select id="kinds" name="%{$prefix}%kinds[]" multiple="multiple">
+            <option value="3" %{if $kind_id_3==1 or $all_kinds==1}% selected%{/if}% >Встречи</option>
+            <option value="1" %{if $kind_id_1==1 or $all_kinds==1}% selected%{/if}% >Задачи</option>
+      <!--      <option value="5" %{if $kind_id_5==1 or $all_kinds==1}% selected%{/if}% >Заметки</option>-->
+            <option value="4" %{if $kind_id_4==1 or $all_kinds==1}% selected%{/if}% >Звонки</option>
+             
+            <option value="2" %{if $kind_id_2==1 or $all_kinds==1}% selected%{/if}% >Командировки</option>
+             
+            </select>
+            
+            <br clear="all" />
+            
+            <div id="kinds_caption" class="statuses_report_caption" style="width:190px !important;">
+            
+            </div>
+		</div>
+		       
+       <div style="float:left; margin-right:20px; margin-bottom:15px;">
+           <label for="sched_period">Период действия:</label><br>
+
+           <select id="sched_period" name="sched_period" style="width:100px;">
+                <option value="1" %{if $sched_period==1}% selected%{/if}% >сегодня</option>
+                <option value="2" %{if $sched_period==2}% selected%{/if}% >завтра</option>
+                <option value="3" %{if $sched_period==3}% selected%{/if}% >вчера</option>
+                <option value="4" %{if $sched_period==4}% selected%{/if}% >неделю</option>
+                <option value="5" %{if $sched_period==5}% selected%{/if}% >месяц</option>
+                <option value="6" %{if $sched_period==6}% selected%{/if}% >период</option>
+                
+           </select>
+           
+           
+           <div id="sched_period_dates" style="%{if $sched_period==6}% display:inline;%{else}% display:none;%{/if}%" >
+            <label for="sched_begin">с:</label>
+            <input type="text" size="10" maxlength="10" value="%{$sched_begin}%" id="sched_begin" name="sched_begin">
+            
+            <label for="sched_end">по</label>
+            <input type="text" size="10" maxlength="10" value="%{$sched_end}%" id="sched_end" name="sched_end">
+            
+           </div>
+           <br>
+
+       </div>
+       
+       <div style="float:left; margin-right: 0px;  margin-bottom:15px;">
+       		<br>
+		<input type="submit" value="Показать" />
+            
+       </div>
+       <br clear="all" />
+        
+     </form>  
+    <div class="fast_block">
+    
+    %{foreach name=planf from=$planned item=pitem}%%{/foreach}%
+   
+    %{if $smarty.foreach.planf.total>0}%
+    <table class="gydex_table" >
+        <thead>
+        	<tr align="left" valign="top">
+         	<th width="150" >
+            	Дата
+                
+                    
+                <div class="sort_dir">
+                <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+                <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+                </div>
+            </th>
+            <th width="200" >
+            	Вид действия
+                
+                                <div class="sort_dir">
+                <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+                <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+                </div>
+
+            </th>
+             <th width="100" >
+            	Статус
+                
+                                <div class="sort_dir">
+                <a href="%{$link}%&sortmode=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+                <a href="%{$link}%&sortmode=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+                </div>
+
+            </th>
+            <th width="200">
+           		 Контрагент
+                 
+                                 <div class="sort_dir">
+                <a href="%{$link}%&sortmode=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+                <a href="%{$link}%&sortmode=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+                </div>
+
+            </th>
+             <th width="*">
+           		 Цель
+                 
+                   <!--              <div class="sort_dir">
+                <a href="%{$link}%&sortmode=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+                <a href="%{$link}%&sortmode=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+                </div>-->
+
+
+            </th>
+            <th width="24">
+            	Действие
+            </th>
+            </tr>
+        </thead>
+        <tbody>
+        %{foreach from=$planned item=pitem}%
+        	<tr align="left" valign="top">
+        	 <td width="150"  >
+            	<nobr>%{$pitem.pdate_beg}% %{$pitem.ptime_beg}%</nobr>
+                %{if $pitem.pdate_end!=""}%- %{$pitem.pdate_end}% %{$pitem.ptime_end}%%{/if}%
+            </td>
+            <td width="200" style="text-align:center;">
+           		 <a target="_blank" href="shedule.php?code%{$pitem.kind_id}%=%{$pitem.code}%&doFilter%{$pitem.kind_id}%=1&force_tab=%{$pitem.kind_id}%">%{$pitem.kind_name}%</a>
+                 <br>
+
+                 
+                 %{$pitem.topic}%
+            </td>
+             <td width="100" style="text-align:center;">
+           		  %{$pitem.status_name}%
+            </td>
+            
+             <td width="200" style="text-align:center;">
+           		 
+     %{foreach from=$pitem.suppliers item=item}%
+    <nobr>%{$item.opf_name}% %{$item.full_name}%</nobr> <br>
+
+     %{/foreach}%
+     	%{if $pitem.kind_id==4}% %{$pitem.contact_value}% %{/if}%
+     
+            </td>
+               <td width="*">
+    <!--       		 
+     %{foreach from=$pitem.cities item=item}%
+     %{$item.name}%, %{$item.okrug_name}%, %{$item.region_name}%,  %{$item.country_name}%<br>
+
+     %{/foreach}%-->
+     		  %{foreach from=$pitem.suppliers item=item}%
+     %{$item.note}%	 <br>
+
+     %{/foreach}%
+     	%{if $pitem.kind_id==4}% %{$pitem.description}% %{/if}%
+      
+            </td>
+
+            <td width="24" align="center">
+            	<a class="gydex_edit"   href="ed_sched.php?action=1&id=%{$pitem.id}%" target="_blank"></a> 
+            </td>
+            </tr>
+        %{/foreach}%
+        </tbody>
+     	</table>
+    %{else}%
+    <em>На выбранный период ничего не запланированно.</em>
+    %{/if}%
+     <a href="shedule.php?force_create" class="add">Добавить новое</a> 
+     
+    %{/if}% 
+    </div>
+     
+    
+    
+    
+    
+       
+   %{if $has_news}% 
+ <div class="fast_block">
+<h2 style="display:inline-block;">Новости отрасли</h2>
+
+<input type="button" value="Renew" id="index_news_show"  style="display:none;" />
+<span id="index_news">
+
+%{include file="index_news.html" show_index=true}%
+</span><br>
+<script>
+$(function(){
+	$("#index_news_show").trigger("click");
+})
+</script>
+
+</div>
+%{/if}% 
+    
+    
+
+    
+    
+    
+	
+
+
+     <h2>Последние документы:</h2>
+     <div class="fast_block">
+     	<table class="gydex_table" >
+        <thead>
+        	<tr align="left" valign="top">
+        	<th width="60" style="padding-right:10px;">
+            	Дата
+            </th>
+            <th width="*">
+           		 Название
+            </th>
+            <th width="24">
+            	Действие
+            </th>
+            </tr>
+        </thead>
+        <tbody>
+        %{foreach from=$last_docs item=item}%
+        	<tr align="left" valign="top">
+        	<td width="60" style="padding-right:10px;">
+            	%{$item.date}%
+            </td>
+            <td width="*">
+           		 %{$item.name}%
+            </td>
+            <td width="24">
+            	<a class="gydex_edit"   href="%{$item.url}%" target="_blank"></a> 
+            </td>
+            </tr>
+        %{/foreach}%
+        </tbody>
+     	</table>
+     </div>
+</td>
+</tr>
+
+</table>
+
+
+<h2>Ваша статистика</h2>
+
+<div class="graf_group" >
+    <div id="container">
+    
+    </div>
+    
+    <div id="container1">
+  
+  </div>
+</div>
+
+%{if $can_view_kompl or $can_view_acc}%
+<div class="graf_group" >
+  %{if $can_view_kompl}%
+   <div id="container4">
+  
+  </div>
+  %{/if}%
+
+   %{if $can_view_acc}%
+  <div id="container5">
+  
+  </div>
+  %{/if}%
+ 
+</div>
+%{/if}%
+
+%{if $can_view_bill or $can_view_bill_in}%
+<div class="graf_group" >
+	%{if $can_view_bill}%
+	 <div id="container6">
+    
+    </div>
+  %{/if}%  
+	
+  %{if $can_view_bill_in}%  
+  <div id="container7">
+  
+  </div>
+  %{/if}%
+ 
+</div>
+%{/if}%
+
+<br clear="all" />
+
+ <style>
+	.graf_group .ui-button .ui-button-text { display: block; line-height: 1.4; font-size:9px !important;  }
+.graf_group .ui-button-text-only .ui-button-text { padding: .4em 0.5em; }
+	</style>
+
+%{if $can_view_kompl_extended or $can_view_acc_extended or $can_view_bill_extended or $can_view_bill_in_extended or $can_view_suppliers_extended or $can_view_debts}%
+	
+	<script>
+    $(function(){
+		
+        $( "#ext_period" ).buttonset();
+		//$( "#ext_divide" ).buttonset();
+		
+		 $("input[name=ext_period]").bind("change", function(){
+            //alert($("input[name=radio]:checked").val());
+			GetExtStat();
+        });
+		
+		function GetExtStat(){
+			%{if $can_view_kompl_extended}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_komplekt",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container3").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container3").html('<h3>'+"Кол-во заявок за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html()+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_komplekt_graf",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container2").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					  //alert(data);
+					var options = {
+                                    chart: {
+                                        
+                                        renderTo: 'container',
+                                        
+                                        borderWidth: 1,
+                                        
+                                        borderColor: '#ebebeb',
+                                         
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+									
+									plotOptions: {
+										pie: {
+											dataLabels: {
+												enabled: false,
+												/*distance: -10,*/
+												style: {
+													fontWeight: 'bold',
+													color: 'white',
+													textShadow: '0px 1px 2px black'
+												} 
+											},
+											 
+										}
+									},
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Кол-во заявок за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html(),
+										align: 'left',
+										
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: ' % '
+                                        }
+                                    },
+                                    tooltip: {
+                                        pointFormat: '<b>{point.percentage:.1f}%</b>'
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+								if(lines.length>30){
+									$("#container2").html('Слишком много данных для нанесения на график.<br> Попробуйте изменить разбивку, либо сократить период выборки.');
+								}else{
+            
+									// Iterate over the lines and add categories or series
+									var series = {
+												 type: 'pie',
+												  name: 'Кол-во документов, %',
+												
+												data: []
+											};
+									$.each(lines, function(lineNo, line) {
+										var items = line.split(',');
+										
+									   
+										 series.data.push({name:items[0]+' '+items[2],y:parseFloat(items[1])});
+										  
+											options.series.push(series);
+									
+										 
+										
+									});
+									
+									// Create the chart
+								
+									$("#container2").highcharts(options);
+								}
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });  
+			  
+			%{/if}%
+			
+			
+			
+			%{if $can_view_acc_extended}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_acc",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container9").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container9").html('<h3>'+"Сумма реализаций за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html()+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_acc_graf",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container8").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					  //alert(data);
+					var options = {
+                                    chart: {
+                                        
+                                        renderTo: 'container',
+                                        
+                                        borderWidth: 1,
+                                        
+                                        borderColor: '#ebebeb',
+                                         
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+									
+									plotOptions: {
+										pie: {
+											dataLabels: {
+												enabled: false,
+												/*distance: -10,*/
+												style: {
+													fontWeight: 'bold',
+													color: 'white',
+													textShadow: '0px 1px 2px black'
+												} 
+											},
+											 
+										}
+									},
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Сумма реализаций за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html(),
+										align: 'left',
+										
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: ' % '
+                                        }
+                                    },
+                                    tooltip: {
+                                        pointFormat: '<b>{point.percentage:.1f}%</b>'
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+								if(lines.length>30){
+									$("#container8").html('Слишком много данных для нанесения на график.<br> Попробуйте изменить разбивку, либо сократить период выборки.');
+								}else{
+            
+									// Iterate over the lines and add categories or series
+									var series = {
+												 type: 'pie',
+												  name: 'Кол-во документов, %',
+												
+												data: []
+											};
+									$.each(lines, function(lineNo, line) {
+										var items = line.split(',');
+										
+									   
+										 series.data.push({name:items[0]+' '+items[2],y:parseFloat(items[1])});
+										  
+											options.series.push(series);
+									
+										 
+										
+									});
+									
+									// Create the chart
+								
+									$("#container8").highcharts(options);
+								}
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  }); 
+			%{/if}%
+			
+			
+			%{if $can_view_bill_extended}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_bill",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container11").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container11").html('<h3>'+"Кол-во исх. счетов за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html()+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_bill_graf",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container10").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					  //alert(data);
+					var options = {
+                                    chart: {
+                                        
+                                        renderTo: 'container',
+                                        
+                                        borderWidth: 1,
+                                        
+                                        borderColor: '#ebebeb',
+                                         
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+									
+									plotOptions: {
+										pie: {
+											dataLabels: {
+												enabled: false,
+												/*distance: -10,*/
+												style: {
+													fontWeight: 'bold',
+													color: 'white',
+													textShadow: '0px 1px 2px black'
+												} 
+											},
+											 
+										}
+									},
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Кол-во исх. счетов за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html(),
+										align: 'left',
+										
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: ' % '
+                                        }
+                                    },
+                                    tooltip: {
+                                        pointFormat: '<b>{point.percentage:.1f}%</b>'
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+								if(lines.length>30){
+									$("#container10").html('Слишком много данных для нанесения на график.<br> Попробуйте изменить разбивку, либо сократить период выборки.');
+								}else{
+            
+									// Iterate over the lines and add categories or series
+									var series = {
+												 type: 'pie',
+												  name: 'Кол-во документов, %',
+												
+												data: []
+											};
+									$.each(lines, function(lineNo, line) {
+										var items = line.split(',');
+										
+									   
+										 series.data.push({name:items[0]+' '+items[2],y:parseFloat(items[1])});
+										  
+											options.series.push(series);
+									
+										 
+										
+									});
+									
+									// Create the chart
+								
+									$("#container10").highcharts(options);
+								}
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			%{/if}%
+			
+			%{if $can_view_bill_in_extended}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_bill_in",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container13").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container13").html('<h3>'+"Кол-во вх. счетов за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html()+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_bill_in_graf",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container12").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					  //alert(data);
+					var options = {
+                                    chart: {
+                                        
+                                        renderTo: 'container',
+                                        
+                                        borderWidth: 1,
+                                        
+                                        borderColor: '#ebebeb',
+                                         
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+									
+									plotOptions: {
+										pie: {
+											dataLabels: {
+												enabled: false,
+												/*distance: -10,*/
+												style: {
+													fontWeight: 'bold',
+													color: 'white',
+													textShadow: '0px 1px 2px black'
+												} 
+											},
+											 
+										}
+									},
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Кол-во вх. счетов за текущий период: \n"+$("label[for=ext_period"+$("input[name=ext_period]:checked").val()+"]").html(),
+										align: 'left',
+										
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: ' % '
+                                        }
+                                    },
+                                    tooltip: {
+                                        pointFormat: '<b>{point.percentage:.1f}%</b>'
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+								if(lines.length>30){
+									$("#container12").html('Слишком много данных для нанесения на график.<br> Попробуйте изменить разбивку, либо сократить период выборки.');
+								}else{
+            
+									// Iterate over the lines and add categories or series
+									var series = {
+												 type: 'pie',
+												  name: 'Кол-во документов, %',
+												
+												data: []
+											};
+									$.each(lines, function(lineNo, line) {
+										var items = line.split(',');
+										
+									   
+										 series.data.push({name:items[0]+' '+items[2],y:parseFloat(items[1])});
+										  
+											options.series.push(series);
+									
+										 
+										
+									});
+									
+									// Create the chart
+								
+									$("#container12").highcharts(options);
+								}
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			%{/if}%
+			
+		
+		}
+		
+		
+		GetExtStat();
+		
+		
+			%{if $can_view_debts}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_debts",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container15").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container15").html('<h3>Долги по контрагентам на текущую дату</h3>'+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_debts_graf",
+					  "period":$("input[name=ext_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container14").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					 // alert(data);
+					 var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'bar',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Долги по контрагентам на текущую дату, руб.',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Сумма долга, руб.'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                           // return this.series.name+': <b>' + this.x + '</b> : <b>' + this.y + ' </b>';
+										    return this.series.name+': ' + this.y + ' руб.';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                //var chart = new Highcharts.Chart(options);
+                                $("#container14").highcharts(options);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			%{/if}%
+		
+	});
+	</script>
+
+<div class="graf_group" ><br>
+
+<h2>Ваша расширенная статистика</h2>
+	<div style="float:left; margin-right:10px; width:300px;">
+            <h3>Период статистики:</h3> 
+            
+            <div id="ext_period">
+                <input type="radio" id="ext_period0" name="ext_period" value="0"><label for="ext_period0">сегодня</label>
+                <input type="radio" id="ext_period1" name="ext_period"  value="1"><label for="ext_period1">неделя</label>
+                <input type="radio" id="ext_period2" name="ext_period"  value="2"><label for="ext_period2">месяц</label>
+                <input type="radio" id="ext_period3" name="ext_period" value="3"><label for="ext_period3">квартал</label>
+                <input type="radio" id="ext_period4" name="ext_period"  checked="checked" value="4"><label for="ext_period4">год</label>
+            </div>
+        </div>
+  </div>
+        
+        <div class="clear"></div>
+        
+%{/if}%
+
+
+%{if $can_view_kompl_extended}%
+<div class="graf_group" >
+   <div id="container2">
+  
+  </div>
+
+  <div id="container3" class="table_container">
+  
+  </div>
+ 
+</div>
+%{/if}%
+
+%{if $can_view_acc_extended}%
+<div class="graf_group" >
+   <div id="container8">
+  
+  </div>
+
+  <div id="container9" class="table_container">
+  
+  </div>
+ 
+</div>
+%{/if}%
+
+%{if $can_view_bill_extended}%
+<div class="graf_group" >
+   <div id="container10">
+  
+  </div>
+
+  <div id="container11" class="table_container">
+  
+  </div>
+ 
+</div>
+%{/if}%
+
+%{if $can_view_bill_in_extended}%
+<div class="graf_group" >
+   <div id="container12">
+  
+  </div>
+
+  <div id="container13" class="table_container">
+  
+  </div>
+ 
+</div>
+%{/if}%
+
+
+%{if $can_view_debts}%
+<div class="graf_group" >
+   <div id="container14">
+  
+  </div>
+
+  <div id="container15" class="table_container">
+  
+  </div>
+ 
+</div>
+%{/if}%
+
+<div class="clear"></div>
+<p />
+
+
+
+%{if $can_view_pms or $can_view_pribyl}%
+<div class="graf_group" ><br>
+
+<h2>Статистика администратора</h2>
+	<div style="float:left; margin-right:10px; width:300px;">
+            <h3>Период статистики:</h3> 
+            
+            <div id="exxt_period">
+                <input type="radio" id="exxt_period0" name="exxt_period" value="0"><label for="exxt_period0">сегодня</label>
+                <input type="radio" id="exxt_period1" name="exxt_period"  value="1"><label for="exxt_period1">неделя</label>
+                <input type="radio" id="exxt_period2" name="exxt_period"  value="2"><label for="exxt_period2">месяц</label>
+                <input type="radio" id="exxt_period3" name="exxt_period" value="3"><label for="exxt_period3">квартал</label>
+                <input type="radio" id="exxt_period4" name="exxt_period"  checked="checked" value="4"><label for="exxt_period4">год</label>
+            </div>
+        </div>
+  </div>
+        
+        <div class="clear"></div>
+
+%{if $can_view_pms}%
+<div class="graf_group" >
+   <div id="container16">
+  
+  </div>
+
+  <div id="container17" class="table_container">
+  
+  </div>
+ 
+</div>
+%{/if}%
+
+%{if $can_view_pribyl}%
+<div class="graf_group" >
+   <div id="container18">
+  
+  </div>
+
+  <div id="container19" class="table_container">
+  
+  </div>
+ 
+</div>
+
+
+<div class="graf_group" >
+   <div id="container20">
+  
+  </div>
+
+  <div id="container21" class="table_container">
+  
+  </div> 
+ 
+</div>
+%{/if}%
+
+<div class="clear"></div>
+<p />
+
+<script>
+    $(function(){
+		
+        $( "#exxt_period" ).buttonset();
+		//$( "#ext_divide" ).buttonset();
+		
+		 $("input[name=exxt_period]").bind("change", function(){
+            //alert($("input[name=radio]:checked").val());
+			GetExtStat1();
+        });
+		
+		function GetExtStat1(){
+			%{if $can_view_pms}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_pms",
+					  "period":$("input[name=exxt_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container17").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container17").html('<h3>'+"Объем +/- по контрагенту за текущий период: \n"+$("label[for=exxt_period"+$("input[name=exxt_period]:checked").val()+"]").html()+'</h3>'+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_pms_graf",
+					  "period":$("input[name=exxt_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container16").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//  alert(data);
+					var options = {
+                                    chart: {
+                                        
+                                        renderTo: 'container',
+                                        
+                                        borderWidth: 1,
+                                        
+                                        borderColor: '#ebebeb',
+                                         
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+									
+									plotOptions: {
+										pie: {
+											dataLabels: {
+												enabled: false,
+												/*distance: -10,*/
+												style: {
+													fontWeight: 'bold',
+													color: 'white',
+													textShadow: '0px 1px 2px black'
+												} 
+											},
+											 
+										}
+									},
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Объем +/- по контрагенту за текущий период: \n"+$("label[for=exxt_period"+$("input[name=exxt_period]:checked").val()+"]").html(),
+										align: 'left',
+										
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: ' % '
+                                        }
+                                    },
+                                    tooltip: {
+                                        pointFormat: '<b>{point.percentage:.1f}%</b>'
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+								if(lines.length>30){
+									$("#container16").html('Слишком много данных для нанесения на график.<br> Попробуйте изменить разбивку, либо сократить период выборки.');
+								}else{
+            
+									// Iterate over the lines and add categories or series
+									var series = {
+												 type: 'pie',
+												  name: 'Кол-во документов, %',
+												
+												data: []
+											};
+									$.each(lines, function(lineNo, line) {
+										var items = line.split(',');
+										
+										//alert(items);
+									     
+										 if(items.length>1){
+										 	series.data.push({name:items[0]+' '+items[2],y:parseFloat(items[1])});
+										  
+											options.series.push(series);
+										 }
+										 
+										
+									});
+									
+									// Create the chart
+								
+									$("#container16").highcharts(options);
+								}
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			 });
+			  
+			%{/if}%
+			
+			%{if $can_view_pribyl}%
+			$.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_pribyl",
+					  "period":$("input[name=exxt_period]:checked").val(),
+					  "divide": 0 //$("input[name=ext_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container19").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//alert(data);
+					$("#container19").html('<h3>'+"Прибыль по контрагенту за текущий период: \n"+$("label[for=exxt_period"+$("input[name=exxt_period]:checked").val()+"]").html()+'</h3>'+data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });
+			  
+			 $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_pribyl_graf",
+					  "period":$("input[name=exxt_period]:checked").val(),
+					  "divide": 0
+				  },
+				  beforeSend: function(){
+					$("#container18").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+					//  alert(data);
+					 var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'bar',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Прибыль по контрагенту за текущий период: \n"+$("label[for=exxt_period"+$("input[name=exxt_period]:checked").val()+"]").html(),
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Прибыль, руб.'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                           // return this.series.name+': <b>' + this.x + '</b> : <b>' + this.y + ' </b>';
+										    return this.series.name+': ' + this.y + ' руб.';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                //var chart = new Highcharts.Chart(options);
+                                $("#container18").highcharts(options);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			 });
+			 
+			 
+			//время работы
+			  $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_work",
+					  "period":$("input[name=exxt_period]:checked").val(),
+					  "divide": $("input[name=exxt_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container21").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+				    
+					
+					data='<h3>'+"Время работы сотрудников за текущий период: \n"+$("label[for=exxt_period"+$("input[name=exxt_period]:checked").val()+"]").html()+'</h3>'+data;
+					 
+					
+					$("#container21").html(data);
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  });	
+			  
+			  //время работы сотрудников
+			  $.ajax({
+				  async: true,
+				  url: "/js/reports_graf.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_extended_work_graf",
+					  "period":$("input[name=exxt_period]:checked").val(),
+					  "divide": $("input[name=exxt_divide]:checked").val()
+				  },
+				  beforeSend: function(){
+					$("#container20").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	
+				  },
+				  success: function(data){
+				     var options = {
+                                    chart: {
+                                        
+                                        renderTo: 'container',
+                                        
+                                        borderWidth: 1,
+                                        
+                                        borderColor: '#ebebeb',
+                                         
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+									
+									plotOptions: {
+										pie: {
+											dataLabels: {
+												enabled: false,
+											 
+												style: {
+													fontWeight: 'bold',
+													color: 'white',
+													textShadow: '0px 1px 2px black'
+												} 
+											},
+											
+											 
+										}
+									},
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: "Время работы сотрудников за текущий период: \n"+$("label[for=exxt_period"+$("input[name=exxt_period]:checked").val()+"]").html(),
+										align: 'left',
+										
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: ' % '
+                                        }
+                                    },
+                                    tooltip: {
+                                        pointFormat: '<b>{point.percentage:.1f}%</b>'
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+								
+                                
+                                var lines = data.split('\n');
+								if(lines.length>30){
+									$("#container20").html('Слишком много данных для нанесения на график.<br> Попробуйте сократить период выборки.');
+								}else{
+            
+									// Iterate over the lines and add categories or series
+									var series = {
+												 type: 'pie',
+												  name: 'Время работы, %',
+												 
+												data: []
+											};
+									$.each(lines, function(lineNo, line) {
+										var items = line.split(',');
+										
+									   
+										 series.data.push({name:items[0]+' '+items[2],y:parseFloat(items[1])});
+										  
+											options.series.push(series);
+									
+										 
+										
+									});
+									
+									// Create the chart
+								
+									$("#container20").highcharts(options);
+								}
+				  },
+				  error: function(xhr, status, m){
+					  //alert("Ошибка!"+status+m); 
+				  }	 
+			  }); 
+			  
+			%{/if}%
+		}
+			 
+		GetExtStat1();
+	  });
+	  </script>
+
+%{/if}%
+	
+
+
+
+
+
+<script>
+    $(function(){
+		$.ajax({
+                            async: true,
+                            url: "/js/reports_graf.php",
+                            type: "POST",
+                            data:{
+                                "action":"load_users_activity",
+                                "pdate": "%{$pdate}%"
+                            },
+                            beforeSend: function(){
+                                 $("#container").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	    
+                            },
+                            success: function(data){
+                            	//alert(data);     
+                             var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'column',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Время работы в программе',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Время работы, час.'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                           // return this.series.name+': <b>' + this.x + '</b> : <b>' + this.y + ' </b>';
+										    return this.series.name+': ' + this.y + ' час. </b>';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                //var chart = new Highcharts.Chart(options);
+                                $("#container").highcharts(options);
+                               
+                                
+                              
+                            },
+                            error: function(xhr, status, m){
+                                //alert("Ошибка!"+status+m); 
+                            }	 
+                        });
+						
+						
+						//ваши заявки
+						%{if $can_view_kompl}%
+						$.ajax({
+                            async: true,
+                            url: "/js/reports_graf.php",
+                            type: "POST",
+                            data:{
+                                "action":"load_users_kompl",
+                                "pdate": "%{$pdate}%"
+                            },
+                            beforeSend: function(){
+                                 $("#container4").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	    
+                            },
+                            success: function(data){
+                            	//alert(data);     
+                             var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'column',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Ваше кол-во заявок по сравнению с другими сотрудниками, %',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Заявки'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                          
+										  
+										    return this.series.name+': ' + this.y + ' % </b>';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                $("#container4").highcharts(options);
+                               
+                                
+                              
+                            },
+                            error: function(xhr, status, m){
+                                //alert("Ошибка!"+status+m); 
+                            }	 
+                        });
+						%{/if}%
+						
+						
+						//ваши реализации
+						%{if $can_view_acc}%
+						$.ajax({
+                            async: true,
+                            url: "/js/reports_graf.php",
+                            type: "POST",
+                            data:{
+                                "action":"load_users_acc",
+                                "pdate": "%{$pdate}%"
+                            },
+                            beforeSend: function(){
+                                 $("#container5").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	    
+                            },
+                            success: function(data){
+                            	//alert(data);     
+                             var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'column',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Ваша сумма отгрузок по сравнению с другими сотрудниками, %',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Сумма отгрузок'
+                                        }
+                                    },
+                                    tooltip: {
+                                        style: {
+											fontSize: '9px'
+										},
+										formatter: function() {
+                                          
+										  
+										    return this.series.name+': ' + this.y + ' % </b>';
+                                        }
+										
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                 $("#container5").highcharts(options);
+                               
+                                
+                              
+                            },
+                            error: function(xhr, status, m){
+                                //alert("Ошибка!"+status+m); 
+                            }	 
+                        });
+						%{/if}%
+						
+						
+						//ваши исх. счета
+						%{if $can_view_bill}%
+						$.ajax({
+                            async: true,
+                            url: "/js/reports_graf.php",
+                            type: "POST",
+                            data:{
+                                "action":"load_users_bills",
+                                "pdate": "%{$pdate}%"
+                            },
+                            beforeSend: function(){
+                                 $("#container6").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	    
+                            },
+                            success: function(data){
+                            	//alert(data);     
+                             var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'column',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Ваше кол-во исх. счетов по сравнению с другими сотрудниками, %',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Исх. счета'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                          
+										  
+										    return this.series.name+': ' + this.y + ' % </b>';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                $("#container6").highcharts(options);
+                               
+                                
+                              
+                            },
+                            error: function(xhr, status, m){
+                                //alert("Ошибка!"+status+m); 
+                            }	 
+                        });
+						%{/if}%
+						
+						
+						//ваши вх. счета
+						%{if $can_view_bill}%
+						$.ajax({
+                            async: true,
+                            url: "/js/reports_graf.php",
+                            type: "POST",
+                            data:{
+                                "action":"load_users_bills_in",
+                                "pdate": "%{$pdate}%"
+                            },
+                            beforeSend: function(){
+                                 $("#container7").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	    
+                            },
+                            success: function(data){
+                            	//alert(data);     
+                             var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'column',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Ваше кол-во вх. счетов по сравнению с другими сотрудниками, %',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Вх. счета'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                          
+										  
+										    return this.series.name+': ' + this.y + ' % </b>';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                $("#container7").highcharts(options);
+                               
+                                
+                              
+                            },
+                            error: function(xhr, status, m){
+                                //alert("Ошибка!"+status+m); 
+                            }	 
+                        });
+						%{/if}%
+						
+						
+						 
+						
+						
+						$.ajax({
+                            async: true,
+                            url: "/js/reports_graf.php",
+                            type: "POST",
+                            data:{
+                                "action":"load_users_activity_compare",
+                                "pdate": "%{$pdate}%"
+                            },
+                            beforeSend: function(){
+                                $("#container1").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />');	  
+
+                            },
+                            success: function(data){
+                            	//alert(data);     
+								var options = {
+                                    chart: {
+                                         
+                                        renderTo: 'container',
+                                        defaultSeriesType: 'column',
+                                        borderWidth: 1,
+                                        borderColor: '#ebebeb',
+                                        style: {
+                                            fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+                                        },
+										backgroundColor: '#fafafa'
+                                    },
+                                    credits: {
+                                        enabled: false
+                                    },
+                                    title: {
+                                        text: 'Время работы в программе по сравнению с другими сотрудниками, %',
+										align: 'left',
+                                        style: {
+                                            color:'#464646',
+											fontSize:'14px',
+											fontWeight:'bold'
+                                        }
+                                    },
+                                    xAxis: {
+                                        categories: []
+                                    },
+                                    yAxis: {
+                                        title: {
+                                            text: 'Время работы, %'
+                                        }
+                                    },
+                                    tooltip: {
+                                        formatter: function() {
+                                           // return this.series.name+': <b>' + this.x + '</b> : <b>' + this.y + ' </b>';
+										    return this.series.name+': ' + this.y + ' % ';
+                                        }
+                                    },
+                                    colors: ['#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425'],
+                                    series: []
+                                };
+                                
+                                var lines = data.split('\n');
+            
+                                // Iterate over the lines and add categories or series
+                                $.each(lines, function(lineNo, line) {
+                                    var items = line.split(',');
+                                    
+                                    // header line containes categories
+                                    if (lineNo == 0) {
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo > 0) options.xAxis.categories.push(item);
+                                        });
+                                    }
+                                    
+                                    // the rest of the lines contain data with their name in the first 
+                                    // position
+                                    else {
+                                        var series = {
+                                            data: []
+                                        };
+                                        $.each(items, function(itemNo, item) {
+                                            if (itemNo == 0) {
+                                                series.name = item;
+                                            } else {
+                                                series.data.push(parseFloat(item));
+                                            }
+                                        });
+                                        
+                                        options.series.push(series);
+                                
+
+                                    }
+                                    
+                                });
+                                
+                                // Create the chart
+                                //var chart = new Highcharts.Chart(options);
+                                $("#container1").highcharts(options);
+                            
+                            },
+                            error: function(xhr, status, m){
+                                //alert("Ошибка!"+status+m); 
+                            }	 
+                        });
+						
+	});
+</script>
+
+
+
+
+    

@@ -1,0 +1,44 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs(%{if $is_current_rights}%{selected:1}%{/if}%);
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Дилер (Пользователь D)</a></li>
+    %{if $has_rights}%
+    <li><a href="#tabs-2">Права пользователя</a></li>
+    %{/if}%
+    
+    %{if $has_admin}%
+    <li><a href="#tabs-3">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+  %{if $has_rights}%
+  <div id="tabs-2">
+    <p>
+    %{$rights}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+  %{if $has_admin}%
+  <div id="tabs-3">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

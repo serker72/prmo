@@ -1,0 +1,50 @@
+ %{section name=rowsec loop=$items}%
+    	<div class="common_block" id="data_copy_%{$word}%_%{$items[rowsec].id}%">
+        <img src="%{$items[rowsec].pc_icon}%" border="0" align="left" vspace="0" hspace="3" />
+        
+        
+        
+        
+        
+        
+        <input type="text" id="value_copy_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].value|escape:"html"}%" disabled size="15" maxlength="255">
+        
+        
+        <label for="value1_copy_%{$word}%_%{$items[rowsec].id}%">доб.:</label>
+        <input type="text" id="value1_copy_%{$word}%_%{$items[rowsec].id}%" value="" size="12" maxlength="255" >
+		
+		<input type="hidden" id="kind_copy_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].kind_id}%" />
+		
+        &nbsp;&nbsp;
+        
+		 <label for="wo_value1_copy_%{$word}%_%{$items[rowsec].id}%">без доб. номера:</label>
+        <input type="checkbox" id="wo_value1_copy_%{$word}%_%{$items[rowsec].id}%" value="1">
+		 
+		
+		<a href="#" id="delete_copy_%{$word}%_%{$items[rowsec].id}%" data-comment="удалить %{$items[rowsec].value|escape:"html"}%" class="reestr_delete16 reestr_button16" style="float:right;"></a>
+		
+		 
+        </div>
+    <script>
+	$(function(){
+		$('#value1_copy_%{$word}%_%{$items[rowsec].id}%').inputmask({"mask": "[9][9][9][9][9][9][9][9][9][9][9][9]",
+											 keepStatic: false
+											  
+											 });
+		$("#wo_value1_copy_%{$word}%_%{$items[rowsec].id}%").bind("change", function(){
+			if($(this).prop("checked")){
+				$("#value1_copy_%{$word}%_%{$items[rowsec].id}%").val('');
+				$("#value1_copy_%{$word}%_%{$items[rowsec].id}%").prop("disabled", true);	
+			}else{
+				$("#value1_copy_%{$word}%_%{$items[rowsec].id}%").prop("disabled", false);	
+			}
+		});
+		
+		$("#delete_copy_%{$word}%_%{$items[rowsec].id}%").bind("click", function(){
+			if(window.confirm("¬ы уверены?")) $("#data_copy_%{$word}%_%{$items[rowsec].id}%").remove();
+			
+			return false;
+		});
+	});
+	</script>    
+    %{/section}%

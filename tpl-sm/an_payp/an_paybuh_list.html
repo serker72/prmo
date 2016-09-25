@@ -1,0 +1,480 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	 
+	 $("#pdate%{$prefix}%_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate%{$prefix}%_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	$("#pdatesub%{$prefix}%_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdatesub%{$prefix}%_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	
+	$("#only_in_buh%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#only_not_in_buh%{$prefix}%").prop("checked",false);
+			$("#pdate%{$prefix}%_1").prop("disabled",false);
+			$("#pdate%{$prefix}%_2").prop("disabled",false);
+		}else{
+			$("#pdate%{$prefix}%_1").prop("disabled",true);
+			$("#pdate%{$prefix}%_2").prop("disabled",true);
+		}
+	});
+	
+	$("#only_not_in_buh%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#only_in_buh%{$prefix}%").prop("checked",false);
+			$("#pdate%{$prefix}%_1").prop("disabled",true);
+			$("#pdate%{$prefix}%_2").prop("disabled",true);
+		}else{
+			$("#pdate%{$prefix}%_1").prop("disabled",false);
+			$("#pdate%{$prefix}%_2").prop("disabled",false);
+		}
+	});
+	
+	
+	
+	$("#bills_payed%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#bills_not_payed%{$prefix}%").prop("checked",false);
+		}
+	});
+	
+	$("#bills_not_payed%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#bills_payed%{$prefix}%").prop("checked",false);
+		}
+	});
+	
+	
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#supplier_name%{$prefix}%" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_supplier.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});							
+});
+</script>
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" >
+
+<input type="hidden" name="tab_page" value="%{$tab_page}%" id="tab_page" />
+
+
+<input type="hidden" name="print" value="0" id="print" />
+
+
+%{include file="every_help_dialog.html" filename="an_paybuh.htm" prefix=$prefix description="отчет счета в бухгалтерии"  style="float:right;  margin-right:10px;"}%
+
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+
+<label for="supplier_name%{$prefix}%">Контрагент:</label><br />
+<input type="text" value="%{$supplier_name}%" id="supplier_name%{$prefix}%" name="supplier_name%{$prefix}%" size="40" maxlength="512" />
+
+
+
+<br />
+<br />
+
+
+<input type="image" src="/img/icons/old-zoom-original.png" value="Вывести" alt="Вывести" title="Вывести" name="doSub%{$prefix}%"  />
+
+<a href="an_ds.php?doSub%{$prefix}%=1&tab_page=%{$tab_page}%"><img src="../../img/icons/old-zoom-deselect.png" border="0" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" /></a>
+
+ %{if $can_print}%
+ 
+  <a href="#" id="print_table%{$prefix}%"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  <div id="print%{$prefix}%_dialog" title="Что вы хотите распечатать?">
+    <strong>Что вы хотите распечатать?</strong><br />
+
+    	
+       
+       <input type="checkbox" id="printmode%{$prefix}%1" value="1" />
+<label for="print">Отчет "Счета, переданные в бухгалтерию"</label>
+<br />
+       
+       
+       <input type="checkbox" id="printmode%{$prefix}%2" value="2" />
+<label for="print2">Реестр переданных документов из отдела снабжения в бухгалтерию</label>
+<br />
+       
+       
+    </div>
+    
+    
+    
+    
+    
+    <div id="print%{$prefix}%_subdialog" title="Выберите период">
+    <em>Внимание! Вы выбираете даты передачи счетов в бухгалтерию. Дата установки галочки "счет в бухгалтерии" считается датой передачи счета в бухгалтерию.</em><br /><br />
+
+
+    
+    <strong>Выберите период:</strong><br />
+	
+    <label for="pdatesub%{$prefix}%_1">с:</label><br />
+<input type="text" id="pdatesub%{$prefix}%_1" size="10" maxlength="10" value="%{$pdate5_1}%"    />
+
+<p />
+	<label for="pdatesub%{$prefix}%_2">по:</label><br />
+    <input type="text" id="pdatesub%{$prefix}%_2"  size="10" maxlength="10" value="%{$pdate5_2}%"   />
+    
+    </div>
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+		$("#printmode%{$prefix}%1").bind("click",function(){
+			if($(this).prop("checked")) $("#printmode%{$prefix}%2").prop("checked",false);
+		});
+		
+		$("#printmode%{$prefix}%2").bind("click",function(){
+			if($(this).prop("checked")) $("#printmode%{$prefix}%1").prop("checked",false);
+		});
+		
+	
+	
+	
+		 $("#print%{$prefix}%_subdialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					
+					if(($("#pdatesub%{$prefix}%_1").val()!="")&&($("#pdatesub%{$prefix}%_1").val()!="-")&&($("#pdatesub%{$prefix}%_2").val()!="-")&&($("#pdatesub%{$prefix}%_2").val()!="")){
+						
+						
+					
+						  only_vyp=0;
+						 
+						  only_not_vyp=0;
+						  
+						  only_not_payed=0;
+						  
+						  
+						  only_in_buh=1;
+						  
+						  only_not_in_buh=0;
+						  
+						    bills_payed=0;
+						  bills_not_payed=0;
+						  bills_semi_payed=0;
+						 
+						 
+						 
+						  zc=window.open('an_ds.php?tab_page=%{$tab_page}%&print='+'2'+'&pdate%{$prefix}%_1='+$("#pdatesub%{$prefix}%_1").val()+'&pdate%{$prefix}%_2='+$("#pdatesub%{$prefix}%_2").val()+'&doSub%{$prefix}%=1&only_vyp%{$prefix}%='+only_vyp+'&only_not_payed%{$prefix}%='+only_not_payed+'&only_not_vyp%{$prefix}%='+only_not_vyp+'&only_not_in_buh%{$prefix}%='+only_not_in_buh+'&only_in_buh%{$prefix}%='+only_in_buh+'&bills_payed%{$prefix}%='+bills_payed+'&bills_not_payed%{$prefix}%='+bills_not_payed+'&bills_semi_payed%{$prefix}%='+bills_semi_payed, 'paybuh2','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+						   
+						   if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+						   
+						
+						$("#print%{$prefix}%_subdialog").dialog("close");
+						
+					}else{
+						alert("Пожалуйста, выберите период передачи счетов в бухгалтерию!\nРеестр будет сформирован на основе этих дат.");	
+					}
+					
+				},
+				"Отмена":function(){
+					$("#print%{$prefix}%_subdialog").dialog("close");
+				}
+				
+			}
+		});
+	
+	
+	
+	
+	   $("#print%{$prefix}%_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					//проверить режим, распечатать в режиме
+					printmode=$("input[id^=printmode%{$prefix}%]:checked").val();
+					
+					if(printmode==undefined){
+						alert("Выберите, что вы хотите распечатать!");
+						
+					}else{
+						
+						if(printmode==1){
+						  only_vyp=0;
+						//  if($("#only_vyp5").prop("checked")) only_vyp=1;
+						  
+						  only_not_vyp=0;
+						  //if($("#only_not_vyp5").prop("checked")) only_not_vyp=1;
+						  
+						  only_not_payed=0;
+						  //if($("#only_not_payed5").prop("checked")) only_not_payed=1;
+						  
+						  
+						  only_in_buh=0;
+						  if($("#only_in_buh%{$prefix}%").prop("checked")) only_in_buh=1;
+						  
+						  only_not_in_buh=0;
+						  if($("#only_not_in_buh%{$prefix}%").prop("checked")) only_not_in_buh=1;
+						  
+						  
+						    bills_payed=0;
+						  if($("#bills_payed%{$prefix}%").prop("checked")) bills_payed=1;
+						  
+						   
+						  bills_not_payed=0;
+						  if($("#bills_not_payed%{$prefix}%").prop("checked")) bills_not_payed=1;
+						  
+						   
+						  bills_semi_payed=0;
+						  if($("#bills_semi_payed%{$prefix}%").prop("checked")) bills_semi_payed=1;
+						  
+						  
+						  pdate1='';
+						  if($("#pdate%{$prefix}%_1").prop("disabled")==false) pdate1='&pdate%{$prefix}%_1='+$("#pdate%{$prefix}%_1").val();
+						  
+						  pdate2='';
+						  if($("#pdate%{$prefix}%_2").prop("disabled")==false) pdate2='&pdate%{$prefix}%_2='+$("#pdate%{$prefix}%_2").val();
+						  
+						  
+						  zc=window.open('an_ds.php?tab_page=%{$tab_page}%&print='+printmode+'&supplier_name%{$prefix}%='+$("#supplier_name%{$prefix}%").val()+pdate1+pdate2+'&doSub%{$prefix}%=1&only_vyp%{$prefix}%='+only_vyp+'&only_not_payed%{$prefix}%='+only_not_payed+'&only_not_vyp%{$prefix}%='+only_not_vyp+'&sortmode%{$prefix}%=%{$sortmode}%&only_not_in_buh%{$prefix}%='+only_not_in_buh+'&only_in_buh%{$prefix}%='+only_in_buh+'&bills_payed%{$prefix}%='+bills_payed+'&bills_not_payed%{$prefix}%='+bills_not_payed+'&bills_semi_payed%{$prefix}%='+bills_semi_payed, 'paybuh'+printmode,'width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+						   
+						   if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+						   
+						}else{
+							//показать диалог, дать выбрать даты
+							//сбросить даты
+							
+							$("#print%{$prefix}%_subdialog").dialog("open");
+							
+							$("#pdatesub%{$prefix}%_1").val("-");
+							$("#pdatesub%{$prefix}%_2").val("-")
+						}
+						$("#print%{$prefix}%_dialog").dialog("close");
+					}
+					
+					
+				},
+				"Отмена":function(){
+					$("#print%{$prefix}%_dialog").dialog("close");
+				}
+				
+			}
+		});
+	  $("#print_table%{$prefix}%").bind("click",function(){
+		  
+		  $("#print%{$prefix}%_dialog").dialog("open");	
+		  
+		  
+		  return false; 
+	  });
+	  
+	
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+
+
+
+
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong>
+</div>
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate%{$prefix}%_1">с:</label><br />
+<input type="text" name="pdate%{$prefix}%_1" id="pdate%{$prefix}%_1" size="10" maxlength="10" value="%{$pdate5_1}%" style="height:13px;" %{if $only_not_in_buh==1 or $only_in_buh==0}% disabled="disabled"%{/if}%  />
+
+<p />
+	<label for="pdate%{$prefix}%_2">по:</label><br />
+    <input type="text" name="pdate%{$prefix}%_2" id="pdate%{$prefix}%_2"  size="10" maxlength="10" value="%{$pdate5_2}%" style="height:13px;" %{if $only_not_in_buh==1 or $only_in_buh==0}% disabled="disabled"%{/if}% />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+<div style="margin-bottom:5px;">
+<input type="checkbox" name="only_in_buh%{$prefix}%" id="only_in_buh%{$prefix}%" value="1" %{if $only_in_buh==1 }%checked="checked"%{/if}% />
+<label for="only_in_buh%{$prefix}%">Только счета, переданные в бухгалтерию</label>
+<br />
+
+
+<input type="checkbox" name="only_not_in_buh%{$prefix}%" id="only_not_in_buh%{$prefix}%" value="1" %{if $only_not_in_buh==1 }%checked="checked"%{/if}% />
+<label for="only_not_in_buh%{$prefix}%">Только счета, не переданные в бухгалтерию</label>
+
+</div>
+
+
+
+<input type="checkbox" name="bills_payed%{$prefix}%" id="bills_payed%{$prefix}%" value="1" %{if $bills_payed==1 }%checked="checked"%{/if}% />
+<label for="bills_payed%{$prefix}%">Оплаченные счета</label>
+<br />
+
+
+<input type="checkbox" name="bills_not_payed%{$prefix}%" id="bills_not_payed%{$prefix}%" value="1" %{if $bills_not_payed==1 }%checked="checked"%{/if}% />
+<label for="bills_not_payed%{$prefix}%">Неоплаченные счета</label>
+<br />
+
+<input type="checkbox" name="bills_semi_payed%{$prefix}%" id="bills_semi_payed%{$prefix}%" value="1" %{if $bills_semi_payed==1 }%checked="checked"%{/if}% />
+<label for="bills_semi_payed%{$prefix}%">Частично оплаченные счета</label>
+<br />
+
+
+</div>
+
+
+
+
+
+
+
+
+<br clear="all" />
+
+</form>
+
+<p />
+<small>
+1. Фильтр <strong>"Период".</strong> По умолчанию показаны все %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета за все время работы программы. <br />
+При выборе фильтра <strong>"Только счета, переданные в бухгалтерию "</strong> становится доступным фильтр <strong>"Период."</strong> При выборе периода в режиме <strong>"Только счета, переданные в бухгалтерию "</strong>  %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета отбираются по дате передачи в бухгалтерию, попадающую в выбранный период.<br />
+<br />
+Если Вы не выбрали фильтр <strong>"Только счета, переданные в бухгалтерию "</strong>, то отбор счетов по периоду не проводится, и фильтр <strong>"Период"</strong> неактивен.<br />
+<br />
+
+
+
+
+2. Фильтр  <strong>"Контрагент"</strong>. 
+
+
+Вы можете осуществлять отбор %{if $is_incoming==1}%входящих%{else}%исходящих%{/if}% счетов по нескольким контрагентам.
+<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента.
+Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию.
+При необходимости отобрать в отчет счета по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов.
+<br />
+После выбора всех необходимых контрагентов нажмите кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.
+<br />
+<br />
+
+3. 
+<strong>Фильтр "Только счета, переданные в бухгалтерию "</strong> позволяет показать только те %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета, которые были переданы в бухгалтерию.
+<br />
+<strong>Фильтр "Только счета, не переданные в бухгалтерию"</strong> позволяет показать только те %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета, которые не были переданы в бухгалтерию.
+<br />
+Одновременно может быть отмечен только один из этих двух фильтров.<br />
+<br />
+
+
+4. 
+<strong>Фильтр "Оплаченные счета"</strong> позволяет  показать только  %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}%  счета со 100% оплатой.
+<br />
+<strong>Фильтр "Неоплаченные счета "</strong> позволяет показать только  %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}%  счета, по которым не было оплат.
+<br />
+Одновременно может быть отмечен только один из этих двух фильтров.<br />
+<br />
+
+5.<strong>Фильтр "Частично оплаченные счета "</strong> позволяет отобрать в отчет частично оплаченные счета.
+<br />
+<br />
+<strong>Фильтры 3,4,5 могут сочетаться, например:</strong>
+<ul>
+<li>Сочетание фильтров "Только счета, переданные в бухгалтерию " и "Оплаченные счета" выдаст полностью оплаченные счета, переданные в бухгалтерию.</li>
+
+<li>Сочетание фильтров "Только счета, переданные в бухгалтерию ", "Оплаченные счета" и "Частично оплаченные счета " выдаст полностью и частично оплаченные счета, переданные в бухгалтерию.</li>
+
+<li>Сочетание фильтров "Только счета, переданные в бухгалтерию " и "Неоплаченные счета" выдаст переданные в бухгалтерию и неоплаченные счета.</li>
+</ul>
+
+
+</small>
+<p />
+
+
+%{if $do_it}%
+%{include file="an_payp/an_paybuh_table.html"}%
+
+
+
+
+
+%{/if}%
+
+
+
+
+
+
+
+
+
+
+%{$pages}%

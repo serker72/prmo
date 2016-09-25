@@ -1,0 +1,741 @@
+%{section name=rowsec loop=$items}%%{/section}%
+%{if $has_header}%
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	 
+	 $("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	$("#given_pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+	 $.ajax({
+		async: true,
+		url: "/js/annul.php",
+		type: "GET",
+		data:{
+			action: "try_annul",
+			kind: 5	
+		},
+		beforeSend: function() {
+		 
+		},
+		success: function(data) {
+			//alert(data);
+		},
+		error: function() {
+		 // alert("");
+		}
+	}); 
+});
+</script>
+
+
+%{include file="every_help_dialog.html" filename="pays.htm" prefix="" description="реестр всех оплат"  style="float:right;  margin-right:00px;" is_right=true}%
+
+<div style="float:right; margin-right:10px;">
+	%{include file="suppliers/mode_reestr.html" prefix="" pagename="pay.php" is_right=true}%
+	
+</div>
+
+%{$pages}%
+
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+
+<input type="button" value="Создать исходящую оплату..." onclick="location.href='ed_pay.php';" style="float:left; margin-right:20px;" />
+
+
+
+
+<label for="statuses" class="statuses_label">Статусы:</label>
+<select id="statuses" name="statuses[]" multiple="multiple">
+
+<option value="14" %{if $status_id_14==1 or $all_statuses==1}% selected%{/if}% >Не выполнена</option>
+<option value="15" %{if $status_id_15==1 or $all_statuses==1}% selected%{/if}% >Выполнена</option>
+<option value="3"  %{if $status_id_3==1 or $all_statuses==1}% selected%{/if}%>Аннулирован</option>
+</select>
+
+<a href="#" id="save_sort_mode"   class="statuses_save reestr_save reestr_button24" data-comment="Сохранить"></a>
+
+&nbsp;&nbsp;
+
+<div id="statuses_caption" class="statuses_caption">
+
+</div>
+
+<br clear="all"/>
+
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		VidgetMulti('statuses');	
+		
+		//сохранение набора
+		$("#save_sort_mode").bind("click",function(){
+			 
+			
+			 $('#statuses').multiselect("widget").find(":checkbox").each(function(){
+				 //alert(this.label);
+				 if(this.checked){
+					 $.cookie('pay_out_status_id_'+this.value, 1, { expires: 14 });  
+				 }else{
+					$.removeCookie('pay_out_status_id_'+this.value);
+				 }
+			  });
+						  
+			$("#doFilter").trigger("click");
+			
+			return false;	
+		});
+		 
+	
+	});
+
+	</script>
+
+
+ 
+<p />
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+%{foreach from=$view item=col}%	
+    
+
+%{if $col.colname=="code"}%    
+     <th scope="col" width="40">
+    Код 
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+   
+    </th>
+  %{/if}%
+%{if $col.colname=="pdate"}%     
+    <th scope="col" width="60">
+    Дата создания
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="given_pdate"}%     
+       <th scope="col" width="60">
+    Заданная дата
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="given_no"}%     
+    <th scope="col" width="60">
+    Заданный номер
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}%
+%{if $col.colname=="p_code"}%    
+     <th scope="col" width="60">
+    Код затрат
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=15"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=14"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+ %{/if}%
+%{if $col.colname=="summ"}%   
+    <th scope="col" width="80" >Сумма оплаты, руб.
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   
+   %{/if}%
+%{if $col.colname=="supplier"}%   
+    <th scope="col" width="100">
+    Поставщик
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}%
+%{if $col.colname=="status"}%   
+    
+     <th scope="col" width="100">
+    Статус
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+   %{/if}%
+%{if $col.colname=="base"}%    
+    
+    
+      
+    <th scope="col" width="*" >
+    Основание
+    </th>
+   %{/if}%
+%{if $col.colname=="notes"}%    
+    
+     <th scope="col" width="*">
+    Примечания
+   
+    </th>
+    
+   %{/if}%
+%{if $col.colname=="crea"}%    
+     <th scope="col" width="80">
+    Создал
+   
+    </th>
+    %{/if}% 
+    
+      
+  %{if $col.colname=="bd_org"}%     
+    
+     <th scope="col" width="*">
+    Реквизиты организации
+   
+    </th>
+    	
+  %{/if}%
+  
+   %{if $col.colname=="bd"}%     
+    
+     <th scope="col" width="*">
+    Реквизиты поставщика
+   
+    </th>
+    	
+  %{/if}%
+   %{if $col.colname=="for_con"}%     
+    
+     <th scope="col" width="*">
+    Оплата по договору
+   
+    </th>
+    	
+  %{/if}%
+   
+    %{if $col.colname=="for_bill"}%     
+    
+     <th scope="col" width="*">
+    Оплата по счету
+   
+    </th>
+    	
+  %{/if}%
+  
+   %{if $col.colname=="is_inner_pay"}%     
+    <th scope="col" width="*">
+     Внутренний платеж
+    </th> 
+  %{/if}%
+   %{if $col.colname=="is_return"}%     
+    <th scope="col" width="*">
+     Возврат д/с
+    </th> 
+  %{/if}%
+   %{if $col.colname=="inner_user_id"}%     
+    <th scope="col" width="*">
+    Сотрудник-получатель 
+    </th> 
+  %{/if}%
+   %{if $col.colname=="contract"}%     
+    <th scope="col" width="*">
+    Договор 
+    </th> 
+  %{/if}%
+	
+   %{/foreach}%
+   
+   
+   
+    
+    
+   
+      <th scope="col" width="100">
+    Утверждение
+   
+    </th>
+  
+    
+   <th scope="col" width="24" >&nbsp;
+   
+   </th>
+    <th scope="col"  width="24">&nbsp;
+   
+   </th>
+</tr>
+
+<tr align="center" valign="top" class="filter">
+%{foreach from=$view item=col}%	
+   
+%{if $col.colname=="code"}%   
+       <td width="40">
+       
+       <input type="text" size="8" maxlength="255" value="%{$code}%" name="code" id="code" style="width:40px;" />
+       
+
+    </td>
+  %{/if}%
+%{if $col.colname=="pdate"}%    
+    <td width="60">
+    
+    
+    &nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" />
+	
+  
+  
+    </td>
+   %{/if}%
+%{if $col.colname=="given_pdate"}%    
+    <td width="60">
+    
+     &nbsp;&nbsp;с:&nbsp;<input type="text" name="given_pdate1" id="given_pdate1" size="10" maxlength="10" value="%{$given_pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="given_pdate2" id="given_pdate2" size="10" maxlength="10" value="%{$given_pdate2}%" style="width:60px;" />
+	 
+    
+    </td>
+    %{/if}%
+%{if $col.colname=="given_no"}%   
+     <td width="60">
+     <input type="text" size="8" maxlength="255" value="%{$given_no}%" name="given_no" id="given_no" style="width:60px;" />
+	 
+    
+    </td>
+   %{/if}%
+%{if $col.colname=="p_code"}%    
+     <td width="60">
+      
+       <select id="code_code" name="code_code" style="width:100px;">
+       %{html_options values=$code_code_ids selected=$code_code output=$code_code_vals}%
+       </select>
+
+    </td>
+    %{/if}%
+%{if $col.colname=="summ"}%   
+    
+     <td width="80">
+   <input type="text" size="8" maxlength="255" value="%{$value}%" name="value" id="value" />
+       
+  
+    </td>
+    %{/if}%
+%{if $col.colname=="supplier"}%   
+     <td width="100">
+   
+   <input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name" id="supplier_name" />
+   
+    
+    </td>
+    
+    %{/if}%
+%{if $col.colname=="status"}%   
+    
+    <td width="100">
+    
+    
+    
+    </td>
+    
+   %{/if}%
+%{if $col.colname=="base"}%    
+    
+    <td width="*">&nbsp;
+  
+  </td>
+    %{/if}%
+%{if $col.colname=="notes"}%   
+     <td width="*">&nbsp;
+  
+  </td>
+    %{/if}%
+%{if $col.colname=="crea"}%   
+     <td width="80">
+       
+       <input type="text" size="8" maxlength="255" value="%{$manager_name}%" name="manager_name" id="manager_name" style="width:60px;" />
+       
+
+    </td>
+    %{/if}% 
+    
+     %{if $col.colname=="bd_org"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+
+
+%{if $col.colname=="bd"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+
+
+%{if $col.colname=="for_con"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+
+
+%{if $col.colname=="for_bill"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+ 
+ %{if $col.colname=="is_inner_pay"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+ %{if $col.colname=="is_return"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+ %{if $col.colname=="inner_user_id"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+ %{if $col.colname=="contract"}%       
+     <td width="*">&nbsp;
+  
+  </td>
+ %{/if}%
+   
+    %{/foreach}%
+   
+  <td width="100">&nbsp;
+	 
+    
+    </td>
+   
+   
+    <td width="24">
+    <input name="doFilter" id="doFilter"  type="submit" value="Найти" />
+    </td>
+     <td  width="24">&nbsp;
+   
+   </td>
+    
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%
+<tr align="center" valign="top" id="pay_item_row_%{$items[rowsec].id}%">
+%{/if}%	
+
+%{foreach from=$view item=col}%    
+    
+
+%{if $col.colname=="code"}%   
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}%>%{$items[rowsec].code}%&nbsp;</td>
+    
+ %{/if}%
+%{if $col.colname=="pdate"}%      
+     <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+  %{/if}%
+%{if $col.colname=="given_pdate"}%     
+      <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].given_pdate}%&nbsp;</td>
+     
+    %{/if}%
+%{if $col.colname=="given_no"}%    
+    
+     <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].given_no}%&nbsp;</td>
+   %{/if}%
+%{if $col.colname=="p_code"}%     
+       <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].code_code}%
+    
+    %{$items[rowsec].code_name}%
+    
+    </td>
+    %{/if}%
+%{if $col.colname=="summ"}%    
+   
+       <td width="80" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].value}%
+    </td>
+   %{/if}%
+%{if $col.colname=="supplier"}%    
+      <td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </a>
+     %{if $items[rowsec].is_inner_pay==1}%
+    %{$items[rowsec].inu_name_s}%  
+    %{/if}%
+    
+    </td>
+   %{/if}%
+%{if $col.colname=="status"}%    
+    
+ <td width="100" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}% id="pay_status%{$prefix}%_%{$items[rowsec].id}%">
+
+
+%{if $items[rowsec].status_id==3}%
+    <strong>аннулирована</strong>
+   
+%{elseif $items[rowsec].status_id==14}%
+    <strong>не выполнена</strong>
+  
+    %{else $items[rowsec].status_id==15}%
+    <strong>выполнена</strong>
+    
+%{/if}%
+
+
+</td>
+
+%{/if}%
+%{if $col.colname=="base"}%   
+   
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   <a href="#" class="reestr_short">
+   <small>
+    %{section name=rowsec2 loop=$items[rowsec].osnovanie}%
+    %{if $smarty.section.rowsec2.first}%
+    	%{if $items[rowsec].osnovanie[rowsec2].kind==0}%
+        оплата по счету № %{$items[rowsec].osnovanie[rowsec2].code}% от %{$items[rowsec].osnovanie[rowsec2].pdate}%, %{$items[rowsec].osnovanie[rowsec2].value}% руб.<br />
+        %{elseif $items[rowsec].osnovanie[rowsec2].kind==1}%
+        оплата по инвентаризационному акту  № %{$items[rowsec].osnovanie[rowsec2].code}% от %{$items[rowsec].osnovanie[rowsec2].pdate}%, %{$items[rowsec].osnovanie[rowsec2].value}% руб. <br />
+        %{/if}%
+    %{/if}%    
+    %{/section}%
+    
+    </small>
+    %{if $smarty.section.rowsec2.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+     </a> 
+    
+   <div class="reestr_full reestr_hide">  
+    <small>
+    %{section name=rowsec2 loop=$items[rowsec].osnovanie}%
+    	%{if $items[rowsec].osnovanie[rowsec2].kind==0}%
+        оплата по счету <a href="ed_bill_in.php?id=%{$items[rowsec].osnovanie[rowsec2].id}%&action=1&from_begin=1" target="_blank" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}% style="color:red;"%{/if}%>№ %{$items[rowsec].osnovanie[rowsec2].code}% от %{$items[rowsec].osnovanie[rowsec2].pdate}%, %{$items[rowsec].osnovanie[rowsec2].value}% руб.</a><br />
+        %{elseif $items[rowsec].osnovanie[rowsec2].kind==1}%
+        оплата по инвентаризационному акту <a href="ed_invcalc.php?id=%{$items[rowsec].osnovanie[rowsec2].id}%&action=1&from_begin=1" target="_blank" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}% style="color:red;"%{/if}%>№ %{$items[rowsec].osnovanie[rowsec2].code}% от %{$items[rowsec].osnovanie[rowsec2].pdate}%, %{$items[rowsec].osnovanie[rowsec2].value}% руб.</a><br />
+        %{/if}%
+        
+    %{/section}%
+    </small>
+    </div>
+    
+    </td>
+  %{/if}%
+%{if $col.colname=="notes"}%    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% align="left">
+     <a href="#" class="reestr_short">
+   <small> %{section  name=notesec loop=$items[rowsec].notes}%
+    %{if $smarty.section.notesec.first}%
+    
+    %{$items[rowsec].notes[notesec].pdate}%
+     %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note|strip_tags|trim|truncate:30:"":false}%
+    %{/if}%
+     %{/section}%</small>
+     %{if $smarty.section.notesec.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a> 
+   
+   <div class="reestr_full reestr_hide">
+   <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    </div>
+    </td>
+   %{/if}%
+%{if $col.colname=="crea"}%   
+    
+    <td width="80" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}%  
+    </td>
+    
+ %{/if}%  
+ 
+  %{if $col.colname=="bd_org"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      <a href="#" class="reestr_short">
+      р/с %{$items[rowsec].org_rs}%
+       <span class='reestr_short_cut4'>...</span>
+     </a>
+    
+     <div class="reestr_full reestr_hide">
+      
+      р/с %{$items[rowsec].org_rs}%, 
+      к/с %{$items[rowsec].org_ks}%, 
+      банк %{$items[rowsec].org_bank}%, 
+      БИК %{$items[rowsec].org_bik}%, 
+      город %{$items[rowsec].org_city}% 
+      %{if $items[rowsec].org_is_basic}% осн. рекв.%{/if}%
+      </div>
+      
+    </td>
+   %{/if}%
+    %{if $col.colname=="bd"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+       <a href="#" class="reestr_short">
+       р/с %{$items[rowsec].rs}%
+         <span class='reestr_short_cut4'>...</span>
+     </a>
+      
+       <div class="reestr_full reestr_hide">
+      р/с %{$items[rowsec].rs}%, 
+      к/с %{$items[rowsec].ks}%, 
+      банк %{$items[rowsec].bank}%, 
+      БИК %{$items[rowsec].bik}%, 
+      город %{$items[rowsec].city}% 
+      %{if $items[rowsec].is_basic}% осн. рекв.%{/if}%
+      </div>
+      
+    </td>
+   %{/if}%
+    %{if $col.colname=="for_con"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     %{if $items[rowsec].pay_for_dogovor==1}% + %{else}% - %{/if}%
+    </td>
+   %{/if}%
+    %{if $col.colname=="for_bill"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $items[rowsec].pay_for_bill==1}% + %{else}% - %{/if}%
+    </td>
+   %{/if}%
+   
+   
+   %{if $col.colname=="is_inner_pay"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $items[rowsec].is_inner_pay==1}% + %{else}% - %{/if}%
+    </td>
+   %{/if}%
+   
+   %{if $col.colname=="is_return"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $items[rowsec].is_return==1}% + %{else}% - %{/if}%
+    </td>
+   %{/if}%
+   
+   %{if $col.colname=="inner_user_id"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].inu_name_s}%  
+    </td>
+   %{/if}%
+   
+   %{if $col.colname=="contract"}%   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].bill_contract_no}%  от %{$items[rowsec].bill_contract_pdate}%  
+    </td>
+   %{/if}%
+   
+    %{/foreach}%
+  
+    
+    %{include file="pay/toggle_confirm.html" filename="pay.php" item=$items[rowsec]  shorter=0}%
+   
+   
+    
+    <td width="24" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+   
+     <a href="ed_pay.php?action=1&id=%{$items[rowsec].id}%" target="_blank"  data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    %{else}%
+   <a href="#" data-comment="Подробно..."  class="reestr_edit reestr_inactive reestr_right_button24" onClick="return false;"> </a>
+  
+    %{/if}%
+    
+    %{if $items[rowsec].is_confirmed==1}%
+ %{if $can_print}%
+ 
+ <a href="ed_pay.php?action=1&id=%{$items[rowsec].id}%&print=1" target="_blank" data-comment="печать исходящей оплаты..." class="reestr_print reestr_right_button24"></a>
+ 
+ %{else}%
+  
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати исходящей оплаты.'); return false;" data-comment="печать исходящей оплаты..."  class="reestr_print reestr_inactive reestr_right_button24"></a>
+ %{/if}%
+ 
+ %{else}%
+  
+ <a href="#" onclick="alert('В данном режиме печать исходящей оплаты недоступна. Пожалуйста, утвердите исходящую оплату.'); return false;" data-comment="печать исходящей оплаты..."  class="reestr_print reestr_inactive reestr_right_button24"></a>
+ %{/if}%
+    </td>
+    
+     <td width="24" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{include file="pay/toggle_annul.html"}%
+    
+    </td>
+    
+%{if $has_header}%   
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>Исходящих оплат не найдено.</em><br />
+%{/if}%
+
+
+
+
+%{$pages}%
+%{/if}%

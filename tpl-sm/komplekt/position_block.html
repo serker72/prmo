@@ -1,0 +1,882 @@
+%{if $action==1}%
+
+%{/if}%
+
+
+
+<script type="text/javascript">
+function link_in_bills(id){
+		 $.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_bills_pos",
+					  "id":id,
+					  "komplekt_ved_id":$("#id").val()
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+}
+
+
+
+function link_in_pol( id){
+	 $.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_acc_pos",
+					  "id":id,
+					  "komplekt_ved_id":$("#id").val()
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+}
+
+function link_in_bills_in(id){
+		 $.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_bills_pos",
+					  "id":id,
+					  "komplekt_ved_id":$("#id").val(),
+					  "is_incoming":1
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+}
+
+
+
+function link_in_pol_in( id){
+	 $.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_acc_pos",
+					  "id":id,
+					  "komplekt_ved_id":$("#id").val(),
+					  "is_incoming":1
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+}
+//сортировка позиций заявки
+function ReloadPositions(id, sortmode, can_modify, can_delete_positions, cannot_select_positions){
+	if(can_modify) int_can_modify=1;
+	else int_can_modify=0;
+	if(can_delete_positions) int_can_delete_positions=1;
+	else int_can_delete_positions=0;
+	
+	if(cannot_select_positions) int_cannot_select_positions=1;
+	else int_cannot_select_positions=0;
+	
+	
+	$.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"reload_positions",
+					  "id":id,
+					  "sortmode":sortmode,
+					  "can_modify":int_can_modify,
+					  "can_delete_positions":int_can_delete_positions,
+					  "cannot_select_positions":int_cannot_select_positions
+				  },
+				  beforeSend: function(){
+					//$("#positions").html('<tr><td colspan="14"><img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" /></td></tr>');
+				  },
+				  success: function(data){
+					$("#positions").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					 alert('Ошибка сортировки позиций заявки.');
+				  }	 
+				});
+	
+	
+}
+
+</script>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2" class="blacktable1" id="position_table">
+  <thead>
+  <tr align="left" valign="top">
+  	<th scope="col" width="20" rowspan="2">
+    № п/п
+    </th>
+    <th scope="col" width="20" rowspan="2">
+    Код
+    %{if $komplekt_ved.id}%
+     <div class="sort_dir">
+    <a href="#" onclick="ReloadPositions($('#id').val(), 1, '%{$can_modify}%', '%{$can_delete_positions}%', '%{$cannot_select_positions}%'); return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="ReloadPositions($('#id').val(), 2, '%{$can_modify}%', '%{$can_delete_positions}%', '%{$cannot_select_positions}%'); return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{else}%
+     <div class="sort_dir">
+    <a href="#" onclick="alert('Для сортировки позиций сохраните пожалуйста заявку!'); return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="alert('Для сортировки позиций сохраните пожалуйста заявку!'); return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    <th scope="col" width="*" rowspan="2">Наименование
+     %{if $komplekt_ved.id}%
+     <div class="sort_dir">
+    <a href="#" onclick="ReloadPositions($('#id').val(), 3, '%{$can_modify}%', '%{$can_delete_positions}%', '%{$cannot_select_positions}%'); return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="ReloadPositions($('#id').val(), 4, '%{$can_modify}%', '%{$can_delete_positions}%', '%{$cannot_select_positions}%'); return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{else}%
+      <div class="sort_dir">
+    <a href="#" onclick="alert('Для сортировки позиций сохраните пожалуйста заявку!');  return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="alert('Для сортировки позиций сохраните пожалуйста заявку!');  return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    
+    </th>
+    <th scope="col" width="50" rowspan="2">
+     ед. изм.
+    </th>
+    <th scope="col" width="50" rowspan="2" >
+     Первоначально по заявке
+    </th>
+    <th scope="col" width="50" rowspan="2">
+     Всего по заявке
+    </th>
+    <th colspan="3" class="kompl1">
+    Закупка
+    </th>
+    
+    <th colspan="3" class="kompl2">
+    Продажа
+    </th>
+    
+     <th rowspan="2" class="kompl3">
+    Итоговый результат
+    </th>
+    
+     <th scope="col" width="24" rowspan="2">
+   	<input type="checkbox" title="выделить все позиции" 
+    id="table_select_all" 
+    %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    />
+    <script type="text/javascript">
+	$(function(){
+		$("#table_select_all").bind("click",function(){
+			
+				$.each( $("#position_table input[id^=to_bill_]"),function(k,v){
+					$(v).prop("checked",$("#table_select_all").prop("checked"));
+					
+				});
+				//$("#table_select_all").prop("checked",false);
+			
+		});
+	});
+	</script>
+    </th>
+    <th scope="col" width="24" rowspan="2">&nbsp;
+   
+    </th>
+   
+  </tr>
+  <tr align="left" valign="top">
+  
+   
+    <th scope="col" width="50" class="kompl1">
+     Во вх. счетах
+    </th>
+    
+    <th scope="col" width="50" class="kompl1">
+    Получено
+    </th>
+    <th scope="col" width="50" class="kompl1">
+    Доступно к закупке 
+    </th>
+    
+  
+  
+    <th scope="col" width="50" class="kompl2">
+     В исх. счетах
+    </th>
+    
+    <th scope="col" width="50" class="kompl2">
+    Отгружено
+    </th>
+    <th scope="col" width="50" class="kompl2">
+    Доступно к продаже
+    </th>
+    
+   
+  </tr>
+  </thead>
+  <tbody id="positions">
+  
+ %{include file="komplekt/positions_list.html" }%
+  
+  </tbody>
+</table>
+<div id="info_positions_dialog" title="О позиции" style="display:none;">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 550,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+<div id="positions_dialog" title="Поиск позиций номенклатуры" style="display:none;">
+	 <strong>Поиск позиции</strong><br />
+    
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="positions_search_set2" >
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" style="width:450px;" size="80" maxlength="255" id="qry2" /></td>
+        <td>&nbsp;</td>
+        <td><a href="#" id="do_ext_search"><img src="/img/icons/plus.png" width="24" height="24" border="0" alt="Расширенный поиск" title="Расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#do_ext_search").unbind("click");
+			$("#do_ext_search").bind("click",function(){
+				
+				$("#qry").attr("value",$("#qry2").val());
+				
+				
+				$("#positions_search_set2").css("display","none");
+				$("#positions_search_set").css("display","table");
+				$("#positions_search_set3").css("display","table");
+				$("#qry2").attr("value","");
+				return false;
+			});
+			
+			$("#qry2").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doSrch").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}				
+			});
+		});
+		</script>
+        
+        </td>
+        
+   </tr>
+    <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        </tr>
+   </table>
+   
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="positions_search_set" style="display:none"  >
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" size="40" maxlength="255" id="qry" /></td>
+        <td>
+        <select id="dimension_id" style="width:50px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="length" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="width" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="height" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="weight" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="volume" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="diametr" /></td>
+        
+        <td><a href="#" id="donot_ext_search" style="display:block; float:left;"><img src="/img/icons/minus.jpg" width="24" height="24" border="0" alt="Скрыть расширенный поиск" title="Скрыть расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#donot_ext_search").unbind("click");
+			$("#donot_ext_search").bind("click",function(){
+				
+				$("#qry2").attr("value",$("#qry").val());
+				$("#qry").attr("value","");
+				$("#positions_search_set").css("display","none");
+				$("#positions_search_set3").css("display","none");
+				$("#dimension_id").val("");
+				$("#length").val("");
+				$("#width").val("");
+				$("#height").val("");
+				$("#weight").val("");
+				$("#volume").val("");
+				$("#diametr").val("");
+				
+				$("#tov_grp").val("");
+				$("#group_id2").val("");
+				$("#group_id3").val("");
+				
+				$("#positions_search_set2").css("display","table");
+				return false;
+			});
+			
+			$("#qry").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doSrch").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}				
+			});
+		});
+		</script>
+        </td>
+      </tr>
+      <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        <td><small>ед. изм.</small></td>
+        <td><small>Длина, мм</small></td>
+        <td><small>Ширина, мм</small></td>
+        <td><small>Высота/ <br />
+толщина, мм</small></td>
+
+		<td><small>Вес <br />
+1 ед., кг</small></td>
+        <td><small>Объем <br />
+1 ед., м<sup>3</sup></small></td>
+
+        <td><small>Диаметр, мм</small></td>
+      </tr>
+    </table>
+	&nbsp;
+    &nbsp;
+  
+	
+    <table width="*" border="0" cellspacing="2" cellpadding="0" align="right">
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td><input type="button" value="Найти" id="doSrch"  /></td>
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td>
+        %{include file="every_help_dialog.html" filename="komplekt_find_pos.html" prefix="kfp" description="Информация о поиске позиций номенклатуры"  style="display:inline;"}%
+        
+        </td>
+      </tr>
+      
+      %{if $can_create_position}%
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td colspan="3">
+      
+        <input type="button" value="Создать позицию" id="doCreate"  />
+        
+        </td>
+         
+      </tr>
+      %{/if}% 
+    </table>
+
+ 	
+    
+    <br />
+	
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" id="positions_search_set3" style="display:none" >
+  <tr align="left" valign="top">
+    <td>
+    <select id="tov_grp" style="width:150px;">
+    %{html_options values=$tov_group_ids selected=$tov_group_id output=$tov_group_names}%
+    </select>
+    </td>
+    <td>
+    <select id="group_id2" style="width:150px;">
+    
+    </select>
+    </td>
+    <td>
+    <select id="group_id3" style="width:150px;">
+   
+    </select>
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <small>товарная группа</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;1&nbsp;ур.</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;2&nbsp;ур.</small>
+    </td>
+  </tr>
+</table>
+
+    
+    
+	
+    <br clear="all" />
+    
+    <strong>Найденные позиции:</strong><br />
+    <div id="pos_rows" style="border:1px solid silver; width:830px; height:300px; overflow:scroll;">
+    
+    </div>
+    
+</div>
+
+ <script type="text/javascript">
+  $(function(){
+     
+	
+	$("#positions_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 850,
+    height: 540,
+    buttons: {
+        "Добавить выбранное и продолжить поиск": function() { 
+        	
+			ret1=true;
+			var ids_list=new Array(); var ids_kols=new Array();
+			$.each($("#position_in_filter_table tbody tr td input[type=hidden][id^=pos_]"), function(key, value){
+				//alert(value.value);
+				
+				
+				//if(  $("#kol_"+value.value).attr("value").length>0){
+				if(  $("#kol_"+$(value).val()).val().length>0){
+					//alert(value.value+" "+key+" "+$("#kol_"+value.value).attr("value"));		
+					
+					
+					rev_value=$("#kol_"+value.value).attr("value");
+					rev_value=rev_value.replace("\,","\.");
+					
+					if((rev_value.length==0)||(rev_value<=0)||isNaN(rev_value)) {
+						ret1=ret1&&false;
+						alert("Неверно указано количество позиции!");
+						$("#kol_"+value.value).focus();
+						return false;	
+					}else{
+						was_changed=was_changed||true;
+						
+						ids_list.push(value.value); 
+						ids_kols.push(rev_value);
+					}
+				}
+				
+			});
+			
+			if(ret1&&(ids_list.length>0)){
+				$.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_to_form",
+					  "ids[]":ids_list,
+					  "kols[]":ids_kols,
+					  "storage_id":$("#storage_id").val()
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					$("#positions").append(data);
+					//как-то вписать номер...
+					var temp_cter=0;
+					$.each($("#positions tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+					});
+					
+					
+					//очистить форму
+					
+					$("#qry2").attr("value","");
+					$("#qry").attr("value","");
+				
+					$("#dimension_id").val("");
+					$("#length").val("");
+					$("#width").val("");
+					$("#height").val("");
+					$("#weight").val("");
+					$("#volume").val("");
+					$("#diametr").val("");
+					
+					$("#tov_grp").val("");
+					$("#group_id2").val("");
+					$("#group_id3").val("");
+					
+					$("#tov_grp").val(0);
+					$("#pos_rows").empty();	
+					$("#group_id2").empty();
+					$("#group_id3").empty();
+					
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			}
+			
+        },
+	   
+	    "Добавить выбранное и закрыть": function() { 
+       	    ret1=true;
+			var ids_list=new Array(); var ids_kols=new Array();
+			$.each($("#position_in_filter_table tbody tr td input[type=hidden][id^=pos_]"), function(key, value){
+				//alert($(value).val());
+				
+				if(  $("#kol_"+$(value).val()).val().length>0){
+					
+					//alert(value.value+" "+key+" "+$("#kol_"+value.value).attr("value"));		
+					
+					rev_value=$("#kol_"+value.value).attr("value");
+					rev_value=rev_value.replace("\,","\.");
+					
+					if((rev_value.length==0)||(rev_value<=0)||isNaN(rev_value)) {
+						ret1=ret1&&false;
+						alert("Неверно указано количество позиции!");
+						$("#kol_"+value.value).focus();
+						return false;	
+					}else{
+						was_changed=was_changed||true;
+						ids_list.push(value.value); 
+						ids_kols.push(rev_value);
+					}
+				}
+			});
+			
+			if(ret1&&(ids_list.length>0)){
+				$.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_to_form",
+					  "ids[]":ids_list,
+					  "kols[]":ids_kols,
+					  "storage_id":$("#storage_id").val()
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					$("#positions").append(data);
+					//как-то вписать номер...
+					var temp_cter=0;
+					$.each($("#positions tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+					});
+					
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+				
+				$(this).dialog("close");
+				$("#qry").attr("value","");
+				$("#tov_grp").val(0);
+				$("#pos_rows").empty();	
+				$("#group_id2").empty();
+				$("#group_id3").empty();
+					
+			}else if(!ret1){
+				
+			}else if(ids_list.length==0){
+				
+				$(this).dialog("close");
+				$("#qry").attr("value","");
+				$("#tov_grp").val(0);
+				$("#pos_rows").empty();	
+				$("#group_id2").empty();
+				$("#group_id3").empty();
+				
+			}
+			
+			
+			
+        
+         },
+		"Закрыть": function(){
+		  $("#qry").attr("value","");
+			$("#tov_grp").val(0);
+			$("#pos_rows").empty();	
+			$("#group_id2").empty();
+			$("#group_id3").empty();
+			
+		 $(this).dialog("close");	
+		}
+      }
+    
+    });
+	
+	$("#add_pos").bind("click", function(){
+		$("#positions_dialog").dialog("open");
+	});
+	
+	//поиск позиций по филтьру
+	$("#doSrch").bind("click",function(){
+		ret=true;
+		
+		if(($("#qry").attr("value").length>0)||($("#tov_grp").val()!=0)||
+		($("#dimension_id").val()!=0)||
+		($("#length").attr("value").length>0)||
+		($("#width").attr("value").length>0)||
+		($("#height").attr("value").length>0)||
+		($("#diametr").attr("value").length>0)||
+		
+		($("#weight").attr("value").length>0)||
+		($("#volume").attr("value").length>0)||
+		($("#qry2").attr("value").length>0)
+		
+		){
+			//alert("loading");
+			
+			group_id=0;
+			if($("#group_id3").val()>0) group_id=$("#group_id3").val();
+			else if($("#group_id2").val()>0) group_id=$("#group_id2").val();
+			else if($("#tov_grp").val()>0) group_id=$("#tov_grp").val();
+			
+			var qry='';
+			if($("#qry").attr("value").length>0) qry=$("#qry").attr("value");
+			else qry=$("#qry2").attr("value");
+			
+			
+			$.ajax({
+              async: true,
+              url: "/js/komplekt.php",
+              type: "POST",
+              data:{
+                  "action":"find_pos",
+				  "group_id":group_id,
+				  "qry":qry,
+				  "dimension_id":$("#dimension_id").val(),
+				  "length":$("#length").attr("value"),
+				  "width":$("#width").attr("value"),
+				  "height":$("#height").attr("value"),
+				  "diametr":$("#diametr").attr("value"),
+				  
+				  "weight":$("#weight").attr("value"),
+				  "volume":$("#volume").attr("value")
+				  
+              },
+              beforeSend: function(){
+                $("#pos_rows").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+              },
+              success: function(data){
+                $("#pos_rows").html(data);
+                
+              },
+              error: function(xhr, status){
+                  $("#pos_rows").html("Ошибка загрузки позиций.");	
+              }	 
+          });
+		  
+		  
+		}else ret=ret&&false;
+		
+		return ret;
+	});
+	
+	
+	
+	//создание позиции по данным филтьра
+	$("#doCreate").bind("click",function(){
+		ret=true;
+		
+		if(($("#qry").attr("value").length>0)||($("#tov_grp").val()!=0)||
+		($("#dimension_id").val()!=0)||
+		($("#length").attr("value").length>0)||
+		($("#width").attr("value").length>0)||
+		($("#height").attr("value").length>0)||
+		($("#diametr").attr("value").length>0)||
+		
+		($("#weight").attr("value").length>0)||
+		($("#volume").attr("value").length>0)||
+		($("#qry2").attr("value").length>0)
+		
+		){
+			//alert("loading");
+			
+			group_id=0;
+			if($("#group_id3").val()>0) group_id=$("#group_id3").val();
+			else if($("#group_id2").val()>0) group_id=$("#group_id2").val();
+			else if($("#tov_grp").val()>0) group_id=$("#tov_grp").val();
+			
+			var qry='';
+			if($("#qry").attr("value").length>0) qry=$("#qry").attr("value");
+			else qry=$("#qry2").attr("value");
+			
+			if(qry.length==0){
+				alert("Введите название позиции!");	
+				return false;
+			}
+			
+			
+			if($("#dimension_id").val()==0){
+				alert("Укажите единицы измерения для создания позиции!");	
+				return false;
+			}
+			
+			
+			$.ajax({
+              async: true,
+              url: "/js/komplekt.php",
+              type: "POST",
+              data:{
+                  "action":"create_pos",
+				  "group_id":group_id,
+				  "qry":qry,
+				  "dimension_id":$("#dimension_id").val(),
+				  "length":$("#length").attr("value"),
+				  "width":$("#width").attr("value"),
+				  "height":$("#height").attr("value"),
+				  "diametr":$("#diametr").attr("value"),
+				  
+				  "weight":$("#weight").attr("value"),
+				  "volume":$("#volume").attr("value")
+				  
+              },
+              beforeSend: function(){
+                //$("#pos_rows").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');  
+				$("#doCreate").prop("disabled", true);  
+              },
+              success: function(data){
+                //$("#pos_rows").html(data);
+                $("#doSrch").trigger("click");
+				$("#doCreate").prop("disabled", false);  
+              },
+              error: function(xhr, status){
+                  $("#pos_rows").html("Ошибка создания позиций.");	
+				  $("#doCreate").prop("disabled", false);  
+              }	 
+          });
+		  
+		  
+		}else ret=ret&&false;
+		
+		return ret;
+	});
+	
+	
+	
+	
+		/*выборка товарной группы*/
+		$("#tov_grp").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#tov_grp").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					//alert(data);
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	
+  });
+  </script>
+ 

@@ -1,0 +1,48 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  	cookie: { expires: 14, name: 'startTab' }
+  });
+  $("#getCookie").click(function(){
+  	var cook = $("#tabs").tabs("option", "cookie");
+  	alert("name: " + cook.name + "\nexpires: " + cook.expires);
+  });
+  
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Входящие сообщения</a></li>
+    <li><a href="#tabs-2">Исходящие сообщения</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-3">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    
+    %{$mess}%
+    
+    </p>
+  </div>
+  <div id="tabs-2">
+    <p>
+    %{$mess_2}%
+    
+    </p>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-3">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+ 
+
+</div>

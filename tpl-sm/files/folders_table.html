@@ -1,0 +1,168 @@
+%{if $folder_id>0}%
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    
+    
+    <a href="%{$this_pagename}%?folder_id=%{$parent_id}%&tab_page=%{$tab_page}%"><img src="/img/icons/folder_up.png" width="24" height="17" border="0" align="left" /><b> .. в родительскую папку</b></a>
+    
+    </td>
+     <td width="60">
+   -
+    </td>
+    
+    <td width="100">
+    -
+    </td>
+   
+    <td width="*">
+    -
+    </td>
+    <td width="150" align="left" >
+    
+   -
+    
+    </td>
+    <td width="100">
+  -
+    </td>
+     <td width="48">
+     -
+    </td>
+     
+    %{if $can_admin_records}%
+    <td width="24">
+   -
+    </td>
+    %{/if}%
+    
+     <td width="24">
+     
+     -
+    </td>
+    
+   
+     <td width="24">
+     
+     -
+    </td>
+    
+  
+</tr>
+
+%{/if}%
+
+%{section name=rowsec1 loop=$folders}%
+  %{if $folders[rowsec1].has_access}%
+<tr align="center" valign="top">
+	<td width="*" align="left">
+    
+  	 <a href="%{$this_pagename}%?folder_id=%{$folders[rowsec1].id}%&tab_page=%{$tab_page}%" class="reestr_folder_reestr  %{if $folders[rowsec1].has_files_or_dirs}%reestr_folder_reestr_ne%{/if}%"><b>%{$folders[rowsec1].filename}%</b></a>
+   
+    
+  
+    
+    <input type="hidden" id="ffolder_name%{$prefix}%_%{$folders[rowsec1].id}%" value="%{$folders[rowsec1].filename|escape:"html"}%" />
+    </td>
+     <td width="60">
+   -
+    </td>
+    
+    <td width="100">
+    -
+    </td>
+   
+    <td width="*"><a target="_blank" href="info.html?name=%{$folders[rowsec1].u_login}%">
+    %{if $folders[rowsec1].u_group_id==3}%%{$folders[rowsec1].u_name_s}%%{else}%%{$folders[rowsec1].u_name_s}%%{/if}% </a></td>
+    <td width="150" align="left" id="fmore_info%{$prefix}%_%{$folders[rowsec1].id}%" title="%{$folders[rowsec1].filename|escape}%|%{$folders[rowsec1].txt|escape}%">
+    
+    
+     <a href="#" class="reestr_short">
+    %{$folders[rowsec1].txt|truncate|strip_tags|trim|truncate:30:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    </a>
+    
+    <div class="reestr_full reestr_hide">
+    %{$folders[rowsec1].txt|truncate}%
+    </div>
+    
+     <input type="hidden" id="ffolder_txt%{$prefix}%_%{$folders[rowsec1].id}%" value="%{$folders[rowsec1].txt|escape:"html"}%" />
+    
+     <script type="text/javascript">
+	$(function(){
+		$("#fmore_info%{$prefix}%_%{$folders[rowsec1].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    
+    
+     %{if $can_edit_folder}%
+     <br />
+	
+     
+     <a href="#" class="reestr_edit" id="fedit_file%{$prefix}%_%{$folders[rowsec1].id}%"> </a>
+      <script type="text/javascript">
+	  $(function(){
+		 $("#fedit_file%{$prefix}%_%{$folders[rowsec1].id}%").bind("click", function(){
+			 EditFolder%{$prefix}%(%{$folders[rowsec1].id}%, $("#ffolder_name%{$prefix}%_%{$folders[rowsec1].id}%").val(), $("#ffolder_txt%{$prefix}%_%{$folders[rowsec1].id}%").val());
+			 return false; 
+		 });
+	  });
+	  </script>
+     
+     
+     %{/if}%
+    
+    </td>
+    <td width="100">
+    %{$folders[rowsec1].pdate}%
+    </td>
+    
+     <td width="48">
+       %{if $folders[rowsec1].can_share}%
+       <input type="button" value="Поделиться" onclick="ShareFolderOpenDialog('%{$folders[rowsec1].id}%', '%{$tablename}%', '%{$storage_id}%', $('#ffolder_name%{$prefix}%_%{$folders[rowsec1].id}%').val(), 'папка файлового реестра', '%{$folders[rowsec1].parent_id}%');" />
+       %{else}%
+       -
+       %{/if}%
+     </td> 
+   
+    
+     %{if $can_admin_records}%
+    <td width="24">
+    <a href="#" onclick="AdminRecordsOpenDialog('%{$folders[rowsec1].id}%', '%{$tablename}%', '%{$storage_id}%', $('#ffolder_name%{$prefix}%_%{$folders[rowsec1].id}%').val(), 'папка файлового реестра'); return false;" class="reestr_key24 reestr_right_button24" data-comment="управление доступом к папке"></a>
+    </td>
+    %{/if}%
+    
+    
+     <td width="24">
+    <input type="checkbox" id="fcheck_file%{$prefix}%_%{$folders[rowsec1].id}%" name="fcheck_file%{$prefix}%_%{$folders[rowsec1].id}%"  value="%{$folders[rowsec1].id}%" />
+    </td>
+    
+    
+    
+     <td width="24">
+     %{if $can_delete_folder}%
+     <a href="#" class="reestr_delete reestr_right_button24" id="fdelete%{$prefix}%_%{$folders[rowsec1].id}%" data-comment="Удалить"></a>
+     <script type="text/javascript">
+	  $(function(){
+			$("#fdelete%{$prefix}%_%{$folders[rowsec1].id}%").bind("click",function(){
+				if(window.confirm("Вы действительно хотите удалить папку %{$folders[rowsec1].filename|escape}%?")){
+					%{if $folders[rowsec1].has_files_or_dirs==true}%
+						if(window.confirm("Внимание! Папка %{$folders[rowsec1].filename|escape}% не пустая!\nВсе равно удалить папку?")){
+							location.href="%{$this_pagename}%?action=3&id=%{$folders[rowsec1].id}%&folder_id=%{$folder_id}%&tab_page=%{$tab_page}%";
+						}
+					%{else}%
+					
+					location.href="%{$this_pagename}%?action=3&id=%{$folders[rowsec1].id}%&folder_id=%{$folder_id}%&tab_page=%{$tab_page}%";	
+					%{/if}%
+				}
+				return false;
+			});
+	  });
+	 </script>
+      %{/if}%
+    </td>
+   
+  
+</tr>
+%{/if}%
+%{/section}%

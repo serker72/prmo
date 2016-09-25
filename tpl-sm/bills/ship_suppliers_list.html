@@ -1,0 +1,40 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="ship_supplier_row_%{$pos[possec].id}%" style="cursor:pointer;">
+    	<td>
+        <input type="radio" id="ship_supplier_%{$pos[possec].id}%" name="ship_supplier_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_supplier}% checked="checked"%{/if}% />
+        %{$pos[possec].code}%
+        
+         <input type="hidden" id="is_confirmed_%{$pos[possec].id}%" value="%{$pos[possec].is_confirmed}%" />
+        </td>
+        
+       
+        <td id="ship_full_name_%{$pos[possec].id}%">%{$pos[possec].full_name}%</td>
+         <td id="ship_opf_name_%{$pos[possec].id}%">%{$pos[possec].opf_name}%</td>
+        <td>%{$pos[possec].inn}%</td>
+        <td>%{$pos[possec].kpp}%</td>
+        <td>%{$pos[possec].legal_address}%</td>
+        
+        <td>
+        <input type="hidden" id="ship_is_org_%{$pos[possec].id}%" value="%{$pos[possec].is_org}%" />
+        %{if $pos[possec].is_org==0}%
+        <a href="supplier.php?action=1&id=%{$pos[possec].id}%" target="_blank">Карта</a>
+        %{else}%
+        <a href="ed_organization.php?action=1&id=%{$pos[possec].id}%" target="_blank">Карта</a>
+        %{/if}%
+        </td>
+    </tr>
+%{/section}%    
+<script type="text/javascript">
+$(function(){
+	%{section name=possec loop=$pos}%
+		$("#ship_supplier_row_%{$pos[possec].id}%").unbind("dblclick");
+		$("#ship_supplier_row_%{$pos[possec].id}%").bind("dblclick",function(){
+			//alert($("#supplier_%{$pos[possec].id}%").attr("value"));
+			
+			$("#ship_supplier_%{$pos[possec].id}%").prop("checked",true);
+			ship_rebuild();
+			
+		});
+   %{/section}%     
+});
+</script>		

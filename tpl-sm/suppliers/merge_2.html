@@ -1,0 +1,119 @@
+<form action="suppliers_merge.php" method="post" id="mergeForm">
+<h2>Таблица выбора значений полей</h2>
+
+<input type="submit" value="Объединить" id="doMerge" name="doMerge" />
+
+<input type="button" value="Назад" id="goBack2" />
+<br>
+<br>
+
+<script type="text/javascript">
+$(function(){
+	
+	$("a[id^=select_all_]").bind("click", function(){
+		
+		id=$(this).attr("id").replace(/^select_all_/,'');
+		
+		$.each($("input[type=radio]"),function(k,v){
+			if($(v).attr("id").replace(/^[a-z,\_]+/,'')==id) $(v).prop("checked",true);
+		});
+		
+		return false;
+	});
+	
+	
+	$("#goBack2").bind("click", function(){
+		$("#merge_block0").show();
+		$("#merge_block1").empty();
+	});
+	
+	//подотрасль менять вместе с отраслью!
+	$("input[type=radio][name=branch_id]").bind("change", function(){
+		 $("#subbranch_id_"+$(this).val()).prop("checked", true);
+		
+	});
+	
+	$("input[type=radio][name=subbranch_id]").bind("change", function(){
+		 $("#branch_id_"+$(this).val()).prop("checked", true);
+	});
+	
+	$("#mergeForm").bind("submit", function(){
+		return window.confirm("Вы уверены, что хотите объединить карты выбранных контрагентов?");
+	});
+});
+</script>
+
+
+
+<table width="*" class="blacktable1">
+<thead>
+<tr align="left" valign="top">
+	<th></th>
+%{section name=rowsec loop=$items}%
+
+	<th>
+    
+    <a href="supplier.php?action=1&id=%{$items[rowsec].id}%" target="_blank" >%{$items[rowsec].code}% %{$items[rowsec].opf_name}% %{$items[rowsec].full_name}%</a>
+    
+    <a href="" id="select_all_%{$items[rowsec].id}%">[Выбрать все]</a>
+    <input type="hidden" name="ids[]" value="%{$items[rowsec].id}%" />
+    </th>
+%{/section}%
+</tr>
+<tr align="left" valign="top">
+<th>Основная карта</th>
+%{section name=rowsec loop=$items}%
+
+	<th><input type="radio" name="base_id" id="base_id_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" %{if $smarty.section.rowsec.first}% checked%{/if}% /><label for="base_id_%{$items[rowsec].id}%">Основная карта</label></th>
+%{/section}%
+</tr>
+</thead>
+<tbody>
+ 
+%{foreach from=$items[0].data item=ldata}%
+
+   
+<tr align="left" valign="top">
+	<td  class="%{if $ldata.has_conflict}%item_conflict%{else}%item_no_conflict%{/if}%" >
+     %{$ldata.caption}%
+     
+     
+    </td>
+
+%{section name=rowsec loop=$items}%
+
+%{foreach from=$items[rowsec].data item=data}%
+%{if $data.name==$ldata.name}%
+<td>
+	 
+  
+ 
+  <input type="radio" name="%{$data.name}%" id="%{$data.name}%_%{$data.id}%" value="%{$data.id}%"  %{if $smarty.section.rowsec.first}% checked%{/if}%  />
+ <label for="%{$data.name}%_%{$data.id}%">
+ %{$data.value}%
+  
+  </label>
+  
+  
+	
+ 
+</td>
+%{/if}%
+
+%{/foreach}%
+
+%{/section}%
+
+
+
+</tr>
+ 
+
+%{/foreach}%
+ 
+</tbody> 
+</table>
+
+
+
+</form>

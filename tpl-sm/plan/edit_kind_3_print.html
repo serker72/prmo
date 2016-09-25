@@ -1,0 +1,207 @@
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;">
+
+
+<h1>Встреча</h1>
+ 
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+ 
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+    
+   
+ <strong> Дата начала:  </strong>
+     <br />
+    
+   %{$bill.pdate_beg}%
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+
+
+  <strong> Время начала:</strong>  <br>
+%{$ptime_beg_hr}%:%{$ptime_beg_mr}%
+ 
+    
+     
+
+</div>
+
+ 
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+
+
+    
+  <strong>   Время окончания:</strong>  <br>
+
+  
+   %{$ptime_end_hr}%:%{$ptime_end_mr}%
+   
+     
+
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+ <strong>Сохранена как:</strong>
+
+ 	<br>
+	
+    
+    %{if $bill.plan_or_fact==1}% 
+    <strong>встреча совершенная</strong>
+    %{else}%
+    <strong>встреча запланированная</strong>
+    %{/if}% 
+   
+</div>
+
+
+ 
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+    
+    <strong>Дата создания: </strong>
+    <br />
+    
+     %{$bill.pdate}% 
+    
+</div>
+
+
+<div style="float:left; margin-right:0px; margin-bottom:1.5em; " id="toggle_annul">
+<strong>Статус:</strong><br>
+
+ %{$bill.status_name}% 
+
+</div>
+
+ 
+<br clear="all" />
+<p />
+
+
+
+ 
+ 
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+     <strong>Место встречи: </strong> <br>
+
+  	
+     %{$bill.meet_name}% 
+    
+     
+
+</div>
+
+
+ 
+<div style="float:left; margin-right:20px;">
+
+
+
+     
+  <strong> Дополнительная информация:</strong>
+   <br />
+    
+     %{$bill.meet_value}%
+     
+
+</div>   
+
+
+<div style="float:left; margin-right:20px;">
+
+
+
+     
+  <strong> Сотрудник:</strong>
+   <br />
+    
+     %{$manager_string}%
+     
+
+</div>    
+  
+ 
+<br clear="all" />
+<p />
+
+   
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Город встречи:</h3>
+</div>
+ 
+<br clear="all" />
+<p />
+
+
+ 
+ 
+%{include file="plan/city_actions_print.html" many=false can_modify=$can_modify}%
+
+
+ 
+ <br clear="all" />
+ 
+   
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагент встречи:</h3>
+</div>
+ 
+<br clear="all" />
+<p />
+
+
+%{include file="plan/supplier_many_actions_print.html" many=false can_modify=$can_modify}%
+
+
+ 
+ <br clear="all" />
+<p />
+   
+
+
+
+ 
+   
+ 
+
+<strong> Результат встречи: </strong><br>
+
+%{$bill.report}%
+<br>
+ 
+ 
+ 
+
+ <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 
+  
+ 
+ 
+</body>
+</html>

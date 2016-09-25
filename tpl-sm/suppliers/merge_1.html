@@ -1,0 +1,253 @@
+<script type="text/javascript">
+$(function(){
+	$("#find_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_full_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_inn").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_kpp").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_legal_address").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#doFind").bind("click",function(){
+		ret=true;
+		
+		if(
+		
+		($("#find_code").val()=="")&&
+		($("#find_full_name").val()=="")&&
+		($("#find_inn").val()=="")&&
+		($("#find_kpp").val()=="")&&
+		($("#find_legal_address").val()=="")) ret=ret&&false;
+		
+		
+		if(ret){
+		
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/suppliers_merge_js.php",
+			  type: "POST",
+			  data:{
+				  "action":"find_suppliers",
+				  
+				  "code":$("#find_code").val(),
+				
+				  "full_name":$("#find_full_name").val(),
+				  "inn":$("#find_inn").val(),
+				  "kpp":$("#find_kpp").val(),
+				  "legal_address":$("#find_legal_address").val()
+				  
+			  },
+			  beforeSend: function(){
+				$("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				$("#suppliers_found").html(data);
+				
+				
+				 
+				
+				
+			  },
+			  error: function(xhr, status){
+				  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+			  }	 
+		  });
+		  
+		}else{
+			alert("Укажите хотя бы один критерий поиска!");	
+		}
+		
+		return ret;
+	});
+	
+	$("#step_next1").bind("click", function(){
+		
+		//проверить корректность выбора:
+		// хотя бы две карты
+		//не более пяти карт
+		//все выбранные дожны быть с одинаковыми флагами утверждения запол-ия
+		var res=true;
+		
+		 
+		if(res&&($("input[id^=supplier_check_]:checked").length<2)){
+			res=res&&false;
+			alert("Выберите хотя бы две карты контрагента!");	
+		}
+		
+		if(res&&($("input[id^=supplier_check_]:checked").length>5)){
+			res=res&&false;
+			alert("Выберите не более пяти карт контрагента!");	
+		}
+		
+		
+		if(res){
+			var last=-1; var eq=true;
+			$.each($("input[id^=supplier_check_]:checked"), function(k,v){
+				
+				id=$(v).val();
+				
+				
+				 th=$("#is_confirmed_"+id).val();
+				if(k==0) {
+					last=th;
+					 
+				}else{
+					if(last!=th) eq=eq&&false;
+				}
+				
+				last=th;
+				
+			});
+			
+			if(!eq){
+				res=res&&false;
+				alert("Выберите только карты либо с утвержденным заполнением, либо с неутвержденным заполнением!");	
+			}
+		}
+		
+		
+		if(res){
+			
+			//подгрузить карты...
+			var ids=new Array();
+			$.each($("input[id^=supplier_check_]:checked"), function(k,v){
+				
+				ids.push($(v).val());
+			});
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/suppliers_merge_js.php",
+			  type: "POST",
+			  data:{
+				  "action":"compare_suppliers",
+				  
+				  "ids[]":ids
+				  
+			  },
+			  beforeSend: function(){
+				$("#merge_block1").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');      
+			  },
+			  success: function(data){
+				$("#merge_block1").html(data);
+				$("#merge_block0").hide();
+				
+				 
+				
+				
+			  },
+			  error: function(xhr, status){
+				 alert("Ошибка загрузки контрагентов.");	
+			  }	 
+		  });
+		  
+				
+		}
+		
+	});
+	
+	//$("#doFind").trigger("click");
+});
+</script> 
+ 
+ 
+<div id="merge_block0"> 
+<input type="button" value="Далее" id="step_next1" />
+<input type="button" value="Отмена" onClick="location.href='suppliers.php';" />
+ <br><br>
+
+
+ <table width="100%" cellpadding="1" cellspacing="0" border="0" class="reptable">
+ <thead>
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Код</th>
+        <th scope="col" width="30">
+        Утв. зап-ие
+        </th>
+        <th scope="col" width="30">
+        Утв. акт-ть
+        </th>
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Юридический адрес</th>
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        <td>
+        <input id="find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td width="30">
+       
+        </td>
+        <td width="30">
+       
+        </td>
+        <td>
+        <input id="find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="find_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_legal_address" type="text" size="15" maxlength="128" value="" />
+        </td>
+       
+        <td>
+        <input type="button" value="Найти" id="doFind" />
+        
+        </td>
+    </tr>
+</thead>    
+    <tbody id="suppliers_found">
+   
+    </tbody>
+    </table>
+    
+</div>    
+<div id="merge_block1"></div>
+	

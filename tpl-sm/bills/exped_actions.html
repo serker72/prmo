@@ -1,0 +1,98 @@
+<script type="text/javascript">
+	
+	function expedbuild(field_id){
+		var selected_bdetails=0;
+		var field_id=field_id;
+		
+		
+		 
+		 $.each($("#exped_list table tr td input[type=radio]"), function(key, value){
+			  if(value.checked){
+				  selected_bdetails=$(value).val();
+			  }
+		  });
+		  
+		  
+		   
+			  
+			  //подгружаем все данные по реквизитам
+			  if(selected_bdetails>0){
+				  $.ajax({
+					async: true,
+					url: "/js/cash.php",
+					type: "GET",
+					dataType: "json",
+					data:{
+						"action":"retrieve_exped",
+						"id":selected_bdetails
+					},
+					beforeSend: function(){
+					  
+					},
+					success: function(data){
+					  
+					 
+					  $("#"+field_id+"driver_id_string").val(''+data.name_s );
+					  $("#"+field_id+"driver_id").val(data.id);
+					  
+					  $("#"+field_id+"responsible_user_id").val(data.id);
+					  
+					},
+					error: function(xhr, status,m){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					   //alert("Ошибка выбора кода оплаты."+status+m);
+					}	 
+				  });
+			  
+			  
+		  }
+		 
+		  //$("#driver_dialog").dialog("close"); 
+	}
+	
+	
+	
+$(function(){
+	
+	
+	
+	
+	
+	
+	$("#exped_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,
+		height: 550,
+		buttons: {
+			"Готово": function(){
+				$(this).dialog("close"); 
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	
+	
+	
+	 
+});
+</script>
+
+
+
+<div id="exped_dialog" title="Выберите экспедитора" style="display:none;">
+
+
+
+   
+
+	<div style="width:510px; height:400px; border:1px solid gray; overflow:auto;" id="exped_list">
+    %{include file="cash/driver_list.html" }%
+  </div>
+
+</div>

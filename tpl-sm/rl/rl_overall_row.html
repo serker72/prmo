@@ -1,0 +1,24 @@
+ 
+  %{foreach from=$rights item=right name=rf}%
+    <td align="center" width="50" style="width:50px;" title="Сотрудник %{$user.login}% %{$user.name_s}%, права  %{$right.object_id}%/%{$right.rl_object_id}%: %{$right.name}%">
+    
+     <!--  <input type="hidden" id="do_change_%{$user_id}%_%{$folder_id}%_%{$right.rl_object_id}%" value="0" />
+    
+   
+    
+    <input type="hidden" id="has_control_%{$user_id}%_%{$folder_id}%_%{$right.rl_object_id}%" value="%{$right.has_control}%" />
+    
+    
+    -->
+  
+  	 <input type="hidden" id="has_inherits_%{$folder_id}%_%{$user_id}%_%{$right.rl_object_id}%" value="%{$right.has_inherits}%" />
+  
+    <input type="hidden" id="old_has_right_%{$folder_id}%_%{$user_id}%_%{$right.rl_object_id}%" value="%{if $right.has}%1%{else}%0%{/if}%"   />
+    
+    <input type="checkbox" id="has_right_%{$folder_id}%_%{$user_id}%_%{$right.rl_object_id}%" value="1" %{if $right.has}% checked="checked"%{else}%%{/if}%  %{if $right.is_inactive}% disabled="disabled"%{/if}%   />
+    <label for="has_right_%{$folder_id}%_%{$user_id}%_%{$right.rl_object_id}%"></label>
+   
+    </td>
+    %{/foreach}%
+     
+ 

@@ -1,0 +1,49 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==3}%	
+	selected: 1
+%{elseif $tab_page==2}%	
+	selected: 2
+%{/if}%	
+  
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Не выдано</a></li>
+     <li><a href="#tabs-3">Выдано</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <h2>Отчет +/-: не выдано</h2>
+    %{$log}%
+    
+    </p>
+  </div>
+  
+   <div id="tabs-3">
+    <p>
+    <h2>Отчет +/-: выдано</h2>
+    %{$log2}%
+    
+    </p>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

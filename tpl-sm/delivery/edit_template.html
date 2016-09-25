@@ -1,0 +1,111 @@
+<script type="text/javascript" src="/js/gen_validatorv31.js"></script>
+<script>
+$(function(){
+	$("#preview").click(function(){
+		
+		$.ajax({
+		  async: true,
+		  url: "js/delivery_templates.php",
+		  type: "POST",
+		  data:{
+			  "action":"save_data",
+			  "id":$("#id").val(),
+			  "data":CKEDITOR.instances.html_content.getData()
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			
+			 window.open('delivery_preview_template.php?id='+$("#id").val(),'template_view');
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		 
+	});
+});
+</script>  
+
+
+
+<h1>Редактировать шаблон</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+ 
+ 
+<div style="overflow:hidden;">
+	<div style="float:left; margin-right:20px;"> 
+    <label for="name">Название:</label><br>
+    <input type="text" value="%{$data.name|escape:"html"}%" name="name" id="name" size="60" maxlength="255" />
+
+	</div>
+    
+    <div style="float:left; margin-right:20px;"> 
+ <br>
+
+ 	<input type="button" id="preview" value="Предварительный просмотр">
+    
+    </div>
+
+</div> 
+ 
+
+ <br>
+
+	
+  
+ 
+
+
+<label for="html_content">Содержимое:</label><br>
+<textarea id="html_content" name="html_content">%{$data.html_content|escape}%</textarea>
+<br>
+
+ 
+                    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+                    <script type="text/javascript">
+	CKEDITOR.replace( 'html_content',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_delivery_template.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash'
+    				  }
+					 );
+	</script> 
+
+
+
+ 
+ 
+ 
+<input type="submit" name="doInp" id="doInp" value="Сохранить и перейти к шаблонам" />
+<input type="submit" name="doApply" id="doApply" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='%{$list_pagename}%';" />
+
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+ 
+frmvalidator.addValidation("name","req","Укажите название списка!");
+
+ 
+</script>

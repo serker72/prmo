@@ -1,0 +1,201 @@
+
+<h1 >Инвентаризационный акт № %{$bill.code}%</h1>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Номер:</strong><br />
+
+%{$bill.code}%
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+
+%{$bill.pdate}%<br />
+<small>создан: %{$created_by}%</small>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата пров.<br />
+
+корр-ки вз.р.:</strong><br />
+
+%{$bill.invcalc_pdate}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px; ">
+<br />
+<strong>Контрагент</strong>
+<br />
+<select style="width:250px;" disabled="disabled">
+%{html_options values=$supplier_ids selected=$bill.supplier_id output=$supplier_names}%
+</select>
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Заданный №:</strong><br />
+
+%{$bill.given_no}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Организация:</strong><br />
+
+%{$org}%
+
+</div>
+
+
+
+<p />
+<br clear="all" />
+
+
+
+<table width="*" border="1" cellpadding="2" cellspacing="0">
+
+<tr align="left" valign="top">
+<td>
+
+<h3>Задолженность в руб. на дату проведения корректировки взаиморасчетов:</h3>
+
+<strong>Текущая задолженность на дату пров. корр-ки вз.р.:<br />
+ 
+ <span id="current_debt_value">%{$bill.current_debt}%</span> руб.
+ 
+ <span id="current_debt_to">%{$bill.current_debt_to}%</span>
+ 
+ </strong>
+
+<p />
+
+
+<strong>Задолженность в руб.
+на дату пров. корр-ки вз.р.:</strong>
+
+%{$bill.debt}% руб.
+<br />
+
+<input type="radio" name="debt_id" id="debt_id2" value="2" %{if $bill.debt_id==2}% checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /> в пользу %{$org}%<br />
+<input type="radio" name="debt_id" id="debt_id1" value="1" %{if $bill.debt_id==1}% checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /> нулевая задолженность<br />
+<input type="radio" name="debt_id" id="debt_id3" value="3" %{if $bill.debt_id==3}% checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /> в пользу <span id="current_supplier">%{$current_supplier}%</span><br />
+
+</td>
+</tr>
+
+<tr align="left" valign="top">
+
+<td>
+<h3>Основания для корректировки:</h3>
+
+%{section name=reassec loop=$reasons}%
+
+
+%{if $bill.reason_id==1 and $reasons[reassec].id==1}%
+ 
+  <strong>%{$reasons[reassec].name}%:</strong><br />
+  
+  <div style="float:left; margin-right:20px;">
+ <strong>Дата акта сверки:</strong>
+  %{$bill.akt_given_pdate}%
+  </div>
+  
+  <div style="float:left; margin-right:20px;">
+  <strong>Заданный № акта сверки:</strong>
+
+  %{$bill.akt_given_no}%
+  </div>
+  
+ 
+  <br clear="all" />
+  
+  
+%{elseif $bill.reason_id==2  and $reasons[reassec].id==2}% 
+
+	
+<strong>%{$reasons[reassec].name}%:</strong><br />
+ 
+  <div style="float:left; margin-right:20px;">
+  <strong>Основание:</strong><br />
+
+  %{$bill.reason_txt}%
+  
+  </div>
+  <br clear="all" />
+ 
+%{/if}%
+
+
+
+%{/section}%
+
+<p />
+</td>
+</tr>
+
+</table>
+
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" >
+        %{include file="invcalc/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+  </div>
+   
+<p />    
+
+
+<br />
+
+
+<div style="float:left; margin-right:20px;">
+%{if $bill.is_confirmed==1}% <strong>Утверждаю заполнение:</strong> %{$is_confirmed_confirmer}%
+<br />
+<br />
+
+%{/if}% 
+
+
+
+<br />
+
+
+%{if $bill.is_confirmed_inv==1}% <strong>Утверждаю корректировку задолженности</strong>: %{$is_confirmed_inv_confirmer}%%{/if}% 
+
+
+</div>
+
+
+
+
+
+<br clear="all" />
+<p />
+
+<br />
+<br />
+<br />
+<br />
+
+
+
+

@@ -1,0 +1,175 @@
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+});
+</script>
+ 
+<style type="text/css">
+.blacktable th{
+	background-color:#aed3ef;
+}
+.blacktable th.main{
+	background-color:#8bc1ea;
+}
+.blacktable th.contract, .blacktable  td.contract{
+	background-color:#d7e7f2;
+	font-weight:bold;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="print" value="0" id="print" />
+
+
+<div class="report_filter_right">
+	%{include file="every_help_dialog.html" filename="an_rent.htm" description="Рентабельность бизнеса"  prefix="" style="float:right;  margin-right:0px;" is_right=true}%
+    
+ 	
+    <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+    <input type="image" src="img/24.png" value="Вывести" alt="Вывести"  name="doSub"    />
+    </div>
+ 
+     
+ 
+ 
+    <a href="an_rent.php?doSub=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" ></a>
+    
+   
+
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  
+  <a href="#" id="print_table" class="reestr_print reestr_right_button24" data-comment="Печать..."   /></a>
+   
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	   $("#print_table").bind("click", function(){
+			
+			
+					extended_an=0;
+					if($("#extended_an").prop("checked")) extended_an=1;
+					
+					
+					
+					/*by_org=0;
+					if($("#by_org").prop("checked")) by_org=1;
+					*/
+					
+					
+					  zc=window.open('an_rent.php?tab_page=1&print='+'1'+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&extended_an='+extended_an+'&doSub=1&do_print_ved=1', 'ved','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+					  
+			 return false; 		
+		});
+	  
+	  
+	  
+	
+  });
+  </script>
+  
+  %{else}%
+  
+   
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."   /></a>
+  
+ %{/if}%
+ 
+ 
+
+
+
+</div>
+
+
+<div class="report_filter_left">
+
+    <div class="report_filter">
+
+    <div style="float:left; margin-right:10px;">
+    <strong>Период</strong><br />
+    <label for="pdate1">с:</label><br />
+    <input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+    
+    <div style="float:left; margin-right:10px;">
+    <br />
+        <label for="pdate2">по:</label><br />
+        <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+    </div>
+    </div>
+    
+    
+    <div class="report_filter">
+
+    <br />
+    
+    
+    
+    <input type="checkbox" name="extended_an" id="extended_an" value="1" %{if $extended_an==1}%checked="checked"%{/if}% />
+    <label for="extended_an">Расширенная ведомость</label>
+    
+    
+    <!--
+    <input type="checkbox" name="by_org" id="by_org" value="1" %{if $by_org==1}%checked="checked"%{/if}% />
+    <label for="by_org">С разбивкой по организациям</label>
+    <br />
+    -->
+    
+    
+    </div>
+</div>
+
+ 
+
+<br clear="all" />
+
+
+
+<p />
+
+
+
+
+</form>
+
+
+
+<small>
+<strong>1. Фильтр "Период"</strong> позволяет отобрать в отчет документы по датам:<br />
+<br />
+
+1.1. Реализации, поступления: по заданной дате (дате с/ф) документа.<br />
+1.2. Исходящие оплаты: по заданной дате документа.<br />
+1.3. Расходы наличных, проценты по расходу наличных: по дате утверждения выдачи денежных средств.
+1.4. Приходы наличных: по дате документа.
+</small>
+<br />
+
+
+
+
+
+%{if $do_it}%
+%{include file="an_rent/an_rent_table.html"}%
+%{/if}%
+
+
+
+
+

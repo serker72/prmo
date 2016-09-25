@@ -1,0 +1,356 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+		
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	$("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	 
+	 $("#percent_dialog").dialog({
+		 dialogClass: 'semi_auth',
+		autoOpen: false,
+		modal: true,
+		width: 400,		 
+		height: 300
+		
+	});
+	
+	function IsCorrectPdate(){
+		res=true;
+		if($("#pdate").val().length==0){
+			$("#pdate").addClass("wrong");	
+			alert("Укажите дату!");
+			$("#pdate").focus();
+			res=res&&false;	
+		}else{
+			$("#pdate").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	function IsCorrectPercent(){
+		res=true;
+		if( ($("#percent").val().length==0)||isNaN($("#percent").val().replace(/\,/,'.'))||(parseFloat($("#percent").val().replace(/\,/,'.'))<=0) ||(parseFloat($("#percent").val().replace(/\,/,'.'))>99.99) ){
+			$("#percent").addClass("wrong");	
+			alert("Укажите корректный %!");
+			$("#percent").focus();
+			res=res&&false;	
+		}else{
+			$("#percent").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	
+	function AddPercent(){
+		res=true;
+		
+		if(res) res=res&&IsCorrectPdate();
+		if(res) res=res&&IsCorrectPercent();	
+		
+		if(res){
+			//ajax...
+			$.ajax({
+				async: true,
+				url: "/js/cash.php",
+				type: "POST",
+				data:{
+					"action":"add_cash_percent",
+					"begin_pdate":$("#pdate").val(),
+					"percent":$("#percent").val(),
+					"notes":$("#notes").val()
+					 
+				},
+				beforeSend: function(){
+				  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+				},
+				success: function(data){
+				   //alert(data);
+					//$("#code_list").html(data);
+					alert("% создан!");
+					$("#percent_dialog").dialog("close");
+					location.reload();
+				},
+				error: function(xhr, status, m){
+					  //alert('e '+status+m);  
+				}	 
+			});	
+			
+		}
+		
+		return res;
+	}
+	
+	
+	
+	$("#create_percent").bind("click", function(){
+		$("#id").val('');
+		$("#pdate").val('');
+		$("#percent").val('');
+		$("#notes").val('');
+		
+		$("#percent_dialog").dialog({
+			buttons:{
+				"Создать %":function(){
+					AddPercent();
+				},
+				"Отмена": function(){
+					$("#percent_dialog").dialog("close");
+				}
+			}
+		});
+			
+		
+		$("#percent_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	 
+	
+});
+
+function EditPercent(id){
+	$.ajax({
+			async: true,
+			url: "/js/cash.php",
+			type: "POST",
+			data:{
+				"action":"edit_cash_percent",
+				"id":id,
+				"begin_pdate":$("#pdate").val(),
+				"percent":$("#percent").val(),
+				"notes":$("#notes").val()
+				 
+			},
+			beforeSend: function(){
+			  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			},
+			success: function(data){
+			   //alert(data);
+				//$("#code_list").html(data);
+				alert("% отредактирован!");
+				$("#percent_dialog").dialog("close");
+				location.reload();
+			},
+			error: function(xhr, status, m){
+				  //alert('e '+status+m);  
+			}	 
+		});		
+}
+
+function DelPercent(id){
+	if(window.confirm("Вы действительно хотите удалить %?")){
+		$.ajax({
+			async: true,
+			url: "/js/cash.php",
+			type: "POST",
+			data:{
+				"action":"del_cash_percent",
+				"id":id 
+				 
+			},
+			beforeSend: function(){
+			  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			},
+			success: function(data){
+			   //alert(data);
+				//$("#code_list").html(data);
+				alert("% удален!");
+				location.reload();
+			},
+			error: function(xhr, status, m){
+				  //alert('e '+status+m);  
+			}	 
+		});	
+	}
+}
+function LaunchEdit(id){
+	var id=id;
+	$("#id").val(id);
+	$("#pdate").val($("#begin_pdate_"+id).val());
+	$("#percent").val($("#percent_"+id).val());
+	$("#notes").val($("#notes_"+id).val());
+	
+	$("#percent_dialog").dialog({
+		buttons:{
+			"Править %":function(){
+				EditPercent(id);
+			},
+			"Отмена": function(){
+				$("#percent_dialog").dialog("close");
+			}
+		}
+	});
+		
+	
+	$("#percent_dialog").dialog("open");
+}
+</script>
+
+ 
+<div id="percent_dialog" title="Редактирование %" style="display:none;">
+	<input type="hidden" id="id" value="" />
+    <input type="hidden" id="code_id" value="%{$code_id}%" />
+    
+    <label for="pdate">Дата начала действия:</label><br />
+    <input type="text" size="10" maxlength="20" id="pdate" value="%{$pdate}%" />
+	<p />
+    
+      <label for="percent">%:</label><br />
+    <input type="text" size="10" maxlength="20" id="percent" value="" />
+	<p />
+    
+     <label for="notes">Примечания:</label><br />
+    <textarea cols="50" rows="5" id="notes"></textarea>
+    <p />
+	<p />   
+</div>
+
+
+
+
+%{include file="every_help_dialog.html" filename="cash.htm" prefix=$prefix description="реестр расхода наличных"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+ 
+ 
+
+
+ 
+
+ 
+<input type="button" value="Создать %..." id="create_percent"   />
+&nbsp;&nbsp;
+
+
+<input type="button" value="Назад к реестру расходов" onclick="location.href='all_pay.php';" />
+     
+<br clear="all" />
+<p />  
+ 
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+   
+    
+    <th scope="col" width="60">
+    Дата начала действия
+   
+    </th>
+    
+     <th scope="col" width="50">
+    %
+   
+    </th>
+    
+  
+ 
+    <th scope="col" width="300" >
+    
+    Код оплаты
+   
+    </th>
+   
+   
+    
+      
+  
+    
+     <th scope="col" width="*">
+    Примечания
+   
+    </th>
+    
+   
+    
+   <th scope="col" width="24" >&nbsp;
+   
+   </th>
+    <th scope="col"  width="24">&nbsp;
+   
+   </th>
+</tr>
+
+</thead>
+<tbody>
+ 
+%{section name=rowsec loop=$items}%
+
+
+<tr align="center" valign="top" id="pay_item_row%{$prefix}%_%{$items[rowsec].id}%">
+
+    
+     
+     <td width="60" %{if $items[rowsec].is_active}%class="item_active"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].begin_pdate}%
+    
+    <input type="hidden" id="begin_pdate_%{$items[rowsec].id}%" value="%{$items[rowsec].begin_pdate}%" />
+    
+    </td>
+    
+    <td width="50"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%> 
+   %{if $items[rowsec].is_active}%<strong>%{/if}%
+   
+    %{$items[rowsec].percent}%
+   <input type="hidden" id="percent_%{$items[rowsec].id}%" value="%{$items[rowsec].percent}%" />
+      %{if $items[rowsec].is_active}%</strong>%{/if}%
+    </td>
+   
+       <td width="300"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+    %{$items[rowsec].code}%  %{$items[rowsec].name}%
+    </td>
+   
+     
+   
+   
+    <td width="*"  %{if $items[rowsec].is_active}%class="item_active"%{/if}% align="left">
+    <div style="max-height:100px; overflow:auto;"><small>  
+    %{$items[rowsec].notes}%
+   </small></div>
+   
+    <input type="hidden" id="notes_%{$items[rowsec].id}%" value="%{$items[rowsec].notes|escape:"html"}%" />
+    </td>
+   
+   
+    <td width="24"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+   
+    <a href="#" onclick=" LaunchEdit('%{$items[rowsec].id}%'); return false;" class="reestr_edit reestr_right_button24" data-comment="Подробно..."></a>
+    
+  
+    
+    </td>
+    
+     <td width="24"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+  <a href="#" onclick=" DelPercent('%{$items[rowsec].id}%'); return false;" class="reestr_delete reestr_right_button24" data-comment="Удалить..."></a>
+    
+    </td>
+    
+   
+</tr>
+ 
+%{/section}%
+ 
+</tbody>
+</table>
+ 
+%{if $smarty.section.rowsec.total==0}%
+<em>% не найдено.</em><br />
+%{/if}%
+
+
+
+
+ 

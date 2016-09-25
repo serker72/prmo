@@ -1,0 +1,215 @@
+<!-- таблица в диалоге -->
+
+
+<strong>Выбранные счета:</strong>   
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="except_ids">
+    <thead>
+    <tr align="center" valign="top">
+    	%{if $pay_mode==1}%
+        <th scope="col" width="24">&nbsp;</th>
+        %{/if}%
+        <th scope="col" width="80">Код</th>
+        <th scope="col" width="80">Дата создания</th>
+        <th scope="col" width="80">№ исходящего
+счета поставщика
+</th>
+        <th scope="col" width="80">Дата счета
+поставщика</th>
+
+		<th scope="col" width="*">Дата оплаты по договору</th>
+        <th scope="col" width="*"  style="min-width:250px !important;">Фактическая дата оплаты</th>
+        
+        <th scope="col" width="80">Сумма счета, руб.</th>
+        
+        <th scope="col" width="80">Ранее оплачено, руб.</th>
+        <th scope="col" width="80">Сумма оплаты, руб.</th>
+       <th scope="col" width="80">Остаток оплаты по счету, руб.</th>
+    </tr>
+    </thead>
+    <tbody>
+   
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].value>0}%
+   %{include file="pay_in/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+    </tbody>
+    </table><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+    
+    <strong>Другие счета поставщика:</strong>   <br />
+
+    <input type="button" id="do_all_bills" value="все счета" />
+   <input type="hidden" id="find_mode" value="0" />
+  
+	<strong>или:</strong>
+    <input type="checkbox" value="1" id="not_payed" /><strong>неоплаченные счета</strong>
+    
+    с: <input type="text" value="%{$filter_from}%" id="filter_from" size="10" maxlength="10" style="width:60px;" />
+    
+    по:  <input type="text" value="%{$filter_to}%" id="filter_to" size="10" maxlength="10" style="width:60px;" />
+    
+    <input type="button" value="Найти" id="doFindBills" />
+<script type="text/javascript">
+	$(function(){
+		$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		$("#filter_from").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+		$("#filter_to").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+		
+		var except_bills=new Array();
+		var except_invs=new Array();
+		function BuildExcepts(){
+			except_bills=new Array();
+			$.each($("#except_ids tbody tr input[id^='hash_']"), function(k, v){
+				//alert(v.value);
+				hash=$(v).val();
+				if($("#kind_"+hash).val()==0){
+					except_bills.push($("#position_id_"+hash).val());
+				}else{
+					except_invs.push($("#position_id_"+hash).val());
+				}
+			});
+		}
+		
+		
+		//все счета
+		$("#do_all_bills").bind("click",function(){
+			BuildExcepts();
+			
+			$("#find_mode").val('0');
+			//pay_mode
+			pay_mode=0;
+			if($("#pay_for_dogovor").prop("checked")) pay_mode=0;
+			else if($("#pay_for_bill").prop("checked")) pay_mode=1;
+			
+			$.ajax({
+              async: true,
+              url: "/js/pay_in.php",
+              type: "POST",
+              data:{
+                  "action":"find_all_bills",
+				  "supplier_id":$("#supplier_id").val(),
+				  "contract_id":$("#contract_id").val(),
+				  "pay_id":$("#id").val(),
+				  "pay_mode":pay_mode,
+				  "except_bills[]":except_bills,
+				  "except_invs[]":except_invs,
+				  "sort_mode":$("#sort_mode").val()
+              },
+              beforeSend: function(){
+                 $("#other_bills tbody").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="0" />');   
+              },
+              success: function(data){
+               
+				$("#other_bills tbody").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });	
+		});
+		
+		
+		//счета по параметрам
+		$("#doFindBills").bind("click",function(){
+			BuildExcepts();
+			
+			$("#find_mode").val('1');
+			
+			if($("#not_payed").prop("checked")) state=1;
+			else state=0;
+			
+			//pay_mode
+			pay_mode=0;
+			if($("#pay_for_dogovor").prop("checked")) pay_mode=0;
+			else if($("#pay_for_bill").prop("checked")) pay_mode=1;
+			
+			$.ajax({
+              async: true,
+              url: "/js/pay_in.php",
+              type: "POST",
+              data:{
+                  "action":"find_custom_bills",
+				  "supplier_id":$("#supplier_id").val(),
+				  "contract_id":$("#contract_id").val(),
+				  "pay_id":$("#id").val(),
+				  "except_bills[]":except_bills,
+				  "not_payed":state,
+				  "pay_mode":pay_mode,
+				  "except_invs[]":except_invs,
+				  "filter_from":$("#filter_from").val(),
+				  "filter_to":$("#filter_to").val(),
+				  "sort_mode":$("#sort_mode").val()
+              },
+              beforeSend: function(){
+                 $("#other_bills tbody").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="0" />');   
+              },
+              success: function(data){
+               
+				$("#other_bills tbody").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });	
+		});
+		
+	});
+	</script>
+    
+    
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="other_bills">
+    <thead>
+    <tr align="center" valign="top">
+    	%{if $pay_mode==1}%
+        <th scope="col" width="24">&nbsp;</th>
+        %{/if}%
+        <th scope="col" width="80">Код
+        
+        <div class="sort_dir">
+    <a href="#" onclick="$('#sort_mode').val('1'); if($('#find_mode').val()==0){ $('#do_all_bills').trigger('click'); }else{ $('#doFindBills').trigger('click'); } return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="$('#sort_mode').val('0'); if($('#find_mode').val()==0){ $('#do_all_bills').trigger('click'); }else{ $('#doFindBills').trigger('click'); } return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+        
+        </th>
+        <th scope="col" width="80">Дата создания</th>
+        <th scope="col" width="80">№ исходящего
+счета поставщика
+ <div class="sort_dir">
+    <a href="#" onclick="$('#sort_mode').val('3'); if($('#find_mode').val()==0){ $('#do_all_bills').trigger('click'); }else{ $('#doFindBills').trigger('click'); } return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="$('#sort_mode').val('2'); if($('#find_mode').val()==0){ $('#do_all_bills').trigger('click'); }else{ $('#doFindBills').trigger('click'); } return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+</th>
+        <th scope="col" width="80">Дата счета
+поставщика</th>
+
+		<th scope="col" width="*">Дата оплаты по договору</th>
+        <th scope="col" width="*"  style="min-width:250px !important;">Фактическая дата оплаты</th>
+        
+        <th scope="col" width="80">Сумма счета, руб.</th>
+        
+        <th scope="col" width="80">Ранее оплачено, руб.</th>
+        <th scope="col" width="80">Сумма оплаты, руб.</th>
+        <th scope="col" width="80">Остаток оплаты по счету, руб.</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].value==0}%
+   
+     %{include file="pay_in/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+    </tbody>
+    </table>

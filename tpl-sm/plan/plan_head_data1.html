@@ -1,0 +1,70 @@
+<table width="100%" class="reptable">
+<thead>
+<tr>
+    <th rowspan="2">Задача</th>
+    <th colspan="2">Дать комментарий</th>
+    <th rowspan="2"></th>
+</tr>
+<tr>
+    <th>Сейчас</th>
+    <th>Позже</th>
+    
+</tr>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr id="plan1_row_%{$item.id}%">
+<td>
+         
+       
+         %{$item.full_title}%  
+         <input type="hidden" id="plan1_id_%{$item.id}%" value="%{$item.id}%" />
+         <input type="hidden" id="plan1_code_%{$item.id}%" value="%{$item.code}%" />
+          
+</td>
+
+<td width="180">         
+         
+           	<input type="radio" name="plan_1_%{$item.id}%" id="plan_1_%{$item.id}%_0" value="0" ><label for="plan_1_%{$item.id}%_0">Сейчас</label><br>
+
+           	<div id="plan_1_comment_block_%{$item.id}%" style="display:none;">
+            <textarea id="plan_1_comment_%{$item.id}%" style="width:100%; min-width:200px; height:100px;"></textarea>
+            </div>
+         
+       
+</td>
+<td width="180">
+         
+         	<input type="radio" name="plan_1_%{$item.id}%" id="plan_1_%{$item.id}%_1" value="1"><label for="plan_1_%{$item.id}%_1">Позже</label>
+             
+</td> 
+    
+    
+<td width="24">
+ <a href="ed_sched_task.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit" onClick=" $('#plan1_row_%{$item.id}%').hide(); if($('tr[id^=plan1_row_]:visible').length==0){ $('#plan1_remind_gialog').dialog('close'); } return true;  "></a>
+ 
+ <script>
+$(function(){
+	$("input[id^=plan_1_%{$item.id}%_]").bind("change", function(){
+			name=$(this).attr("name");
+			id=name.replace(/plan_1_/,'');//.replace(/_[0-9]+$/,'');
+			//alert(id);
+			
+			if($("input[name=plan_1_"+id+"]:checked").val()==0){
+				$("#plan_1_comment_block_"+id).show();
+			}else{
+				$("#plan_1_comment_block_"+id).hide();
+			}
+			 
+			
+		});
+		
+		
+});
+</script>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 

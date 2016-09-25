@@ -1,0 +1,38 @@
+
+<table class="reptable">
+<thead>
+<tr>
+	<th width="*">
+    Данные
+    </th>
+    <th width="60">
+    %{$title}%
+    </th>
+     
+</tr>
+</thead>
+<tbody>
+%{foreach from=$alls.items item=item}%
+<tr>
+	<td width="*" align="left">
+    %{$item.name}%
+    </td>
+    <td width="60">
+    %{$item.value}%
+    </td>
+     
+</tr>		
+%{/foreach}%
+</tbody>
+<tfoot>
+<tr>
+	<th width="*">
+    Итого
+    </th>
+    <th width="60">
+    %{$alls.total}%
+    </th>
+   
+</tr>	
+</tfoot>
+</table>

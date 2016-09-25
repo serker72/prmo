@@ -1,0 +1,26 @@
+ <div id="annul_dialog%{$prefix}%" title="Невозможно аннулировать документ">
+     <div id="annul_dialog_text%{$prefix}%">
+     
+     </div>
+     
+ </div>
+ 
+  <script type="text/javascript">
+	$(function(){
+		
+		$("#annul_dialog%{$prefix}%").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 500,
+			height: 250,
+			stack: true,
+			buttons:{
+				"ОК":function(){
+					$("#annul_dialog%{$prefix}%").dialog("close");
+				}
+			}
+		});
+		
+	});
+	</script>

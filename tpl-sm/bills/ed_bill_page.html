@@ -1,0 +1,135 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+%{if $from_begin==1}%
+	selected:0
+	
+%{elseif $do_show_log}%	
+	selected:6
+%{elseif $do_show_in_bills}%	
+	selected:1	
+%{elseif $do_show_acc}%	
+	selected:2	
+%{elseif $do_show_pay}%	
+	selected:3	
+%{elseif $do_show_pm_folder and $has_pm_folder}%	
+	selected:5	
+%{elseif $do_show_cash}%	
+	selected:4	
+%{elseif $from_begin==0}%
+  	cookie: { expires: 14, name: 'billTab' }
+%{/if}%	
+  });
+  
+});
+</script>
+
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Исходящий счет</a></li>
+    
+     %{if $has_bills_in}%
+    <li><a href="#tabs-8">Входящие счета</a></li>
+    %{/if}%
+    
+    %{if $has_acc}%
+    <li><a href="#tabs-6">Реализации товара</a></li>    
+    %{/if}%
+    
+     %{if $has_pays}%
+    <li><a href="#tabs-5">Оплаты</a></li>    
+    %{/if}%
+    
+      %{if $has_cash}%
+    <li><a href="#tabs-9">Затраты по сделке</a></li>    
+    %{/if}%
+    
+    %{if $has_pm_folder}%
+    <li><a href="#tabs-7">+/-</a></li>    
+    %{/if}%
+    
+    
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+  
+     %{if $has_bills_in}% 
+   <div id="tabs-8">
+    <p>
+    %{$bills_in}%
+    </p>
+  </div>
+   %{/if}%
+  
+  
+   %{if $has_acc}%
+   <div id="tabs-6">
+    <p>
+    %{$accs}%
+    </p>
+  </div>
+  %{/if}%
+  
+  
+
+  
+  
+   %{if $has_pays}%
+   <div id="tabs-5">
+    <p>
+    %{$pays}%
+    </p>
+  </div>
+  %{/if}%
+  
+  
+   %{if $has_cash}%
+   <div id="tabs-9">
+    <p>
+    %{$cash}%
+    </p>
+  </div>
+  %{/if}%
+  
+   %{if $has_pm_folder}%
+    <div id="tabs-7">
+    <p>
+    %{$pm_folder}%
+    </p>
+  </div>
+    %{/if}%
+  
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

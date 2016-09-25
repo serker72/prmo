@@ -1,0 +1,587 @@
+<!-- таблица в диалоге -->
+
+<div id="info_positions_dialog" title="О позиции">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 450,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+</script>
+
+<script type="text/javascript">
+//общие функции для каждого ряда в счете
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+function RecalcPrices(){
+	//cena +-
+	
+	
+}
+
+//смена поля "ВСЕГО"
+function TotalChanged(hash){
+	
+	//сменить итоговую цену
+	p=0;
+	if(parseFloat($("#quantity_"+hash).val())!=0){
+		p=roundPlus(parseFloat($("#total_check_"+hash).val().replace("\,","\."))/parseFloat($("#quantity_"+hash).val().replace("\,","\.")),2);
+	
+	}
+	
+	//куда девать остаток от деления, чтобы сошлось по счету????
+	
+	$("#price_pm_check_"+hash).val(p);
+	
+	//сменить начальную цену
+	if($("#do_pm_"+hash).prop("checked")){
+		//есть +-/
+		
+		//slag=1;
+		pi=p;
+		
+		if($("#rub_or_percent_"+hash).val()==0){
+			if($("#plus_or_minus_"+hash).val()==0){
+				pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+			}else{
+				//slag=-1.0*slag;
+				pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+			}
+			
+		}else{
+			pi=p;
+		
+			
+			if(parseFloat($("#value_"+hash).val())!=0){
+			
+			  if($("#plus_or_minus_"+hash).val()==0){
+				  pi=p*100/(100+parseFloat($("#value_"+hash).val().replace("\,","\.")));
+				  
+			  }else{
+				  pi=p*100/(100-parseFloat($("#value_"+hash).val().replace("\,","\.")));
+			  }
+			}
+		}
+		
+		pi=roundPlus(pi,2);
+		$("#price_"+hash).val(pi);	
+		$("#span_price_"+hash).html(pi);	
+		
+	}else{
+		
+		$("#price_"+hash).val(p);	
+		$("#span_price_"+hash).html(p);	
+	}
+	
+	$("#cost_"+hash).html(roundPlus(p*parseFloat($("#quantity_"+hash).val().replace("\,","\.")),2));
+	
+	$("#nds_summ_"+hash).html(roundPlus(p*parseFloat($("#quantity_"+hash).val().replace("\,","\."))-p*parseFloat($("#quantity_"+hash).val().replace("\,","\."))/1.18,2));
+	
+}
+
+
+//смена поля +/-
+function PMChanged(hash){
+	//ищем итог цену с учеом стоимости
+	
+	TotalChanged(hash);
+	
+}
+
+//смена поля Итог цена
+function PIchanged(hash){
+	//меняем стоимсть
+	sigma=0;
+	
+	sigma=roundPlus(parseFloat($("#price_pm_check_"+hash).val().replace("\,","\."))*parseFloat($("#quantity_"+hash).val().replace("\,","\.")),2);
+	$("#total_check_"+hash).val(sigma);
+	
+	//меняем исх цену
+	p=parseFloat($("#price_pm_check_"+hash).val().replace("\,","\."));
+		
+	//сменить начальную цену
+	if($("#do_pm_"+hash).prop("checked")){
+		//есть +-/
+		
+		//slag=1;
+		pi=p;
+		
+		if($("#rub_or_percent_"+hash).val()==0){
+			if($("#plus_or_minus_"+hash).val()==0){
+				pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+			}else{
+				//slag=-1.0*slag;
+				pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+			}
+			
+		}else{
+			pi=p;
+		
+			
+			if(parseFloat($("#value_"+hash).val())!=0){
+			
+			  if($("#plus_or_minus_"+hash).val()==0){
+				  pi=p*100/(100+parseFloat($("#value_"+hash).val().replace("\,","\.")));
+				  
+			  }else{
+				  pi=p*100/(100-parseFloat($("#value_"+hash).val().replace("\,","\.")));
+			  }
+			}
+		}
+		
+		pi=roundPlus(pi,2);
+		$("#price_"+hash).val(pi);	
+		$("#span_price_"+hash).html(pi);	
+		
+	}else{
+		
+		$("#price_"+hash).val(p);	
+		$("#span_price_"+hash).html(p);	
+	}
+	
+}
+
+//смена поля кол-во
+function QuantityChanged(hash){
+	
+	//найдем новую стоимость как итог_цена*кол-во,
+	//вычислим начальную цену исходя из +-
+	PIchanged(hash);
+		
+}
+
+//режим +/- активировать
+function do_pm(hash){
+	if($("#do_pm_"+hash).prop("checked")){
+					$("#plus_or_minus_"+hash).attr("disabled",false);
+					$("#value_"+hash).attr("disabled",false);
+					$("#rub_or_percent_"+hash).attr("disabled",false);
+					
+					$("#discount_plus_or_minus_"+hash).attr("disabled",false);
+					$("#discount_value_"+hash).attr("disabled",false);
+					$("#discount_rub_or_percent_"+hash).attr("disabled",false);
+							
+				}else{
+					$("#plus_or_minus_"+hash).attr("disabled",true);
+					$("#value_"+hash).attr("disabled",true);
+					$("#rub_or_percent_"+hash).attr("disabled",true);
+					
+					$("#discount_plus_or_minus_"+hash).attr("disabled",true);
+					$("#discount_value_"+hash).attr("disabled",true);
+					$("#discount_rub_or_percent_"+hash).attr("disabled",true);
+				}	
+}
+
+//проверка итоговой цены
+function price_pm_check(hash){
+	ret=true;
+				
+				if($("#price_pm_check_"+hash).val().length==0){
+					alert("Заполните поле Итоговая цена!");
+					ret=ret&&false;
+					//return false;	
+				}
+				
+				
+				rev_value=$("#price_pm_check_"+hash).val();
+				rev_value=rev_value.replace("\,","\.");
+				
+				
+				if(isNaN(rev_value)||(parseFloat(rev_value)<0)){
+					alert("Неверное значение в поле Итоговая цена!\nЕсли Вы вводите дробное значение (копейки), просьба отделять дробную часть от целой символом точки.");
+					ret=ret&&false;
+				}
+				
+				
+				
+				if(!ret){
+					 $("#price_pm_check_"+hash).focus();
+					 $("#price_pm_check_"+hash).addClass("wrong");
+				}else{
+					//peres4et	
+					$("#price_pm_check_"+hash).removeClass("wrong");
+					PIchanged(hash);
+					
+					
+				}
+				
+				//проверка итоговой цены
+				
+				
+				return ret;	
+}
+
+//проверка стоимости!!!!
+function total_check(hash){
+		ret=true;
+				
+				if($("#total_check_"+hash).val().length==0){
+					alert("Заполните поле Всего!");
+					ret=ret&&false;
+					//return false;	
+				}
+				
+				rev_value=$("#total_check_"+hash).val();
+				rev_value=rev_value.replace("\,","\.");
+				
+				
+				if(isNaN(rev_value)||(parseFloat(rev_value)<0)){
+					alert("Неверное значение в поле Всего!\nЕсли Вы вводите дробное значение (копейки), просьба отделять дробную часть от целой символом точки.");
+					ret=ret&&false;
+				}
+				
+				
+				
+				if(!ret){
+					 $("#total_check_"+hash).focus();
+					 $("#total_check_"+hash).addClass("wrong");
+				}else{
+					//peres4et	
+					$("#total_check_"+hash).removeClass("wrong");
+					
+					
+					TotalChanged(hash);
+					
+					
+				}
+				
+				return ret;
+}
+
+//проверка добавки цены
+function value(hash){
+	ret=true;
+				
+				if($("#value_"+hash).val().length==0){
+					alert("Заполните поле +/-!");
+					ret=ret&&false;
+					//return false;	
+				}
+				
+				rev_value=$("#value_"+hash).val();
+				rev_value=rev_value.replace("\,","\.");
+				
+				
+				if(isNaN(rev_value)||(parseFloat(rev_value)<0)){
+					alert("Неверное значение в поле +/-!\nЕсли Вы вводите дробное значение, просьба отделять дробную часть от целой символом точки.");
+					ret=ret&&false;
+				}
+				
+				
+				
+				if(!ret) {
+					$("#value_"+hash).addClass("wrong");
+					$("#value_"+hash).focus();
+				}else{
+					//peres4et	
+					$("#value_"+hash).removeClass("wrong");	
+					
+					PMChanged(hash);
+					RecalcPrices(hash);
+				}
+				
+				//проверка итоговой цены
+				
+				
+				return ret;
+}
+
+//проверка дисконта
+function discount_value(hash){
+	ret=true;
+				
+				if($("#discount_value_"+hash).val().length==0){
+					alert("Заполните поле Дисконт +/-!");
+					ret=ret&&false;
+					//return false;	
+				}
+				
+				
+				rev_value=$("#discount_value_"+hash).val();
+				rev_value=rev_value.replace("\,","\.");
+				
+				if(isNaN(rev_value)||(parseFloat(rev_value)<0)){
+					alert("Неверное значение в поле Дисконт +/-!\nЕсли Вы вводите дробное значение, просьба отделять дробную часть от целой символом точки.");
+					ret=ret&&false;
+				}
+				
+				
+				
+				if(!ret) {
+					$("#discount_value_"+hash).addClass("wrong");
+					$("#discount_value_"+hash).focus();
+				}else{
+					//peres4et	
+					$("#discount_value_"+hash).removeClass("wrong");	
+					
+				
+				}
+				
+				
+				return ret;
+}
+
+function link_in_sh(id, storage_id, komplekt_ved_id){
+				
+				$.ajax({
+					async: true,
+					url: "/js/bill.php",
+					type: "POST",
+					data:{
+						"action":"find_sh_pos",
+						"id":id,
+						"bill_id":$("#id").val(),
+						"storage_id":storage_id,
+						"komplekt_ved_id":komplekt_ved_id
+					},
+					beforeSend: function(){
+					  $("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+					},
+					success: function(data){
+					  $("#position_info").html(data);
+					  
+					},
+					error: function(xhr, status){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					}	 
+				  });
+				
+				$("#info_positions_dialog").dialog("open");
+				return false;
+			
+}
+
+function link_in_sh_in(id, storage_id, komplekt_ved_id){
+				
+				$.ajax({
+					async: true,
+					url: "/js/bill.php",
+					type: "POST",
+					data:{
+						"action":"find_sh_pos_in",
+						"id":id,
+						"bill_id":$("#id").val(),
+						"storage_id":storage_id,
+						"komplekt_ved_id":komplekt_ved_id
+					},
+					beforeSend: function(){
+					  $("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+					},
+					success: function(data){
+					  $("#position_info").html(data);
+					  
+					},
+					error: function(xhr, status){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					}	 
+				  });
+				
+				$("#info_positions_dialog").dialog("open");
+				return false;
+			
+}
+</script>
+
+<div id="positions_scroll_block" style="/*overflow:auto; width: 1200px; height:580px;*/"  >
+
+<div style="padding-right:0px; padding-top:0px;">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+<strong>Позиции в счете:</strong>   
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="40">Ед. изм.</th>
+        
+        <th scope="col" width="40">Кол-во</th>
+        <th scope="col"  width="40">Всего по заявке</th>
+        <th scope="col" width="40">Доступное кол-во</th>
+        <th scope="col" width="40">В реал-ции</th>
+        <th scope="col" width="40">В пост-ии</th>
+        <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Цена с НДС</th>
+        <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+         <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Дисконт +/-</th>
+        <th scope="col" width="80">Итоговая цена</th>
+     
+         <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего</th>
+        <th scope="col" width="100" style="display:none">Объект</th>
+        <th scope="col" width="100" style="display:none">Участок</th>
+        <th scope="col" width="100">Заявка</th>
+        
+    </tr>
+    </thead>
+    <tbody>
+   
+    %{include file="bills/positions_edit_rows.html" kind=0}%
+
+    </tbody>
+    </table><br />
+<br />
+<br />
+<br />
+
+	%{if !$can_mod_pm_only}%
+    
+     <strong>Доступные позиции по заявке:</strong>   
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="40">Ед. изм.</th>
+        
+        <th scope="col" width="40">Кол-во</th>
+        <th scope="col"  width="40">Всего по заявке</th>
+        <th scope="col" width="40">Доступное кол-во</th>
+        <th scope="col" width="40">В реал-ции</th>
+        <th scope="col" width="40">В пост-ии</th>
+        <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Цена с НДС</th>
+        <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+         <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Дисконт +/-</th>
+        <th scope="col" width="80">Итоговая цена</th>
+  
+         <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего</th>
+        <th scope="col" width="100" style="display:none">Объект</th>
+        <th scope="col" width="100" style="display:none">Участок</th>
+        <th scope="col" width="100">Заявка</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    
+    %{include file="bills/positions_edit_rows.html" kind=1}%
+
+    </tbody>
+    </table>
+    <br />
+<br />
+<br />
+
+    
+    <strong>Доступные позиции по другим заявкам выбранного контрагента:</strong>   
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="40">Ед. изм.</th>
+        
+        <th scope="col" width="40">Кол-во</th>
+        <th scope="col"  width="40">Всего по заявке</th>
+        <th scope="col" width="40">Доступное кол-во</th>
+        <th scope="col" width="40">В реал-ции</th>
+        <th scope="col" width="40">В пост-ии</th>
+        <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Цена с НДС</th>
+        <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+         <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Дисконт +/-</th>
+        <th scope="col" width="80">Итоговая цена</th>
+   
+         <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего</th>
+        <th scope="col" width="100" style="display:none">Объект</th>
+        <th scope="col" width="100" style="display:none">Участок</th>
+        <th scope="col" width="100">Заявка</th>
+    </tr>
+    </thead>
+    <tbody>
+
+   %{include file="bills/positions_edit_rows.html" kind=2}%
+
+    </tbody>
+    </table>
+    
+    
+    <br />
+<br />
+<br />
+
+    
+    <strong>Доступные услуги:</strong>   
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="40">Ед. изм.</th>
+        
+        <th scope="col" width="40">Кол-во</th>
+        <th scope="col"  width="40">Всего по заявке</th>
+        <th scope="col" width="40">Доступное кол-во</th>
+        <th scope="col" width="40">В реал-ции</th>
+         <th scope="col" width="40">В пост-ии</th>
+        <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Цена с НДС</th>
+        <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>+/-</th>
+         <th scope="col" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Дисконт +/-</th>
+        <th scope="col" width="80">Итоговая цена</th>
+   
+         <th scope="col" width="80" %{if $cannot_view_pm}% style="display:none;"%{/if}%>Сумма</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего</th>
+        <th scope="col" width="100" style="display:none">Объект</th>
+        <th scope="col" width="100" style="display:none">Участок</th>
+        <th scope="col" width="100">Заявка</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    
+    %{include file="bills/positions_edit_rows.html" kind=3}%
+
+    </tbody>
+    </table>
+    
+    %{/if}%
+    
+    </div>
+    
+    
+ <script type="text/javascript">
+   $(function(){ 
+ %{section name=pospossec loop=$pospos}%
+ 
+ 	$("#link_in_sh_%{$pospos[pospossec].hash}%").bind("click", function(){
+			return link_in_sh("%{$pospos[pospossec].position_id}%", "%{$pospos[pospossec].storage_id}%", "%{$pospos[pospossec].komplekt_ved_id}%");
+			
+				
+			});
+			
+	$("#link_in_sh_in_%{$pospos[pospossec].hash}%").bind("click", function(){
+			return link_in_sh_in("%{$pospos[pospossec].position_id}%", "%{$pospos[pospossec].storage_id}%", "%{$pospos[pospossec].komplekt_ved_id}%");
+			
+				
+			});		
+	
+ %{/section}%
+   });
+ </script>

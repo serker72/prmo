@@ -1,0 +1,316 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+ 
+	
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#remind_ptime").mask('00:00');
+	
+	
+	$("#wo_supplier").bind("change", function(){
+		if($("#wo_supplier").prop("checked")){
+			$("#suppliers_tbody").empty();
+			$("#suppliers_add").prop("disabled",true);	
+		}else{
+			$("#suppliers_add").prop("disabled",false);	
+		}
+	});
+	 
+	
+});
+</script>
+
+
+
+
+<form action="ed_sched.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+ <input type="hidden" id="manager_id" value="%{$manager_id}%">
+
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+
+
+
+<div style="float:right; margin-top:25px; ">
+
+     %{include file="every_help_dialog.html" filename="sched_5.html" prefix="" description="Информация о редактировании заметки" style="float:right" is_right=true}%
+    
+     
+    
+    <div style="float:right;  margin-right:10px; ">
+      <a href="ed_sched_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank"  data-comment="печать заметки..." class="reestr_print reestr_right_button24"> </a>
+    </div>  
+    
+    <div style="float:right;  margin-right:10px; ">
+        <a href="#" id="email_documents" data-comment="отправить pdf-документы на электронную почту..." class="reestr_email reestr_right_button24"> </a>
+             %{include file="plan/pdf_actions.html" mode=0}%
+    </div>
+    
+     %{if $can_create}%
+      <a href="#" onclick="window.open('ed_sched.php?kind_id=%{$bill.kind_id}%&copyfrom=%{$bill.id}%'); return false;" class="reestr_copy reestr_right_button24" data-comment="Копировать..." style="float:right; margin-right:10px;"></a>
+    %{else}%
+     <a href="#" onclick="alert('У Вас недостаточно прав для копирования заметки.'); return false;" class="reestr_copy reestr_right_button24 reestr_inactive" data-comment="Копировать..." style="float:right; margin-right:10px;"></a>
+    %{/if}%
+    
+    
+  
+     
+   
+    
+  
+</div>
+
+
+<div style="float:left; ">
+
+    <h1 style="float:left; margin-right:10px;">Заметка</h1>
+    <br clear="all" />
+    
+    
+    
+    <div style="float:left; margin-right:10px;">
+    
+        <strong>Номер:</strong><br>
+        <strong>%{$bill.code}%</strong>
+    
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+    
+        <label for="topic">Тема:</label><br>
+        <input type="text" value="%{$bill.topic|escape:"html"}%" name="topic" id="topic" size="60" maxlength="255"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+    
+    
+    </div>
+    
+    
+    
+    
+     
+     
+    
+    <div style="float:left; margin-right:20px;">
+        
+      <strong>  Дата создания: </strong>
+        <br />
+        
+        %{$bill.pdate}% 
+        
+    </div>
+    
+    
+     <div style="float:left;  margin-right:10px; ">
+        %{if $bill.note_is_actual==1}%
+      
+       
+        
+       
+        <strong>Статус:<br>
+ Актуальна</strong>
+       
+        
+        %{else}%
+        <strong>Статус:<br>
+ Неактуальна</strong>
+      
+        
+        %{/if}%
+        
+    </div>
+    
+      <div style="float:left; margin-right:10px; margin-top:10px;">
+    	
+     %{if $bill.note_is_actual==1}%
+      <input type="submit" value="Не актуальна" %{if !$can_modify}% disabled="disabled"%{/if}%  name="notActual" onClick="return window.confirm('Вы уверены, что хотите отметить заметку как неактуальную?');" />
+      
+        %{else}%
+   
+    
+    <input type="submit" value="Актуальна" %{if !$can_modify}% disabled="disabled"%{/if}%  name="doActual" onClick="return window.confirm('Вы уверены, что хотите отметить заметку как актуальную?');" />
+    
+    %{/if}%
+     </div> 
+</div>
+
+
+<br clear="all" />
+<p />
+
+	
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагенты:</h3>
+</div>
+<div style="float:right; margin-right:00px;"> 
+	 
+<input type="checkbox" id="wo_supplier" name="wo_supplier" value="1"  %{if !$can_modify}% disabled="disabled"%{/if}% %{if $bill.wo_supplier==1}% checked%{/if}% />    
+<label for="wo_supplier">Без контрагента</label>  
+ 
+</div>
+<br clear="all" />
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+  %{include file="plan/supplier_15_actions.html" many=true can_modify= $can_modify_suppliers }%    
+</div>
+
+
+<br clear="all" />
+<p />
+  
+
+
+<label for="description">Заметка:</label><br>
+<textarea id="description" name="description" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$bill.description|escape}%</textarea>
+
+ 
+<script type="text/javascript">
+	try{
+			$("#description").ckeditor({
+               customConfig : '/ckeditor4/config-kp.js',
+							 width: '100%',
+							 height: '250px'
+            });
+		
+	}catch(e){}
+
+	 
+	</script>
+
+<br>
+<p />
+
+
+
+
+
+
+<h3>Напомнить мне:</h3>
+
+<input type="checkbox" id="remind_do" name="remind_do" value="1" %{if $bill.remind_do==1}%checked%{/if}% %{if !$can_modify}% disabled="disabled"%{/if}% /><label for="remind_do">напомнить мне</label><br>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="remind_pdate">
+Дата напоминания: 
+</label><br />
+
+<input type="text" %{if !$can_modify}% disabled="disabled"%{/if}% value="%{$bill.remind_pdate}%" id="remind_pdate" name="remind_pdate"  size="10"   maxlength="10" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+
+
+<label for="remind_ptime">Время напоминания:</label><br />
+<input type="text" %{if !$can_modify}% disabled="disabled"%{/if}% value="%{$bill.remind_ptime}%" name="remind_ptime" id="remind_ptime" size="10" maxlength="5" />
+</div>
+
+
+ <br clear="all" />
+<p />
+
+
+
+
+%{if $can_share}%
+<h3>Поделиться заметкой:</h3>
+
+%{include file="plan/share_actions.html"}%
+
+
+
+
+
+ <br clear="all" />
+<p />
+%{/if}%
+
+
+<h3>Файлы:</h3>
+
+%{$files}%
+
+<br clear="all" />
+<p />
+
+
+
+ 
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку заметок" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='shedule.php';
+}else location.href='shedule.php';" />
+
+
+<br>
+
+<p />
+
+
+</form>
+%{if $can_modify}%
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	if($("#remind_do").prop("checked")){
+		if($("#remind_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату напоминания!');
+			return false;
+		}	
+		
+		if($("#remind_ptime").val().length<5){
+			sfm_show_error_msg('Укажите время напоминания!');
+			return false;
+		}				
+	}
+	
+	//хотя бы 1 контрагент
+	if((!$("#wo_supplier").prop("checked"))&&($("tr[id^=our_supplier_row_]").length==0)){
+		sfm_show_error_msg('Укажите хотя бы одного контрагента, либо отметьте галочку Без контрагента!');
+		  	return false;	
+		
+	}
+	 
+	return true; 
+}
+
+ 
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{/if}%
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>Сообщение, тема: %{$topic}%</title>
+<style type="text/css">
+h4{
+	margin-bottom:10px;
+	margin-top:0px;
+}
+</style>
+<script type="text/javascript" src="/js/jquery-1.6.3.min.js"></script>
+<script type="text/javascript">
+window.onload=function(){
+	window.print() ;
+};
+</script>
+</head>
+
+<body>
+
+<h4>От: %{$from}%</h4>
+
+<h4>Кому: %{$to}%</h4>
+
+<h4>%{$pdate}%, тема: %{$topic}%</h4>
+
+<h4>Сообщение:</h4>
+<p>
+%{$text}%
+</p>
+
+
+
+
+
+
+%{if $show_ans}%
+<h3>Вся переписка:</h3>
+%{$chain}%
+%{/if}%
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<em>Сообщение распечатано %{$nowdate}% пользователем %{$username}%.</em>
+</p>
+
+</body>
+</html>

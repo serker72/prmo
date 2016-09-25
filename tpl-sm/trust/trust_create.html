@@ -1,0 +1,220 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	//$("#pdate").datepicker();
+	//$("#pdate_shipping_plan").datepicker();
+	//$("#pdate_payment_contract").datepicker();
+	
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	
+});
+</script>
+
+<h1 style="float:left; margin-right:10px;">Создание доверенности</h1>
+
+%{include file="every_help_dialog.html" filename="trust_create.htm" prefix="" description="создание доверенности"  style="float:right;  margin-right:0px;" is_right=true}%
+
+<br clear="all" />
+
+<form action="ed_trust.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$bill_id}%" />
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="pdate">Дата создания:</label>
+
+<input type="text" size="10" maxlength="10" value="%{$now}%" disabled="disabled" id="pdate" style="width:60px;" />
+<input type="hidden" name="pdate" value="%{$now}%"  />
+
+</div>
+
+
+
+<div style="float:right; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;" >
+</a>
+
+<strong>Статус:</strong><br />
+
+не утверждена
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:10px; padding-top:5px;">
+<label for="given_no">Заданный номер:</label>
+
+<input type="text" size="10" maxlength="255" value="" id="given_no" name="given_no" style="width:60px;" />
+
+</div>
+
+<div style="float:left; margin-right:10px; padding-top:5px;">
+<label for="pdate">Выберите сотрудника:</label>
+
+<select name="user_id" id="user_id" style="width:220px;">
+%{html_options values=$user_ids selected=$user_id output=$user_names}%
+</select>
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:10px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" style="width:225px;" />
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Контрагент:</label>
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" style="width:235px;" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Счет:</label>
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" style="width:320px;" />
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+
+
+<label for="contract_no">Договор №</label>
+
+
+<input type="text" size="10" maxlength="255" value="%{$contract_no}%" id="contract_no_string" disabled="disabled" style="width:100px;" />
+
+<input type="hidden"  value="%{$contract_id}%" name="contract_id" id="contract_id"  />
+&nbsp;
+
+<label for="contract_pdate">от</label>
+
+<input type="text" size="10" maxlength="255" value="%{$contract_pdate}%" id="contract_pdate_string" disabled="disabled" style="width:60px;" />
+
+
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+%{include file="trust/another_pos.html"}%
+
+
+<br clear="all" />
+<p />
+
+
+%{if $total_quantity==0}%
+<script type="text/javascript">
+$(function(){
+	alert("Внимание! По всем позициям данного счета ранее были выписаны доверенности. Доверенность будет создана без позиций. Попробуйте использовать позиции других счетов данного контрагента.");
+});
+</script>
+%{/if}%
+
+<strong>Позиции доверенности:</strong> 
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+
+</td>
+<td width="50%" align="right">
+
+
+  <a href="#" target="_blank" onclick="alert('В данном режиме печать доверенности недоступна. Пожалуйста, нажмите кнопку Создать доверенность и перейти к утверждению для получения возможности печати доверенности.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать доверенности..." /></a>
+  
+  <a href="#" onclick="alert('В данном режиме отправка доверенности на электронную почту недоступна. Пожалуйста, нажмите кнопку Создать доверенность и перейти к утверждению для получения возможности отправки доверенности.'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить доверенность на эл. почту..." ></a>
+
+ </td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2"> 
+
+%{include file="trust/position_actions.html"}%
+
+</td>
+</tr>
+</table> 
+ 
+<p />
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать доверенность" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать доверенность и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='trust.php?bill_id=%{$bill_id}%';
+}else location.href='trust.php?bill_id=%{$bill_id}%';" />
+
+
+</form>
+
+<script type="text/javascript">
+ var frmvalidator  = new Validator("crea_form");
+ 
+ function DoCustomValidation()
+{
+	
+	if($("#ship_positions_table tbody tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить доверенность без позиций! Пожалуйста, укажите позиции доверенности!');
+		return false;
+	}else return true;
+}
+ 
+ frmvalidator.addValidation("user_id","dontselect=0","Выберите сотрудника!");
+ frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+ 
+</script>

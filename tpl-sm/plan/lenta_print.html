@@ -1,0 +1,61 @@
+%{if $has_header}%
+
+<br clear="all" />
+<p />
+
+ 
+
+ 
+ 
+
+
+
+
+
+<div id="lenta_commments">
+%{/if}%
+
+%{section name=rowsec loop=$items}%
+    <div class="common_block" id="lenta_%{$items[rowsec].id}%" >
+     
+        
+          
+        <strong>%{$items[rowsec].pdate}%</strong>
+        %{$items[rowsec].name_s}%: 
+        <br />
+    
+        
+       <div style="border:1px solid #aeaeae; padding:5px 5px;">
+        %{$items[rowsec].txt}%
+       </div>
+
+    
+        
+        %{section name=filesec loop=$items[rowsec].files}%%{/section}%
+        %{if $smarty.section.filesec.total>0}%
+        <b>‘‡ÈÎ˚:</b>
+        %{/if}%
+        %{section name=filesec loop=$items[rowsec].files}%
+       %{$items[rowsec].files[filesec].orig_name}% 
+        
+        %{$items[rowsec].files[filesec].size|string_format:"%.3f&nbsp;Ã¡"}%
+        <br />
+        %{/section}%
+        
+       
+       
+       
+    </div>
+    <br>
+
+
+%{/section}%
+
+%{if $has_header}%
+
+</div>
+ 
+ <br clear="all" />
+ <p />
+ 
+%{/if}% 

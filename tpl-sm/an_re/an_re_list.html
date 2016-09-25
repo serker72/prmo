@@ -1,0 +1,223 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+
+ 
+<script type="text/javascript" src="/js/jquery.fixedheadertable.js?v=3"></script>
+
+<link href="/css/css/defaultTheme.css?v=1" rel="stylesheet" media="screen" />
+<link href="/css/css/myTheme.css?v=1" rel="stylesheet" media="screen" />
+       
+<link href="/css/css/960.css?v=1" rel="stylesheet" media="screen" />
+ 
+ 
+
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+ <link href="/js/select2/select2.css" rel="stylesheet"/>
+
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+		function SelectGo2(name){
+	 $("#"+name).select2(
+	 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_supplier_select2.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				 var data = new Array();
+				
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.full_name|escape:"html"}%'});
+				%{/foreach}%
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	SelectGo2("supplier_name");
+		
+	
+	
+	
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+.blacktable th.main{
+	background-color:#e5edf0;
+}
+.blacktable th.contract{
+	background-color:#eee;
+	font-weight:normal;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="print" value="0" id="print" />
+
+
+<div class="report_filter_right" style="width:140px; margin-left:-150px;">
+	%{include file="every_help_dialog.html" filename="an_rent.htm" description="Рентабельность бизнеса"  prefix="" style="float:right;  margin-right:00px;" is_right=true}%
+    
+  
+    <div class="reestr_zoom reestr_right_button24" data-comment="Найти">         
+    <input type="image" src="/img/24.png" value="Вывести" alt="Вывести"   name="doSub"    />
+    </div>
+    
+    <a href="an_re.php?doSub=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" ></a>
+  
+
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+   <a href="#" id="print_table" class="reestr_print reestr_right_button24" data-comment="Печать..." ></a>
+  
+  
+  
+ <a href="#" id="print_table_excel" class="reestr_xls reestr_right_button24" data-comment="Excel-версия..." style="margin-right:5px;" ></a>
+  
+ 
+  <script type="text/javascript">
+  $(function(){
+		function GenPrint(filename){
+			
+					
+					  zc=window.open(filename+'?tab_page=1&print='+'1'+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&supplier_name='+$('#supplier_name').val()+'&doSub=1&do_print_ved=1', 'ved','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+		}
+	  
+	   $("#print_table").bind("click", function(){
+			
+			 GenPrint('an_re.php');
+					
+					  
+			 return false; 		
+		});
+		
+		 $("#print_table_excel").bind("click", function(){
+			
+			 GenPrint('an_re_xls.php');
+					
+					  
+			 return false; 		
+		});
+	  
+	  
+	  
+	
+  });
+  </script>
+  
+  %{else}%
+   <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..." ></a>
+   
+  
+  
+ 
+    <a href="#" onclick="alert('У Вас недостаточно прав для получения Excel-версии отчета.'); return false;"class="reestr_xls reestr_inactive reestr_right_button24" data-comment="Excel-версия..."  ></a>
+    
+ 
+ %{/if}%
+ 
+
+
+</div>
+
+
+<div class="report_filter_left" style="margin-right:140px;">
+	
+    <div class="report_filter">
+
+    <div style="float:left; margin-right:10px;">
+    <strong>Период</strong><br />
+    <label for="pdate1">с:</label><br />
+    <input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+    
+    <div style="float:left; margin-right:10px;">
+    <br />
+        <label for="pdate2">по:</label><br />
+        <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+    </div>
+	</div>
+    
+        
+    
+    <div class="report_filter" style="max-width:470px;">
+    
+    <label for="supplier_name">Покупатель:</label><br />
+    <input type="text" id="supplier_name" name="supplier_name" value="%{$supplier_name}%" size="60" maxlength="512" style="width:450px;" />
+    
+    
+    
+    
+    </div>
+
+
+</div>
+ 
+<br clear="all" />
+
+
+
+<p />
+
+
+
+
+</form>
+
+<small>
+1. Фильтр "Период" позволяет отобрать позиции по заданной дате реализации.<br />
+<br />
+2. Фильтр "Покупатель" позволяет отобрать позиции <strong>по контрагенту-покупателю.</strong>
+<br />
+Вы можете осуществлять отбор по нескольким контрагентам.<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента. Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию. При необходимости отобрать в отчет данные по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов.
+<br />
+<br />
+
+</small>
+
+
+
+%{if $do_it}%
+%{include file="an_re/an_re_table.html"}%
+%{/if}%
+
+
+
+
+

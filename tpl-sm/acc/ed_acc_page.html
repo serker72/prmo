@@ -1,0 +1,45 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs(%{if $do_show_log}%{
+	selected:2}%{/if}%);
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Реализация товара</a></li>
+    
+    %{if $can_origs}%
+     <li><a href="#tabs-2">Оригиналы документов</a></li>
+     %{/if}%
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+   %{if $can_origs}%
+   <div id="tabs-2">
+    <p>
+    %{$origs}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

@@ -1,0 +1,108 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="supplier_row_%{$pos[possec].id}%" >
+    	<td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+       
+        %{$pos[possec].code}%
+        
+         
+         
+        </td>
+         <td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        %{if $pos[possec].is_confirmed}%+%{else}%-%{/if}%
+        </td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        
+          <td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        %{if $pos[possec].is_active}%+%{else}%-%{/if}%
+        </td>
+        
+       
+        <td id="full_name_%{$pos[possec].id}%"  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].full_name}%</td>
+         <td id="opf_name_%{$pos[possec].id}%"  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].opf_name}%</td>
+        <td  %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].inn}%</td>
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>%{$pos[possec].kpp}%</td>
+        
+        
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        
+          <small>
+     %{foreach from=$pos[possec].cities item=item}%
+     %{$item.name}%, %{$item.okrug_name}%, %{$item.region_name}%,  %{$item.country_name}%<br>
+
+     %{/foreach}%
+     </small>
+        </td>
+        
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+        
+         %{foreach from=$pos[possec].contacts item=item}%
+     <strong>%{$item.name}%, %{$item.position}%</strong><br>
+       %{if $pos[possec].can_edit}%
+       %{foreach from=$item.data item=value}%
+        <img src="%{$value.pc_icon}%" border="0" alt=" %{$value.pc_name}%" title="%{$value.pc_name}%" align="left" vspace="0" hspace="3" /> %{$value.value}% 
+         
+         %{if $value.value1!=""}%доб. %{/if}%
+        
+         %{$value.value1}%
+       <br clear="all">
+
+       %{/foreach}%
+       %{/if}%
+       <br>
+     %{/foreach}%
+        </td>
+        
+        
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+         %{$pos[possec].branch_name}% %{if $items[possec].subbranch_name!=""}%/%{/if}%
+       %{$pos[possec].subbranch_name}%  
+        %{if $items[possec].subbranch_name1!=""}%<br>
+
+	%{$pos[possec].branch_name}% / 
+       %{$pos[possec].subbranch_name1}%  
+
+%{/if}%
+        </td>
+       
+       
+          
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+         %{$pos[possec].holding_opf_name}%  %{$pos[possec].holding_name}%  
+        </td>
+        
+         <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+         %{$pos[possec].subholding_opf_name}%  %{$pos[possec].subholding_name}%  
+        </td>
+        
+        
+ 
+        
+         <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+         %{foreach from=$pos[possec].resps item=item}%
+	%{$item.name_s}%    
+    <br>
+
+    %{/foreach}%
+    </td>
+        
+        <td %{if $pos[possec].is_active==0}%class="item_inactive"%{/if}%>
+       
+       %{if $pos[possec].can_edit}%
+   
+    <a href="supplier.php?action=1&id=%{$pos[possec].id}%" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+    
+      
+    %{else}%
+    <a href="#" title="Подробно..."  class="reestr_edit reestr_inactive" onClick="return false;"> </a>
+    
+    %{/if}%
+       
+      
+        </td>
+        
+       
+    </tr>
+    <tr align="left" valign="top" id="supplier_contact_row_%{$pos[possec].id}%" >
+    
+    </tr>
+%{/section}%    
+ 	

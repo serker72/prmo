@@ -1,0 +1,157 @@
+<div id="who_dialog" title="Выберите адресатов" style="display:none">
+	
+    <table width="100%" class="blacktable">
+    <thead>
+    <tr>
+    	<th width="24">
+        <input type="checkbox" id="who_select_all" />
+        </th>
+        <th width="*">
+        <label for="who_select_all">Ф.И.О.</label>
+        </th>
+        <th width="*">
+        <strong>Должность</strong>
+        </th>
+        
+    </tr>
+    
+    </thead>
+    <tbody id="who_users">
+    
+    </tbody>
+    </table>
+    
+
+</div>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	var dialog_width=700;
+	var dialog_position='center';
+	
+	
+	$("#who_select").bind("click",function(){
+			w=parseInt($(window).width());
+			if(w<1200){
+				 dialog_width=w-10;
+				 dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 
+			}else{
+				dialog_width=1200;
+				dialog_position='center';
+			}
+			
+			//$("#who_dialog").dialog( "option", "position", dialog_position );
+			//$("#who_dialog").dialog( "option", "width", dialog_width );
+			//подгрузить адресатов с учетом ранее выбранных
+			
+			var except_ids=new Array(); 
+			
+			$.each($("#who").select2("val"), function(k,v){
+				except_ids.push(v);
+			});
+			//alert(except_ids);
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/messages.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_users",
+				  
+				  "except_ids[]":except_ids
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#who_users").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#who_users").html(data); 
+				
+				 
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			$("#who_dialog").dialog("open");
+			
+			
+			
+	});
+	
+	$("#who_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: dialog_width,
+		position: dialog_position,
+		height: 620,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				
+				
+				var complex_positions=new Array();
+				 
+				if(can_put) {
+				 
+					//перенос данных в таблицу на странице
+					 
+					$.each($("input[type=hidden][id^=who_hash_]"), function(key, value){
+						
+						
+						hash1=$(value).val();
+						
+						if($("#who_user_is_in_"+hash1).prop("checked")&&($("#who_user_id_"+hash1).val()>0)){
+							 
+							// alert($("#who_user_id_"+hash1).val());
+							
+							 
+							complex_positions.push({"id":$("#who_user_id_"+hash1).val(), "text":$("#who_user_name_"+hash1).html()});			  
+						}
+					});
+					
+					
+					//alert(complex_positions);
+					
+					$("#who").select2("data", complex_positions);
+					
+					 
+					$(this).dialog("close");  
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	$("#who_select_all").bind("change", function(){
+		state=$(this).prop("checked");
+		$.each($("#who_users input[id^=who_user_is_in_]"), function(k,v){
+			//проверить, не служебное ли поле
+			//если служебное - пропустить!
+			hash=$(v).attr("id").replace(/^who_user_is_in_/,'');
+
+			if($("#who_user_id_"+hash).val()>0){
+				$(v).prop("checked",state);	
+			}
+		});
+		
+		 
+		
+	});
+		  
+});
+</script>

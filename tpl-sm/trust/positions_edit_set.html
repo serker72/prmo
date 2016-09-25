@@ -1,0 +1,102 @@
+<!-- таблица в диалоге -->
+<strong>Позиции в доверенности:</strong>   
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="*">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по доверенности</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+       <th scope="col" width="150">Счет</th>
+        
+    </tr>
+    </thead>
+   <tbody>
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity>0}%
+   %{include file="trust/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+   </tbody>
+   </table>
+   
+   <br />
+   
+    %{include file="trust/other_pos.html"}%
+   
+   <br />
+<br />
+<br />
+
+   
+   
+   
+ 	<strong>Доступные позиции в текущем счете:</strong>   
+    
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="*">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по доверенности</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+      <th scope="col" width="150">Счет</th>
+        
+    </tr>
+    </thead>
+   <tbody>
+
+    
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity==0 and $pospos[pospossec].bill_id==$bill_id}%
+   
+     %{include file="trust/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+    </tbody>
+    </table>
+    
+    <br />
+<br />
+<br />
+   
+    %{if $can_use_other_sup}%
+    <strong>Доступные позиции в других счетах выбранного поставщика:</strong>   
+    
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="*">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по доверенности</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+      <th scope="col" width="150">Счет</th>
+        
+    </tr>
+    </thead>
+   <tbody>
+
+    
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity==0 and $pospos[pospossec].bill_id!=$bill_id}%
+   
+     %{include file="trust/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+    </tbody>
+    </table>
+    
+	%{/if}%

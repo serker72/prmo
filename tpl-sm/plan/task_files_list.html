@@ -1,0 +1,22 @@
+ 
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+  
+       
+        %{if $smarty.section.rowsec.total>0}%
+        <h4>װאיכû:</h4>
+        %{/if}%
+        %{section name=rowsec loop=$items}%
+        <div class="sched_report_file_link">
+        <a href="%{$loadname}%?id=%{$items[rowsec].id}%" class="sched_report_file_link">%{$items[rowsec].orig_name}%</a>
+        
+        %{$items[rowsec].size|string_format:"%.3f&nbsp;ֱּ"}%</div>
+        
+        %{/section}%
+        
+       
+       
+ 

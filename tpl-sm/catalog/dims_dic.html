@@ -1,0 +1,111 @@
+%{section name=rowsec loop=$items}%
+
+<div style="white-space:nowrap;"><input type="text" size="35" maxlength="255" id="dim_%{$items[rowsec].id}%" value="%{$items[rowsec].name|escape:"html"}%" style="width:250px; background-color:silver;" />
+<a href="#" id="edit_dim_%{$items[rowsec].id}%" data-comment="редактировать единицу" class="reestr_edit16 reestr_button16"> </a>
+<a href="#" id="delete_dim_%{$items[rowsec].id}%" data-comment="удалить единицу" class="reestr_delete16 reestr_button16"> </a>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#edit_dim_%{$items[rowsec].id}%").bind("click",function(){
+		/*alert('editing');
+		*/
+		if($("#icon_dim_%{$items[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			//включаем редактирование
+			$("#icon_dim_%{$items[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#dim_%{$items[rowsec].id}%").css("background-color","white");
+		}else{
+			//вносим изменения
+			
+			$.ajax({
+				async: true,
+				url: "/js/position.php",
+				type: "POST",
+				data:{
+					"action":"edit_dim",
+					"dim":$("#dim_%{$items[rowsec].id}%").attr("value"),
+					"id":"%{$items[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/position.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_dims"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#dims_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования единицы.");	
+				}	 
+			});
+		}
+		
+		return false;
+	});
+	
+	$("#dim_%{$items[rowsec].id}%").bind("click",function(){
+		if($("#icon_dim_%{$items[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_dim_%{$items[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#dim_%{$items[rowsec].id}%").css("background-color","white");
+		}
+	});
+	
+	//удаление
+	$("#delete_dim_%{$items[rowsec].id}%").bind("click",function(){
+		if(window.confirm("Вы действительно хотите удалить единицу %{$items[rowsec].name|escape:"html"}%?")){
+			$.ajax({
+				async: true,
+				url: "/js/position.php",
+				type: "POST",
+				data:{
+					"action":"delete_dim",
+					"id":"%{$items[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/position.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_dims"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#dims_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления единицы.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+});
+</script>
+%{/section}%

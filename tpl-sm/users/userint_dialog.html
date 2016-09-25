@@ -1,0 +1,33 @@
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" %{if !$can_edit}% disabled="disabled"%{/if}% />
+
+
+<div id="dialog_nest_%{$word}%" title="%{$named}%"  style="display:none;">
+
+  
+<label for="time_from_h_s_%{$word}%">с:</label>
+<select  id="time_from_h_s_%{$word}%" style="width:60px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select id="time_from_m_s_%{$word}%" style="width:60px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+
+<label for="time_to_h_s_%{$word}%">до:</label>
+<select  id="time_to_h_s_%{$word}%" style="width:60px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select  id="time_to_m_s_%{$word}%" style="width:60px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+
+<br />
+	
+   <br />
+<strong>Комментарий:</strong><br />
+<textarea id="comments_%{$word}%" cols="60" rows="3"></textarea>
+
+
+</div>
+
+
+

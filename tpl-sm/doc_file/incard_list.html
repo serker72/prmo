@@ -1,0 +1,324 @@
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	
+});
+</script>
+
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+%{if $can_load}%
+<div class="common_block">
+<h3>Загрузите файл:</h3>
+
+<strong>Описание файла:</strong><br />
+<textarea id="txt%{$id_prefix}%" cols="80" rows="5" style="height:50px;"></textarea><p />
+
+
+ 
+ <input type="file" id="file%{$id_prefix}%" /> 
+  <em>максимальный размер файла: 512M</em>  
+    
+    
+   
+<script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+
+<div id="queue%{$id_prefix}%"></div>
+ 
+    
+    
+</div>
+
+<script type="text/javascript">
+$(function(){
+	function AddCode%{$id_prefix}%(id){
+			//alert(id);
+			if($("#txt%{$id_prefix}%").val().length>0) $.ajax({
+				async: false,
+				url: "/js/%{$pagename}%",
+				type: "POST",
+				data:{
+					"action":"edit_txt",
+					"id":id,
+					"txt": $("#txt%{$id_prefix}%").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 	//location.reload();
+					//alert('zzz%{$tab_page}%');
+					//location.href="%{$this_pagename}%?folder_id=%{$folder_id}%&%{$doc_id_name}%=%{$doc_id}%";
+					
+					//return true;	
+					
+					
+				   				},
+				error: function(xhr, status){
+					//alert("error!");
+					//location.reload();
+				}	 
+			});	
+			
+		}
+		
+		$('#file%{$id_prefix}%').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите и загрузите файл...',
+			'fileTypeDesc' : 'Все файлы',
+        	'fileTypeExts' : '*.*', 
+				'fileSizeLimit' : '512 MB',
+				'uploadLimit' : 100, 
+				'multi'          : true, 
+				'width'           : 200,
+				'formData'         : {
+									 "PHPSESSID" : "%{$session_id}%",
+							  "%{$storage_name}%": "%{$storage_id}%",
+							  "folder_id":"%{$folder_id}%",
+							  "%{$doc_id_name}%": "%{$doc_id}%"
+				                     },
+				'queueID'          : 'queue%{$id_prefix}%',
+				'uploadScript'     : '%{$uploader_name}%',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				},
+				'onQueueComplete' : function(uploads) {
+					location.reload(); //alert(uploads.successful + ' files were uploaded successfully.');
+				}
+			});
+});
+	 
+	</script>
+	
+<p />
+%{/if}%
+
+
+%{include file="doc_file/folder_header.html" prefix=$id_prefix}%
+
+
+
+
+%{$pages}%
+
+<!--<form action="%{$pagename}%" method="get" id="filter_form%{$id_prefix}%">-->
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*">Файл
+    </th>
+    <th scope="col" width="60">Размер
+    </th>
+	<th scope="col" width="100">Получить
+    </th>
+    <th scope="col" width="*">Кем загружен
+    </th>
+    <th scope="col" width="150">Описание
+    </th>    
+    <th scope="col" width="100">Дата
+    </th>
+    <th scope="col" width="24">
+    <input type="checkbox" id="check_all%{$id_prefix}%" value="1" />
+    <script type="text/javascript">
+	$(function(){
+		$("#check_all%{$id_prefix}%").bind("change", function(){
+			if($("#check_all%{$id_prefix}%").prop("checked")){
+				$.each($("input[id^=check_file%{$id_prefix}%]"),function(k,v){
+					if($(v).prop("checked")==false) $(v).prop("checked", true);
+				});
+			}else{
+				$.each($("input[id^=check_file%{$id_prefix}%]"),function(k,v){
+					if($(v).prop("checked")==true) $(v).prop("checked", false);
+				});
+			}
+			
+			if($("#check_all%{$id_prefix}%").prop("checked")){
+				$.each($("input[id^=fcheck_file%{$id_prefix}%]"),function(k,v){
+					if($(v).prop("checked")==false) $(v).prop("checked", true);
+				});
+			}else{
+				$.each($("input[id^=fcheck_file%{$id_prefix}%]"),function(k,v){
+					if($(v).prop("checked")==true) $(v).prop("checked", false);
+				});
+			}
+		});
+	});
+	</script>
+    
+    </th>
+    
+    
+   
+    <th scope="col" width="24">
+    
+     %{if $can_delete}%Удалить%{/if}%
+    </th>
+    
+    
+</tr>
+
+</thead>
+<tbody>
+
+%{include file="doc_file/folders_table.html" prefix=$id_prefix}%
+
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="*" align="left"><a href="%{$loadname}%?id=%{$items[rowsec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$items[rowsec].orig_name}%</a></td>
+     <td width="60">
+    %{$items[rowsec].size|string_format:"%.3f&nbsp;МБ"}%
+    </td>
+    
+    <td width="100">
+    <input type="button" value="Получить" onclick="location.href='%{$loadname}%?id=%{$items[rowsec].id}%';" />
+    
+    </td>
+   
+    <td width="*"><a target="_blank" href="info.html?name=%{$items[rowsec].u_login}%">
+    %{if $items[rowsec].u_group_id==3}%%{$items[rowsec].u_name_s}%%{else}%%{$items[rowsec].u_name_s}%%{/if}% </a></td>
+    <td width="150" align="left" id="more_info%{$id_prefix}%_%{$items[rowsec].id}%" title="%{$items[rowsec].orig_name|escape}%|%{$items[rowsec].txt|escape}%">
+    
+    %{$items[rowsec].txt|truncate:80:"..."}%
+    
+     <script type="text/javascript">
+	$(function(){
+		$("#more_info%{$id_prefix}%_%{$items[rowsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    
+    
+     %{if $items[rowsec].can_edit}%
+     <br />
+	
+     
+     <a href="#" id="edit_file%{$id_prefix}%_%{$items[rowsec].id}%"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать..." title="редактировать..." border="0" /></a>
+     
+     
+      <script type="text/javascript">
+	  $(function(){
+		  $("#edit_file%{$id_prefix}%_%{$items[rowsec].id}%").bind("click", function(){
+			  $("#file_id%{$id_prefix}%").attr("value", "%{$items[rowsec].id}%");
+			  $("#file_txt%{$id_prefix}%").val("%{$items[rowsec].txt|escape:"html"|regex_replace:"/[\n]/":"\\n"|regex_replace:"/[\r]/":"\\r"}%");
+			  
+			  $("#txt_dialog%{$id_prefix}%").dialog("open");
+			  return false;
+		  });
+		  return false;
+	   });
+	  </script>
+     %{/if}%
+    
+    </td>
+    <td width="100">
+    %{$items[rowsec].pdate}%
+    </td>
+    
+    
+    <th scope="col" width="24">
+    <input type="checkbox" id="check_file%{$id_prefix}%_%{$items[rowsec].id}%" name="check_file%{$id_prefix}%_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+    
+    
+    </th>
+    
+    
+    
+  
+     <td width="24">
+       %{if $can_delete}%
+     <a href="#" id="delete%{$id_prefix}%_%{$items[rowsec].id}%" class="reestr_delete reestr_button16" data-comment="Удалить файл"></a>
+     <script type="text/javascript">
+	  $(function(){
+			$("#delete%{$id_prefix}%_%{$items[rowsec].id}%").bind("click",function(){
+				if(window.confirm("Вы действительно хотите удалить файл %{$items[rowsec].orig_name|escape}%?")){
+					location.href="%{$this_pagename}%?action=2&%{$elem_id_prefix}%id=%{$items[rowsec].id}%&folder_id=%{$folder_id}%&%{$doc_id_name}%=%{$doc_id}%";	
+				}
+				return false;
+			});
+	  });
+	 </script>
+      %{/if}%
+    </td>
+   
+  
+</tr>
+%{/section}%
+</tbody>
+</table>
+<!--</form>-->
+
+
+ 
+<div id="txt_dialog%{$id_prefix}%" title="Описание файла" style="display:none;">
+<input type="hidden" id="file_id%{$id_prefix}%" value="" />
+
+Описание файла:<br />
+<textarea id="file_txt%{$id_prefix}%" cols="60" rows="7"></textarea><p />
+
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#txt_dialog%{$id_prefix}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 420,
+    height: 270,
+    buttons: {
+        "Готово": function() { 
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$pagename}%",
+			  type: "POST",
+			  data:{
+				  "action":"edit_txt_chk",
+				  "id": $("#file_id%{$id_prefix}%").attr("value"),
+				  "txt": $("#file_txt%{$id_prefix}%").val()
+			  },
+			  beforeSend: function(){
+					
+			  },
+			  success: function(data){
+				 alert("Описание файла отредактировано."); 
+				 location.reload();
+				
+			  },
+			  error: function(xhr, status){
+				  alert("Ошибка редактирования описания файла.");	
+			  }	 
+		  });
+			  
+		  $(this).dialog("close");
+		},
+		"Отмена":  function() { 
+			$(this).dialog("close"); 		
+		}
+      }
+    
+    });
+	
+});
+</script>
+ 
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>Файлов пока нет.</em><br />
+%{/if}%
+
+%{$pages}%

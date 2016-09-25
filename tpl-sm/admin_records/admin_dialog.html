@@ -1,0 +1,306 @@
+<script type="text/javascript">
+//!!!!!!!!!!!!!!!! функция вызова диалога
+function AdminRecordsOpenDialog(record_id, tablename, additional_id, record_name, record_description){
+	$("#admin_records_tablename").val(tablename);
+	$("#admin_records_additional_id").val(additional_id);
+	$("#admin_records_record_id").val(record_id);
+	
+	
+	var record_name=record_name||"";
+	var record_description=record_description||"";
+	
+	$("#admin_records_record_name").val(record_name);
+	$("#admin_records_record_description").val(record_description);
+	
+	
+	AdminRecordsBuildTable(record_id, tablename, additional_id);
+	
+	$("#admin_records_dialog").dialog("open");	
+}
+
+function AdminRecordsBuildTable(record_id, tablename, additional_id){
+	//1. получить галочку о включении/ не включении модели
+	//2. если модель включена - построить таблицу прав!
+	
+	var additional_id=additional_id;
+	var record_id=record_id;
+	var tablename=tablename;
+	
+	$.ajax({
+		async: true,
+		url: "/js/admin_dialog.php",
+		type: "POST",
+		data:{
+			"action":"retrive_has_record",
+			"record_id":record_id,
+			"tablename":tablename,
+			"additional_id":additional_id
+		},
+		beforeSend: function(){
+			$("#admin_records_has_record").prop("disabled", true);  
+		},
+		success: function(data){
+		    $("#admin_records_has_record").prop("disabled", false);  
+			if(data==1) $("#admin_records_has_record").prop("checked", true);  
+			else $("#admin_records_has_record").prop("checked", false); 
+			
+			if(data==1){
+				$.ajax({
+					async: true,
+					url: "/js/admin_dialog.php",
+					type: "POST",
+					data:{
+						"action":"retrive_table",
+						"record_id":record_id,
+						"tablename":tablename,
+						"additional_id":additional_id
+					},
+					beforeSend: function(){
+						$("#admin_records_table").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />'); 
+					},
+					success: function(data){
+						
+						$("#admin_records_table").html(data);
+						//alert($("#admin_records_dialog").dialog("option", "height"));
+						
+						try{
+							w=Math.round($("#admin_records_dialog").dialog("option", "width"))-50;
+							if(w>0) {
+								$("#admin_dialog_field").css("width", w  ); 
+								//console.log('set width='+ui.size.width);	
+							}
+							h=Math.round($("#admin_records_dialog").dialog("option", "height"))-150;
+							if(h>0) {
+								$("#admin_dialog_field").css("height", h  ); 
+								//console.log('set height='+ui.size.height);		
+							}
+						}catch(e){}
+						 
+					},
+					error: function(xhr, status){
+						$("#admin_records_table").html("Ошибка получения данных.");	
+					}	 
+				});
+			}else{
+				$("#admin_records_table").html('Для выбранного объекта не включено разграничение доступа. Пожалуйста, отметьте галочку "Включить разграничение доступа" и нажмите "Сохранить и остаться" для включения разграничения доступа и дальнейшего редактирования прав.'); 
+			}
+		},
+		error: function(xhr, status){
+			alert("Ошибка получения данных.");	
+		}	 
+	});
+}
+
+//сохранение данных
+function AdminRecordsSaveData(do_retrieve){
+	var do_retrieve=do_retrieve;	
+	var is_checked=0;
+	if($("#admin_records_has_record").prop("checked")) is_checked=1;
+	
+	//построить массив изменяемых прав...
+	var letters=new Array();
+	var objects=new Array();
+	var users=new Array();
+	var actions=new Array();
+	
+	$.each($("input[id^=do_edit_]"), function(k,v){
+		if($(v).val()==1){
+			id=$(v).attr("id");
+			
+			
+			letter=id.replace(/^do_edit_/,'');
+			letter=letter.replace(/_([0-9]+)_([0-9]+)/,'');
+			letters.push(letter);
+			
+			object=id.replace(/^do_edit_/,'');
+			object=object.replace(/^([a-z]+)_/,'');
+			object=object.replace(/_([0-9]+)/,'');
+			 
+			objects.push(object);
+			
+			user=id.replace(/^do_edit_([a-z]+)_([0-9]+)_/,'');
+			users.push(user); 
+			
+			actions.push($("#state_"+letter+"_"+object+"_"+user).val());
+		}
+	});
+	
+	
+	$.ajax({
+		async: true,
+		url: "/js/admin_dialog.php",
+		type: "POST",
+		data:{
+			"action":"save_data",
+			"is_checked":is_checked,
+			"record_id":$("#admin_records_record_id").val(),
+			"tablename":$("#admin_records_tablename").val(),
+			"additional_id":$("#admin_records_additional_id").val(),
+			"users[]":users,
+			"objects[]":objects,
+			"letters[]":letters,
+			"actions[]":actions,
+			"record_name":$("#admin_records_record_name").val(),
+			"record_description":$("#admin_records_record_description").val()
+			
+		},
+		beforeSend: function(){
+			
+		},
+		success: function(data){
+			//alert(data);
+			
+			//$("#admin_records_table").html(data); 
+			if(do_retrieve){
+				AdminRecordsBuildTable($("#admin_records_record_id").val(), $("#admin_records_tablename").val(), $("#admin_records_additional_id").val());
+			}
+		},
+		error: function(xhr, status){
+			alert("Ошибка сохранения данных.");	
+		}	 
+	});
+	
+	
+}
+
+
+$(function(){
+	 $("#admin_records_dialog").dialog({
+  	  autoOpen:false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 860,
+	  height: 600,
+	  buttons: {
+		   "Сохранить и остаться": function() { 
+		  		AdminRecordsSaveData(true);
+		  		 
+		   },
+		   "Сохранить и выйти": function() { 
+		   		AdminRecordsSaveData(false);
+		   		$(this).dialog("close");
+		  
+		   },
+		  "Закрыть": function() { 
+		  
+		  		$(this).dialog("close");
+		  
+		   }
+		},
+		
+		resizeStart: function( event, ui ) {
+			try{
+				
+				$("#tabletwo").stickyTableHeaders('destroy');
+			}catch(e){
+				//console.log('ee');
+			}	
+			
+		},
+		resizeStop: function( event, ui ) {
+			
+			//console.log('launch resize...');
+			
+			
+			 
+			
+			try{
+				
+				$("#tabletwo").stickyTableHeaders('destroy');
+				
+				w=Math.round($("#admin_records_dialog").dialog("option","width"))-50;
+				h=Math.round($("#admin_records_dialog").dialog("option","height"))-160;
+				
+				 
+				if(w>0) {
+					$("#admin_dialog_field").css("width", w  ); 
+					//console.log('set width='+ui.size.width);	
+				}
+				 
+				if(h>0) {
+					$("#admin_dialog_field").css("height", h  ); 
+					//console.log('set height='+ui.size.height);		
+				}
+				
+				$("#tabletwo").stickyTableHeaders({ scrollableArea: $("#admin_dialog_field")[0], "fixedOffset": 1 });	
+			}catch(e){
+				//console.log('ee');
+			}
+			
+			
+			
+		},
+		
+		dragStop: function( event, ui ) {
+			
+			//console.log('stop drop...');
+			
+			try{
+				
+				// console.log($("#admin_records_dialog").dialog("option","height"));
+				$("#tabletwo").stickyTableHeaders('destroy');
+				
+				
+				
+				w=Math.round($("#admin_records_dialog").dialog("option","width"))-50;
+				h=Math.round($("#admin_records_dialog").dialog("option","height"))-160;
+				if(w>0) {
+					$("#admin_dialog_field").css("width", w  ); 
+					//console.log('set width='+w);	
+				}
+			 
+				if(h>0) {
+					$("#admin_dialog_field").css("height", h  ); 
+					//console.log('set height='+h);		
+				} 
+				
+				$("#tabletwo").stickyTableHeaders({ scrollableArea: $("#admin_dialog_field")[0], "fixedOffset": 1 }); 
+				 
+			}catch(e){
+				//console.log('err');	
+			}
+			
+		},
+		
+		dragStart: function( event, ui ) {
+			
+			//console.log('launch resize...');
+			try{
+				
+				$("#tabletwo").stickyTableHeaders('destroy');
+				//
+			}catch(e){
+				
+			}
+			
+		}
+		
+		
+  
+  });
+});
+</script>
+
+<div id="admin_records_dialog" title="Разграничение доступа" style="display:none;">
+
+
+	<input type="hidden" value="" id="admin_records_tablename" />
+    <input type="hidden" value="" id="admin_records_additional_id" />
+    <input type="hidden" value="" id="admin_records_record_id" />
+    
+    <input type="hidden" value="" id="admin_records_record_name" />    
+    <input type="hidden" value="" id="admin_records_record_description" />
+    
+    
+    <input type="checkbox" value="1" id="admin_records_has_record" disabled />
+    <label for="admin_records_has_record">Включить разграничение доступа</label> 
+	 
+    <br />
+
+
+	<div id="admin_records_table">
+   
+    </div>
+
+
+</div>

@@ -1,0 +1,106 @@
+%{if $item.status_id==3}%
+    <strong>аннулировано</strong>
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="deaunnul_%{$item.id}%" />
+    %{/if}%
+%{elseif  $item.is_confirmed_price==0}%
+    <strong>цены не утв.</strong>
+    %{if $can_confirm_price}%
+    <input type="button" value="Утвердить" id="confirm_price_%{$item.id}%"   />
+    %{/if}% 
+    %{else}%
+    <strong>цены утв.</strong>
+    %{if  ($can_unconfirm_price ) or $can_super_confirm_price}%
+    <input type="button" value="Не утвердить" id="confirm_price_%{$item.id}%" %{if $item.is_confirmed_shipping==1}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}%  %{$item.confirm_price_pdate}%
+    
+  
+    <script type="text/javascript">
+	$(function(){
+		 %{if $can_confirm_price or $can_super_confirm_price}%
+		$("#confirm_price_%{$item.id}%").bind("click",function(){
+			
+			%{if $item.is_confirmed_price==1 and $item.binded_payments!=''}%
+			if(window.confirm("Внимание! По данному счету была оплачена сумма %{$item.binded_payments_summ}% руб. (оплаты %{$item.binded_payments}%).\nСнятие утверждения оплаты счета приведет к исключению данного счета из реестра оплат.\nСумма %{$item.binded_payments_summ}% руб. будет автоматически распределена по неоплаченным счетам поставщика.\nЕсли неоплаченных счетов нет, то сумма %{$item.binded_payments_summ}% руб. будет перечислена на карту поставщика как авансовый платеж.")){
+				if(window.confirm("Вы уверены, что хотите снять утверждение оплаты счета?")){
+					
+				}else return false;
+			}else{
+				return false;	
+			}
+			%{/if}%
+			
+			
+			flag_to_payments=0;
+			%{if $item.is_confirmed_price==0 and $item.avans_payments!=''}%
+			if((parseFloat("%{$item.avans_payments_summ}%")>0)&&(parseFloat("%{$item.total_cost}%")>parseFloat("%{$item.sum_by_bill}%"))){
+				if(window.confirm("Внимание! У выбранного поставщика имеются авансовые платежи на сумму %{$item.avans_payments_summ}% руб. по утвержденным оплатам %{$item.avans_payments}%.\nЖелаете ли вы включить в эти оплаты платежи по данному счету?")){
+					flag_to_payments=1;	
+				}else{
+					flag_to_payments=0;
+				}	
+			}
+			%{/if}%
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm_price",
+				  "id":"%{$item.id}%",
+				  "invcalc_id":"%{$id}%",
+				  "shorter":"%{$shorter}%",
+				  "flag_to_payments":flag_to_payments
+			  },
+			  beforeSend: function(){
+				//	$("#status_price_%{$item.id}%").html('<img src="/img/wait.gif" width="32" height="32" alt="">');
+				$("#item_row_%{$item.id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+					$("#item_row_%{$item.id}%").html(data);
+				
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+		 %{/if}%
+		 
+		 
+		 %{if $item.status_id==3 and $can_restore}%
+		  $("#deaunnul_%{$item.id}%").bind("click",function(){
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$item.id}%",
+						"invcalc_id":"%{$id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#item_row_%{$item.id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   $("#item_row_%{$item.id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+   
+    
+    

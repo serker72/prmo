@@ -1,0 +1,190 @@
+
+<h1 style="">Расход наличных № %{$ship.code}%</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+Код:<br />
+
+<strong>%{$ship.code}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$ship.pdate}%</strong><br />
+<small>создана: %{$created_by}%</small>
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+Сумма платежа, руб.:<br />
+
+<strong>%{$ship.value}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+ 
+ <div style="float:left; margin-right:20px;">
+ Вид:<br />
+
+<strong>%{$kind_name}%</strong>
+ </div>
+ 
+ <div style="float:left; margin-right:20px;">
+ Счета: <br />
+
+ %{section loop=$bills name=bsec}%
+    
+   	№ <a href="ed_bill.php?action=1&id=%{$bills[bsec].id}%" target="_blank">%{$bills[bsec].code}% от %{$bills[bsec].pdate}%</a>%{if !$smarty.section.bsec.last}%,%{/if}%
+    %{/section}%
+    
+    
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+ <strong>Время работы:</strong><br />
+   
+    <label for="time_from_h">&nbsp;&nbsp;&nbsp;с:</label>
+    <select id="time_from_h" name="time_from_h"  disabled="disabled"  style="width:60px">
+        %{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+    </select>час. 
+    <select id="time_from_m" name="time_from_m"   disabled="disabled" style="width:60px">
+        %{html_options values=$from_ms selected=$from_m output=$from_ms}%
+    </select>мин.
+  <br />
+
+    <label for="time_to_h">по:</label>
+    <select id="time_to_h" name="time_to_h"   disabled="disabled" style="width:60px">
+        %{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+    </select>час. 
+    <select id="time_to_m" name="time_to_m"  disabled="disabled"  style="width:60px">
+        %{html_options values=$to_ms selected=$to_m output=$to_ms}%
+    </select>мин.
+    
+    <p />
+  
+    Общее время работы, час:мин<br />
+  <strong> %{$times}%</strong>
+ 
+    <br clear="all" />
+<p />
+
+    <div style="float:left; margin-right:20px;">
+       Кол-во принятых машин:<br />
+  <strong>%{$ship.number_pieces}%</strong>
+    </div>
+    
+   
+    <br clear="all" />
+    <p />
+    
+   
+
+
+ %{if $ship.has_chief_bonus==1}% Премия руководителя: <br />
+   <div style="float:left; margin-right:10px;">
+<strong>%{$ship.chief_bonus}% руб.</strong>
+        
+        
+     </div>
+     
+      <div style="float:left; margin-right:10px;">
+       причина:<br>
+      <strong> %{$ship.chief_bonus_reason}%</strong>
+        </div>
+   
+   
+    
+    <br clear="all" />
+
+ %{/if}%
+
+ 
+
+<div style="float:left; margin-right:0px;">
+
+Код оплаты:<br />
+
+<strong>%{$ship.code_id_string}%</strong>
+</div>
+<br clear="all" />
+<p />
+
+
+
+<label for="driver_id">Экспедитор:</label><br /> 
+
+<select id="driver_id" name="driver_id" style="width:400px;" disabled="disabled"  >
+ %{html_options values=$exped_id_ids selected=$ship.driver_id output=$exped_id_vals}%
+</select>
+<br clear="all" />
+<p />
+
+
+
+
+
+ 
+<label for="responsible_user_id">Сотрудник-получатель платежа:</label><br />
+
+<select id="responsible_user_id" name="responsible_user_id" style="width:400px;"  disabled="disabled"  >
+ %{html_options values=$responsible_user_id_ids selected=$ship.responsible_user_id output=$responsible_user_id_vals}%
+</select>
+<br clear="all" />
+<p />
+
+
+
+   
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="cash/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+   
+<p />    
+
+
+%{include file="cash/cash_percent.html"}%
+
+<div style="float:left; margin-right:20px;">
+
+%{if $ship.is_confirmed==1}%
+<strong>Подтверждаю затраты</strong>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+<p />
+%{/if}%
+
+
+%{if $ship.is_confirmed_given==1}%
+<strong>Сумма выдана</strong>
+<span id="is_confirmed_given_confirmer">%{$is_confirmed_given_confirmer}%</span>
+<p />
+%{/if}%
+
+
+</div>
+<br clear="all" />
+<p />
+

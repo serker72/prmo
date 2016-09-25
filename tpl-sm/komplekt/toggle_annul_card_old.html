@@ -1,0 +1,62 @@
+%{if $komplekt_ved.can_annul}%
+<a href="#" id="do_annul">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			%{if $komplekt_ved.binded_to_annul!=""}%
+			if(!window.confirm("Внимание! С данным документом связаны следующие документы: %{$komplekt_ved.binded_to_annul}%. При аннулировании документа  они также будут аннулированы. Продолжить?")) return false;
+			%{/if}%
+			
+			if(window.confirm("Внимание! Вы действительно хотите аннулировать заявку № %{$komplekt_ved.id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/komplekt.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$komplekt_ved.id}%",
+					  "shorter":0,
+					  "from_card":1
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+
+%{else}%
+<a href="#" onclick="alert('Невозможно аннулировать заявку № %{$komplekt_ved.id}%. Причина: %{$komplekt_ved.can_annul_reason}%.'); return false;"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" align="right" align="right" /></a>
+%{/if}%
+
+<strong>Статус:</strong><br />
+%{if $komplekt_ved.blink}%
+<img src="/img/new_message.gif" width="13" height="10" alt="" border="0" /> 
+%{/if}%
+
+%{if $komplekt_ved.status_id==1}%
+не утверждена 
+%{elseif $komplekt_ved.status_id==2}%
+утверждена 
+%{elseif $komplekt_ved.status_id==3}%
+аннулирована
+%{elseif $komplekt_ved.status_id==11}%
+новая
+%{elseif $komplekt_ved.status_id==12}%
+не выполнена
+%{elseif $komplekt_ved.status_id==13}%
+выполнена
+%{/if}%

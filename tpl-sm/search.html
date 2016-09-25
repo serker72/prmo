@@ -1,0 +1,68 @@
+<form action="search.php" method="get">
+<h1>GYDEX.Поиск</h1>
+
+
+<label for="data">Запрос: </label><input type="text" size="40" maxlength="255" id="data" placeholder="введите запрос" value="%{$data}%" name="data" />
+ 
+
+<input type="submit" value="Найти" />
+
+</form>
+
+%{if $do_it}%
+%{if $total==0}%
+<strong>По вашему запросу ничего не найдено.</strong>
+%{/if}%
+
+%{foreach from=$search item=block}%
+<div class="fast_block">
+%{foreach from=$block.docs name=df item=item}%%{/foreach}%
+<h2>%{$block.name}%: %{$smarty.foreach.df.total}%</h2>
+
+<table class="gydex_table" >
+<thead>
+    <tr align="left" valign="top">
+    <th width="60" style="padding-right:10px;">
+        Дата
+    </th>
+    <th width="*">
+         Название
+    </th>
+    <th width="*">
+         Найдено в полях
+    </th>
+    <th width="24"  style="padding-right:10px;">
+        Карта
+    </th>
+     <th width="24"  style="padding-right:10px;">
+        Реестр
+    </th>
+    </tr>
+</thead>
+<tbody>
+%{foreach from=$block.docs name=df item=item}%
+<tr align="left" valign="top">
+        	<td width="60" style="padding-right:10px;">
+            	%{$item.date}%
+            </td>
+            <td width="*">
+           		 %{$item.name}%
+            </td>
+             <td width="*">
+           		 %{$item.matched_fields}%
+            </td>
+            <td width="24">
+            	<a class="gydex_edit"   href="%{$item.url}%" target="_blank"></a> 
+            </td>
+            <td width="24">
+            	<a class="gydex_edit"   href="%{$item.registry_url}%" target="_blank"></a> 
+            </td>
+            </tr>
+%{/foreach}%
+</tbody>
+</table>
+
+</div>
+%{/foreach}%
+
+%{/if}%

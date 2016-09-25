@@ -1,0 +1,250 @@
+<script type="text/javascript">
+//!!!!!!!!!!!!!!!! функция вызова диалога
+function ShareFolderOpenDialog(record_id, tablename, additional_id, record_name, record_description, parent_folder_id){
+	$("#share_folder_tablename").val(tablename);
+	$("#share_folder_additional_id").val(additional_id);
+	$("#share_folder_record_id").val(record_id);
+	
+	
+	var record_name=record_name||"";
+	var record_description=record_description||"";
+	var parent_folder_id=parent_folder_id||"0";
+	
+	$("#share_folder_record_name").val(record_name);
+	$("#share_folder_record_description").val(record_description);
+	$("#share_parent_folder_record_id").val(parent_folder_id);
+	
+	ShareFolderBuildTable(record_id, tablename, additional_id, parent_folder_id);
+	
+	$("#share_folder_dialog").dialog("option","title", "Поделиться папкой "+$("#share_folder_record_name").val());
+	$("#share_folder_dialog").dialog("open");	
+}
+
+function ShareFolderBuildTable(record_id, tablename, additional_id, share_parent_folder_record_id){
+	//1. получить галочку о включении/ не включении модели
+	//2. если модель включена - построить таблицу прав!
+	
+	var additional_id=additional_id;
+	var record_id=record_id;
+	var tablename=tablename;
+	var share_parent_folder_record_id=share_parent_folder_record_id;
+
+
+	$.ajax({
+		async: true,
+		url: "/js/share_dialog.php",
+		type: "POST",
+		data:{
+			"action":"retrive_table",
+			"record_id":record_id,
+			"parent_record_id":share_parent_folder_record_id,
+			"tablename":tablename,
+			"additional_id":additional_id
+		},
+		beforeSend: function(){
+			$("#share_folder_table").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />'); 
+		},
+		success: function(data){
+			
+			$("#share_folder_table").html(data);
+			//alert($("#share_folder_dialog").dialog("option", "height"));
+			
+		
+		
+			 
+		},
+		error: function(xhr, status, d){
+			$("#share_folder_table").html("Ошибка получения данных."+status+d);	
+		}	 
+	});
+			
+			
+}
+
+//сохранение данных
+function ShareFolderSaveData(do_retrieve){
+	var do_retrieve=do_retrieve;	
+	//var is_checked=0;
+	//if($("#share_folder_has_record").prop("checked")) is_checked=1;
+	
+	
+	var all_data=new Array(); var changed_data=new Array();
+	
+	$("input[id^=share_right_]").each(function(index, v) {
+		id=$(v).attr("id");
+		
+		user_id=id.replace(/^share_right_/,'').replace(/_[0-9]+$/,'');
+		right_id=$(v).val();
+		if($(v).prop("checked")) state=1;
+		else state=0;
+		
+		data=user_id+";"+right_id+";"+state;
+		all_data.push(data);
+		if($(v).hasClass("changed")&&(!$(v).prop("disabled"))) changed_data.push(data);
+		
+		
+		
+	});
+	
+	/*alert(changed_data);
+	alert(all_data);*/
+	
+	
+	
+	
+	
+	$.ajax({
+		async: true,
+		url: "/js/share_dialog.php",
+		type: "POST",
+		data:{
+			"action":"save_data",
+			 
+			"record_id":$("#share_folder_record_id").val(),
+			"tablename":$("#share_folder_tablename").val(),
+			"additional_id":$("#share_folder_additional_id").val(),
+			"changed_data[]":changed_data,
+			"all_data[]":all_data,
+			 
+			"record_name":$("#share_folder_record_name").val(),
+			"record_description":$("#share_folder_record_description").val()
+			
+		},
+		beforeSend: function(){
+			
+		},
+		success: function(data){
+			//alert(data);
+			
+			//$("#share_folder_table").html(data); 
+			if(do_retrieve){
+				ShareFolderBuildTable($("#share_folder_record_id").val(), $("#share_folder_tablename").val(), $("#share_folder_additional_id").val(), $("#share_parent_folder_record_id").val());
+			}
+		},
+		error: function(xhr, status){
+			alert("Ошибка сохранения данных.");	
+		}	 
+	});
+	
+	
+	
+	
+	
+	//построить массив изменяемых прав...
+	/*var letters=new Array();
+	var objects=new Array();
+	var users=new Array();
+	var actions=new Array();
+	
+	$.each($("input[id^=do_edit_]"), function(k,v){
+		if($(v).val()==1){
+			id=$(v).attr("id");
+			
+			
+			letter=id.replace(/^do_edit_/,'');
+			letter=letter.replace(/_([0-9]+)_([0-9]+)/,'');
+			letters.push(letter);
+			
+			object=id.replace(/^do_edit_/,'');
+			object=object.replace(/^([a-z]+)_/,'');
+			object=object.replace(/_([0-9]+)/,'');
+			 
+			objects.push(object);
+			
+			user=id.replace(/^do_edit_([a-z]+)_([0-9]+)_/,'');
+			users.push(user); 
+			
+			actions.push($("#state_"+letter+"_"+object+"_"+user).val());
+		}
+	});
+	
+	
+	$.ajax({
+		async: true,
+		url: "/js/share_dialog.php",
+		type: "POST",
+		data:{
+			"action":"save_data",
+			"is_checked":is_checked,
+			"record_id":$("#share_folder_record_id").val(),
+			"tablename":$("#share_folder_tablename").val(),
+			"additional_id":$("#share_folder_additional_id").val(),
+			"users[]":users,
+			"objects[]":objects,
+			"letters[]":letters,
+			"actions[]":actions,
+			"record_name":$("#share_folder_record_name").val(),
+			"record_description":$("#share_folder_record_description").val()
+			
+		},
+		beforeSend: function(){
+			
+		},
+		success: function(data){
+			//alert(data);
+			
+			//$("#share_folder_table").html(data); 
+			if(do_retrieve){
+				ShareFolderBuildTable($("#share_folder_record_id").val(), $("#share_folder_tablename").val(), $("#share_folder_additional_id").val());
+			}
+		},
+		error: function(xhr, status){
+			alert("Ошибка сохранения данных.");	
+		}	 
+	});*/
+	
+	
+}
+
+
+$(function(){
+	 $("#share_folder_dialog").dialog({
+  	  autoOpen:false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 860,
+	  height: 600,
+	  buttons: {
+		   "Сохранить и остаться": function() { 
+		  		ShareFolderSaveData(true);
+		  		 
+		   },
+		   "Сохранить и выйти": function() { 
+		   		ShareFolderSaveData(false);
+		   		$(this).dialog("close");
+		  
+		   },
+		  "Закрыть": function() { 
+		  
+		  		$(this).dialog("close");
+		  
+		   }
+		}
+		 
+  
+  });
+});
+</script>
+
+<div id="share_folder_dialog" title="Поделиться папкой" style="display:none;">
+
+
+	<input type="hidden" value="" id="share_folder_tablename" />
+    <input type="hidden" value="" id="share_folder_additional_id" />
+    <input type="hidden" value="" id="share_folder_record_id" />
+    <input type="hidden" value="" id="share_parent_folder_record_id" />
+    
+    <input type="hidden" value="" id="share_folder_record_name" />    
+    <input type="hidden" value="" id="share_folder_record_description" />
+    
+    
+    
+    <br />
+
+
+	<div id="share_folder_table">
+   
+    </div>
+
+
+</div>

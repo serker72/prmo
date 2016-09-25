@@ -1,0 +1,622 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	
+	   function SelectCityGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_city.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_cities item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.fullname|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	} 
+	 
+	 
+	 	
+	function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_newcli.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );
+		 
+	}
+	
+	function SelectSupplierGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_supplier_wolim.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.code|escape:"html"}% %{$item.full_name|escape:"html"}%, %{$item.opf_name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	function SelectCntryGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_country.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					//alert(data.results[0].);
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_countries item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			} 
+		 }
+		 );  
+	}
+	
+	function SelectFoGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_fo.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					//alert(data.results[0].);
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_fos item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+				
+				
+			}
+		 }
+		 );  
+	}
+	
+	
+	  
+	 
+	
+	
+	SelectGo2("user%{$prefix}%");
+ 	SelectSupplierGo2("supplier%{$prefix}%");
+	SelectCityGo2("city%{$prefix}%");
+	 
+ 	
+	
+	SelectCntryGo2("country%{$prefix}%");
+	SelectFoGo2("fo%{$prefix}%");
+	
+	
+	$("#country%{$prefix}%")
+    .on("change", function(e) { 
+	
+		//alert(JSON.stringify({val:e.val, added:e.added, removed:e.removed}) );
+		
+		if($.inArray("1",  e.val)!=-1){
+			//разблокировать фо	
+			$("#fo%{$prefix}%").select2("enable", true);
+		}else{
+			//заблокировать, очистить ФО
+			 $("#fo%{$prefix}%").select2("val", ""); 
+			 //$("#fo%{$prefix}%").select2("enable", false);
+				
+		}
+	});
+		
+	/*if($.inArray("1",  $("#country%{$prefix}%").select2("val"))==-1){
+		$("#fo%{$prefix}%").select2("val", ""); 
+		$("#fo%{$prefix}%").select2("enable", false);	
+	}*/
+	
+	$("#fo%{$prefix}%")
+    .on("change", function(e) { 
+		if(e.val.length>0){
+			//выбрать россию!
+			$("#country%{$prefix}%").select2("data",  {id: 1, text: "Россия"} ); 	
+		}else{
+			
+		}
+	});
+	
+	
+	 $("#supplier%{$prefix}%").bind("change", function(){
+			 if( $("#supplier%{$prefix}%").val()!="") {
+				 $("#user%{$prefix}%").select2("val", "");
+				 $("#wo_kur%{$prefix}%").prop("checked", false);
+				 $("#w_kur%{$prefix}%").prop("checked", false);
+				 
+				 $("#%{$prefix}%supplier_kinds").multiselect("disable");
+				 
+				 $("#country%{$prefix}%").select2("val", "");
+				 $("#fo%{$prefix}%").select2("val", "");
+				 $("#city%{$prefix}%").select2("val", "");
+				 
+			 }
+			
+	});
+	
+	$("#user%{$prefix}%").bind("change", function(){
+		if( $("#user%{$prefix}%").val()!="") {
+			$("#supplier%{$prefix}%").select2("val", "");
+			$("#wo_kur%{$prefix}%").prop("checked", false);
+			$("#w_kur%{$prefix}%").prop("checked", false);
+			
+			$("#%{$prefix}%supplier_kinds").multiselect("enable");
+		}
+	});
+	
+	$("#wo_kur%{$prefix}%").bind("change", function(){
+		if($("#wo_kur%{$prefix}%").prop("checked")){
+			$("#supplier%{$prefix}%").select2("val", "");
+			$("#user%{$prefix}%").select2("val", "");
+			$("#w_kur%{$prefix}%").prop("checked", false);
+			
+			$("#%{$prefix}%supplier_kinds").multiselect("enable");
+		}
+	});
+	
+	
+	$("#w_kur%{$prefix}%").bind("change", function(){
+		if($("#w_kur%{$prefix}%").prop("checked")){
+			$("#supplier%{$prefix}%").select2("val", "");
+			$("#user%{$prefix}%").select2("val", "");
+			$("#wo_kur%{$prefix}%").prop("checked", false);
+			
+			$("#%{$prefix}%supplier_kinds").multiselect("enable");
+		}
+	});
+	
+	
+	$("#city%{$prefix}%").bind("change", function(){
+		if( $("#city%{$prefix}%").val()!="") {
+			$("#supplier%{$prefix}%").select2("val", "");
+			 
+			
+			$("#%{$prefix}%supplier_kinds").multiselect("enable");
+		}
+	});
+	
+	$("#country%{$prefix}%").bind("change", function(){
+		if( $("#country%{$prefix}%").select2("val")!="") {
+			$("#supplier%{$prefix}%").select2("val", "");
+			 
+			
+			$("#%{$prefix}%supplier_kinds").multiselect("enable");
+		}
+	});
+	
+	 
+	
+	$("#rep_form%{$prefix}%").bind("submit", function(){
+		
+		if(($("#supplier%{$prefix}%").val()=="")&&($("#user%{$prefix}%").val()=="")&&($("#wo_kur%{$prefix}%").prop("checked")==false)&&($("#w_kur%{$prefix}%").prop("checked")==false)){
+			alert("Укажите контрагента, куратора или один из режимов: 'Только без куратора', либо 'Только с куратором'!");
+			return false;	
+		}else return true;
+	});
+	
+	
+	  VidgetMultiReport('%{$prefix}%supplier_kinds', 'Выберите вид', 'Вид', 'Cнять выбор', '# из # выбрано', "Выбрано: ", 'Вид не выбран', 250 );
+	
+});
+</script>
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" /> 
+ 
+
+
+
+
+
+
+<div class="report_filter_right">
+ 
+        
+  
+    
+      <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+
+     <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти"  />
+     </div>
+    
+    <a href="an_sched.php?doSub%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+
+  
+
+  
+  %{if $can_print}%
+  
+   
+  
+  
+  <a href="#" id="print_table%{$prefix}%"   class="reestr_print reestr_right_button24" data-comment="Печать..."></a>
+  
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	  
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+			if(($("#supplier%{$prefix}%").val()=="")&&($("#user%{$prefix}%").val()=="")&&($("#wo_kur%{$prefix}%").prop("checked")==false)&&($("#w_kur%{$prefix}%").prop("checked")==false)){
+				alert("Укажите контрагента, куратора или один из режимов: 'Только без куратора', либо 'Только с куратором'!");
+				return false;	
+			}
+			
+			 
+		 	 window.open('an_sched.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize(), 'an_sched');
+		   
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."</a>
+ %{/if}%
+  
+ 	
+    
+    %{include file="every_help_dialog.html" filename="an_sched.html;an_sched_8.html" prefix=$prefix description="отчет Планировщик"  style="display:inline-block; margin-right:0px;" is_right=true}%      
+</div> 
+ 
+
+
+<div class="report_filter_left">  
+    
+    
+    
+     
+     
+    
+    <div class="report_filter">
+    <label for="supplier%{$prefix}%">Контрагент:</label><br />
+    <input type="text" value="%{$supplier}%" id="supplier%{$prefix}%" name="supplier%{$prefix}%" size="30" maxlength="512" style="width:220px;"  />
+    
+     
+    <br>
+  
+  <input type="checkbox" id="has_holdings%{$prefix}%" name="has_holdings%{$prefix}%" value="1" %{if $has_holdings}% checked%{/if}%>
+  <label for="has_holdings%{$prefix}%">Включая субхолдинги <br>
+и подчиненные предприятия</label>
+    </div>
+    
+     
+    
+    
+    
+    <div class="report_filter">
+    <label for="user%{$prefix}%">Ответственный сотрудник:</label><br />
+    <input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:220px;"  />
+    </div>
+    
+    
+    
+      
+    
+	<div class="report_filter"><br>
+
+   <input type="checkbox" value="1" id="wo_kur%{$prefix}%" name="wo_kur%{$prefix}%" %{if $wo_kur==1}% checked%{/if}%/>
+   <label for="wo_kur%{$prefix}%">Только без куратора</label>
+   
+   </div>
+    
+    
+      
+    
+  <div class="report_filter"><br>
+
+   <input type="checkbox" value="1" id="w_kur%{$prefix}%" name="w_kur%{$prefix}%" %{if $w_kur==1}% checked%{/if}%/>
+   <label for="w_kur%{$prefix}%">Только с куратором</label>
+   
+   </div>
+    
+    
+    <br clear="all" />
+    
+    
+  <div class="report_filter">
+    
+     
+    
+    
+        <label for="%{$prefix}%supplier_kinds" class="statuses_report_label">Виды контрагента:</label><br>
+    
+        <select id="%{$prefix}%supplier_kinds" name="%{$prefix}%supplier_kinds[]" multiple="multiple">
+       
+        <option value="1" %{if $supplier_kind_1==1 or $all_supplier_kinds==1}% selected%{/if}% >Покупатель</option>
+        <option value="2" %{if $supplier_kind_2==1 or $all_supplier_kinds==1}% selected%{/if}% >Поставщик</option>
+        <option value="3" %{if $supplier_kind_3==1 or $all_supplier_kinds==1}% selected%{/if}% >Партнер</option>
+        
+        <option value="4" %{if $supplier_kind_4==1 or $all_supplier_kinds==1}% selected%{/if}% >Вид не указан</option>
+         
+       
+        </select>
+        
+        
+        
+        <br clear="all" />
+        
+        <div id="%{$prefix}%supplier_kinds_caption" class="statuses_report_caption" style="width:250px !important; white-space:normal !important;">
+        
+        </div>
+    
+    
+    </div>
+
+    
+      
+   <div class="report_filter">
+    <label for="country%{$prefix}%">Страна контрагента:</label><br />
+    <input type="text" value="%{$country}%" id="country%{$prefix}%" name="country%{$prefix}%" size="30" maxlength="512" style="width:150px;" class="sched_report_field"  />
+    </div>
+    
+     <div class="report_filter">
+    <label for="fo%{$prefix}%">Фед. округ контрагента:</label><br />
+    <input type="text" value="%{$fo}%" id="fo%{$prefix}%" name="fo%{$prefix}%" size="30" maxlength="512" style="width:150px;" class="sched_report_field"  />
+    
+    
+        <div   class="statuses_report_caption">
+		Только для России            
+        </div>
+    </div>
+    
+     
+    
+   
+   <div class="report_filter">
+    <label for="city%{$prefix}%">Город контрагента:</label><br />
+    <input type="text" value="%{$city}%" id="city%{$prefix}%" name="city%{$prefix}%" size="30" maxlength="512" style="width:150px;"  />
+    </div>
+     
+
+     
+      
+</div>     
+ 
+ <br clear="all" />
+ 
+
+  
+ 
+</form>
+ 
+
+
+ <small>
+1. Отчет работает в четырех режимах: <strong>поиск контрагентов по куратору</strong>,  <strong>поиск кураторов по контрагенту</strong>,  <strong>контрагенты только без куратора</strong>,  <strong>контрагенты только с куратором</strong>. Необходимо выбрать один из режимов. <strong>Для выбора доступен только один режим.</strong>
+<br>
+<br>
+2. <strong>Поиск кураторов по контрагенту</strong>: выберите в поле "Контрагент" одного или более контрагентов. В отчете будут показаны сотрудники, которые являются кураторами выбранных контрагентов.
+<br>
+<br>
+
+
+
+3. <strong>Поиск контрагентов по куратору</strong>: выберите в поле "Ответственный сотрудник" одного или более кураторов. В отчете будут показаны контрагенты, кураторами которых являются выбранные сотрудники.
+<br>
+<br>
+
+4. <strong>Контрагенты только без куратора</strong>: отметьте галочку "Только без куратора". В отчете будут показаны только контрагенты, в картах которых не указаны кураторы.
+<br>
+<br>
+
+5. <strong>Контрагенты только c куратором</strong>: отметьте галочку "Только с куратором". В отчете будут показаны только контрагенты, в картах которых указаны кураторы.
+<br>
+<br>
+
+ 
+ </small> 
+ <br />
+<br>
+
+
+
+
+
+%{if $do_it}%
+
+%{if $prefix==1}%
+%{include file="an_sched/table_1.html"}% 
+%{elseif $prefix==2}%
+%{include file="an_sched/table_2.html"}% 
+%{elseif $prefix==3}%
+%{include file="an_sched/table_3.html"}% 
+%{elseif $prefix==4}%
+%{include file="an_sched/table_4.html"}% 
+%{elseif $prefix==5}%
+%{include file="an_sched/table_5.html"}% 
+%{elseif $prefix==6}%
+%{include file="an_sched/table_6.html"}% 
+%{elseif $prefix==7}%
+%{include file="an_sched/table_7.html"}% 
+%{elseif $prefix==8}%
+%{include file="an_sched/table_8.html"}% 
+%{else}%
+%{include file="an_sched/table.html"}%  
+%{/if}%
+
+%{/if}%

@@ -1,0 +1,203 @@
+%{if $item.status_id==3}%
+    <nobr><strong>аннулировано</strong></nobr>
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="deaunnul%{$prefix}%_%{$item.id}%" />
+    %{/if}%
+%{elseif  $item.is_confirmed_price==0}%
+    <nobr><strong>цены не утв.</strong></nobr>
+    %{if $can_confirm_price}%
+    <input type="button" value="Утвердить" id="confirm_price%{$prefix}%_%{$item.id}%"   />
+    %{/if}% 
+    %{else}%
+    <nobr><strong>цены утв.</strong></nobr>
+    %{if  ($can_unconfirm_price ) or $can_super_confirm_price}%
+    <input type="button" value="Не утвердить" id="confirm_price%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed_shipping==1}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}%   %{$item.confirm_price_pdate}%
+    
+  
+    <script type="text/javascript">
+	$(function(){
+		 %{if $can_confirm_price or $can_super_confirm_price}%
+		$("#confirm_price%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			var can_ret=true;
+			%{if $item.is_confirmed_price==1}%
+			
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение цен счета %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{elseif $item.is_confirmed_price==0}%
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm_price",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить цены счета %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }else{
+					//выполнить проверку превышения цен
+					//can_confirm_price_bigger  
+					$.ajax({
+						async: false,
+						url: "/js/%{$filename}%",
+						type: "POST",
+						data:{
+							"action":"check_confirm_bigger_price",
+							id: "%{$item.id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						//alert(data);
+						  if(data!=0){
+							  
+							  %{if $can_confirm_price_bigger}%	
+							  can_ret=window.confirm("Внимание!\n"+data+"\nВы действительно хотите утвердить цены счета?");
+							  %{else}%
+							  alert("Невозможно утвердить цены счета %{$item.code}%. Причина:\n"+data+""); 
+							  can_ret=false;
+							  %{/if}%
+							}
+							// can_ret=false;
+						},
+						error: function(xhr, status){
+							
+							alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+							can_ret=false;	
+						}	 
+					});  
+					  
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{/if}%
+			
+			if(!can_ret){
+				return false;	
+			}
+			
+			
+			
+			%{if $item.is_confirmed_price==1 and $item.binded_payments!=''}%
+			if(window.confirm("Внимание! По данному счету была оплачена сумма %{$item.binded_payments_summ}% руб. (оплаты %{$item.binded_payments}%).\nСнятие утверждения оплаты счета приведет к исключению данного счета из реестра оплат.\nСумма %{$item.binded_payments_summ}% руб. будет автоматически распределена по неоплаченным счетам контрагента.\nЕсли неоплаченных счетов нет, то сумма %{$item.binded_payments_summ}% руб. будет перечислена на карту контрагента как авансовый платеж.")){
+				if(window.confirm("Вы уверены, что хотите снять утверждение оплаты счета?")){
+					
+				}else return false;
+			}else{
+				return false;	
+			}
+			%{/if}%
+			
+			
+			flag_to_payments=0;
+			%{if $item.is_confirmed_price==0 and $item.avans_payments!=''}%
+			if((parseFloat("%{$item.avans_payments_summ}%")>0)&&(parseFloat("%{$item.total_cost}%")>parseFloat("%{$item.sum_by_bill}%"))){
+				if(window.confirm("Внимание! У выбранного контрагента имеются авансовые платежи на сумму %{$item.avans_payments_summ}% руб. по утвержденным оплатам %{$item.avans_payments}%.\nЖелаете ли вы включить в эти оплаты платежи по данному счету?")){
+					flag_to_payments=1;	
+				}else{
+					flag_to_payments=0;
+				}	
+			}
+			%{/if}%
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm_price",
+				  "id":"%{$item.id}%",
+				  "shorter":"%{$shorter}%",
+				  "flag_to_payments":flag_to_payments
+			  },
+			  beforeSend: function(){
+				$("#item_row%{$prefix}%_%{$item.id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+					//alert(data);
+					//alert("#item_row%{$prefix}%_%{$item.id}%");
+					$("#item_row%{$prefix}%_%{$item.id}%").html(data);
+					
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+		 %{/if}%
+		 
+		 
+		 %{if $item.status_id==3 and $can_restore}%
+		 
+		
+		  
+		  $("#deaunnul%{$prefix}%_%{$item.id}%").bind("click",function(){
+			 
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$item.id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#item_row%{$prefix}%_%{$item.id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   $("#item_row%{$prefix}%_%{$item.id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+   
+    
+    

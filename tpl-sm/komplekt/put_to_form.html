@@ -1,0 +1,145 @@
+
+<tr align="left" valign="top" id="pos_block_%{$tempid}%">
+	
+    <td width="20">
+    <span id="no_%{$id}%">%{$no}%</span>
+    </td>
+     <td width="20">
+    <span id="code_%{$id}%">%{$id}%</span>
+    </td>
+    <td width="*">
+    <span id="name_%{$id}%">%{$name}%</span>
+	<input type="hidden" name="pos_%{$tempid}%_%{$id}%" id="pos_%{$id}%" value="%{$kol}%" %{if !$can_modify  and !$can_edit_quantities}% disabled="disabled"%{/if}% />
+    
+    <input type="hidden"  id="resolve_%{$id}%" value="%{$tempid}%" />
+    
+    
+    
+    </td>
+    <td width="50">
+    <span id="dim_name_%{$id}%">%{$dim_name}%</span>
+    </td>
+	<td width="50">
+    <span id="kol_init_%{$id}%">%{$kol_init}%</span>
+    </td>
+    <td width="50">
+    <span id="kol_%{$id}%" %{if $kol!=$kol_init and ($kol!=$in_pol or $kol==0) and ($komplekt_ved.status_id==1 or $komplekt_ved.status_id==2 or $komplekt_ved.status_id==12)}%style=" font-weight:bold; "%{/if}%>%{$kol}%</span>
+    </td>
+    
+    
+    
+    
+    <td width="50" class="kompl1">
+    <a href="#" id="link_in_bills_in_%{$tempid}%" title="подробно...">%{$in_bills_in}%</a>
+    </td>
+    
+    <td width="50" class="kompl1">
+    <a href="#" id="link_in_pol_in_%{$tempid}%" title="подробно...">%{$in_pol_in}%</a>
+    </td>
+    
+    <td width="50" class="kompl1">
+    %{*$in_free*}%
+    
+    <span id="in_free_in_%{$id}%">%{$kol-$in_bills_in-$in_pol_in|string_format:"%.3f"}%</span>
+    </td>
+    
+    
+    
+    
+    <td width="50" class="kompl2">
+    <a href="#" id="link_in_bills_%{$tempid}%" title="подробно...">%{$in_bills}%</a>
+    </td>
+    
+    <td width="50" class="kompl2">
+    <a href="#" id="link_in_pol_%{$tempid}%" title="подробно...">%{$in_pol}%</a>
+    </td>
+    
+    <td width="50" class="kompl2">
+    %{*$in_free*}%
+    
+    <span id="in_free_%{$id}%">%{$kol-$in_bills-$in_pol|string_format:"%.3f"}%</span>
+    </td>
+    
+    
+    
+     <td width="50" class="kompl3">
+      <!--<span id="in_all_%{$id}%">%{$kol-$in_bills-$in_pol-$kol+$in_bills_in+$in_pol_in}%</span>
+      -->
+    
+     <span id="in_all_%{$id}%" %{if $in_pol_in>$in_pol}% style="color:red;"%{/if}% >%{$in_pol-$in_pol_in}%</span>
+     </td>
+    
+    
+    <td width="24">
+    <input type="checkbox" value="%{$in_free}%" 
+    id="to_bill_%{$id}%" 
+    %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    
+    onchange="try{ if(!$('#table_select_all').prop('disabled')){   x=$('input[type=checkbox][id^=to_bill_]:enabled').length;  y=$('input[type=checkbox][id^=to_bill_]:enabled:checked').length;  $('#table_select_all').prop('checked',(x==y));  };  }catch(e){};"
+    />
+    </td>
+    <td width="24">
+    
+    %{if $can_modify}%
+	
+    %{if $can_delete_positions}%
+    <a href="#" onclick="
+    //контроль, что не последн€€
+    if($('#positions tr').length==1){
+    	alert('¬нимание! Ќевозможно удалить данную позицию, т.к. она €вл€етс€ последней позицией в за€вке! ƒл€ удалени€ данной позиции, пожалуйста, добавьте в за€вку другие позиции.');
+    }else{
+    
+   			 if(window.confirm('¬ы уверены, что хотите удалить позицию '+$('#name_%{$id}%').html()+'?')){ $('#pos_block_%{$tempid}%').remove(); 
+					var temp_cter=0;
+					$.each($('#positions tr'),function(kk,vv){
+						temp_cter++;
+						
+						$('#'+$(vv).attr('id')+' td:first span').html(temp_cter);
+					});
+					 was_changed=was_changed||true; } 
+                 } 
+                     return false;" class="reestr_delete reestr_right_button24" data-comment="удалить позицию" ></a>
+    %{else}%
+    <a href="#" onclick="alert('” ¬ас недостаточно прав дл€ удалени€ позиции за€вки!'); return false;" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию"></a>
+    %{/if}%
+    
+    
+    %{else}%
+    <a href="#" onclick="alert('¬ы не можете удалить позицию утвержденной за€вки!'); return false;" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию"></a>
+    %{/if}%
+    <script type="text/javascript">
+	$(function(){
+		 $("#link_in_bills_%{$tempid}%").bind("click", function(){
+			 
+			  return link_in_bills("%{$id}%");
+		  });
+		  
+		  
+		 
+		  $("#link_in_pol_%{$tempid}%").bind("click", function(){
+			 
+			  return link_in_pol("%{$id}%");
+		  });
+		  
+		  $("#link_in_bills_in_%{$tempid}%").bind("click", function(){
+			 
+			  return link_in_bills_in("%{$id}%");
+		  });
+		  
+		  
+		 
+		  $("#link_in_pol_in_%{$tempid}%").bind("click", function(){
+			 
+			  return link_in_pol_in("%{$id}%");
+		  });
+		  
+		 
+	});
+	</script></td>
+   
+
+</tr>
+
+

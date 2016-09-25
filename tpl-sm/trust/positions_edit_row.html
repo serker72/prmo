@@ -1,0 +1,99 @@
+<tr align="left" valign="top" >
+    	<td width="80">
+        %{$pospos[pospossec].position_id|string_format:"%05d"}%
+        
+        </td>
+        <td width="*">
+        %{$pospos[pospossec].position_name}%
+        <input type="hidden" id="position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        
+       
+        
+        <input type="hidden" id="hash_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].hash}%" />
+        
+        
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+         <td width="80">
+        <input type="text" id="quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%" size="4" maxlength="20" />
+    	</td>
+        
+        <td width="80">
+        %{$pospos[pospossec].quantity}%
+        </td>
+       
+        <td width="80">
+        %{$pospos[pospossec].max_quantity}%
+        <input type="hidden" id="max_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].max_quantity}%" />
+        
+        
+		<script type="text/javascript">
+		$(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+			  if(isNaN(x) || isNaN(n)) return false;
+			  var m = Math.pow(10,n);
+			  return Math.round(x*m)/m;
+			}
+			
+			
+			
+			
+			
+			//проверка количества
+			$("#quantity_%{$pospos[pospossec].hash}%").bind("change",function(){
+				ret=true;
+				
+				if($("#quantity_%{$pospos[pospossec].hash}%").attr("value").length==0){
+					alert("Заполните поле Количесто!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value").replace("\,","\."))||(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value").replace("\,","\."))<0)){
+					alert("Неверное значение в поле Количество!");
+					ret=ret&&false;
+				}
+				
+				
+				
+				
+				if(!isNaN($("#quantity_%{$pospos[pospossec].hash}%").attr("value").replace("\,","\."))&&(roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].hash}%").attr("value").replace("\,","\.")),3)>roundPlus(parseFloat("%{$pospos[pospossec].max_quantity}%")*parseFloat("%{$TRUSTUP}%"),3))){
+					//сделать проверку на БОЛЬШЕ
+					//alert(roundPlus(parseFloat("%{$pospos[pospossec].max_quantity}%")*parseFloat("%{$TRUSTUP}%"),3)+' '+(parseFloat("%{$pospos[pospossec].max_quantity}%")*parseFloat("%{$TRUSTUP}%")));
+					alert("Превышено допустимое количество!\nКоличество позиций не может превышать доступного количества более чем на "+Math.round((parseFloat("%{$TRUSTUP}%")-1)*100)+"%.");
+					ret=ret&&false;
+				
+				}
+				
+				if(!ret) {
+					$("#quantity_%{$pospos[pospossec].hash}%").addClass("wrong");
+					$("#quantity_%{$pospos[pospossec].hash}%").focus();
+				}else{
+					//peres4et	
+					$("#quantity_%{$pospos[pospossec].hash}%").removeClass("wrong");
+					//RecalcPrices();
+				}
+				return ret;
+			});
+			
+			
+			
+		});
+		</script>
+        
+        </td>
+       
+        <td width="150">
+       <a href="ed_bill_in.php?action=1&id=%{$pospos[pospossec].bill_id}%&from_begin=1" target="_blank">№ %{$pospos[pospossec].bill_code}%</a>
+       от %{$pospos[pospossec].bill_pdate}%
+        <input type="hidden" id="bill_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].bill_id}%" />
+        
+       
+       
+       </td>
+       
+       
+    
+    </tr>

@@ -1,0 +1,25 @@
+ 
+    
+     
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top" >
+    	<td   >
+        
+        <input type="radio" id="managers_%{$items[rowsec].id}%" name="managers" value="%{$items[rowsec].id}%" %{if $items[rowsec].id==$manager_id}% checked="checked"%{/if}% />
+       
+ 		<label for="managers_%{$items[rowsec].id}%">%{$items[rowsec].name_s}%, %{$items[rowsec].position_s}%</label>
+
+
+
+ 
+ 
+ 
+        </td>
+        
+       
+      
+        
+</tr>
+ 
+%{/section}%    
+ 

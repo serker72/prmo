@@ -1,0 +1,145 @@
+<html xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1251">
+<style>
+<!--
+h3 {
+	page-break-after: avoid;
+	font-size: 13.0pt;
+	font-family: "Arial", "sans-serif";
+}
+p.MsoCaption, li.MsoCaption, div.MsoCaption {
+	font-size: 10.0pt;
+	font-family: "Times New Roman", "serif";
+	font-weight: bold;
+}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+	font-size: 8.0pt;
+	font-family: "Tahoma", "sans-serif";
+}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph {
+	font-size: 12.0pt;
+	font-family: "Times New Roman", "serif";
+}
+span.3 {
+	font-family: "Arial", "sans-serif";
+	font-weight: bold;
+}
+span.a {
+	font-family: "Tahoma", "sans-serif";
+}
+.MsoPapDefault {
+	line-height: 115%;
+}
+-->
+</style>
+</head>
+
+<body lang=RU>
+<div class=WordSection1>
+  <p style='text-align:justify'>Отчет позволяет выяснить, какие входящие счета были переданы
+    в бухгалтерию и когда; какие счета не были переданы в бухгалтерию, а также –
+  при необходимости проставить флаги «счет в бухгалтерии» у отдельных счетов.</p>
+  <p>Рассмотрим форму отчета:</p>
+  <p style='text-align:justify'><img src="an_paybuh.files/01.png" alt="" width="800" height="485"></p>
+  <p class=MsoCaption>Рис. 7.36 Отчет «Счета,
+    переданные в бухгалтерию»: форма отчета.</p>
+  <p><b>(1) – фильтр
+    «Контрагент»: </b>Вы можете осуществлять отбор входящих счетов по нескольким
+    контрагентам.</p>
+  <p>Для этого в форму поиска нужно вписать фрагмент названия искомого
+    контрагента. Программа выдаст список вариантов названий. Выберите в списке
+    требуемого контрагента щелчком мыши по его названию. При необходимости отобрать
+    в отчет счета по еще одному контрагенту - снова наберите фрагмент его названия
+    и выберите контрагента из всплывшего списка вариантов названий контрагентов<span
+class=GramE>..</span></p>
+  <p><b>(2) – период: </b>позволяет
+    отбирать для отчета входящие счета по датам передачи в бухгалтерию за выбранный
+    период.</p>
+  <p><b>(3) - Фильтр
+    &quot;Только счета, переданные в бухгалтерию&quot;</b> позволяет показать
+    только те входящие счета, которые были переданы в бухгалтерию.</p>
+  <p>При выборе этого фильтра становится активным фильтр «период»
+    (1).</p>
+  <p><b>(4) - Фильтр
+    &quot;Только счета, не переданные в бухгалтерию счета&quot;</b> позволяет
+    показать только те входящие счета, которые не были переданы в бухгалтерию.</p>
+  <p>При выборе этого фильтра фильтр «период» неактивен.</p>
+  <p><b>Одновременно может
+    быть отмечен только один из двух фильтров: (3) или (4).</b></p>
+  <p><b>(5) - Фильтр &quot;Оплаченные
+    счета&quot;</b> позволяет  показать
+    только  входящие счета со 100% оплатой.</p>
+  <p><b>(6) - Фильтр &quot;Неоплаченные
+    счета&quot;</b> позволяет показать только  входящие счета, по которым не было оплат.</p>
+  <p><b>Одновременно может
+    быть отмечен только один из двух фильтров: (5) или (6).</b></p>
+  <p><b>(7) - Фильтр
+    «Частично оплаченные счета»</b>  позволяет отобрать в отчет частично оплаченные
+    счета.</p>
+  <p>Фильтры могут сочетаться. Например:</p>
+  <p class=MsoListParagraph><span style='font-family:Symbol;
+'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>Сочетание фильтров <b>&quot;Только счета, переданные в бухгалтерию &quot;</b> и <b>&quot;Оплаченные счета&quot;</b> выдаст
+    полностью оплаченные счета, переданные в бухгалтерию.</p>
+  <p class=MsoListParagraph><span style='font-family:Symbol;
+'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>Сочетание фильтров <b>&quot;Только счета, переданные в бухгалтерию &quot;</b>, <b>&quot;Оплаченные счета&quot;</b> и <b>&quot;Частично оплаченные счета &quot;</b> выдаст полностью и частично оплаченные счета, переданные в бухгалтерию.</p>
+  <p class=MsoListParagraph><span style='font-family:Symbol;
+'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>Сочетание фильтров <b>&quot;Только счета, переданные в бухгалтерию &quot;</b> и <b>&quot;Неоплаченные счета&quot; </b>выдаст
+    переданные в бухгалтерию и неоплаченные счета.</p>
+  <p><span class=GramE>Если не отмечен ни один из фильтров 3-7,
+    то период неактивен, выбираются все счета за время работы программы с
+    сортировкой от не переданных счетов к переданным счетам, далее - от старых к
+    новым счетам.</span></p>
+  <p><b>(8) – кнопка <img src="../img/icons/old-zoom-original.png" alt="" width="24" height="24" /> («найти»)</b> - осуществляет формирование
+    отчета по указанным параметрам в фильтрах (1)-(7) .</p>
+  <p><b>(9) – кнопка <img src="../img/icons/old-zoom-deselect.png" alt="" width="24" height="24" /> («сбросить все фильтры») </b>– сбрасывает все
+    параметры фильтров (1)-(9), формирует отчет согласно общей логике.</p>
+  <p><b>(10) – кнопка <img src="../img/icons/print.png" alt="" width="24" height="24" /> («печать») </b>– производится печать отчета
+    согласно параметрам фильтров (1)-(7).</p>
+  <p><i>Пример.</i></p>
+  <p><i>Найдем все переданные
+    в бухгалтерию счета поставщика «Строительная ярмарка» за период с 18.06.2014 по
+    16.12.2014.</i></p>
+  <p><i>Для этого введем в
+    поле «Контрагент» текст:</i></p>
+  <p><i>Строительная ярмарка</i></p>
+  <p><i>Отметим флаг (3),
+    укажем соответствующий период и нажмем кнопку </i><b><img src="../img/icons/old-zoom-original.png" alt="" width="24" height="24" /></b><i>:</i></p>
+  <p style='text-align:justify'><img src="an_paybuh.files/02.png" alt="" width="800" height="728"></p>
+  <p class=MsoCaption><a name="_Ref342047657">Рис. </a><span>7</span>.<span>37</span> Отчет «Счета, переданные в
+    бухгалтерию»: результат поиска.</p>
+  <p>Полученные результаты (Рис. 7.37)
+    можно сортировать <span class=GramE>по</span>:</p>
+  <ul type=disc>
+    <li>№ счета в программе</li>
+    <li>Сумме счета</li>
+    <li>Статусу счета</li>
+    <li>Контрагенту</li>
+    <li>Наличию счета в
+      бухгалтерии</li>
+  </ul>
+  <p style='text-align:justify'>В отчете есть возможность
+    проставлять, либо снимать ранее проставленное наличие счета в бухгалтерии. Для
+    этого необходимо отметить требуемые счета (6) (снять галочку, если счет не в
+    бухгалтерии, проставить – если в бухгалтерии), и нажать кнопку <img width=23 height=25
+src="orgs_list.files/1.jpg" alt=edit v:shapes="Рисунок_x0020_4"> (7) для внесения изменений. Программа запросит
+    подтверждение изменений.</p>
+  <p style='text-align:justify'>По нажатию кнопки <b><img src="../img/icons/print.png" alt="" width="24" height="24" /></b> доступны 2 печатные формы отчета:</p>
+  <p class=MsoListParagraph style='text-align:justify;
+'><span
+style='font-family:Symbol;'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>Отчет «Счета, переданные в бухгалтерию» - печать
+    отчета, выведенного на экран</p>
+  <p class=MsoListParagraph style='text-align:justify;
+'><span
+style='font-family:Symbol;'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>Реестр переданных документов из отдела снабжения
+    в бухгалтерию – печать реестра счетов, переданных в бухгалтерию, программа
+    запросит период передачи.</p>
+  <p style='text-align:justify'>Необходимо
+    выбрать требуемую форму и нажать кнопку «Печать»:</p>
+  <p style='text-align:justify'><img width=409 height=302
+src="an_paybuh.files/image014.jpg" v:shapes="Рисунок_x0020_35"></p>
+  <p class=MsoCaption>Рис. 7.38 Выбор печатной формы
+    отчета «Счета, переданные в бухгалтерию».</p>
+</div>
+</body>
+</html>

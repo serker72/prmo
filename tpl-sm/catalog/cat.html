@@ -1,0 +1,1098 @@
+ 
+
+%{include file="every_help_dialog.html" filename="catalog.htm" prefix="" description="Раздел Номенклатура" style="float:right;  margin-right:0px;" is_right=true}%
+
+
+
+
+<div style="float:right; margin-right:10px;">
+	%{include file="suppliers/mode_reestr.html" prefix="" pagename="catalog.php" is_right=true}%
+	
+</div>
+
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $can_add}%
+<div style="float:left; margin-right:10px;">
+<input type="button" value="Добавить позицию..." onclick="location.href='position.php';" />
+</div>
+%{/if}%
+
+%{if $can_expand_groups}%
+<div style="float:left; margin-right:10px;">
+<input type="button" value="Добавить товарную группу..." id="show_groups" />
+</div>
+<div id="groups_dialog" title="Товарные группы"  style="display:none;">
+%{include file="catalog/allgroups_3.html"}%
+</div>
+
+<script type="text/javascript">
+$(function(){
+  $("#groups_dialog").dialog({
+  autoOpen: %{if $do_open_newgroup==1}%true%{else}%false%{/if}%,
+  modal: true,
+  dialogClass: 'semi_auth',
+  width: 820,
+  height: 550,
+  buttons: {
+  	  "Готово": function() { 
+	  
+	  
+	  $(this).dialog("close");
+	  
+	  loc='catalog.php?from=0';
+	  if($("#one_group_id").val()!=null) loc=loc+'&group_id='+$("#one_group_id").val();
+	  if($("#two_group_id").val()!=null) loc=loc+'&two_group_id='+$("#two_group_id").val();
+	  if($("#three_group_id").val()!=null) loc=loc+'&three_group_id='+$("#three_group_id").val();
+	  location.href=loc;
+	  
+	   }
+  	}
+  
+  });
+  $("#show_groups").bind("click",function(){
+	  $("#groups_dialog").dialog("open");
+  });
+  
+  
+	
+  
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+	function RedrawGroups(val){
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups",
+				"current_id":val
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#one_group_id").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#one_group_id").bind("change", function(){
+		//alert('zz');
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"redraw_two_groups",
+				"group_id":$("#one_group_id").val()
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#three_group_id").empty();
+			  $("#two_group_id").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка выбора подгрупп.");	
+			}	 
+		});
+	});
+	
+	$("#add_new_one_group").bind("click",function(){
+		if($("#new_one_group").attr("value").length<3){
+			$("#new_one_group").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"add_group",
+				"question":$("#new_one_group").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Группа добавлена!"); 
+			   $("#new_one_group").attr("value","");
+			   RedrawGroups(data);
+			   $("#one_group_id").trigger("click");
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления группы.");	
+			}	 
+		});
+	});
+	
+	
+	$("#edit_one_group").bind("click",function(){
+		if( ($("#one_group_id").val()=='')||($("#one_group_id").val()==0)){
+			return false;
+		}
+		
+		zz=window.prompt("Введите название группы",$("#one_group_id option:selected").html());
+		if((zz!=$("#one_group_id option:selected").html())&&(zz!=null)){
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"edit_group",
+					"group":zz,
+					"id":$("#one_group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  RedrawGroups($("#one_group_id").val());
+			   	  $("#one_group_id").trigger("click");
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования группы.");	
+				}	 
+			});
+		}
+		
+		
+		return false;
+		
+	});
+	
+	
+	
+	//удаление
+	$("#delete_one_group").bind("click",function(){
+		
+		if( ($("#one_group_id").val()==null)||($("#one_group_id").val()==0)){
+			return false;
+		}
+		
+		
+		
+		$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"can_delete_group",
+					"id":$("#one_group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 //alert(data);
+				 
+				 if(data==1){
+					if(window.confirm("Вы действительно хотите удалить группу  "+$("#one_group_id option:selected").html()+"?")){
+					$.ajax({
+						async: true,
+						url: "/js/catalog.php",
+						type: "POST",
+						data:{
+							"action":"delete_group",
+							"id":$("#one_group_id").val()
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  RedrawGroups(0);
+						  
+						},
+						error: function(xhr, status){
+							alert("Ошибка удаления группы.");	
+						}	 
+					});	
+					} 
+				 }else{
+					alert("Невозможно удалить данную товарную группу. Причина: группа не пуста, либо позиции данной группы находятся в утвержденных документах.");
+				 }
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления группы.");	
+				}	 
+			});	
+		
+		
+		
+		
+		
+		return false;
+	});
+	
+	
+	
+	//грп 2
+	$("#two_group_id").bind("change", function(){
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"redraw_two_groups",
+				"group_id":$("#two_group_id").val()
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#three_group_id").empty();
+			  $("#three_group_id").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	});
+	
+	function RedrawGroups2(val){
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"redraw_two_groups",
+				"group_id":$("#one_group_id").val(),
+				"current_id":val
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#two_group_id").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	
+	$("#add_new_two_group").bind("click",function(){
+		if(($("#new_two_group").attr("value").length<3)||($("#one_group_id").val()==null)||($("#one_group_id").val()==0)){
+			$("#new_two_group").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"add_two_group",
+				"parent_id":$("#one_group_id").val(),
+				"question":$("#new_two_group").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Группа добавлена!"); 
+			   $("#new_two_group").attr("value","");
+			   RedrawGroups2(data);
+			  // $("#two_group_id").trigger("click"); ?? не то показывает!
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления группы.");	
+			}	 
+		});
+	});
+	
+	
+	$("#edit_two_group").bind("click",function(){
+		if( ($("#two_group_id").val()==null)||($("#two_group_id").val()==0)){
+			return false;
+		}
+		
+		zz=window.prompt("Введите название группы",$("#two_group_id option:selected").html());
+		if((zz!=$("#two_group_id option:selected").html())&&(zz!=null)){
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"edit_group",
+					"group":zz,
+					"id":$("#two_group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  RedrawGroups2($("#two_group_id").val());
+			   	  $("#two_group_id").trigger("click");
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования группы.");	
+				}	 
+			});
+		}
+		
+		
+		return false;
+		
+	});
+	
+	
+	
+	//удаление
+	$("#delete_two_group").bind("click",function(){
+		
+		if( ($("#two_group_id").val()==null)||($("#two_group_id").val()==0)){
+			return false;
+		}
+		
+		
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"can_delete_group",
+					"id":$("#two_group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 // RedrawGroups2(0);
+				  if(data==1){
+					 
+					 if(window.confirm("Вы действительно хотите удалить группу  "+$("#two_group_id option:selected").html()+"?")){
+					 
+					 $.ajax({
+						async: true,
+						url: "/js/catalog.php",
+						type: "POST",
+						data:{
+							"action":"delete_group",
+							"id":$("#two_group_id").val()
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  RedrawGroups2(0); 
+						},
+						error: function(xhr, status){
+							alert("Ошибка удаления группы.");	
+						}	 
+					  });	
+					  }
+				  }else{
+					  alert("Невозможно удалить данную товарную группу. Причина: группа не пуста, либо позиции данной группы находятся в утвержденных документах.");
+				  }
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления группы.");	
+				}	 
+			});	
+		
+		return false;
+	});
+	
+	
+	//3 уровень
+	function RedrawGroups3(val){
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"redraw_two_groups",
+				"group_id":$("#two_group_id").val(),
+				"current_id":val
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#three_group_id").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_three_group").bind("click",function(){
+		if(($("#new_three_group").attr("value").length<3)||($("#two_group_id").val()==null)||($("#two_group_id").val()==0)){
+			$("#new_three_group").focus();
+			return false;
+		}
+		
+		//alert($("#two_group_id").val());
+		
+		$.ajax({
+			async: true,
+			url: "/js/catalog.php",
+			type: "POST",
+			data:{
+				"action":"add_two_group",
+				"parent_id":$("#two_group_id").val(),
+				"question":$("#new_three_group").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Группа добавлена!"); 
+			   $("#new_three_group").attr("value","");
+			   RedrawGroups3(data);
+			  // $("#two_group_id").trigger("click"); ?? не то показывает!
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления группы.");	
+			}	 
+		});
+	});
+	
+	
+	
+	$("#edit_three_group").bind("click",function(){
+		if( ($("#three_group_id").val()==null)||($("#three_group_id").val()==0)){
+			return false;
+		}
+		
+		zz=window.prompt("Введите название группы",$("#three_group_id option:selected").html());
+		if((zz!=$("#three_group_id option:selected").html())&&(zz!=null)){
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"edit_group",
+					"group":zz,
+					"id":$("#three_group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  RedrawGroups3($("#three_group_id").val());
+			   	  $("#three_group_id").trigger("click");
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования группы.");	
+				}	 
+			});
+		}
+		
+		
+		return false;
+		
+	});
+	
+	
+	
+	//удаление
+	$("#delete_three_group").bind("click",function(){
+		
+		if( ($("#three_group_id").val()==null)||($("#three_group_id").val()==0)){
+			return false;
+		}
+		
+		
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"can_delete_group",
+					"id":$("#three_group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 // RedrawGroups3(0);
+					
+					if(data==1) {
+				 		if(window.confirm("Вы действительно хотите удалить группу  "+$("#three_group_id option:selected").html()+"?")){
+								  $.ajax({
+								  async: true,
+								  url: "/js/catalog.php",
+								  type: "POST",
+								  data:{
+									  "action":"delete_group",
+									  "id":$("#three_group_id").val()
+								  },
+								  beforeSend: function(){
+										
+								  },
+								  success: function(data){
+									RedrawGroups3(0);	
+									},
+								  error: function(xhr, status){
+									  alert("Ошибка удаления группы.");	
+								  }	
+								  });	   
+						   }
+					
+					}else{
+						 alert("Невозможно удалить данную товарную группу. Причина: группа не пуста, либо позиции данной группы находятся в утвержденных документах.");
+						
+					}
+				
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления группы.");	
+				}	 
+			});	
+		
+		return false;
+	});
+	
+	
+});
+</script>
+
+
+%{/if}%
+
+
+
+<form action="catalog.php" method="get" id="filter_form">
+
+
+
+<div style="float:left; margin-right:10px;">
+ 
+
+<label for="is_active1">Активные позиции</label><input type="radio" name="is_active" id="is_active1" value="1" %{if $is_active==1}% checked="checked"%{/if}%  %{if !$can_active_position}% disabled="disabled"%{/if}% /> 
+
+&nbsp;
+<label for="is_active0"> Неактивные позиции</label><input type="radio" name="is_active" id="is_active0" value="0" %{if $is_active==0}% checked="checked"%{/if}% %{if !$can_active_position}% disabled="disabled"%{/if}%  /> 
+
+&nbsp;
+<label for="is_active_all">Все позиции</label><input type="radio" name="is_active" id="is_active_all" value="-1" %{if $is_active==-1}% checked="checked"%{/if}% %{if !$can_active_position}% disabled="disabled"%{/if}%  /> 
+</div>
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		if($.cookie('cat_is_active')==null){
+			$.cookie('cat_is_active', 1, { expires: 14 });		
+		}
+		
+		
+		$("input[name=is_active]").bind("change", function(){
+//			alert($("input[name=is_active]:checked").val());
+			$.cookie('cat_is_active', $("input[name=is_active]:checked").val(), { expires: 14 });	
+		});
+		
+	
+	});
+	</script>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+
+%{foreach from=$view item=col}%
+
+
+%{if $col.colname=="id"}%   
+
+	<th scope="col" width="80">
+    Код позиции
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+%{/if}%
+%{if $col.colname=="name"}%   
+
+    <th scope="col" width="*">
+    Наименование
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+%{/if}%
+%{if $col.colname=="dim"}%   
+
+    
+     <th width="50" scope="col">
+    ед.изм.
+   
+    </th>
+%{/if}%
+%{if $col.colname=="group"}%   
+
+    
+    <th scope="col" width="150">
+    Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+   
+    </th>
+
+%{/if}%
+%{if $col.colname=="gost_tu"}%   
+    
+    <th scope="col">
+    ГОСТ/ТУ
+   
+    </th>
+    
+%{/if}%
+%{if $col.colname=="length"}%   
+   
+    
+     <th width="50" scope="col">
+    Длина, мм
+   
+    </th>
+%{/if}%
+%{if $col.colname=="width"}%   
+
+
+    <th width="50" scope="col">
+    Ширина, мм
+   
+    </th>
+
+%{/if}%
+%{if $col.colname=="height"}%   
+
+    <th width="50" scope="col">
+    Высота/ толщина, мм
+   
+    </th>
+
+%{/if}%
+%{if $col.colname=="diametr"}%   
+
+    <th width="50" scope="col">
+    Диаметр, мм:
+    </th>
+%{/if}%
+%{if $col.colname=="base_or_add"}%   
+    
+    
+    <th scope="col" width="80">
+    Основной/ доп. товар
+    </th>
+%{/if}%
+%{if $col.colname=="notes"}%   
+
+    
+    <th scope="col" width="80">
+    Примечания
+    </th>
+%{/if}%
+%{if $col.colname=="files"}%   
+    
+    <th scope="col" width="80">
+    Файлы
+    </th>
+%{/if}%
+
+%{if $col.colname=="is_active"}%   
+    
+    <th scope="col" width="80">
+     Позиция активна
+    </th>
+%{/if}%
+
+%{/foreach}%  
+    
+    
+    
+    <th scope="col" width="24">&nbsp;</th>
+    <th scope="col" width="24">&nbsp;</th>
+   
+</tr>
+<tr align="center" valign="top" class="filter">
+%{foreach from=$view item=col}%
+
+%{if $col.colname=="id"}%   
+
+	<td width="80">
+	 <input type="text" size="8" maxlength="255" value="%{$id}%" name="id" id="id" />
+    
+    </td>
+%{/if}%
+%{if $col.colname=="name"}%   
+
+
+	<td width="*" >
+   <input type="text" size="10" maxlength="255" value="%{$name}%" name="name" id="name"  />
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="dim"}%   
+
+    
+     <td width="*" width="50">
+    <select name="dimension_id" id="dimension_id" style="width:50px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="group"}%   
+
+    
+    <td width="100">
+   
+   
+    <select name="group_id" id="group_id" style="width:100px;">
+    %{section name=groupsec loop=$group}%
+    	<option value="%{$group[groupsec].id}%" %{if $group[groupsec].is_current}%selected="selected"%{/if}%>%{$group[groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="two_group_id" id="group_id2" style="width:100px;">
+    %{section name=two_groupsec loop=$two_group}%
+    	<option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="three_group_id" id="group_id3" style="width:100px;">
+    %{section name=three_groupsec loop=$three_group}%
+    	<option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <script type="text/javascript">
+	$(function(){
+		$("#group_id").bind("change", function(){
+			 
+			if(($("#group_id").val()!=null)&&($("#group_id").val()!=0)&&($("#group_id").val()!=undefined)){
+				
+				$("#doFilter").trigger("click");
+			}
+		});
+		
+		$("#group_id2").bind("change", function(){
+			
+			if(($("#group_id2").val()!=null)&&($("#group_id2").val()!=0)&&($("#group_id2").val()!=undefined)){
+				$("#doFilter").trigger("click");
+			}
+			
+		});
+		
+		$("#group_id3").bind("change", function(){
+			
+			if(($("#group_id3").val()!=null)&&($("#group_id3").val()!=0)&&($("#group_id3").val()!=undefined)){
+				$("#doFilter").trigger("click");
+			}
+			
+		});
+		 
+	});
+	</script>
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="gost_tu"}%   
+
+
+     <td>
+    <input type="text" size="8" maxlength="255" value="%{$gost_tu}%" name="gost_tu" id="gost_tu" />
+    
+    </td>    
+
+%{/if}%
+%{if $col.colname=="length"}%   
+   
+     <td width="50">
+     
+     <input type="text" size="4" maxlength="255" value="%{$length}%" name="length" id="length" />
+   
+    </td>
+%{/if}%
+%{if $col.colname=="width"}%   
+
+
+    <td width="50">
+    <input type="text" size="4" maxlength="255" value="%{$width}%" name="width" id="width" />
+   
+    </td>
+
+%{/if}%
+%{if $col.colname=="height"}%   
+
+    <td width="50">
+    <input type="text" size="4" maxlength="255" value="%{$height}%" name="height" id="height" />
+   
+    </td>
+%{/if}%
+%{if $col.colname=="diametr"}%   
+
+
+    <td width="50">
+    <input type="text" size="4" maxlength="255" value="%{$diametr}%" name="diametr" id="diametr" />
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="base_or_add"}%   
+
+    
+    <td width="80">
+ 	<input type="checkbox" id="is_base" name="is_base_or_add" value="0" %{if $is_base_or_add==0}% checked="checked"%{/if}% /><label for="is_base" >осн. товар</label><br />
+    
+    <input type="checkbox" id="is_add" name="is_base_or_add" value="1" %{if $is_base_or_add==1}% checked="checked"%{/if}% /><label for="is_add" >доп. товар</label>
+    <script type="text/javascript">
+	$(function(){
+		$("#is_base").bind("change",function(){
+			if($("#is_base").prop("checked")){
+				$("#is_add").prop("checked", false);
+			}
+		});
+		
+		$("#is_add").bind("change",function(){
+			if($("#is_add").prop("checked")){
+				$("#is_base").prop("checked", false);
+			}
+		});
+	});
+	</script>
+    </td>
+%{/if}%
+%{if $col.colname=="notes"}%   
+
+
+     <td >&nbsp;</td>
+%{/if}%
+%{if $col.colname=="files"}%   
+
+
+     <td >&nbsp;</td>
+%{/if}%
+     
+     %{if $col.colname=="is_active"}%   
+
+
+     <td >&nbsp;</td>
+%{/if}%
+
+
+     
+     %{/foreach}%  
+
+    <td width="24">&nbsp;
+    
+   
+    </td>
+   
+   
+    <td width="24">
+    <input id="doFilter" name="doFilter" type="submit" value="Найти" />
+    </td>
+  
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+%{foreach from=$view item=col}%
+
+
+%{if $col.colname=="id"}%   
+
+	<td width="80"  %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>%{$items[rowsec].id|string_format:"%05d"}%</td>
+%{/if}%
+%{if $col.colname=="name"}%   
+
+
+    <td width="*" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+    
+     <a href="#" class="reestr_short">%{$items[rowsec].name|strip_tags|trim|truncate:30:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    
+     <div class="reestr_full reestr_hide">%{$items[rowsec].name}%</div>
+    </td>
+%{/if}%
+%{if $col.colname=="dim"}%   
+
+
+      <td width="50" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>%{$items[rowsec].dim_name}%</td>
+
+%{/if}%
+%{if $col.colname=="group"}%   
+
+    
+    <td width="*" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+   
+    
+     <a href="#" class="reestr_short">%{$items[rowsec].group_name|strip_tags|trim|truncate:30:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    
+     <div class="reestr_full reestr_hide">%{$items[rowsec].group_name}%</div>
+    
+    
+    </td>
+%{/if}%
+%{if $col.colname=="gost_tu"}%   
+
+
+    <td width="*" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>%{$items[rowsec].gost_tu}%</td>
+
+%{/if}%
+%{if $col.colname=="length"}%   
+  
+   
+    <td width="50" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+   
+    %{$items[rowsec].length|default:"-"}%
+    </td>
+
+%{/if}%
+%{if $col.colname=="width"}%   
+
+    <td width="50" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+	 %{$items[rowsec].width|default:"-"}%
+    </td>
+%{/if}%
+%{if $col.colname=="height"}%   
+
+
+    <td width="50" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+	 %{$items[rowsec].height|default:"-"}%
+    </td>
+
+%{/if}%
+%{if $col.colname=="diametr"}%   
+
+	
+ 	<td width="50" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+    %{$items[rowsec].diametr|default:"-"}%
+    </td>
+
+%{/if}%
+%{if $col.colname=="base_or_add"}%   
+
+    
+    <td width="80" style="white-space:nowrap;  %{if $items[rowsec].is_active==0}% color:red;%{/if}%">
+    
+    
+    <input type="checkbox" id="is_base_%{$items[rowsec].id}%" value="0" %{if $items[rowsec].is_base_or_add==0}% checked="checked"%{/if}%  disabled="disabled" /><label for="is_base_or_add_%{$items[rowsec].id}%" >осн. товар</label><br />
+	<input type="checkbox"  id="is_add_%{$items[rowsec].id}%" value="0" %{if $items[rowsec].is_base_or_add==1}% checked="checked"%{/if}%  disabled="disabled" /><label for="is_base_or_add_%{$items[rowsec].id}%" >доп. товар</label>
+    
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="notes"}%   
+
+    
+    <td width="*" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+    
+     <a href="#" class="reestr_short">
+    %{$items[rowsec].notes|strip_tags|trim|truncate:30:"...":false|regex_replace:"/\.\.\.$/":"<span class='reestr_short_cut4'>...</span>"}%</a>
+    
+    <div class="reestr_full reestr_hide">
+    
+    
+    %{$items[rowsec].notes}%
+    
+    </div>
+    
+    </td>
+
+%{/if}%
+%{if $col.colname=="files"}%   
+
+    
+     <td width="80" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}% align="left"><input type="button" value="Файлы..." onclick="zc=window.open('pos_files.php?bill_id=%{$items[rowsec].id}%','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						if(zc==null) alert('Окно файлов не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон.'); return false;" style="width:90px; margin-bottom:5px" />
+                        
+         
+     
+                        
+                        </td>
+%{/if}%
+
+%{if $col.colname=="is_active"}%   
+
+    
+     <td width="80" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%> 
+                        %{if $items[rowsec].is_active==1}% +%{else}% - %{/if}% 
+                        
+                        </td>
+%{/if}%
+                        
+%{/foreach}%  
+                        
+                        
+    <td width="24" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+    %{if $can_edit}%
+   
+    <a href="position.php?action=1&id=%{$items[rowsec].id}%" target="_blank"  data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    %{else}%
+    <a href="#" data-comment="Подробно..."  class="reestr_edit reestr_inactive reestr_right_button24" onClick="return false;"> </a>
+    %{/if}%
+    </td>
+    
+    <td width="24" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+   
+    
+    %{if $items[rowsec].can_delete and $can_delete}%
+    <a href="#" onclick="if(window.confirm('Вы действительно хотите удалить позицию %{$items[rowsec].name|escape}%?')) location.href='position.php?action=2&id=%{$items[rowsec].id}%'; return false;" class="reestr_delete reestr_right_button24" data-comment="Удалить">
+    </a>
+    %{else}%
+     <a href="#" class="reestr_delete reestr_inactive reestr_right_button24" onclick=" return false;"  data-comment="Удалить"></a>
+    %{/if}%
+    
+    
+    </td>
+</tr>
+%{/section}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям позиций не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

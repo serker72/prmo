@@ -1,0 +1,192 @@
+
+<h4>Оборот за год:</h4>
+<select id="turnover_years" style="width:100px;">
+%{html_options values=$years selected=$now_year output=$years}%
+</select><br>
+
+
+<div id="turnover_month" style="border:1px solid silver; width:500px; height:250px; overflow:scroll;">
+%{section name=monsec loop=$month}%
+  %{if $smarty.section.monsec.index is div by 6}%
+  <div style="float:left;">
+  %{/if}%
+  
+  <div class="common_block">
+  
+  
+  %{if $month[monsec].enabled}%
+    <strong>%{$month[monsec].month_name}%</strong>:
+    %{if $month[monsec].value!=""}%
+    %{$month[monsec].value}%
+    
+    %{if $can_turnover_edit}%
+    <input type="button" id="turnover_month_change_%{$month[monsec].month}%" value="Сменить..." />
+    %{/if}%
+    
+    %{else}%
+    -
+    %{if $can_turnover_edit}%
+    <input type="button" id="turnover_month_add_%{$month[monsec].month}%" value="Задать..." />
+    %{/if}%
+    
+    %{/if}%
+  %{else}%
+  <em>%{$month[monsec].month_name}%</em>
+  %{/if}%
+  
+  </div>
+  
+  %{if $smarty.section.monsec.index_next is div by 6 or $smarty.section.monsec.last}%
+  </div>
+  %{/if}%
+  
+  %{if $can_turnover_edit}%
+  <script type="text/javascript">
+  $(function(){
+  		
+		$("#turnover_month_change_%{$month[monsec].month}%").bind("click", function(){
+			z=window.prompt("Введите величину оборота, руб.");
+			if(z){
+			  
+			  $.ajax({
+				  async: true,
+				  url: "/js/user_d.php",
+				  type: "POST",
+				  data:{
+					  "action":"set_turnover",
+					  "year":$("#turnover_years").val(),
+					  "month": "%{$month[monsec].month}%",
+					  "value": z,
+					  "user_id":"%{$user_id}%"
+				  },
+				  beforeSend: function(){
+						
+				  },
+				  success: function(data){
+					 $.ajax({
+						async: true,
+						url: "/js/user_d.php",
+						type: "POST",
+						data:{
+							"action":"redraw_turnover_table",
+							"year":$("#turnover_years").val(),
+							"user_id":%{$user_id}%
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+							$("#turnovers").html(data);
+						  
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления вопроса.");	
+						}	 
+					});
+				
+					
+				  },
+				  error: function(xhr, status){
+					  alert("Ошибка ввода оборота.");	
+				  }	 
+			  });
+			}
+		
+		}); 
+		
+		$("#turnover_month_add_%{$month[monsec].month}%").bind("click", function(){
+			z=window.prompt("Введите величину оборота, руб.");
+			if(z){
+			  
+			  $.ajax({
+				  async: true,
+				  url: "/js/user_d.php",
+				  type: "POST",
+				  data:{
+					  "action":"set_turnover",
+					  "year":$("#turnover_years").val(),
+					  "month": "%{$month[monsec].month}%",
+					  "value": z,
+					  "user_id":"%{$user_id}%"
+				  },
+				  beforeSend: function(){
+						
+				  },
+				  success: function(data){
+					 $.ajax({
+						async: true,
+						url: "/js/user_d.php",
+						type: "POST",
+						data:{
+							"action":"redraw_turnover_table",
+							"year":$("#turnover_years").val(),
+							"user_id":%{$user_id}%
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+							$("#turnovers").html(data);
+						  
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления вопроса.");	
+						}	 
+					});
+				
+					
+				  },
+				  error: function(xhr, status){
+					  alert("Ошибка ввода оборота.");	
+				  }	 
+			  });
+			}	
+		});
+	  
+  });
+  </script>
+  %{/if}%
+%{/section}%
+<br clear="all" />
+</div>
+
+<script type="text/javascript">
+$(function(){
+	
+	//переключили год
+	$("#turnover_years").bind("change",function(){
+		 $.ajax({
+			async: true,
+			url: "/js/user_d.php",
+			type: "POST",
+			data:{
+				"action":"redraw_turnover_table",
+				"year":$("#turnover_years").val(),
+				"user_id":%{$user_id}%
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				$("#turnovers").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	});
+});
+</script>
+
+
+<div style="float:left; margin-right:10px;">
+
+<strong>Оборот за прошлый месяц:</strong><br />
+<div id="turnover_month_value">%{$turnover_month_value}%</div>
+
+<strong>Оборот за прошлый год:</strong><br />
+<div id="turnover_year_value">%{$turnover_year_value}%</div>
+
+<p />
+</div>

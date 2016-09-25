@@ -1,0 +1,114 @@
+
+<h1 style="">Коммерческое предложение № %{$bill.code}%</h1>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$bill.pdate}%</strong><br />
+<small>создан: %{$created_by}%</small>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Действ. по:<br />
+
+<strong>%{$bill.valid_pdate}%</strong>
+
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+Контрагент:<br />
+<strong>%{$bill.supplier_id_string}%</strong>
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Договор №
+%{$bill.contract_no}%
+
+от
+%{$bill.contract_pdate}%
+
+</div>
+<br clear="all" />
+<p />
+
+
+
+
+<div style="float:left; margin-right:0px;">
+Реквизиты контрагента:<br />
+<strong>%{$bill.bdetails_id_string}%</strong>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+<!-- конец блока контрагента -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<strong>Позиции коммерческого предложения:</strong> 
+
+
+
+%{include file="kp/position_actions_print.html" bill=$bill action=1}%
+
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="kp/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    
+<p />    
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Утверждаю:</strong>
+<span id="is_confirmed_price_confirmer">%{$is_confirmed_price_confirmer}%</span>
+
+
+
+
+
+</div>
+
+<br clear="all" />
+<p />
+

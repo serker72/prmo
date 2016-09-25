@@ -1,0 +1,162 @@
+<h1>Оригиналы отгрузочных документов</h1>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+<strong>Нет оригиналов:</strong><br />
+
+
+<select id="mode%{$prefix}%" name="mode%{$prefix}%" style="width:150px;"  disabled="disabled">
+<option value="0">-всех документов-</option>
+%{html_options values=$mode_ids selected=$mode output=$mode_names}%
+</select>
+
+
+
+</div>
+
+
+%{if $supplier_name!=""}%
+<div style="float:left; margin-right:10px;">
+
+<strong>Название контрагента содержит:</strong><br />
+
+<em>%{foreach from=$our_suppliers item=item}%
+				 %{$item.full_name}%;
+				%{/foreach}%</em>
+
+</div>
+%{/if}%
+
+
+
+
+
+<br clear="all" />
+<p />
+
+%{if $sortmode==0 or $sortmode==1}%
+<em>сортировка по дате</em>
+%{elseif $sortmode==2 or $sortmode==3}%
+<em>сортировка по контрагенту</em>
+%{elseif $sortmode==8 or $sortmode==9}%
+<em>сортировка по менеджеру</em>
+%{/if}%
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="center" valign="top">
+    <th scope="col" width="100">Документ</th>
+    <th scope="col" width="60">Дата </th>
+    
+    <th scope="col" width="60">Заданная дата с/ф  </th>
+    <th scope="col" width="60">Заданный номер с/ф </th>
+    <th scope="col" width="100">Контрагент </th>
+    <th scope="col" width="100">Участок  </th>
+    <th scope="col" width="100">Объект 	 </th>
+    <th scope="col" width="80">Статус  	 </th>
+    
+    <th scope="col" width="*">Входящий счет</th>
+    <th scope="col" width="100">Создал</th>
+    <th scope="col" width="*">Нет оригиналов:</th>
+   
+ 
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+   <tr align="left" valign="top">
+    
+    
+    
+    <td width="100">
+      %{if $prefix==1}%
+     <a href="ed_acc_in.php?action=1&id=%{$items[rowsec].id}%" target="_blank">Поступление № %{$items[rowsec].id}%</a>
+    %{elseif $prefix==2}%
+    <a href="ed_acc.php?action=1&id=%{$items[rowsec].id}%" target="_blank">Реализация № %{$items[rowsec].id}%</a>
+    %{/if}%
+    </td>
+    
+    <td width="60">%{$items[rowsec].pdate}%</td>
+     <td width="60">%{$items[rowsec].given_pdate}%</td>
+     
+    
+     <td width="60">%{$items[rowsec].given_no}%</td>
+     
+    
+     
+     <td width="100">%{$items[rowsec].supplier_name}%, %{$items[rowsec].opf_name}% </td>
+     
+     <td width="100">  %{$items[rowsec].sector_name}% </td>
+     
+     <td width="100">  %{$items[rowsec].storage_name}% </td>
+     
+     
+     <td width="100" >
+
+%{if $items[rowsec].status_id==6}%
+    <strong>аннулировано</strong>
+  
+%{elseif $items[rowsec].status_id==4}%
+    <strong>не выполнено</strong>
+  
+    %{else}%
+    <strong>выполнено</strong>
+   
+%{/if}%
+   
+
+</td>
+
+ <td width="*" >
+    %{if $prefix==1}%
+      <a href="ed_bill_in.php?action=1&id=%{$items[rowsec].o_id}%&from_begin=1" target="_blank">Входящий счет № %{$items[rowsec].code}% от %{$items[rowsec].o_pdate}%</a>&nbsp;
+    %{elseif $prefix==2}%
+     <a href="ed_bill.php?action=1&id=%{$items[rowsec].o_id}%&from_begin=1" target="_blank">Исходящий счет № %{$items[rowsec].code}% от %{$items[rowsec].o_pdate}%</a>&nbsp;
+    %{/if}%   
+    </td>
+    
+
+<td width="100">
+    %{$items[rowsec].manager_name}%
+    </td>
+    
+    
+    <td width="*">
+    
+   %{if $items[rowsec].has_nakl==0}%<strong>-товарной накладной </strong><br />
+	%{/if}%
+    
+   %{if $is_incoming==1}%
+    %{if $items[rowsec].has_fakt==0}%<strong> -счета-фактуры </strong><br />
+	%{/if}%
+    %{/if}%
+    
+    
+    %{if $items[rowsec].has_akt==0 and $items[rowsec].has_usl}%<strong> -акта  </strong><br />
+	%{/if}%
+    </td>
+     
+     
+   
+     
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+
+
+<strong>Итого: отcутствует документов: %{$count_of_docs}% по %{$count_of_accs}% 
+%{if $prefix==1}%
+     поступлениям
+    %{elseif $prefix==2}%
+    реализациям
+    %{/if}%  
+
+ от %{$count_of_suppliers}% контрагентов.</strong>

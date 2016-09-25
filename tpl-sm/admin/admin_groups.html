@@ -1,0 +1,211 @@
+<h1>Роли прав доступа</h1>
+
+<div><em>Предназначаются для задания набора прав по умолчанию для вновь создаваемого пользователя системы; для редактирования прав доступа пользователей по ролям.</em><br />
+</div>
+
+<input type="button" value="Добавить роль..." id="add_role" /><p />
+<script type="text/javascript">
+$(function(){
+	$("#add_role").bind("click", function(){
+		res=window.prompt("Введите название новой роли","");
+		if(res){
+			location.href="admin_templates.php?add_role=1&name="+(res);
+			
+		}
+	});
+ 
+	//$("#tableone").columnHover({eachCell:true, hoverClass:'hover', includeSpans:true}); 
+	//$("#tableone").columnHover({eachCell:true, hoverClass:'hover', includeSpans:true}); 
+	
+	//$(".reptable").columnHover();
+	$("#tableone tr:even").addClass("even");
+	
+	function AcquireSize(){
+		 //rights_block content_inner
+		//$("#debug").html($(window).width());
+		
+		w=Math.round($(window).width())-320;
+				if(w>0) {
+					$("#rights_block").css("width", w  ); 
+					//console.log('set width='+ui.size.width);	
+				}
+				/*h=Math.round($(window).width())-600;
+				if(h>0) {
+					$("#rights_block").css("height", h  ); 
+					//console.log('set height='+ui.size.height);		
+				} */
+	}
+	
+	$(window).bind("resize", function(){
+		 AcquireSize();
+	});
+	//сделать привязку размера...
+	 
+	 AcquireSize();
+	
+});
+
+function OnMove(letter,object_id, user_id){
+	$("#right_"+letter+"_"+object_id+"_"+user_id+"").css("cursor","pointer");
+}
+function OnOut(letter,object_id, user_id){
+	$("#right_"+letter+"_"+object_id+"_"+user_id+"").css("cursor","arrow");
+}
+function OnClick(letter,object_id, user_id){
+	
+	$("#do_edit_"+letter+"_"+object_id+"_"+user_id+"").attr("value",1);
+					
+					
+					//меняем режим права
+					if($("#state_"+letter+"_"+object_id+"_"+user_id+"").attr("value")==0){
+						$("#state_"+letter+"_"+object_id+"_"+user_id+"").attr("value",1);
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("inactive");
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("inactive_changed");
+						
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").addClass("active_changed");
+					}else{
+						$("#state_"+letter+"_"+object_id+"_"+user_id+"").attr("value",0);
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("active");
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("active_changed");
+						
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").addClass("inactive_changed");
+					}
+	
+}
+</script>
+
+
+<form action="admin_templates.php" method="post" id="rights_form">
+<div id="rights_block" style="border:1px solid gray; width:780px; height:400px; overflow:scroll; padding:2 2 2 2;">
+<table width="*" cellspacing="0" cellpadding="4" border="0" class="tableone">
+<thead>
+<!-- группы объектов -->
+<tr align="center" valign="top">
+	<th scope="col" width="160" rowspan="2">
+    Роли пользователей/ Группы+объекты системы
+    </th>
+    %{section name=obgsec loop=$obg}%
+    <th scope="col" width="80" colspan="%{$obg[obgsec].objects_count}%">
+    <div id="obgrp_%{$obg[obgsec].id}%" title="Группа объектов %{$obg[obgsec].name|escape}%|%{$obg[obgsec].description|escape}%">%{$obg[obgsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obgrp_%{$obg[obgsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </th>
+  	
+    %{/section}%
+</tr>
+<!-- объекты -->
+<tr align="center" valign="top">
+    %{section name=objsec loop=$obj}%
+    <th width="80">
+    <div id="obj_%{$obj[objsec].id}%" title="Объект %{$obj[objsec].name|escape}%|%{$obj[objsec].description|escape}%">%{$obj[objsec].id}%. %{$obj[objsec].name}%</div>
+    
+    </th>
+   
+    %{/section}%
+</tr>
+</thead>
+<tbody>
+<!-- группы пользователей + пользователи -->
+%{section name=usec loop=$u}%
+<tr align="left" valign="top">
+	<!-- группы пользователей -->
+   
+    <td width="80">
+    <div id="ug_%{$u[usec].id}%" title="%{$u[usec].g_name|escape}%|%{$u[usec].g_description|escape}%" style="font-weight:bold;">%{$u[usec].g_name}%</div>
+    <script type="text/javascript">
+	/*$(function(){
+		$("#ug_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});*/
+	</script>
+    </td>
+    
+    
+    <!-- права пользователей по объектам -->
+   %{section name=rsec loop=$u[usec].rights_arr}%
+	<td width="*" align="center" title="Роль %{$u[usec].g_name}%| Права на объект %{$u[usec].rights_arr[rsec].object_name}%" id="column_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%">
+    	<script type="text/javascript">
+		/*$(function(){
+			$("#column_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%").cluetip({
+			  splitTitle: "|"
+			});
+		});*/
+		</script>
+    	%{section name=rrsec loop=$u[usec].rights_arr[rsec].rights}%
+        	%{if $u[usec].rights_arr[rsec].rights[rrsec].has_access}%
+            
+            <input type="hidden" value="1" name="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" id="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" />
+            <div id="right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" class="active"  onmouseover="OnMove('%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%', '%{$u[usec].id}%');" onmouseout="OnOut('%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%', '%{$u[usec].id}%');" onclick="OnClick('%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%', '%{$u[usec].id}%');">
+            %{else}%
+             <input type="hidden" value="0" name="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" id="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" />
+            
+            <div id="right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" class="inactive" onmouseover="OnMove('%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%', '%{$u[usec].id}%');" onmouseout="OnOut('%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%', '%{$u[usec].id}%');" onclick="OnClick('%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%','%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%', '%{$u[usec].id}%');">
+            %{/if}%
+            %{$u[usec].rights_arr[rsec].rights[rrsec].letter}%
+           
+            %{if $u[usec].rights_arr[rsec].rights[rrsec].has_access}%
+            </div>
+            %{else}%
+            </div>
+            %{/if}%
+            <input type="hidden" value="0" name="do_edit_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" id="do_edit_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" />
+            
+        %{/section}%
+    </td>
+    
+    %{/section}%
+</tr>
+
+
+%{/section}%
+</tbody>
+</table>
+</div>
+
+<br />
+<label for="change_mode">Укажите, как редактировать права пользователей с редактируемыми ролями?</label>
+<br />
+
+<input type="radio" name="change_mode" value="0" checked="checked" />Не редактировать<br />
+<input type="radio" name="change_mode" value="1" />Добавить новые права, не удалять удаляемые права<br />
+<input type="radio" name="change_mode" value="2" />Удалить удаляемые права, не добавлять новые права<br />
+<input type="radio" name="change_mode" value="3" />Полная смена прав<br />
+
+
+<br />
+<input type="submit" name="doInp" value="Внести изменения" />
+
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#rights_form").bind("submit", function(){
+		return window.confirm("Вы действительно хотите внести в базу сделанные изменения?");
+	});
+});
+</script>
+<p />
+
+
+<strong>Обозначения прав:</strong>
+<table width="275" border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <th scope="row">r</th>
+    <td>права на чтение</td>
+  </tr>
+  <tr>
+    <th scope="row">w</th>
+    <td>права на запись</td>
+  </tr>
+  <tr>
+    <th scope="row">x</th>
+    <td>права на администрирование</td>
+  </tr>
+</table><br />

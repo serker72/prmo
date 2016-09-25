@@ -1,0 +1,317 @@
+ <div id="copy_pos_dialog" title="Копирование позиции">
+      	
+        <strong>Вы копируете позицию:</strong><br />
+        <div id="copy_pos_dialog_name"></div><br />
+
+       <strong> Количество новой позиции:</strong><br />
+		<em>максимальное: <span id="copy_pos_max_quantity"></span></em><br />
+
+        <input type="text" id="copy_pos_quantity" value="0" size="10" maxlength="10" />
+        <br />
+		<br />
+		<strong>Объект новой позиции:</strong><br />
+
+      	<select id="copy_pos_storage_id" style="width:150px;"></select>
+      
+      </div>
+      
+      
+       
+      <script type="text/javascript">
+      $(function(){
+			
+			$("#copy_pos_dialog").dialog({
+			  autoOpen: false,
+			  dialogClass: 'semi_auth',
+			  modal: true,
+			  width: 300,
+			  height: 250
+			});
+			
+			
+			
+			
+			$("#do_copy_pos").bind("click",function(){
+			//построить массив выделенных элементов	
+			  var sel_elems=new Array();
+			  $.each($("#bill_positions_table input[type=checkbox][id^=to_ship_]:checked"), function(index, value) { 
+				  
+				   hash=$(value).attr("id");
+				   hash=hash.replace(/^to_ship_/,"");
+				   //alert(hash);
+				   name=$("#new_position_code_"+hash).html()+" "+$("#new_position_name_"+hash).html()+", "+$("#new_position_dim_name_"+hash).html();
+				  // alert(name);
+				  
+				   sel_elems.push({
+					   "position_id":$("#new_position_id_"+hash).val(),
+					   "storage_id":$("#new_storage_id_"+hash).val(),
+					   "sector_id":$("#new_sector_id_"+hash).val(),
+					   "komplekt_ved_id":$("#new_komplekt_ved_id_"+hash).val(),
+					   "name":name});
+				  
+			  });
+			  
+			  //return;
+			  
+			  //рекурсивная функция копирования
+			  function SplitRow(){
+			  	if(sel_elems.length>0){
+			  		var elem=sel_elems.shift();
+					
+					//alert(elem.position_id+" "+elem.storage_id+elem.sector_id+elem.komplekt_ved_id);
+					//диалог с аджакс - запросом на кнопке Готово, в секции success - вызов SplitRow()
+					
+					var hash=hex_md5(elem.position_id+'_'+elem.storage_id+'_'+elem.sector_id+'_'+elem.komplekt_ved_id);
+					//alert(hash);
+					$("#copy_pos_dialog_name").html(elem.name);
+					$("#copy_pos_storage_id").val(0);
+					$("#copy_pos_quantity").val(0);
+					$("#copy_pos_max_quantity").html(parseFloat($("#new_quantity_"+hash).val())-0.001);
+					//подгрузить объекты
+					$.ajax({
+					  async: false,
+					  url: "/js/bill.php",
+					  type: "POST",
+					  data:{
+						  "action":"load_storages",
+						  "current_id":0,
+						  "sector_id":elem.sector_id
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						$("#copy_pos_storage_id").html(data);
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					$("#copy_pos_dialog").dialog({
+					 buttons:{
+						  "Готово": function(){
+							 //проверки: кол-во больше нуля, но меньше максимального количества
+							 //склад - не ноль и не текущий
+							 
+							 can_apply=true;
+							 
+							 if(isNaN($("#copy_pos_quantity").val())||($("#copy_pos_quantity").val()==0)||parseFloat($("#copy_pos_quantity").val())<0){
+								alert("Неверно заполнено поле Количество новой позиции!");
+								$("#copy_pos_quantity").focus();
+								can_apply=can_apply&&false; 
+							 }
+							 
+							 if(can_apply&&($("#copy_pos_quantity").val()>parseFloat($("#copy_pos_max_quantity").html())-0.001)){
+								alert("Вы превышаете допустимое количество новой позиции!");
+								$("#copy_pos_quantity").focus();
+								can_apply=can_apply&&false; 
+							 }
+							 
+							 
+							 //проверки склада-объекта
+							 if(can_apply&&($("#copy_pos_storage_id").val()==0)){
+								alert("Выберите объект!");
+								$("#copy_pos_storage_id").focus();
+								can_apply=can_apply&&false;  
+							 }
+							 
+							 if(can_apply&&($("#copy_pos_storage_id").val()==$("#new_old_storage_id_"+hash).val())){
+							 	alert("Вы выбрали текущий объект. Пожалуйста, выберите другой объект!");
+								$("#copy_pos_storage_id").focus();
+								can_apply=can_apply&&false;  
+							 }
+							 
+							
+							 if(can_apply){
+							 	
+								//перенос данных в таблицу на странице
+							
+								var complex_positions=new Array();
+								
+								$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+								  hash1=$(value).val();
+								  
+								  hashed_string='';
+								  hashed_string=$("#new_position_id_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#new_quantity_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#new_has_pm_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#new_price_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#new_rub_or_percent_"+hash1).val();
+								  
+								  hashed_string=hashed_string+';'+$("#new_plus_or_minus_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#new_value_"+hash1).val();
+								  
+								  hashed_string=hashed_string+';'+$("#new_storage_id_"+hash1).val();
+								  
+								  hashed_string=hashed_string+';'+$("#new_sector_id_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#new_komplekt_ved_id_"+hash1).val();
+								  hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val();
+									hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val();
+									hashed_string=hashed_string+';'+$("#new_discount_rub_or_percent_"+hash1).val();
+								  
+								 
+								  hashed_string=hashed_string+';'+$("#new_discount_value_"+hash1).val();
+								  
+								  //alert(hashed_string);
+								  complex_positions.push(hashed_string);			  
+								
+							  });
+								
+								
+								//alert(hash);
+								position_id=elem.position_id;
+								old_quantity=$("#new_quantity_"+hash).attr("value");
+						
+							
+								old_storage_id=$("#new_storage_id_"+hash).val();
+								
+								
+								//попробуем найти элемент с параметрами, как у вновь создаваемого:
+								var hash_new=hex_md5(elem.position_id+'_'+$("#copy_pos_storage_id").val()+'_'+elem.sector_id+'_'+elem.komplekt_ved_id);
+								
+								if($("#new_quantity_"+hash_new).val()!=undefined){
+									 //alert('zz');
+									 additional_quantity=$("#new_quantity_"+hash_new).val();
+								}else{
+									additional_quantity=0;
+								}
+								
+								//alert(additional_quantity);
+								
+								$.ajax({
+								  async: true,
+								  url: "/js/bill.php",
+								  type: "POST",
+								  data:{
+									  "action":"split_positions",
+									  
+									  "position_id":position_id,
+									  "old_quantity":old_quantity,
+									  "old_storage_id":old_storage_id,
+									  "additional_quantity":additional_quantity,
+									  
+									  "new_storage_id":$("#copy_pos_storage_id").val(),
+									  "new_quantity":$("#copy_pos_quantity").val(),
+									  
+									  "id":$("#id").attr("value"),
+									  "komplekt_id":$("#new_komplekt_ved_id_"+hash).attr("value"),
+									  "storage_id":$("#new_storage_id_"+hash).val(),
+									  "sector_id":$("#new_sector_id_"+hash).val(),
+									  
+									  "complex_positions[]":complex_positions
+								  },
+								  beforeSend: function(){
+									//alert("Загрузка реквизитов.");
+									
+								  },
+								  success: function(data){
+									//$("#positions_dialog_table").html(data);
+									
+									$("#positions").html(data); 
+									$("#copy_pos_dialog").dialog("close");  
+							 	
+							 		SplitRow();  
+								  },
+								  error: function(xhr, status){
+									// alert("Ошибка загрузки реквизитов.");	
+								  }	 
+								});
+								
+							 }
+						  },
+						  "Отмена": function(){
+							 $("#copy_pos_dialog").dialog("close"); 
+						  }
+					  }
+					});	
+					$("#copy_pos_dialog").dialog("open");
+					
+					
+				}else{
+					//кончились позиции к разбиению
+					
+					
+					complex_positions=new Array();
+				
+					$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+						hash1=$(value).val();
+						
+						hashed_string='';
+						
+						hashed_string=$("#new_position_id_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#new_quantity_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#new_has_pm_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#new_price_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#new_rub_or_percent_"+hash1).val();
+						
+						hashed_string=hashed_string+';'+$("#new_plus_or_minus_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#new_value_"+hash1).val();
+						
+						
+						
+						hashed_string=hashed_string+';';
+					hashed_string=hashed_string+';';
+					hashed_string=hashed_string+';';
+					hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash1).val();
+					hashed_string=hashed_string+';'+$("#check_new_total_"+hash1).val();
+						
+						
+						//alert(hashed_string);
+						complex_positions.push(hashed_string);
+						
+					});
+					
+					//подсчет нового Итого
+					$.ajax({
+					  async: true,
+					  url: "/js/bill.php",
+					  type: "POST",
+					  data:{
+						  "action":"calc_new_total",
+						  
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						$("#positions_cost").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />'); 
+					  },
+					  success: function(data){
+						$("#positions_cost").html(data); 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					//подсчет нового НДС
+					$.ajax({
+					  async: true,
+					  url: "/js/bill.php",
+					  type: "POST",
+					  data:{
+						  "action":"calc_new_nds",
+						  
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						$("#positions_nds").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />'); 
+					  },
+					  success: function(data){
+						$("#positions_nds").html(data); 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+				}
+				
+			  }
+			  
+			  
+			  SplitRow();
+			  return false;
+			});
+				
+	  });
+	  </script>

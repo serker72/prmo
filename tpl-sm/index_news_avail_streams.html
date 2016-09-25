@@ -1,0 +1,69 @@
+ 	%{foreach from=$streams item=item}%
+    <div class="common_block" id="index_news_feed_block_%{$item.id}%">
+    
+    	<div style="float:left; margin-right:10px;">
+            <input type="checkbox" id="index_news_feed_%{$item.id}%" value="%{$item.url}%" />
+            <label for="index_news_feed_%{$item.id}%">%{$item.url}%</label>
+			        
+        </div>
+        <div style="float:left; margin-right:10px;">
+        	<label for="index_news_feed_charset_%{$item.id}%"> одировка</label><br>
+			<select id="index_news_feed_charset_%{$item.id}%" style="width:100px;">
+            	<option value="utf-8" %{if $item.charset=="utf-8"}% selected%{/if}%>utf-8</option>
+                <option value="windows-1251" %{if $item.charset=="windows-1251"}% selected%{/if}%>windows-1251</option>
+            </select>
+        </div>
+        
+        <br clear="all">
+        
+       
+        <div id="index_news_feed_preview_%{$item.id}%">
+            
+             <strong>%{$item.title}%</strong>
+             
+            
+             %{$item.content}%
+             
+            
+        </div>
+      
+                
+    </div>
+    %{/foreach}%
+    <script>
+	$(function(){
+		$("select[id^=index_news_feed_charset_]").bind("change", function(){
+			id=$(this).attr("id").replace(/^index_news_feed_charset_/,'');
+			
+			//подгрузка превью в соотв-ии с выбранной кодировкой
+			$.ajax({
+			async: false,
+			url: "/js/index_news.php",
+			type: "POST",
+			 
+			data:{
+				"action":"redraw_preview",
+				
+				"url":$("#index_news_feed_"+id).val(),
+				"charset":$("#index_news_feed_charset_"+id).val()
+			},
+			beforeSend: function(){
+				 $("#index_news_feed_preview_"+id).html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+			},
+			success: function(data){
+			  // alert(data);
+				$("#index_news_feed_preview_"+id).html(data);
+			},
+			error: function(xhr, status,error){
+				
+			   
+			   //$("#index_news_streams").html(""); 
+			},
+			complete: function(){
+				
+			} 
+		});	
+			
+		});
+	});
+	</script>

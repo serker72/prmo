@@ -1,0 +1,100 @@
+<script type="text/javascript">
+$(function(){
+	
+	//поиск самого старого неоплаченного счета контрагента
+	function FindOldBill(){
+		$.ajax({
+			async: true,
+			url: "/js/pay.php",
+			type: "POST",
+			data:{
+				"action":"auto_find_old_bill",
+				"supplier_id":$("#supplier_id").val(),
+				"contract_id":$("#contract_id").val(),
+				"pay_id":$("#id").val(),
+				"value":$("#value").val().replace("\,","\.")
+			},
+			beforeSend: function(){
+				$("#positions").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="0" />');  
+			},
+			success: function(data){
+			 
+			  $("#positions").html(data);
+			  
+			  ControlSumm();
+			  
+			  if($("#bill_positions_table tbody tr").length==0){
+				alert("У данного контрагента нет неоплаченных счетов. Сумма оплаты попадет на карту контрагента как авансовый платеж.");  
+			  }else{
+				 $("#bill_id").val($("#bill_positions_table tbody tr input[id^=new_position_id_]:first").val());  
+			  }
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});	
+		
+	}
+	
+	
+	
+	
+	
+	$("#pay_for_bill").bind("change",function(){
+		if($("#pay_for_bill").prop("checked")){
+			//$("#add_pos").trigger("click");
+			
+			
+			
+			if(($("#supplier_id").val()==0)||($("#supplier_id").val()=="")||($("#supplier_id").val()==null)){
+				alert("Пожалуйста, выберите контрагента!");
+				$("#pay_for_bill").prop("checked",false);
+				return false;
+			}else if(($("#contract_id").val()==0)||($("#contract_id").val()=="")||($("#contract_id").val()==null)){
+				alert("Пожалуйста, выберите договор контрагента!");
+				$("#pay_for_bill").prop("checked",false);
+				return false;
+			}else{
+				if(($("#value").val()==0)||($("#value").val()=="")||($("#value").val()==null)){
+					alert("Пожалуйста, укажите сумму платежа!");
+					$("#pay_for_bill").prop("checked",false);
+					$("#value").focus();
+					return false;
+				}else{
+					//
+					do_it=true;
+					if($("#bill_positions_table tbody > tr").length>0){
+						do_it=window.confirm("Внимание! Данное действие приведет к сбросу ранее выбранных счетов в оплате. Счет для оплаты будет выбран автоматически. Все равно продолжить?");
+					}
+					
+					if(do_it){
+						//снять галочку "оплата по договору"
+						$("#pay_for_dogovor").prop("checked",false);
+						
+						
+					
+							//не знаем счета - пытаемся найти старый
+							FindOldBill();
+						
+						
+						
+						
+					}else{
+						$("#pay_for_bill").prop("checked",false);
+						return false;
+					}
+				}
+			}
+			
+			
+		}else{
+			if(window.confirm("Внимание! Данное действие приведет к сбросу ранее выбранного счета в оплате. Все равно продолжить?")){
+				$("#positions").empty();
+			}else{
+				$("#pay_for_bill").prop("checked",true);
+			}
+		}
+	});
+});
+</script>

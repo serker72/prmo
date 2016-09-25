@@ -1,0 +1,68 @@
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	
+});
+</script>
+<table width="*" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*">Файл
+    </th>
+    <th scope="col" width="60">Размер
+    </th>
+	<th scope="col" width="100">Получить
+    </th>
+   
+    <th scope="col" width="150">Описание
+    </th>    
+    <th scope="col" width="100">Дата
+    </th>
+    
+   
+    
+</tr>
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="*" align="left"><a href="%{$loadname}%?id=%{$items[rowsec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$items[rowsec].orig_name}%</a></td>
+     <td width="60">
+    %{$items[rowsec].size|string_format:"%.3f&nbsp;МБ"}%
+    </td>
+    
+    <td width="100">
+    <input type="button" value="Получить" onclick="location.href='%{$loadname}%?id=%{$items[rowsec].id}%';" />
+    
+    </td>
+   
+   
+    <td width="150" align="left" id="more_info_%{$items[rowsec].id}%" title="%{$items[rowsec].orig_name|escape}%|%{$items[rowsec].txt|escape}%">
+    
+    %{$items[rowsec].txt|truncate:80:"..."}%
+    
+     <script type="text/javascript">
+	$(function(){
+		$("#more_info_%{$items[rowsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    
+    
+    
+    
+    </td>
+    <td width="100">
+    %{$items[rowsec].pdate}%
+    </td>
+    
+   
+  
+</tr>
+%{/section}%
+</tbody>
+</table>

@@ -1,0 +1,118 @@
+ 
+
+<div id="%{$fieldname}%_bills_list" style=" display:none;" title="Выберите счета">
+<table width="100%" border="1" class="blacktable" cellpadding="1" cellspacing="0">
+<thead>
+<tr align="left" valign="top">
+	<th width="50">Счет</th>
+    <th width="50">Зад. № счета</th>
+    <th width="*">Контрагент</th>
+    <th width="50">Сумма, руб.</th>
+    <th width="24"></th>
+</tr>    
+</thead>
+<tbody id="%{$fieldname}%_bills_tb">
+%{include file="cash/bills_for_cash.html"}%
+</tbody>
+</table>
+</div>
+
+
+
+<script type="text/javascript">
+  $(function(){
+    $("#%{$fieldname}%_bills_list").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 450,
+    height: 350,
+    buttons: {
+        "Готово": function() { 
+        	var seld=new Array();
+			$.each($("input[id^=%{$fieldname}%bill_checked_]:checked"), function(k,v){
+				seld.push($(v).val());
+			});
+			
+			 
+        	if(seld.length==0){
+				
+				alert("Выберите хотя бы один счет для включения в расход наличных!");	
+			}else{
+				
+				$.ajax({
+				  async: true,
+				  url: "/js/cash.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_bills_to_cash",
+					  
+					  "fieldname":"%{$fieldname}%",
+					  "kind_id":$("#kind_id").val(),
+					  "checked[]":seld
+				  },
+				  beforeSend: function(){
+					$("#bills").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');    
+				  },
+				  success: function(data){
+					$("#bills").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления вопроса.");	
+				  }	 
+			  });
+				
+				
+				$(this).dialog("close"); 
+				
+			}
+		
+		
+		},
+       
+	  "Отмена": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	
+	$("#bills_edit").bind("click", function(){
+		//alert('zzz');
+		checked=new Array();
+		$.each($("input[id^=bill_]"), function(k,v){
+			
+			checked.push($(v).val());
+		});
+		
+		$.ajax({
+              async: true,
+              url: "/js/cash.php",
+              type: "POST",
+              data:{
+                  "action":"get_avail_bills",
+				  "id":$("#id").val(),
+				  "fieldname":"%{$fieldname}%",
+				  "kind_id":$("#kind_id").val(),
+				  "checked[]":checked
+              },
+              beforeSend: function(){
+                $("#%{$fieldname}%_bills_tb").html('<tr><td colspan=5><img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" /></td></tr>');    
+              },
+              success: function(data){
+                $("#%{$fieldname}%_bills_tb").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		
+		
+		$("#%{$fieldname}%_bills_list").dialog("open");
+	});
+  });
+</script>

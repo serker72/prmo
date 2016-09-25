@@ -1,0 +1,565 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	$("#pdate_beg").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_end").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 
+	 
+	
+	$("#pdate_beg").bind("change", ChangeMode);
+	$("#ptime_beg_h").bind("change", ChangeMode);
+	$("#ptime_beg_m").bind("change", ChangeMode);
+	$("input[name=incoming_or_outcoming]").bind("change", ChangeMode);
+	
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	function ChangeMode(){
+		ev_date=new Date( $("#pdate_beg").val().substr(6,4), $("#pdate_beg").val().substr(3,2)-1, $("#pdate_beg").val().substr(0,2), $("#ptime_beg_h").val(), $("#ptime_beg_m").val(),0,0);
+		now=new Date();
+		
+		
+		if($("input[name=incoming_or_outcoming]:checked").val()==0){
+			//если входящий - то  прошедшее время
+			//время при этом сбрасываем в настоящее
+			$("#plan_or_fact").val(1);
+			$("#plan_or_fact_1").prop("checked",true);
+			
+			if(ev_date>now){
+				$("#pdate_beg").val(ZeroFormat(now.getDate())+'.'+ZeroFormat(now.getMonth()+1)+'.'+ZeroFormat(now.getFullYear()));
+				$("#ptime_beg_h").val(ZeroFormat(now.getHours()));
+				$("#ptime_beg_m").val(ZeroFormat(now.getMinutes()));	
+			}
+			$("#remind_do").prop("checked",false);
+			$("#remind_do").prop("disabled",true);
+			$("#remind_period").prop("disabled",true);
+			$("#report").prop("disabled",false);
+			
+			$("#description_block").hide();
+				
+		}else if($("input[name=incoming_or_outcoming]:checked").val()==1){
+			//если исходящий - то проверим введенное время
+			//если время настоящее или прошлое - то совершенный
+			//если будущее - то запланированный
+			
+			if(ev_date>now){
+				$("#plan_or_fact").val(0);
+				$("#plan_or_fact_0").prop("checked",true);
+				
+				$("#remind_do").prop("checked",true);
+				$("#remind_period").val(1);
+				$("#report").prop("disabled",true);
+			}else{
+				$("#plan_or_fact").val(1);
+				$("#plan_or_fact_1").prop("checked",true);
+				
+				$("#remind_do").prop("checked",false);
+				$("#remind_period").val(0);
+				$("#report").prop("disabled",false);
+			}
+			
+			$("#remind_do").prop("disabled",false);
+			$("#remind_period").prop("disabled",false);
+			
+			
+			if($("#plan_or_fact").val()==0){
+				$("#description_block").show();
+			}else{
+				$("#description_block").hide();
+			}
+				
+				
+		}
+		
+	}
+	 
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="sched_4.html" prefix="" description="Информация о создании звонка" style="float:right" is_right=true}%
+
+
+
+<h1>Запланировать звонок</h1>
+
+<form action="ed_sched.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+<input type="hidden" name="kind_id" value="4">
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;"> 
+
+
+    <input type="radio" value="1" id="incoming_or_outcoming_1" %{if $incoming_or_outcoming==1}%checked %{/if}% name="incoming_or_outcoming" />
+    <label for="incoming_or_outcoming_1">Исходящий звонок</label>
+    <br>
+    
+    
+    <input type="radio" value="0" id="incoming_or_outcoming_0" %{if $incoming_or_outcoming==0}%checked %{/if}% name="incoming_or_outcoming" />
+    <label for="incoming_or_outcoming_0">Входящий звонок</label>
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+    
+   
+<label for="pdate_beg">
+    Дата звонка: 
+    </label> <br>
+
+    
+    <input type="text" value="%{$now}%" id="pdate_beg" name="pdate_beg"  size="10"   maxlength="10" />
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="ptime_beg">Время звонка:</label> <br>
+
+    <!--<input type="text" value="%{$time}%" name="ptime_beg" id="ptime_beg" size="10" maxlength="5" />
+    
+    -->
+     <select name="ptime_beg_h" id="ptime_beg_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$ptime_beg_hr output=$ptime_beg_h}%
+    </select>: 
+    <select name="ptime_beg_m" id="ptime_beg_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$ptime_beg_mr output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+ <strong>Вы заносите:</strong>
+
+ 	<input type="hidden" value="%{$plan_or_fact}%" name="plan_or_fact" id="plan_or_fact" /><br>
+	
+    <input disabled type="radio" value="1" id="plan_or_fact_1"  %{if $plan_or_fact==1}% checked%{/if}%   name="plan_or_factt" />
+    <label for="plan_or_fact_1">звонок совершенный</label>
+    <br>
+    
+    
+    <input disabled type="radio" value="0" id="plan_or_fact_0" %{if $plan_or_fact==0}% checked%{/if}% name="plan_or_factt" />
+    <label for="plan_or_fact_0">звонок запланированный</label>
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+
+
+    <label for="pdate">
+    Дата создания: 
+    </label><br />
+    
+  %{$now_time}%
+    <input type="hidden" value="%{$now_date}%" name="pdate" />
+
+</div>
+
+
+
+  
+  
+
+<div style="float:right; margin-right:0px; min-width:120px;">
+
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;" >
+ 
+</a>
+
+<strong>Статус:</strong><br />
+
+создан
+
+
+</div>
+
+<div style="float:right;  margin-right:10px; ">
+  <a href="#" onclick="alert('В данном режиме копирование звонка недоступно. Пожалуйста, нажмите кнопку Создать звонок и остаться в карте для получения возможности копирования звонка.'); return false;" class="reestr_copy reestr_inactive reestr_right_button24" data-comment="Копировать..."></a>
+  
+  <a href="#"   onclick="alert('В данном режиме печать звонка недоступна. Пожалуйста, нажмите кнопку Создать звонок и остаться в карте для получения возможности печати звонка.'); return false;"  data-comment="печать звонка..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+</div>  
+
+
+<br clear="all" />
+ 
+	
+
+
+<div style="float:left; margin-right:20px;">
+
+	<label for="manager_select">Сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+   
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  
+
+	
+	<input type="button" id="manager_select" value="..." />
+    <input type="button" id="manager_clear" value="x" />
+	
+    %{include file="plan/manager_actions.html"}%
+    
+</div> 
+    
+    
+    
+   <br clear="all" />
+<p />
+ 
+
+   
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контакт:</h3>
+</div>
+<div style="float:left; margin-right:20px;"> 
+	<input type="button" id="supplier_select" value="..." />
+    <input type="button" id="supplier_clear" value="x" />
+    
+    
+    
+
+<input type="hidden"  id="supplier_id" name="supplier_id" value="%{$old_doc.supplier_id}%" />
+    <input type="hidden"  id="contact_id" name="contact_id" value="%{$old_doc.contact_id}%" />
+    <input type="hidden"  id="ccontact_value" name="ccontact_value" value="%{$old_doc.ccontact_value}%" />
+</div>    
+
+<br clear="all" />
+<p />
+
+
+ 
+
+
+<div style="float:left; margin-right:5px;">	
+    
+    <label for="supplier_string">Контрагент:</label><br>
+    <input type="text" id="supplier_string" value="%{$old_doc.supplier_string|escape:"html"}%" disabled size="40" maxlength="255" style="width:300px;" />
+
+
+</div>
+<div style="float:left; margin-right:20px; padding-top:15px;">
+ <a href="#" onClick=" if(($('#supplier_id').val()!='')&&($('#supplier_id').val()!='')) window.open('supplier.php?action=1&id='+$('#supplier_id').val()+'&show_actions=1'); return false;" class="reestr_edit reestr_button24" style="display:inline-block !important; float:none;"  data-comment="перейти во вкладку Действия по контрагенту"></a> 
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">	
+    
+    <label for="supplier_string">Имя, должность:</label><br>
+
+    <input type="text" id="contact_string" value="%{$old_doc.contact_string|escape:"html"}%" disabled size="40" maxlength="255" style="width:300px;"  /><br>
+    
+
+</div>    
+<div style="float:left; margin-right:20px;">	
+    
+    <label for="supplier_string">Телефон:</label><br>
+    <input type="text" id="contact_value_string" value="%{$old_doc.contact_value_string|escape:"html"}%" disabled size="40" maxlength="255" style="width:300px;"  /><br>
+	
+</div>    
+  
+    
+ 
+ 
+%{include file="plan/supplier_actions.html"}%
+
+
+ 
+ <br clear="all" />
+<p />
+   
+
+
+<div id="description_block" style="float:left; width:100%; min-width:480px;  margin-right:0px; %{if !$show_description}% display:none;%{/if}%">
+
+<label for="description">Цель звонка:</label><br>
+<textarea id="description" name="description" cols="60" rows="5"  style="width:100%;">%{$old_doc.description|escape:"html"}%</textarea>
+
+<script type="text/javascript">
+	try{
+			$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height:'25px'
+            });
+		
+	}catch(e){}
+	
+	 
+	</script>
+
+<br clear="all" />
+<p />
+</div>
+
+
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+
+<label for="report">Результат звонка:</label><br>
+<textarea id="report" name="report" cols="60" rows="5" %{if $plan_or_fact==0}% disabled%{/if}% style="width:940px;">%{$old_doc.report|escape:"html"}%</textarea>
+
+<script type="text/javascript">
+	try{
+			$("#report").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height:'100px'
+            });
+		
+	}catch(e){}
+	
+	 
+	</script>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+ 
+<h3>Напомнить мне:</h3>
+ 
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" id="remind_do" name="remind_do" value="1"  %{if $plan_or_fact==0}% checked%{/if}% /><label for="remind_do">напомнить мне</label><br>
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<select name="remind_period" id="remind_period" style="width:200px;">
+<option value="0" selected>-выберите период-</option>
+<option value="1">за 15 минут</option>
+<option value="2">за 30 минут</option>
+<option value="3">за час</option>
+<option value="4">за сутки</option>
+</select>
+</div>
+
+<br clear="all" />
+<p />
+
+ 
+ 
+ 
+
+
+
+<input type="submit" value="Создать звонок" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать звонок и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='shedule.php';" />
+<br>
+
+<p />
+
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	
+	
+	//контроль времени напоминания относительно начала встречи	
+	if($("#remind_do").prop("checked")){
+		now=new Date();	
+		//дата срабатывания напоминания - это дата начала - определенный интервал времени
+		remind_date=new Date( $("#pdate_beg").val().substr(6,4), $("#pdate_beg").val().substr(3,2)-1, $("#pdate_beg").val().substr(0,2), $("#ptime_beg_h").val(), $("#ptime_beg_m").val(),0,0);
+		 
+		if($("#remind_period").val()==0){
+			alert("Выберите период напоминания!");
+			return false;
+		}else if($("#remind_period").val()==1){
+			remind_date.setMinutes(remind_date.getMinutes()-15);
+			//alert(remind_date); 
+		}else if($("#remind_period").val()==2){
+			remind_date.setMinutes(remind_date.getMinutes()-30);
+		}else if($("#remind_period").val()==3){
+			remind_date.setHours(remind_date.getHours()-1);
+			//alert(remind_date); 
+			 //.setMinutes(remind_date.getMinutes()+30); 
+		}else if($("#remind_period").val()==4){
+			remind_date.setDate(remind_date.getDate()-1); 
+		}else if($("#remind_period").val()==5){
+			 remind_date.setDate(remind_date.getDate()-3); 
+		}else if($("#remind_period").val()==6){
+			 remind_date.setDate(remind_date.getDate()-7); 
+		}else if($("#remind_period").val()==7){
+			  remind_date.setDate(remind_date.getDate()-14); 
+		}else if($("#remind_period").val()==8){
+			remind_date.setMonth(remind_date.getMonth()-1); 
+		}
+		
+		//alert(remind_date+" vs "+begin_date);
+		 
+		if(remind_date<now){
+			alert("Невозможно установить выбранный период напоминания "+$("#remind_period option:selected").text()+", т.к. дата и время напоминания о событии попадают в прошлое. Выберите другой интервал напоминания, либо отключите напоминание.");
+			return false;
+		}
+		 
+		 
+	}
+	
+ 
+	  if( ($("#supplier_id").val()==0) || ($("#supplier_id").val()=="") || ($("#supplier_id").val()==null) || ($("#supplier_id").val()==undefined) ){
+		  sfm_show_error_msg('Укажите контрагента!');
+		  return false;
+	  }
+	  
+	  if( ($("#contact_id").val()==0) || ($("#contact_id").val()=="") || ($("#contact_id").val()==null) || ($("#contact_id").val()==undefined) ){
+		  sfm_show_error_msg('Укажите контакт контрагента!');
+		  return false;
+	  }
+	  
+	  if( ($("#ccontact_value").val()==0) || ($("#ccontact_value").val()=="") || ($("#ccontact_value").val()==null) || ($("#ccontact_value").val()==undefined) ){
+		  sfm_show_error_msg('Укажите контакт контрагента!');
+		  return false;
+	  }
+   
+    
+	
+	//если создаем запланированный звонок - требовать выбрать период напоминания
+	//контролировать время? - контролируется само
+	/*if($("#plan_or_fact").val()==0){
+		if(!$("#remind_do").prop("checked")){
+			 sfm_show_error_msg('Укажите период напоминания о звонке!');
+		  	return false;	
+		}
+		
+		if($("#remind_period").val()==0){
+			 sfm_show_error_msg('Укажите период напоминания о звонке!');
+		  	return false;	
+		}
+		
+	}*/
+	
+	
+	//если мы создаем запланированный исходящий звонок - то требовать запонение поля Цель звонка
+	if(($("#plan_or_fact").val()==0)&&($("#incoming_or_outcoming_1").prop("checked"))){
+		
+		try{
+			data=CKEDITOR.instances.description.getData();
+		}catch(e){
+			data=$("#description").val();
+		}
+		if($.trim(strip_tags(data)).length<10){
+			 sfm_show_error_msg('Заполните поле Цель звонка (мин. длина 10 симоволов)!');
+			 $("#description").focus();
+		  	return false;		
+		}
+		
+	}
+	
+	
+	//если мы создаем фактический звонок - то требовать запонение поля Результат звонка
+	if($("#plan_or_fact").val()==1){
+		
+		try{
+			data=CKEDITOR.instances.report.getData();
+		}catch(e){
+			data=$("#report").val();
+		}
+		if($.trim(data).length<10){
+			 sfm_show_error_msg('Заполните поле Результат звонка (мин. длина 10 симоволов)!');
+			 $("#report").focus();
+		  	return false;		
+		}
+		
+	}
+	
+	
+	
+	//проверять доступность выбранного контрагента выбранному сотруднику
+	supplier_ids=new Array();
+	var can_ret=true;
+
+	supplier_ids.push($("#supplier_id").val());
+
+	
+	$.ajax({
+		async: false,
+		url: "/js/sched.php",
+		type: "POST",
+		data:{
+			"action":"check_managers_to_supplier",
+			"manager_id": $("#manager_id").val(),
+			"supplier_ids[]": supplier_ids
+		},
+		beforeSend: function(){
+			  
+		},
+		success: function(data){
+		  //alert(data);
+		  if(data!=0){
+			 
+			/* al=data.split(';');
+			 names=new Array();
+			 $.each(al, function(k,v){
+				names.push($("#supplier_string_"+v).html()); 
+			 });*/
+			 
+			 alert("Невозможно сохранить действие, причина: указанный сотрудник "+$("#manager_string").val()+" не имеет доступа к контрагенту: "+$("#supplier_string").val());
+			 can_ret=can_ret&&false;
+		  } 
+		},
+		error: function(xhr, status){
+			
+			alert("Ошибка при проверке состояния действия. Пожалуйста, попытайтесь сохранить действие снова.");
+			can_ret=can_ret&&false;	
+		}	 
+	});			
+	if(!can_ret) return false; 
+	 
+	
+	return true; 
+}
+
+frmvalidator.addValidation("pdate_beg","req","Выберите дату звонка!");
+
+ frmvalidator.addValidation("manager_id","req","Выберите сотрудника!");
+frmvalidator.addValidation("manager_id","gt=0","Выберите сотрудника!");
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

@@ -1,0 +1,66 @@
+<div id="task_movea_dialog" title="Перенос срока задачи" style="display:none;">
+	 
+	<div  style="font-weight:bold; margin:10px 0px 10px 0px;" >
+   Утвердите новый крайний срок задачи:
+    
+    
+    </div>
+    
+     <div style="float:left; margin-right:20px;">   
+   
+        <label for="anew_pdate_beg_">Дата: 
+        </label> <br>
+    
+        
+        <input  type="text" disabled value="%{$bill.new_pdate_beg}%" id="anew_pdate_beg_"  size="10"   maxlength="10" />
+    </div>
+    <div style="float:left; margin-right:20px;">   
+        <label for="anew_ptime_beg_">Время:</label> <br>
+    
+        
+         <select disabled id="anew_ptime_beg_h_"  style="width:60px">
+            %{html_options values=$ptime_beg_h  selected=$new_ptime_beg_hr output=$ptime_beg_h}%
+        </select>: 
+        <select disabled  id="anew_ptime_beg_m_"   style="width:60px">
+            %{html_options values=$ptime_beg_m selected=$new_ptime_beg_mr   output=$ptime_beg_m}%
+        </select>
+   
+   </div>
+    
+    <br clear="all" />
+    
+     <div  style="font-weight:bold; margin:10px 0px 10px 0px;" >
+   Комментарий:
+    
+    
+    </div>
+    
+    <textarea cols="73" rows="5" id="a_comment"></textarea>
+
+     
+    
+</div>
+
+<script>
+$(function(){
+	$("#task_movea_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 500,
+	  height: 300,
+   
+	   
+	/*  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   */
+  });
+		
+	
+	
+});
+</script>

@@ -1,0 +1,206 @@
+<h1>Товары на объектах (деньги)</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период:</strong><br />
+
+
+<strong>с:<br /></strong>
+%{$pdate4_1}%
+
+<p />
+
+<strong>по:<br /></strong>
+%{$pdate4_2}%
+
+<p />
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<br />
+
+<strong>Участок:<br /></strong>
+
+%{section name=secsec loop=$sector_names_selected}%
+%{$sector_names_selected[secsec]}%%{if $smarty.section.secsec.last==false}%,%{/if}%
+%{sectionelse}%
+все участки
+%{/section}%
+
+
+
+<p />
+
+<strong>Объект:<br /></strong>
+%{section name=obsec loop=$storage_names_selected}%
+%{$storage_names_selected[obsec]}%%{if $smarty.section.obsec.last==false}%,%{/if}%
+%{sectionelse}%
+все объекты
+%{/section}%
+
+
+<br />
+
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+%{if $only_active_sectors_4==1 or $only_active_storages_4==1}%
+<strong>Вы выбрали:</strong>
+%{/if}%
+<br />
+
+%{if $only_active_sectors_4==1}%только активные участки<br />%{/if}%
+
+
+
+%{if $only_active_storages_4==1}%только активные объекты%{/if}%
+<br />
+
+
+
+</div>
+
+
+<br clear="all" />
+
+
+
+
+%{section name=somesec loop=$some}%
+
+%{section name=rowsec loop=$some[somesec].items}%%{/section}%
+
+%{if $smarty.section.rowsec.total>0}%
+<h2>%{$some[somesec].full_name}%</h2>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="left" valign="top">
+    <th scope="col" width="40"> Код позиции</th>
+	<th scope="col" width="*">Наименование</th> 
+    
+    <th width="40" scope="col" >
+    ед.изм.
+   
+    </th>
+    
+    <th width="60" scope="col" >
+    Кол-во
+   
+    </th>
+    
+    
+   
+    <th scope="col" width="60" >
+    Итоговая цена
+   
+    </th>
+    
+    <th scope="col" width="60" >
+    Сумма
+   
+    </th>
+    
+     <th width="200" scope="col" >
+    Поставщик
+   
+    </th>
+    <th width="40" scope="col" >
+    Заданный номер с/ф
+   
+    </th>
+    <th width="40" scope="col" >
+    Заданная дата c/ф
+   
+    </th>
+    <th width="80" scope="col" >
+    Заявка
+    </th>
+  
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$some[somesec].items}%
+   <tr align="left" valign="top">
+    <td width="40">%{$some[somesec].items[rowsec].id|string_format:"%05d"}%</td>
+    <td width="*">
+   
+    %{$some[somesec].items[rowsec].name}%
+   
+    </td>
+     <td width="40" >%{$some[somesec].items[rowsec].dim_name}%</td>
+   
+    
+   
+    
+    <td width="60" >%{$some[somesec].items[rowsec].quantity}%</td>
+   
+    <td width="60" >
+   
+    %{$some[somesec].items[rowsec].price_pm}%
+    </td>
+    
+     <td width="60" >
+   
+    %{$some[somesec].items[rowsec].total}%
+    </td>
+    <td width="200" >
+	 <a href="supplier.php?action=1&id=%{$some[somesec].items[rowsec].supplier_id}%" target="_blank">%{$some[somesec].items[rowsec].supplier_name}%, %{$some[somesec].items[rowsec].opf_name}%</a>
+    </td>
+    <td width="40" >
+	 <a href="ed_acc.php?action=1&id=%{$some[somesec].items[rowsec].acceptance_id}%" target="_blank">%{$some[somesec].items[rowsec].given_no}%</a>
+    </td>
+	
+ 	<td width="40" >
+    %{$some[somesec].items[rowsec].given_pdate}%
+    </td>
+   <td width="80" >
+   %{if $some[somesec].items[rowsec].komplekt_ved_id>0}%
+   <a href="ed_komplekt.php?action=1&id=%{$some[somesec].items[rowsec].komplekt_ved_id}%" target="_blank">Заявка №  %{$some[somesec].items[rowsec].komplekt_ved_id}%</a>
+   %{else}%
+   -
+   %{/if}%
+   </td> 
+   
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+<br />
+<strong>Итого за период с %{$pdate4_1}% по %{$pdate4_2}% на %{$titlename2}% %{if $some[somesec].full_name!=""}%, %{$some[somesec].full_name}%%{/if}% поставлено материалов на сумму <nobr>%{$some[somesec].itogo_price}%&nbsp;руб.</nobr></strong>
+
+
+<p />  
+
+%{/if}%
+  
+%{/section}%
+<h3>Всего за период с %{$pdate4_1}% по %{$pdate4_2}% поставлено на %{$titlename}% материалов на сумму <nobr>%{$itogo_price}%&nbsp;руб.</nobr> </h3>
+
+
+<br />
+<br />
+<br />

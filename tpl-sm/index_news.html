@@ -1,0 +1,399 @@
+%{if $can_add_stream}%
+<input type="button" value="Управление новостями..." id="explore_index_news" />
+%{/if}%
+
+
+
+
+<div id="index_news_dialog" title="Список новостных сайтов" style="display:none;">
+	 <input type="button" id="add_index_news" value="Добавить сайт..." /><br><br>
+
+    <div id="index_news_streams">  
+	
+    </div>
+     
+
+   
+</div>
+
+
+<div id="index_news_add" title="Редактирование новостного сайта" style="display:none;">
+	
+    <label for="index_news_name">Название сайта:</label><br>
+    <input type="text" size="30" maxlength="255" id="index_news_name" value="" /><br>
+<br>
+
+    
+    <label for="index_news_url">Адрес сайта:</label><br>
+    <input type="text" size="50" maxlength="255" id="index_news_url" value="" style=" min-width:400px;" />
+    <input type="button" value="..." id="index_news_feeds_show" />
+    <br>
+
+<br>
+
+	
+    Выберите новостную ленту RSS (ATOM) или <a href="#" id="index_news_feed_add">добавьте ее адрес</a>:<br>
+
+	
+    <div id="index_news_feeds" style="width:99%; min-width:450px; height:220px; overflow:auto; border:1px solid silver;">
+    
+    </div><br>
+
+
+    
+   <!-- <label for="index_news_num_news">Кол-во новостей для отображения на главной странице:</label><br>
+    <input type="text" size="3" maxlength="2" id="index_news_num_news" value="5" />-->
+</div>
+
+
+
+
+
+%{if $show_index}%
+<br clear="all" />
+
+ <table class="gydex_table" >
+        <thead>
+        	<tr align="left" valign="top">
+         	<th width="80" >
+            	Дата
+                
+            
+            </th>
+            
+            	 
+             <th width="*">
+           		 Новость
+                 
+            </th>
+            <th width="24">
+            	Действие
+            </th>
+            </tr>
+        </thead>
+        <tbody>
+        %{foreach from=$news item=item}%
+        	<tr align="left" valign="top">
+            	<td width="80" >
+            	%{$item.pdate}%
+                
+            
+            </td>
+            
+            	 
+             <td width="*">
+           		 <strong>%{$item.title}%</strong><br><br>
+
+				
+                %{$item.content}%
+                 
+            </td>
+            <td width="24">
+            	<a class="gydex_edit"   href="newsview.php?id=%{$item.id}%" target="_blank"></a> 
+            
+            </td>
+            </tr>
+        %{/foreach}%    
+        </tbody>
+</table>
+
+<br>
+ <a href="news.php" class="add">Перейти в раздел</a>   
+ 
+%{/if}% 
+ 
+ 
+<script>
+$(function(){
+	function RedrawNews(){
+		//index_news
+		$.ajax({
+		  async: true,
+		  url: "/js/index_news.php",
+		  type: "POST",
+		  data:{
+			  "action":"redraw_news"
+		  },
+		  beforeSend: function(){
+			  $("#index_news").html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	 $("#index_news").html(data);
+			 
+		  },
+		  error: function(xhr, status,error){
+			  
+			 
+			 $("#index_news").html(""); 
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	
+	function RedrawStreams(){
+		//streams list
+		$.ajax({
+		  async: true,
+		  url: "/js/index_news.php",
+		  type: "POST",
+		  data:{
+			  "action":"redraw_streams"
+		  },
+		  beforeSend: function(){
+			  $("#index_news_streams").html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	 $("#index_news_streams").html(data);
+			 
+		  },
+		  error: function(xhr, status,error){
+			  
+			 
+			 $("#index_news_streams").html(""); 
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	
+	 
+	
+	
+	//
+	$("#index_news_show").unbind("click");
+	$("#index_news_show").bind("click",function(){
+		RedrawNews();
+	});
+	
+	
+	
+	$("#index_news_add").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 500,
+		height: 450,
+		dialogClass: 'semi_auth',
+		stack: true 
+		
+	});
+	
+	$("#index_news_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 800,
+		height: 600,
+		dialogClass: 'semi_auth',
+		stack: true,
+		buttons:{
+			"Готово":function(){
+				//RedrawNews();
+				$(this).dialog("close");	
+			}
+		}
+	});
+	
+	$("#explore_index_news").bind("click", function(){
+		 RedrawStreams();
+		$("#index_news_dialog").dialog("open");
+		
+	});
+	
+	$("#add_index_news").bind("click", function(){
+		
+		$("#index_news_name").val('');
+		$("#index_news_url").val('');
+		$("#index_news_num_news").val(5);
+		$("#index_news_feeds").empty();
+		
+		
+		$("#index_news_add").dialog("option","buttons",{
+			
+			"Готово":function(){
+				can_ret=true;
+				
+				if(can_ret&&($("#index_news_name").val().length==0)){
+					can_ret=can_ret&&false;
+					
+					alert("Укажите название сайта!");	
+					$("#index_news_name").focus();
+				}
+				
+				if(can_ret&&($("#index_news_url").val().length==0)){
+					can_ret=can_ret&&false;
+					alert("Укажите адрес сайта!");
+					$("#index_news_url").focus();	
+				}
+				
+				/*if(can_ret&&($("#index_news_num_news").val().length==0)){
+					can_ret=can_ret&&false;
+					alert("Укажите количество новостей!");
+					$("#index_news_num_news").focus();	
+				}*/
+				
+				/*if(can_ret&&(isNaN($("#index_news_num_news").val()) || (parseInt($("#index_news_num_news").val())<=0))){
+					can_ret=can_ret&&false;
+					alert("Укажите корректное количество новостей!");
+					$("#index_news_num_news").focus();	
+				}*/
+				
+				
+				//одна или несколько лент выбраны
+				if(can_ret&&($("input[id^=index_news_feed_]:checked").length==0)){
+					can_ret=can_ret&&false;
+					alert("Выберите одну или несколько лент новостей!");
+					//$("#index_news_num_news").focus();	
+				}
+				
+				urls=new Array(); charsets=new Array();
+				$.each($("input[id^=index_news_feed_]:checked"), function(k,v){
+					id=$(v).attr("id").replace(/^index_news_feed_/,'');
+					
+					urls.push($(v).val());
+					charsets.push($("#index_news_feed_charset_"+id).val());
+				});
+				
+				 
+				
+				if(can_ret){
+					//все ОК, добавим сайт
+					$.ajax({
+						  async: false,
+						  url: "/js/index_news.php",
+						  type: "POST",
+						  data:{
+							  "action":"add_stream",
+							  "name":$("#index_news_name").val(),
+							//  "num_news":$("#index_news_num_news").val(),
+							  "site_url":$("#index_news_url").val(),
+							  "urls[]":urls,
+							  "charsets[]":charsets
+						  },
+						  beforeSend: function(){
+							  
+						  },
+						  success: function(data){
+							// alert(data);
+							  RedrawStreams();
+						  },
+						  error: function(xhr, status,error){
+							  
+							 
+							 //$("#index_news_streams").html(""); 
+						  },
+						  complete: function(){
+							  
+						  } 
+					  });	
+					
+					
+					$(this).dialog("close");	
+				}
+			},
+			"Закрыть":function(){
+				$(this).dialog("close");	
+			}
+		});
+		
+		
+		
+		$("#index_news_add").dialog("open");
+		
+	});
+	
+	//предзагрузка новостей по УРЛ сайта
+	$("#index_news_url").bind("change", function(){
+		
+		$.ajax({
+			async: false,
+			url: "/js/index_news.php",
+			type: "POST",
+			 
+			data:{
+				"action":"find_streams",
+				
+				"url":$("#index_news_url").val()
+			},
+			beforeSend: function(){
+				 $("#index_news_feeds").html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+			},
+			success: function(data){
+			  // alert(data);
+				$("#index_news_feeds").html(data);
+			},
+			error: function(xhr, status,error){
+				
+			   
+			   //$("#index_news_streams").html(""); 
+			},
+			complete: function(){
+				
+			} 
+		});	
+		
+	});
+	
+	$("#index_news_url").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$(this).trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	//добавить новую ленту в список превью
+	$("#index_news_feed_add").unbind("click");
+	$("#index_news_feed_add").bind("click", function(){
+		 
+		zc=true;
+		while(zc){
+			ln=window.prompt("Введите адрес:", "");
+			if(ln==undefined) {
+						break;
+			}
+			
+			if(ln.length>5){
+				zc=false;	
+				break;
+			}
+		}
+		
+		$.ajax({
+			async: false,
+			url: "/js/index_news.php",
+			type: "POST",
+			 
+			data:{
+				"action":"add_preview_stream",
+				
+				"url":ln
+			},
+			beforeSend: function(){
+				// $("#index_news_feeds").html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+			},
+			success: function(data){
+			  // alert(data);
+				$("#index_news_feeds").append(data);
+			},
+			error: function(xhr, status,error){
+				
+			   
+			   //$("#index_news_streams").html(""); 
+			},
+			complete: function(){
+				
+			} 
+		});	
+		
+		return false;
+	});
+	
+	$("#index_news_feeds_show").bind("click", function(){
+		if($("#index_news_url").val()!="") $("#index_news_url").trigger("change");
+	});
+	
+});
+</script>      

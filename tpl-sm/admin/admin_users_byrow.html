@@ -1,0 +1,342 @@
+<h1>Права пользователей</h1>
+
+<div id="debug">
+
+</div>
+
+<script type="text/javascript">
+var queue=new Array();
+var queue_rows=new Array();
+$(function(){
+//	$("#tableone").columnHover({eachCell:true, hoverClass:'hover', includeSpans:true}); 
+	
+	//$(".reptable").columnHover();
+	$("#tableone tr:even").addClass("even");
+	
+	$("div[id^=right_]").cluetip({
+			  splitTitle: "|"
+			});
+	
+	
+	function AcquireSize(){
+		 //rights_block content_inner
+		//$("#debug").html($(window).width());
+		
+		w=Math.round($(window).width())-320;
+				if(w>0) {
+					$("#rights_block").css("width", w  ); 
+					//console.log('set width='+ui.size.width);	
+				}
+				/*h=Math.round($(window).width())-600;
+				if(h>0) {
+					$("#rights_block").css("height", h  ); 
+					//console.log('set height='+ui.size.height);		
+				} */
+	}
+	
+	$(window).bind("resize", function(){
+		 AcquireSize();
+	});
+	//сделать привязку размера...
+	 
+	 AcquireSize();
+	
+	FindRightsRows();
+	
+});
+
+	function FindRightsRows(){
+		if(queue_rows.length>0){
+			var elem=queue_rows.shift();
+			
+			
+			//alert(elem);
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/admin_users.php",
+			  type: "POST",
+			  data:{
+				  "action":"draw_row_rights",
+				  "user_id":elem,
+				  "gr_id":$("#gr_aj_id").val()
+				 
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#indic_"+elem).css('display','inline');  
+			  },
+			  success: function(data){
+				$("#row_"+elem).append(data);  
+				$("#indic_"+elem).css('display','none');  
+				//alert(data);
+				window.setTimeout("FindRightsRows()",20);
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");
+				window.setTimeout("FindRightsRows()",20);	
+			  }	 
+			});
+			
+		}
+	}
+
+	function FindRights(){
+		if(queue.length>0){
+			var elem=queue.shift();
+			//alert(elem[0]+'_'+elem[1]);
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/admin_users.php",
+			  type: "POST",
+			  data:{
+				  "action":"draw_rights",
+				  "user_id":elem[0],
+				  "object_id":elem[1]
+				 
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#block_"+elem[1]+"_"+elem[0]).html('<img src="/img/icon_wait.gif" alt="пожалуйста, подождите..." border="0" />');  
+			  },
+			  success: function(data){
+				$("#block_"+elem[1]+"_"+elem[0]).html(data);  
+				window.setTimeout("FindRights()",20);
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");
+				window.setTimeout("FindRights()",20);	
+			  }	 
+			});
+			
+		}else{
+			//alert('empty');	
+		}
+	}
+
+
+function OnMove(letter,object_id, user_id){
+	$("#right_"+letter+"_"+object_id+"_"+user_id+"").css("cursor","pointer");
+}
+function OnOut(letter,object_id, user_id){
+	$("#right_"+letter+"_"+object_id+"_"+user_id+"").css("cursor","arrow");
+}
+function OnClick(letter,object_id, user_id, anti_id, repeat){
+	
+	$("#do_edit_"+letter+"_"+object_id+"_"+user_id+"").attr("value",1);
+					
+					
+					//меняем режим права
+					if($("#state_"+letter+"_"+object_id+"_"+user_id+"").attr("value")==0){
+						$("#state_"+letter+"_"+object_id+"_"+user_id+"").attr("value",1);
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("inactive");
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("inactive_changed");
+						
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").addClass("active_changed");
+						
+						//если есть взаимоисключ об-т - снять его выделение
+						if(repeat&&(parseInt(anti_id)>0)&&($("#state_"+letter+"_"+anti_id+"_"+user_id).val()==1)){
+							OnClick(letter,anti_id, user_id, object_id,false);
+						}						
+						
+					}else{
+						$("#state_"+letter+"_"+object_id+"_"+user_id+"").attr("value",0);
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("active");
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").removeClass("active_changed");
+						
+						$("#right_"+letter+"_"+object_id+"_"+user_id+"").addClass("inactive_changed");
+					}
+	
+}
+</script>
+
+
+<form action="admin_users.php" method="get">
+<input type="hidden" id="gr_aj_id" value="%{$gr_id}%" />
+
+<label for="gr_id">Выберите группу объектов:</label><br />
+
+<select name="gr_id" id="gr_id">
+<option value="0" %{if $gr_id==0}% selected="selected"%{/if}%>все группы объектов</option>
+%{section name=psec loop=$p}%
+<option value="%{$p[psec].id}%" %{if $gr_id==$p[psec].id}% selected="selected"%{/if}%>%{$p[psec].name}%</option>
+%{/section}%
+</select>
+<input type="submit" value="Показать" />
+</form>
+<p />
+
+
+<form action="admin_users.php" method="post" id="rights_form">
+  <div id="rights_block" style="border:1px solid gray; width:980px; height:450px; overflow:scroll; padding:2 2 2 2;">
+<table width="*" cellspacing="0" cellpadding="4" border="0" class="tableone">
+<thead>
+<!-- группы объектов -->
+<tr align="center" valign="top">
+	<th scope="col" width="160" rowspan="2">
+    Группы+пользователи/ Группы+объекты
+    </th>
+    %{section name=obgsec loop=$obg}%
+    <th scope="col" width="80" colspan="%{$obg[obgsec].objects_count}%">
+    <div id="obgrp_%{$obg[obgsec].id}%" title="Группа объектов %{$obg[obgsec].name|escape}%|%{$obg[obgsec].description|escape}%">%{$obg[obgsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obgrp_%{$obg[obgsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </th>
+  	
+    %{/section}%
+</tr>
+<!-- объекты -->
+<tr align="center" valign="top">
+    %{section name=objsec loop=$obj}%
+    <th width="80">
+    <div id="obj_%{$obj[objsec].id}%" title="Объект %{$obj[objsec].name|escape}%|%{$obj[objsec].description|escape}%">%{$obj[objsec].id}%. %{$obj[objsec].name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obj_%{$obj[objsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	  
+	 
+	  
+	  
+	   $("#w_%{$obj[objsec].id}%").bind("click",function(){
+		 
+			
+			$.each($("div[id^=right_w_%{$obj[objsec].id}%_]"), function(k,v){
+				$(v).trigger("click");
+			});
+			
+			return false; 
+	  });
+	  
+	 
+	  
+	  
+	});
+	</script>
+    
+    
+   
+    <a href="#" id="w_%{$obj[objsec].id}%">w</a>
+  
+    </th>
+   
+    %{/section}%
+</tr>
+</thead>
+<tbody>
+<!-- группы пользователей + пользователи -->
+%{section name=usec loop=$u}%
+<tr align="left" valign="top" id="row_%{$u[usec].id}%">
+	<!-- группы пользователей -->
+   
+   <!-- 
+    %{if $u[usec].to_change}%
+    <td width="80" %{if $u[usec].users_count>0}% rowspan="%{$u[usec].users_count}%"%{/if}%>
+     
+    <div id="ug_%{$u[usec].id}%" title="Группа пользователей %{$u[usec].g_name|escape}%|%{$u[usec].g_description|escape}%" style="font-weight:bold;">%{$u[usec].g_name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#ug_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    %{/if}%
+    -->
+    <!-- пользователи -->
+    <td width="80">
+    <div id="u_%{$u[usec].id}%" title="Пользователь %{$u[usec].login|escape}%|%{if $u[usec].group_id==3}%%{$u[usec].name_d|escape}%%{else}%%{$u[usec].name_s|escape}%%{/if}%" style="font-weight:bold; white-space:nowrap;">%{$u[usec].login}%
+    
+   <small>%{$u[usec].name_s}%</small> 
+    
+     
+    </div>
+    <script type="text/javascript">
+	$(function(){
+		$("#u_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	  
+	   
+	});
+	
+	queue_rows.push(%{$u[usec].id}%);
+	</script>
+    
+    <img src="/img/icon_wait.gif" width="16" height="16" alt="пожалуйста, подождите..." border="0" id="indic_%{$u[usec].id}%" style="display:none;" />
+    </td>
+    
+    <!-- права пользователей по объектам -->
+   %{section name=rsec loop=$u[usec].rights_arr}%
+	<td width="*" align="center" title="Пользователь %{$u[usec].login}%| Права на объект %{$u[usec].rights_arr[rsec].object_name}%" id="column_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%">
+    	
+		<script type="text/javascript">
+		arr=new Array();
+		arr.push(%{$u[usec].id}%);
+		arr.push(%{$u[usec].rights_arr[rsec].object_id}%);
+		queue.push(arr);
+		$(function(){
+			$("#column_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%").cluetip({
+			  splitTitle: "|"
+			});
+		});
+		</script>
+        
+        
+        <div id="block_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%">
+        
+        </div>
+        
+        
+        
+        
+        
+    </td>
+    
+    %{/section}%
+    %{if $smarty.section.rsec.total==0}%
+    
+    %{section name=objsec loop=$obj}%
+    <!-- <td width="80">-</td> -->
+    %{/section}%
+    %{/if}%
+</tr>
+
+
+%{/section}%
+</tbody>
+</table>
+</div>
+<br />
+<input type="submit" name="doInp" value="Внести изменения" />
+
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#rights_form").bind("submit", function(){
+		return window.confirm("Вы действительно хотите внести в базу сделанные изменения?");
+	});
+});
+</script>
+<p />
+
+
+<strong>Обозначения прав:</strong>
+<table width="275" border="1" cellpadding="2" cellspacing="0">
+ 
+  <tr>
+    <th scope="row">w</th>
+    <td>права на действие</td>
+  </tr>
+ 
+</table><br />

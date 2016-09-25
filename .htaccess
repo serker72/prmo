@@ -1,0 +1,109 @@
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+
+RewriteEngine on
+
+Options +FollowSymlinks
+RewriteBase /
+
+RewriteRule ^login.html$ /usereffects.php [L]
+RewriteRule ^info.html$ /card.php [L]
+RewriteRule ^chp.html$ /chp.php [L]
+RewriteRule ^confirm.html$ /chp_confirm.php [L]
+RewriteRule ^forgot.html$ /forgot.php [L]
+
+
+RewriteRule ^attachment.html$ /file_attachment.php [L]
+
+RewriteRule ^load.html$ /file_load.php [L]
+RewriteRule ^load_pl.html$ /file_pl_load.php [L]
+RewriteRule ^load_spl.html$ /file_spl_load.php [L]
+RewriteRule ^load_l.html$ /file_l_load.php [L]
+RewriteRule ^load_pm.html$ /file_pm_load.php [L]
+
+RewriteRule ^load_order.html$ /file_order_load.php [L]
+
+RewriteRule ^load_reclam.html$ /file_reclam_load.php [L]
+
+RewriteRule ^load_claim.html$ /file_claim_load.php [L]
+
+RewriteRule ^load_task.html$ /file_task_load.php [L]
+
+RewriteRule ^load_memo.html$ /file_memo_load.php [L]
+
+RewriteRule ^load_petition.html$ /file_petition_load.php [L]
+
+RewriteRule ^load_mission.html$ /file_mission_load.php [L]
+
+RewriteRule ^contract.html$ /contract_load.php [L]
+
+RewriteRule ^contract_org.html$ /contract_org_load.php [L]
+
+RewriteRule ^bill_file.html$ /bill_file_load.php [L]
+
+RewriteRule ^bill_in_file.html$ /bill_in_file_load.php [L]
+
+RewriteRule ^document.html$ /user_pasp_load.php [L]
+
+RewriteRule ^storage_file.html$ /storage_file_load.php [L]
+
+RewriteRule ^uchcontract.html$ /uchcontract_load.php [L]
+
+RewriteRule ^acc_file.html$ /acc_file_load.php [L]
+
+RewriteRule ^acc_in_file.html$ /acc_in_file_load.php [L]
+
+RewriteRule ^ship_file.html$ /ship_file_load.php [L]
+
+RewriteRule ^ship_in_file.html$ /ship_in_file_load.php [L]
+
+RewriteRule ^pay_file.html$ /pay_file_load.php [L]
+
+RewriteRule ^pay_in_file.html$ /pay_in_file_load.php [L]
+
+RewriteRule ^trust_file.html$ /trust_file_load.php [L]
+
+RewriteRule ^is_file.html$ /is_file_load.php [L]
+
+RewriteRule ^wf_file.html$ /wf_file_load.php [L]
+
+RewriteRule ^komplekt_ved_file.html$ /komplekt_ved_file_load.php [L]
+
+RewriteRule ^shema.html$ /supplier_shema_load.php [L]
+
+RewriteRule ^akt.html$ /supplier_akt_load.php [L]
+
+RewriteRule ^pos_file.html$ /pos_file_load.php [L]
+
+RewriteRule ^inv_file.html$ /inv_file_load.php [L]
+
+RewriteRule ^_all_files.html$ /_all_files_load.php [L]
+
+RewriteRule ^invcalc_file.html$ /invcalc_file_load.php [L]
+
+RewriteRule ^invcalc_akt_file.html$ /invcalc_akt_file_load.php [L]
+
+RewriteRule ^pl_file.html$ /pl_file_load.php [L]
+
+RewriteRule ^kp_file.html$ /kp_file_load.php [L]
+
+RewriteRule ^supplier_file.html$ /supplier_file_load.php [L]
+
+RewriteRule ^cash_file.html$ /cash_file_load.php [L]
+
+RewriteRule ^cash_in_file.html$ /cash_in_file_load.php [L]
+
+RewriteRule ^document_v.html$ /user_v_pasp_load.php [L]
+
+RewriteRule ^sched_file.html$ /sched_file_load.php [L]
+
+RewriteRule ^sched_lenta_file.html$ /sched_lenta_load.php [L]
+
+RewriteRule ^email_file.html$ /email_file_load.php [L]
+
+
+
+
+#зоны и страницы-исключения
+RewriteRule ^img/campaign_([0-9]+)_([0-9]+).png  /js/delivery_view.php?user_id=$1&delivery_id=$2 [L]
+

@@ -1,0 +1,348 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate_1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 
+	 	
+	function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	
+	function SelectShareGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$share_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	function SelectSupplierGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_supplier.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.code|escape:"html"}% %{$item.full_name|escape:"html"}%, %{$item.opf_name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	 
+	
+	
+	SelectGo2("user%{$prefix}%");
+ 	SelectShareGo2("share_user%{$prefix}%");
+	SelectSupplierGo2("supplier%{$prefix}%");
+	 
+	
+});
+</script>
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+ 
+ 
+
+
+
+
+
+<div class="report_filter_right">
+    
+  
+        
+	 <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+
+     <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти"  />
+     </div>
+    
+    <a href="an_sched.php?doSub%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+
+  
+  %{if $can_print}%
+  
+   
+  
+  <a href="#" id="print_table%{$prefix}%"   class="reestr_print reestr_right_button24" data-comment="Печать..."></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	  
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+			// $("#print").val(1);
+	 		//alert('doSub=1&print=1&'+$("#rep_form2").serialize());
+			 
+			
+		 	 window.open('an_sched.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize(), 'an_sched','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		   
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."></a>
+ %{/if}%
+ 
+ 	%{include file="every_help_dialog.html" filename="an_sched.html;an_sched_5.html" prefix=$prefix description="отчет Планировщик"  style="display:inline-block;  margin-right:0px;" is_right=true}%
+  
+  
+ 
+</div> 
+
+
+<div class="report_filter_left">
+  
+  <div class="report_filter">
+  <strong>Период:</strong>
+  <br>
+  
+  
+  <label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10" class="sched_report_field" />
+   &nbsp;&nbsp;
+  <label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10" class="sched_report_field" />
+  
+  </div>
+  
+  
+   
+  
+  
+  <div class="report_filter">
+  <label for="user%{$prefix}%">Создал:</label><br />
+  <input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:130px;"  />
+  </div>
+   
+  <div class="report_filter">
+  <label for="share_user%{$prefix}%">Поделился заметкой с:</label><br />
+  <input type="text" value="%{$share_user}%" id="share_user%{$prefix}%" name="share_user%{$prefix}%" size="30" maxlength="512" style="width:130px;"  />
+  </div>
+   
+   
+  <div class="report_filter">
+  <label for="topic%{$prefix}%">Тема:</label><br />
+  <input type="text" value="%{$topic}%" id="topic%{$prefix}%" name="topic%{$prefix}%" size="30" maxlength="512" style="width:130px;"  class="sched_report_field" />
+  </div>
+  
+  <div class="report_filter">
+  <label for="description%{$prefix}%">Содержание:</label><br />
+  <input type="text" value="%{$description}%" id="description%{$prefix}%" name="description%{$prefix}%" size="30" maxlength="512" style="width:130px;" class="sched_report_field"  />
+  </div>
+  
+  
+  
+  
+  
+  
+ 
+   <div class="report_filter">
+      <label for="contents%{$prefix}%">Поиск в файлах:</label><br>
+  
+      <input type="text" name="contents%{$prefix}%" id="contents%{$prefix}%" size="30" maxlength="255" value="%{$contents}%" style="width:150px;"  class="sched_report_field" />
+  </div>
+  
+  
+  
+  
+  
+  <div class="report_filter">
+  <label for="supplier%{$prefix}%">Контрагент:</label><br />
+  <input type="text" value="%{$supplier}%" id="supplier%{$prefix}%" name="supplier%{$prefix}%" size="30" maxlength="512" style="width:200px;"  />
+  
+   
+    <br>
+  
+  <input type="checkbox" id="has_holdings%{$prefix}%" name="has_holdings%{$prefix}%" value="1" %{if $has_holdings}% checked%{/if}%>
+  <label for="has_holdings%{$prefix}%">Включая субхолдинги <br>
+и подчиненные предприятия</label>
+  </div>
+   
+   
+  
+  
+  <div class="report_filter">
+   
+  <br>
+  
+  <input type="checkbox" id="has_content%{$prefix}%" name="has_content%{$prefix}%" value="1" %{if $has_content}% checked%{/if}%>
+  <label for="has_content%{$prefix}%">Добавить содержание 
+   в отчет</label>
+  
+  </div>
+  
+</div>  
+<br clear="all" />
+ 
+</form>
+ 
+
+
+<small>
+1. <strong>Фильтр Период</strong>: поиск записей планировщика осуществляется по попаданию в выбранный период следующей даты:
+<ul style="display:inline-block;">
+
+
+<li style="display:inline-block;"><strong>Заметки</strong> - дата создания заметки</li>
+ </ul>
+ 
+ <br>
+
+ 
+ 2. <strong>Фильтр Содержание</strong>: поиск заметок планировщика производится по наличию фрагмента текста в содержании заметки.
+ 
+ 
+ </small>
+ <br />
+<br>
+
+
+
+
+%{if $do_it}%
+
+%{if $prefix==1}%
+%{include file="an_sched/table_1.html"}% 
+%{elseif $prefix==2}%
+%{include file="an_sched/table_2.html"}% 
+%{elseif $prefix==3}%
+%{include file="an_sched/table_3.html"}% 
+%{elseif $prefix==4}%
+%{include file="an_sched/table_4.html"}% 
+%{elseif $prefix==5}%
+%{include file="an_sched/table_5.html"}% 
+%{else}%
+%{include file="an_sched/table.html"}%  
+%{/if}%
+
+%{/if}%

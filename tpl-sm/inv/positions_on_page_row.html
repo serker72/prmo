@@ -1,0 +1,130 @@
+ <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        <span>%{$smarty.section.pospossec.index+1}%</span>
+        </td>
+        <td width="24">
+         %{$pospos[pospossec].position_id|string_format:"%05d"}%
+        </td>
+        <td width="*">
+        <span id="name_%{$pospos[pospossec].id}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].id}%" name="new_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].id}%" />
+        
+       <input type="hidden" id="new_pl_position_id_%{$pospos[pospossec].id}%" name="new_pl_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].position_id}%" />
+        </td>
+        <td width="60">
+        <span id="dim_name_%{$pospos[pospossec].id}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].id}%" name="new_dimension_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+       <!--  <td width="60">
+        %{$pospos[pospossec].quantity_initial}%
+      
+    	</td>-->
+        
+        
+        <td width="60">
+        %{$pospos[pospossec].quantity_as_is}%
+        <input type="hidden" id="new_quantity_as_is_%{$pospos[pospossec].id}%" name="new_quantity_as_is_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity_as_is}%"  />
+    	</td>
+        
+       
+        
+        
+         <td width="60">
+          <span id="kol_%{$pospos[pospossec].id}%">%{$pospos[pospossec].quantity_fact}%</span>
+        <input type="hidden" id="new_quantity_fact_%{$pospos[pospossec].id}%" name="new_quantity_fact_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity_fact}%"  />
+         </td>
+         
+          
+          
+          <td width="60" id="izb_%{$pospos[pospossec].id}%">
+          %{if ($pospos[pospossec].quantity_fact-$pospos[pospossec].quantity_as_is)>0}%
+          <span style="color:red;">%{$pospos[pospossec].quantity_fact-$pospos[pospossec].quantity_as_is}%</span>
+          %{else}%
+          0
+          %{/if}%
+          </td>
+          
+          <td width="60" id="nedost_%{$pospos[pospossec].id}%">
+          %{if ($pospos[pospossec].quantity_as_is-$pospos[pospossec].quantity_fact)>0}%
+          <span style="color:red;">%{$pospos[pospossec].quantity_as_is-$pospos[pospossec].quantity_fact}%</span>
+          %{else}%
+          0
+          %{/if}%
+          </td>
+          
+           <td width="60">
+          %{$pospos[pospossec].quantity_by_program}%
+        </td>
+        
+         <td width="60">
+        <a href="#" id="link_in_acc_%{$pospos[pospossec].id}%" title="подробно...">%{$pospos[pospossec].in_acc}%</a>
+        </td>
+        
+         <td width="60">
+        <a href="#" id="link_in_wf_%{$pospos[pospossec].id}%" title="подробно...">%{$pospos[pospossec].in_wf}%</a>
+        </td>
+          
+          
+           <td width="24" align="center">
+    <input type="checkbox" value="%{$pospos[pospossec].id}%" 
+    id="to_bill_%{$pospos[pospossec].id}%" 
+    %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    
+    onchange="try{ if(!$('#table_select_all').prop('disabled')){   x=$('input[type=checkbox][id^=to_bill_]:enabled').length;  y=$('input[type=checkbox][id^=to_bill_]:enabled:checked').length;  $('#table_select_all').prop('checked',(x==y));  };  }catch(e){};"
+    />
+    </td>
+        
+       
+        <td width="24">
+       
+       %{if $can_modify}%
+       %{if $can_del_positions or $pospos[pospossec].quantity_as_is==0}%
+        <a href="#" id="new_del_%{$pospos[pospossec].id}%" class="reestr_delete reestr_right_button24" data-comment="удалить позицию..." ></a>
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].id}%" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..." ></a>
+       %{/if}%
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].id}%" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..." ></a>
+        %{/if}%
+			
+		<script type="text/javascript">
+		$(function(){
+			$("#new_del_%{$pospos[pospossec].id}%").bind("click",function(){
+				%{if $can_modify}%
+				%{if $can_del_positions or $pospos[pospossec].quantity_as_is==0}%
+				if(window.confirm('¬ы действительно хотите удалить позицию распор€жени€ на инвентаризацию?')){ 
+					$('#new_row_%{$pospos[pospossec].id}%').remove();
+					var temp_cter=0;
+					$.each($("#inv_positions_table tbody tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+					});
+				}
+				%{else}%
+				alert("” ¬ас недостаточно прав, чтобы удалить позиции распор€жени€ на инвентаризацию!");
+				%{/if}%
+				%{else}%
+				alert("Ќевозможно удалить позиции утвержденного распор€жени€ на инвентаризацию!");
+				%{/if}%
+				return false;
+			});
+			
+			
+			 $("#link_in_acc_%{$pospos[pospossec].id}%").bind("click", function(){
+			    return link_in_acc("%{$pospos[pospossec].position_id}%");
+			  
+		  });
+		  
+		   $("#link_in_wf_%{$pospos[pospossec].id}%").bind("click", function(){
+			 return link_in_wf("%{$pospos[pospossec].position_id}%");
+			 
+		  });
+		});
+		</script>
+    	</td>
+    </tr>
+    

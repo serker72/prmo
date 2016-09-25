@@ -1,0 +1,169 @@
+<tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        <td width="20">
+        <span id="new_position_code_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].pl_position_id|string_format:"%05d"}%
+        </span>
+        </td>
+        
+           <td width="50">
+       	<a href="%{$pospos[pospossec].photo_for_kp}%" target="_blank" class="fancybox"><img src="/js/getthumb.php?path=%{$pospos[pospossec].photo_for_kp}%" border="0" /></a>
+        <script type="text/javascript">
+		
+		$(function(){
+			$('.fancybox').fancybox();
+			
+		});
+		</script>
+        </td>
+        
+        
+        
+        <td width="30%">
+        <span id="new_position_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].position_name}%</span>
+        
+        <input type="hidden" id="new_pl_position_id_%{$pospos[pospossec].hash}%" name="new_pl_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_position_id}%" />
+        
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].hash}%" name="new_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        
+        
+       <input type="hidden" id="new_hash_%{$pospos[pospossec].hash}%" name="new_hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        </td>
+        
+        
+        <td width="30%">
+        <div id="new_txt_for_kp_small_%{$pospos[pospossec].hash}%">
+        %{$pospos[pospossec].txt_for_kp|strip_tags|truncate:30}%
+        
+        <br />
+		<a href="#" onclick="$('#new_txt_for_kp_big_%{$pospos[pospossec].hash}%').css('display','block'); $('#new_txt_for_kp_small_%{$pospos[pospossec].hash}%').css('display','none'); return false;"><em>подробнее...</em></a>
+        </div>
+        
+         
+        <div id="new_txt_for_kp_big_%{$pospos[pospossec].hash}%" style="display:none;">
+        %{$pospos[pospossec].txt_for_kp}%
+        <br />
+
+        <a href="#" onclick="$('#new_txt_for_kp_big_%{$pospos[pospossec].hash}%').css('display','none'); $('#new_txt_for_kp_small_%{$pospos[pospossec].hash}%').css('display','block'); return false;"><em>скрыть...</em></a>
+        </div>
+        
+        
+        
+        <td width="80">
+        <span id="new_position_dim_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].hash}%" name="new_dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="80">
+        <span id="new_span_quantity_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].quantity}%</span>
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].hash}%" name="new_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%"  />
+        
+      
+    	</td>
+        
+        
+        
+        
+        <td width="80" >
+        %{$pospos[pospossec].price}%
+        <input type="hidden" id="new_price_%{$pospos[pospossec].hash}%" name="new_price_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price}%" />
+        
+        <input type="hidden" id="new_pl_discount_id_%{$pospos[pospossec].hash}%" name="new_pl_discount_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_discount_id}%" />
+          
+         <input type="hidden" id="new_pl_discount_value_%{$pospos[pospossec].hash}%" name="new_pl_discount_value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_discount_value}%" />
+         
+         <input type="hidden" id="new_pl_discount_rub_or_percent_%{$pospos[pospossec].hash}%" name="new_pl_discount_rub_or_percent_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_discount_rub_or_percent}%" />
+         
+        
+        
+        </td>
+        
+         %{foreach from=$pospos[pospossec].discs1 item=discs}%
+         <!-- виды скидок -->
+         <td width="80" >
+        
+        
+         %{if $pospos[pospossec].pl_discount_id==$discs.id}%
+         
+         
+         %{$pospos[pospossec].pl_discount_value}%
+         
+         
+         %{if $pospos[pospossec].pl_discount_rub_or_percent==0}%
+         руб.
+         %{elseif $pospos[pospossec].pl_discount_rub_or_percent==1}%
+         %
+        <!-- <br />
+
+         <small>(%{$pospos[pospossec].pl_discount_value_from_percent}%)</small>
+        -->
+        
+         %{/if}%
+         
+         %{else}%
+         0.00
+         %{/if}%
+         
+         <input type="hidden" value="%{$discs.dl_value}%" name="new_dl_value_%{$discs.id}%_%{$pospos[pospossec].hash}%" id="new_dl_value_%{$discs.id}%_%{$pospos[pospossec].hash}%" />
+    
+    <input type="hidden" value="%{$discs.dl_rub_or_percent}%" name="new_dl_rub_or_percent_%{$discs.id}%_%{$pospos[pospossec].hash}%" id="new_dl_rub_or_percent_%{$discs.id}%_%{$pospos[pospossec].hash}%" />
+         </td>
+         %{/foreach}%
+        
+      
+       
+        
+        <td width="80">
+        
+         %{*$pospos[pospossec].price_f*}%
+        <input type="hidden" id="new_price_f_%{$pospos[pospossec].hash}%" name="new_price_f_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_f}%" />
+        
+        <span id="new_price_pm_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].price_pm}%</span>
+       	<input type="hidden" id="check_new_price_pm_%{$pospos[pospossec].hash}%" name="new_price_pm_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_pm}%" />
+        </td>
+        <td width="80" style="display:none;">
+        <span id="new_cost_f_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].cost|string_format:"%.2f"}%</span>
+         
+        </td>
+        <td width="80">
+        <span id="new_nds_proc_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_proc}%</span>
+        </td>
+        
+         <td width="80">
+        <span id="new_nds_summ_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_summ}%</span>
+        </td>
+        
+        
+        <td width="80">
+        <span id="new_total_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].total}%</span>
+         <input type="hidden" id="check_new_total_%{$pospos[pospossec].hash}%" name="new_total_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].total}%" />
+        </td>
+        
+        
+        
+        <td width="24">
+        %{*$pospos[pospossec].in_rasp*}%
+        <input type="checkbox" value="%{if  $pospos[pospossec].quantity-$pospos[pospossec].in_rasp<0}%0%{else}%%{$pospos[pospossec].quantity-$pospos[pospossec].in_rasp}%%{/if}%" 
+    id="to_ship_%{$pospos[pospossec].hash}%" 
+    %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    />
+        </td>
+        
+        <td width="24">
+        
+       %{if $can_modify}%
+       
+       %{if $can_delete_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%"><img src="/img/icons/delete.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{else}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+        
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+        </td>
+    </tr>

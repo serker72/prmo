@@ -1,0 +1,75 @@
+
+<table width="600" border="1" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40">Дата 
+   
+    </th>
+	<th scope="col" width="60">Пользователь
+   
+    </th>
+    <th scope="col" width="60">Действие
+    
+    </th>
+    <th scope="col" width="60">Затронутый пользователь
+    
+    </th>    
+    <th scope="col" width="60">Затронутый объект системы
+   
+    </th>
+    
+    <th scope="col" width="60">Затронутая группа пользователей
+   
+    </th>
+    <th scope="col" width="40">IP-адрес
+   
+    </th>
+    <th scope="col" width="*">Установленное значение
+    </th>
+   
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="40">%{$items[rowsec].pdate}%</td>
+    <td width="60">
+    <a href="info.html?name=%{$items[rowsec].s_login}%" target="_blank">
+    
+     %{$items[rowsec].s_name_s}% 
+    %{$items[rowsec].s_login}%
+    
+    
+    </a>
+    </td>
+    <td width="60">%{$items[rowsec].description}%</td>
+    <td width="60">
+    
+    %{if $items[rowsec].o_login!=""}%
+    
+     <a href="info.html?name=%{$items[rowsec].o_login}%" target="_blank">
+   
+     %{$items[rowsec].o_name_s}% 
+    %{$items[rowsec].o_login}%
+    
+    
+    </a>
+   
+    
+    %{else}%-%{/if}%
+    
+    
+    </td>
+    
+    <td width="60">%{if $items[rowsec].ob_name!=""}%%{$items[rowsec].ob_name}%%{else}%-%{/if}%</td>
+    
+    <td width="60">%{if $items[rowsec].gr_name!=""}%%{$items[rowsec].gr_name}%%{else}%-%{/if}%</td>
+    <td width="40">%{$items[rowsec].ip}%</td>
+    <td  width="*">%{if $items[rowsec].value!=""}%%{$items[rowsec].value}%%{else}%-%{/if}%</td>
+   
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+%{$pages}%

@@ -1,0 +1,85 @@
+<h1>Товары на объектах</h1>
+
+<div style="float:left; margin-right:20px;" >
+<strong>Объект:</strong>
+%{section name=obsec loop=$storage_names_selected}%
+%{$storage_names_selected[obsec]}%%{if $smarty.section.obsec.last==false}%,%{/if}%
+%{/section}%
+</div>
+
+%{if $only_active_storages_3==1 or $only_active_sectors_3==1}%
+<div style="float:left; margin-right:20px;" >
+<strong>Вы выбрали: </strong><br />
+
+%{if $only_active_storages_3==1}%
+только активные объекты<br />
+%{/if}%
+
+%{if $only_active_sectors_3==1}%
+только активные участки<br />
+%{/if}%
+
+</div>
+%{/if}%
+
+<br clear="all" />
+
+
+%{section name=rowsec loop=$items}%
+
+
+    
+    <div style="margin-bottom:5px;"><strong>Объект %{$items[rowsec].name}%:</strong></div>
+
+    
+    <table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+    <thead>
+    <tr align="left" valign="top">
+     <th scope="col" width="200" style="min-width:200px; width:200px; max-width:200px;">
+    	<strong>Наименование позиции</strong>
+    </th>
+    %{section name=rowsec1 loop=$items[rowsec].sectors}%
+    	<th scope="col" width="%{$items[rowsec].td_width}%" style="min-width:80px;">
+    	<strong> %{$items[rowsec].sectors[rowsec1].name}%</strong>
+    	</th>
+     %{sectionelse}%
+     <th scope="col" width="*">-</th>
+     %{/section}%
+     <th scope="col" align="right" width="80" style="min-width:80px; width:80px; max-width:80px;">
+     <strong>Итого:</strong>
+     
+     </th>
+    </tr>
+    </thead>
+    <tbody>
+     %{section name=rowsec2 loop=$items[rowsec].positions}%
+    <tr align="left" valign="top">
+    <td width="200"  style="min-width:200px; width:200px; max-width:200px;">
+     %{$items[rowsec].positions[rowsec2].position_id|string_format:"%05d"}%
+     %{$items[rowsec].positions[rowsec2].name}%,
+     %{$items[rowsec].positions[rowsec2].dimension}%
+    </td>
+     %{section name=rowsec3 loop=$items[rowsec].positions[rowsec2].pos_by_sectors}%
+     	<td width="%{$items[rowsec].positions[rowsec2].td_width}%" style="min-width:80px;">
+      
+        %{$items[rowsec].positions[rowsec2].pos_by_sectors[rowsec3].sum_sector}%
+     	
+        </td>
+     %{sectionelse}%
+     <td width="*">-</td>
+     %{/section}%
+    <td align="right" width="80" style="min-width:80px; width:80px; max-width:80px;">
+   %{$items[rowsec].positions[rowsec2].s_q}%
+    </td>
+    </tr>
+    %{/section}%
+   </tbody>
+    </table>
+    <div style="margin-bottom:30px;"></div>
+    
+    
+  
+%{/section}%
+
+
+

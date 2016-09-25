@@ -1,0 +1,111 @@
+%{section name=rowsec loop=$opfs_total}%
+
+<div style="white-space:nowrap;"><input type="text" size="35" maxlength="255" id="opf_%{$opfs_total[rowsec].id}%" value="%{$opfs_total[rowsec].name|escape:"html"}%" style="width:250px; background-color:silver;" />
+<a href="#" id="edit_opf_%{$opfs_total[rowsec].id}%" title="редактировать вопрос"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_opf_%{$opfs_total[rowsec].id}%" border="0" alt="" /></a>
+<a href="#" id="delete_opf_%{$opfs_total[rowsec].id}%" title="удалить вопрос"><img src="/img/del.gif" width="15" height="15" border="0" alt="" /></a>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#edit_opf_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		/*alert('editing');
+		*/
+		if($("#icon_opf_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			//включаем редактирование
+			$("#icon_opf_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#opf_%{$opfs_total[rowsec].id}%").css("background-color","white");
+		}else{
+			//вносим изменения
+			
+			$.ajax({
+				async: true,
+				url: "/js/user_d.php",
+				type: "POST",
+				data:{
+					"action":"edit_opf",
+					"question":$("#opf_%{$opfs_total[rowsec].id}%").attr("value"),
+					"id":"%{$opfs_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_d.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_opf_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#opf_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования ОПФ.");	
+				}	 
+			});
+		}
+		
+		return false;
+	});
+	
+	$("#opf_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if($("#icon_opf_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_opf_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#opf_%{$opfs_total[rowsec].id}%").css("background-color","white");
+		}
+	});
+	
+	//удаление
+	$("#delete_opf_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if(window.confirm("Вы действительно хотите удалить ОПФ %{$opfs_total[rowsec].name|escape:"html"}%?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_d.php",
+				type: "POST",
+				data:{
+					"action":"delete_opf",
+					"id":"%{$opfs_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_d.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_opf_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#opf_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления ОПФ.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+});
+</script>
+%{/section}%

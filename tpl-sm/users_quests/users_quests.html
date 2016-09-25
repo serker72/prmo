@@ -1,0 +1,66 @@
+<h1>Вопросы, курируемые сотрудниками</h1>
+
+<form action="users_s.php" method="get" id="users_quests_form">
+<input type="hidden" name="tab_page" value="2" />
+<input type="hidden" name="is_active" value="1" />
+
+%{include file="every_help_dialog.html" filename="an_vopr.htm" prefix="_uq" description="отчет Вопросы, курируемые сотрудниками"  style="float:right;  margin-left:00px;" is_right=true}%
+
+
+%{section name=rowsec1 loop=$qsts}%
+
+%{if $smarty.section.rowsec1.index is div by $per_page}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+
+<input type="checkbox" value="%{$qsts[rowsec1].id}%" id="quest_%{$qsts[rowsec1].id}%" name="quest_%{$qsts[rowsec1].id}%" %{if $qsts[rowsec1].is_checked}%checked="checked"%{/if}% /> 
+<label for="quest_%{$qsts[rowsec1].id}%">%{$qsts[rowsec1].name}%</label>
+<br />
+
+
+%{if $smarty.section.rowsec1.index_next is div by $per_page or $smarty.section.rowsec1.last}%
+</div>
+%{/if}%
+
+%{/section}%
+
+
+<div style="float:left; margin-right:20px;">
+
+<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+<input type="image" name="doSub" value="Найти"  alt="Найти" src="/img/24.png"   />
+</div>
+
+<a href="users_s.php?doSub=1&tab_page=2" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить фильтры" ></a>
+
+<a href="#" id="print_users_quests"  class="reestr_print reestr_right_button24" data-comment="Печать отчета"  ></a>
+<br clear="all" />
+<input type="checkbox" id="quests_select_all" value="1" /><strong>Все функции</strong>
+
+<script type="text/javascript">
+$(function(){
+	$("#print_users_quests").bind("click",function(){
+		window.open('users_s.php?print=1&'+$("#users_quests_form").serialize()+'&doSub=1', 'users_quests','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		
+		 return false; 
+	});
+	$("#quests_select_all").bind("change", function(){
+		$("input[type=checkbox][id^=quest_]").prop("checked", $(this).prop("checked"));
+	});
+});
+</script>
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+</form>
+
+%{if $do_it}%
+%{include file="users_quests/users_quests_table.html"}%
+%{/if}%
+

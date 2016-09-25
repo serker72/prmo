@@ -1,0 +1,10 @@
+ 
+<h3>Подзадачи:</h3>
+
+<input class="subtask_button" onClick="location.href='ed_sched_task.php?kind_id=1&action=0&task_id=%{$bill.id}%';" type="button" value="Создать подзадачу..." %{if !$field_rights.can_subtask}% disabled %{/if}% />
+<p />
+ 
+
+%{$subtasks}%
+
+ 

@@ -1,0 +1,14 @@
+syntax: glob
+cnf/*
+sxd/*
+msd/*
+upload/*
+uploadphotos/*
+upload_kp/*
+webstat/*
+classes/global.php
+classes/dbparams.php
+tpl-sm/compile/*
+convert*.php
+tmp/data
+tmp/exit

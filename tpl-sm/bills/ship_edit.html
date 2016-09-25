@@ -1,0 +1,258 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript">
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_shipping_plan").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_payment_contract").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#pdate_shipping_fact").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_payment_ind").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+});
+</script>
+<h1 style="">Редактирование исходящего счета</h1>
+
+
+
+<form action="ed_ship.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$ship.id}%" />
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Номер:</strong>
+%{$ship.id}%
+</div>
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong>
+%{$ship.pdate}%
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="storage_id_string">Объект:</label>
+<input type="text" size="20" maxlength="255" id="storage_id_string" value="%{$storage_id_string}%" disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id_string">Участок:</label>
+<input type="text" size="20" maxlength="255" id="sector_id_string" value="%{$sector_id_string}%" disabled="disabled" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+<p />
+
+
+
+
+<!-- блок выбора поставщика -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Поставщик:</label>
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label>
+<input type="text" size="40" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" />
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора поставщика -->
+
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+<br clear="all" />
+<p />
+
+
+
+
+<!-- блок выбора поставщика -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id">Поставщик:</label>
+<input type="text" size="40" maxlength="255" value="%{$bill.supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+<input type="button" id="supplier_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="supplier_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+<input type="hidden"  value="%{$bill.supplier_id}%" name="supplier_id" id="supplier_id" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="contract_no">Договор №</label>
+<input type="text" size="20" maxlength="255" value="%{$bill.contract_no}%" id="contract_no_string" disabled="disabled" />
+<input type="hidden" name="contract_no" id="contract_no" value="%{$bill.contract_no}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+<label for="contract_pdate">от</label>
+<input type="text" size="10" maxlength="255" value="%{$bill.contract_pdate}%" id="contract_pdate_string" disabled="disabled" />
+<input type="hidden" name="contract_pdate" id="contract_pdate" value="%{$bill.contract_pdate}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate_shipping_plan">Плановая дата поставки:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_shipping_plan}%" name="pdate_shipping_plan" id="pdate_shipping_plan" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate_shipping_fact">Фактическая дата поставки:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_shipping_fact}%" name="pdate_shipping_fact" id="pdate_shipping_fact" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate_payment_contract">Дата оплаты по договору:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_payment_contract}%" name="pdate_payment_contract" id="pdate_payment_contract" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate_payment_ind">Фактическая дата оплаты:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_payment_ind}%" name="pdate_payment_ind" id="pdate_payment_ind" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="bdetails_id">Банковский счет:</label><br />
+<input type="text" size="40" maxlength="255" id="bdetails_id_string" value="%{$bill.bdetails_id_string}%" disabled="disabled" />
+<input type="hidden" name="bdetails_id" id="bdetails_id" value="%{$bill.bdetails_id}%" />
+<input type="button" id="bdetails_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="bdetails_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+<br clear="all" />
+<p />
+
+%{include file="bills/supplier_actions.html" current_supplier=$bill.supplier_id pos=$bill.bdetails current_bank=$bill.bdetails_id}%
+
+
+<!-- конец блока поставщика -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- блок выбора компл. ведомости -->
+<div style="float:left; margin-right:20px;">
+<label for="komplekt_ved_id">Заявка:</label><br />
+<input type="text" size="40" maxlength="255" id="komplekt_ved_id_string" value="%{$bill.komplekt_ved_id_string}%" disabled="disabled" />
+<input type="hidden" name="komplekt_ved_id" id="komplekt_ved_id" value="%{$bill.komplekt_ved_id}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="komplekt_ved_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="komplekt_ved_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="storage_id">Объект:</label><br />
+<input type="text" size="20" maxlength="255" id="storage_id_string" value="%{$bill.storage_id_string}%" disabled="disabled" />
+<input type="hidden" name="storage_id" id="storage_id" value="%{$bill.storage_id}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id">Участок:</label><br />
+<select name="sector_id" id="sector_id" style="width:150px;" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$bill.sectors}%</select>
+</div>
+<br clear="all" />
+<p />
+
+%{include file="bills/komplekt_actions.html"}%
+<!-- конец блока комплектовочной ведомости -->
+
+
+
+<strong>Позиции счета:</strong> 
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+%{include file="bills/position_actions.html"}%
+ 
+<p />
+
+<label for="notes">Примечания:</label><br />
+<textarea rows="3" cols="120" name="notes" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$bill.notes}%</textarea>
+<p />
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed_price" id="is_confirmed_price" value="1" onchange="" %{if $bill.is_confirmed_price==1}% checked="checked"%{/if}% %{if $can_confirm_price==false}% disabled="disabled"%{/if}% /><label for="is_confirmed_price">Утверждаю цену</label>
+<span id="is_confirmed_price_confirmer">%{$is_confirmed_price_confirmer}%</span>
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed_shipping" id="is_confirmed_shipping" value="1" onchange="" %{if $bill.is_confirmed_shipping==1}% checked="checked"%{/if}% %{if $can_confirm_shipping==false}% disabled="disabled"%{/if}% /><label for="is_confirmed_shipping">Утверждаю отгрузку</label>
+<span id="is_confirmed_shipping_confirmer">%{$is_confirmed_shipping_confirmer}%</span>
+
+%{if $bill.is_confirmed_shipping==1}%
+<input type="button" onclick="location.href='ship_instructions.php?bill_id=%{$bill.id}%';" value="Распоряжение на отгрузку..." />
+
+%{/if}%
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку исходящих счетов" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='bills.php';" />
+
+
+</form>
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+frmvalidator.addValidation("supplier_id","req","Выберите поставщика!");
+
+frmvalidator.addValidation("bdetails_id","req","Выберите реквизиты поставщика!");
+
+frmvalidator.addValidation("komplekt_ved_id","req","Выберите заявку!");
+</script>

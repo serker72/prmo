@@ -1,0 +1,101 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'ansc_Tab' }  
+  	});
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+
+ 
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+ 
+</style>
+
+<div id="tabs">
+  <ul>
+   
+    <li><a href="#tabs-3">Встречи</a></li>
+    <li><a href="#tabs-1">Задачи</a></li>
+    <li><a href="#tabs-5">Заметки</a></li>
+    <li><a href="#tabs-4">Звонки</a></li>
+    <li><a href="#tabs-2">Командировки</a></li>
+    
+    <li><a href="#tabs-6">Все действия</a></li>
+    
+    <li><a href="#tabs-7">Новые клиенты</a></li>
+    <li><a href="#tabs-8">Мои клиенты</a></li>
+   
+  </ul>
+  
+  
+  <div id="tabs-3">
+    <p>
+    %{$log3}%
+    
+    </p>
+  </div>
+  
+  <div id="tabs-1">
+    <p>
+    %{$log1}%
+    
+    </p>
+  </div>
+  
+  <div id="tabs-5">
+    <p>
+    %{$log5}%
+    
+    </p>
+  </div>
+  
+  <div id="tabs-4">
+    <p>
+    %{$log4}%
+    
+    </p>
+  </div>
+  
+  <div id="tabs-2">
+    <p>
+    %{$log2}%
+    
+    </p>
+  </div>
+  
+  <div id="tabs-6">
+    <p>
+    %{$log6}%
+    
+    </p>
+  </div>
+  
+  
+  <div id="tabs-7">
+    <p>
+    %{$log7}%
+    
+    </p>
+  </div>
+  
+   <div id="tabs-8">
+    <p>
+    %{$log8}%
+    
+    </p>
+  </div>
+
+</div>

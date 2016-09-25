@@ -1,0 +1,554 @@
+<!-- таблица на странице -->
+
+%{section name=pospossec loop=$pospos}%
+
+%{if $smarty.section.pospossec.first}%
+
+<div align="right" style="font-size:8pt;"><em>Страница %{$pospos[pospossec].page-1}%</em></div>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" id="positions_on_page_table">
+    <thead>
+    <tr align="center" valign="middle">
+	<th scope="col" width="30" rowspan="2" class="ten blacktable">
+    Но-
+мер
+по по-
+рядку 
+    </th> 
+    <th scope="col" width="*" colspan="2" class="ten blacktable" >
+    Товар					
+    </th>   
+    <th scope="col" width="140" colspan="2" class="ten blacktable">
+    Единица измерения				
+					
+    </th>   
+    
+     <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+   Вид упаковки
+				
+    </th> 
+    <th scope="col" width="140" colspan="2" class="ten  blacktable">
+    Количество					
+					
+    </th> 
+     <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+   Масса брутто		
+		
+    </th>
+
+     <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+   Количество 
+(масса 
+нетто)
+		
+    </th>
+    <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+  Цена,
+руб. коп.
+    </th>
+    <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+  Сумма без
+учета НДС,
+руб. коп.
+    </th>
+     <th scope="col" width="140" colspan="2" class="ten  blacktable">
+   НДС				
+					
+					
+    </th> 
+      <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+  Сумма с
+учетом 
+НДС, 
+руб. коп.
+    </th> 
+    
+    </tr>
+    <tr align="center" valign="middle">
+     <th scope="col" width="*"  class="ten  blacktable" style="min-width:300px;">
+   наименование, характеристика, сорт, артикул товара				
+				
+    </th> 
+     <th scope="col" width="70"  class="ten  blacktable">
+   код
+		
+    </th> 
+    <th scope="col" width="70"  class="ten  blacktable" >
+   наименование			
+
+		
+    </th> 
+     <th scope="col" width="70"  class="ten  blacktable">
+   код по ОКЕИ
+
+    </th> 
+    <th scope="col" width="70"  class="ten  blacktable">
+   в одном месте		
+
+    </th> 
+    <th scope="col" width="70"  class="ten  blacktable">
+  мест,
+штук		
+
+    </th> 
+    
+    <th scope="col" width="70"  class="ten  blacktable">
+  ставка, %	
+
+    </th> 
+    
+    <th scope="col" width="70"  class="ten  blacktable">
+  сумма, 
+руб. коп.
+    </th> 
+    
+    </tr>
+    <tr align="center" valign="middle">
+    <th scope="col" width="30"  class="ten  blacktable">
+    1
+    </th>
+    <th scope="col" width="*"  class="ten  blacktable" style="min-width:300px;">
+    2
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    3
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    4
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    5
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    6
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    7
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    8
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    9
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    10
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    11
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    12
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    13
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    14
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    15
+    </th>
+    </tr>
+    
+    </thead>
+	<tbody>
+	
+%{/if}%    
+    
+    
+    
+    
+  
+     <tr align="center" valign="top">
+     <td width="30" class="ten  blacktable">
+      %{$smarty.section.pospossec.index+1}%
+     </td>
+     <td width="*" align="left" class="ten  blacktable" style="min-width:300px;">
+     %{$pospos[pospossec].position_name}%
+     </td>
+     <td width="70" class="ten  blacktable2">
+     %{$pospos[pospossec].id}%
+     </td>
+     <td width="70" class="ten  blacktable">
+    %{$pospos[pospossec].dim_name}%
+     </td>
+      <td width="70" class="ten  blacktable2">&nbsp;
+    %{$pospos[pospossec].okei}%
+     </td>
+      <td width="70" class="ten  blacktable2">&nbsp;
+   
+     </td>
+      <td width="70" class="ten  blacktable2">&nbsp;
+   
+     </td>
+      <td width="70" class="ten  blacktable2">&nbsp;
+   
+     </td>
+      <td width="70" class="ten  blacktable2">&nbsp;
+   
+     </td>
+      <td width="70" class="ten  blacktable2">
+   %{$pospos[pospossec].quantity}%
+     </td>
+      <td width="70" class="ten  blacktable2" style="white-space:nowrap;">
+  
+  %{if $do_print_summ==1}%
+   %{$pospos[pospossec].price_pm_wo_nds}%
+  %{else}%
+-
+%{/if}% 
+   
+     </td>
+     <td width="70" class="ten  blacktable2" style="white-space:nowrap;">
+     %{if $do_print_summ==1}%
+  %{$pospos[pospossec].total_wo_nds}%
+  %{else}%
+-
+%{/if}% 
+     </td>
+     <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+   %{$pospos[pospossec].nds_proc}%
+     </td>
+      <td width="70" class="ten  blacktable2" style="white-space:nowrap;">
+       %{if $do_print_summ==1}%
+   %{$pospos[pospossec].nds_summ_f}%
+     %{else}%
+-
+%{/if}% 
+     </td>
+     <td width="70" class="ten  blacktable2" style="white-space:nowrap;">
+      %{if $do_print_summ==1}%
+     %{$pospos[pospossec].total_f}%
+       %{else}%
+-
+%{/if}% 
+     </td>
+     </tr>
+
+
+
+    
+%{if $pospos[pospossec].break_after and !$smarty.section.pospossec.last}%
+
+ </tbody>
+     <tfoot>
+     
+     <tr align="center" valign="top">
+     <td width="*" align="right" class="ten" colspan="7" style="border-style:none;">
+     Итого
+     </td>
+      <td width="70" class="ten  blacktable">&nbsp;
+     
+     </td>
+       <td width="70" class="ten  blacktable">&nbsp;
+     
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+     %{$pospos[pospossec].cols_by_page_f}%
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+     X
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+         %{if $do_print_summ==1}%
+     %{$pospos[pospossec].costs_by_page_f}%
+      %{else}%
+-
+%{/if}% 
+     </td>
+       <td width="70" class="ten  blacktable">
+     X
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+       %{if $do_print_summ==1}%
+     %{$pospos[pospossec].nds_sums_by_page_f}%
+      %{else}%
+-
+%{/if}% 
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+        %{if $do_print_summ==1}%
+     %{$pospos[pospossec].totals_by_page_f}%
+      %{else}%
+-
+%{/if}% 
+     </td>
+     </tr>
+   
+   
+     
+     
+      <tfoot>
+     
+	</tbody>
+</table>
+
+
+
+<div style="page-break-after:always;"></div>
+
+<div align="right" style="font-size:8pt;"><em>Страница %{$pospos[pospossec].page}%</em></div>
+<table width="100%" cellpadding="1" cellspacing="0" border="0" id="positions_on_page_table">
+    <thead>
+    <tr align="center" valign="middle">
+	<th scope="col" width="30" rowspan="2" class="ten blacktable">
+    Но-
+мер
+по по-
+рядку 
+    </th> 
+    <th scope="col" width="*" colspan="2" class="ten blacktable">
+    Товар					
+    </th>   
+    <th scope="col" width="140" colspan="2" class="ten blacktable">
+    Единица измерения				
+					
+    </th>   
+    
+     <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+   Вид упаковки
+				
+    </th> 
+    <th scope="col" width="140" colspan="2" class="ten  blacktable">
+    Количество					
+					
+    </th> 
+     <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+   Масса брутто		
+		
+    </th>
+
+     <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+   Количество 
+(масса 
+нетто)
+		
+    </th>
+    <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+  Цена,
+руб. коп.
+    </th>
+    <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+  Сумма без
+учета НДС,
+руб. коп.
+    </th>
+     <th scope="col" width="140" colspan="2" class="ten  blacktable">
+   НДС				
+					
+					
+    </th> 
+      <th scope="col" width="70" rowspan="2" class="ten  blacktable">
+  Сумма с
+учетом 
+НДС, 
+руб. коп.
+    </th> 
+    
+    </tr>
+    <tr align="center" valign="middle">
+     <th scope="col" width="*"  class="ten  blacktable" style="min-width:300px;">
+   наименование, характеристика, сорт, артикул товара				
+				
+    </th> 
+     <th scope="col" width="70"  class="ten  blacktable">
+   код
+		
+    </th> 
+    <th scope="col" width="70"  class="ten  blacktable">
+   наименование			
+
+		
+    </th> 
+     <th scope="col" width="70"  class="ten  blacktable">
+   код по ОКЕИ
+
+    </th> 
+    <th scope="col" width="70"  class="ten  blacktable">
+   в одном месте		
+
+    </th> 
+    <th scope="col" width="70"  class="ten  blacktable">
+  мест,
+штук		
+
+    </th> 
+    
+    <th scope="col" width="70"  class="ten  blacktable">
+  ставка, %	
+
+    </th> 
+    
+    <th scope="col" width="70"  class="ten  blacktable">
+  сумма, 
+руб. коп.
+    </th> 
+    
+    </tr>
+    <tr align="center" valign="middle">
+    <th scope="col" width="30"  class="ten  blacktable">
+    1
+    </th>
+    <th scope="col" width="*"  class="ten  blacktable" style="min-width:300px;">
+    2
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    3
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    4
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    5
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    6
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    7
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    8
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    9
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    10
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    11
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    12
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    13
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    14
+    </th>
+    <th scope="col" width="70"  class="ten  blacktable">
+    15
+    </th>
+    </tr>
+    
+    </thead>
+	<tbody>
+	
+%{/if}%  
+ 
+ 
+   
+  
+%{if $smarty.section.pospossec.last}% 
+     </tbody>
+     <tfoot>
+     
+     <tr align="center" valign="top">
+     <td width="*" align="right" class="ten" colspan="7" style="border-style:none;">
+     Итого
+     </td>
+      <td width="70" class="ten  blacktable">&nbsp;
+     
+     </td>
+       <td width="70" class="ten  blacktable">&nbsp;
+     
+     </td>
+       <td width="70" class="ten  blacktable">
+     %{$pospos[pospossec].cols_by_page_f}%
+     </td>
+       <td width="70" class="ten  blacktable">
+     X
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+     %{if $do_print_summ==1}%
+    
+     %{$pospos[pospossec].costs_by_page_f}%
+      %{else}%
+-
+%{/if}% 
+     </td>
+       <td width="70" class="ten  blacktable">
+     X
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+          %{if $do_print_summ==1}%
+    
+     %{$pospos[pospossec].nds_sums_by_page_f}%
+      %{else}%
+-
+%{/if}% 
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+        %{if $do_print_summ==1}%
+     %{$pospos[pospossec].totals_by_page_f}%
+      %{else}%
+-
+%{/if}% 
+     </td>
+     </tr>
+     
+     
+     
+      
+     <tr align="center" valign="top">
+     <td width="*" align="right" class="ten" colspan="7" style="border-style:none;">
+     Всего по накладной
+     </td>
+      <td width="70" class="ten  blacktable">&nbsp;
+     
+     </td>
+       <td width="70" class="ten  blacktable">&nbsp;
+     
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+     %{$cols_by_all}%
+     </td>
+       <td width="70" class="ten  blacktable">
+     X
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+        %{if $do_print_summ==1}%
+     %{$costs_by_all}%
+     %{else}%
+-
+%{/if}% 
+     </td>
+       <td width="70" class="ten  blacktable">
+     X
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+       %{if $do_print_summ==1}%
+     %{$nds_sums_by_all}%
+     %{else}%
+-
+%{/if}% 
+     </td>
+       <td width="70" class="ten  blacktable" style="white-space:nowrap;">
+       %{if $do_print_summ==1}%
+     %{$totals_by_all}%
+     %{else}%
+    -
+    %{/if}% 
+     </td>
+     </tr>
+   
+     
+     
+      <tfoot>
+     
+	</tbody>
+</table>
+
+
+
+<!--<div style="page-break-after:always;">-->
+
+ %{/if}%
+%{/section}%
+
+ 
+    
+ 
+

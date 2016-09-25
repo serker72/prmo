@@ -1,0 +1,134 @@
+<script type="text/javascript">
+	
+	function codebuild(field_id){
+		var selected_bdetails=0;
+		var field_id=field_id;
+		
+		
+		 
+		 $.each($("#code_list table tr td input[type=radio]"), function(key, value){
+			  if(value.checked){
+				  selected_bdetails=$(value).val();
+			  }
+		  });
+		  
+		  
+		   if($("#code_id").val()!=selected_bdetails){
+			  
+			  //подгружаем все данные по реквизитам
+			  if(selected_bdetails>0){
+				  $.ajax({
+					async: true,
+					url: "/js/cash.php",
+					type: "GET",
+					dataType: "json",
+					data:{
+						"action":"retrieve_code",
+						"id":selected_bdetails
+					},
+					beforeSend: function(){
+					  
+					},
+					success: function(data){
+					  
+					 
+					  $("#"+field_id+"code_id_string").val(''+data.code+' '+data.name+' '+data.descr);
+					  $("#"+field_id+"code_id").val(data.id);
+					  
+					},
+					error: function(xhr, status,m){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					   //alert("Ошибка выбора кода оплаты."+status+m);
+					}	 
+				  });
+			  }
+			  
+		  }
+		 
+		 // $("#code_dialog").dialog("close"); 
+	}
+	
+	
+	
+$(function(){
+	
+	
+	
+	
+	
+	
+	$("#code_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,
+		height: 550,
+		buttons: {
+			"Готово": function(){
+				$(this).dialog("close"); 
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	
+	
+	
+	 
+});
+</script>
+
+
+
+<div id="code_dialog" title="Выберите код оплаты" style="display:none;">
+
+
+
+  <a href="#" id="code_dialog_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="right" vspace="3" hspace="5" /></a>
+
+	
+    
+	<br clear="all" />
+	
+    
+  <div id="code_dialog_help" title="Информация о выборе кода оплаты">
+    
+    
+    
+  </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#code_dialog_help").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 600,
+		  height: 180,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#code_dialog_info").bind("click", function(){
+			
+			
+			
+			$("#code_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+	<div style="width:510px; height:400px; border:1px solid gray; overflow:auto;" id="code_list">
+    %{include file="cash/code_list.html" }%
+  </div>
+
+</div>

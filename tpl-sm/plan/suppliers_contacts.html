@@ -1,0 +1,69 @@
+
+ 
+    	<td colspan="7">
+         
+         
+         
+         
+         <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+         
+         %{section name=rowsec loop=$items}%
+    <tr align="left" valign="top">
+    	
+    
+    <td width="200">
+    
+    <strong>%{$items[rowsec].name}%</strong><br />
+	<strong>%{$items[rowsec].position}%</strong>
+ 
+    <input type="hidden" id="contact_name_%{$items[rowsec].id}%" value="%{$items[rowsec].name|escape:"html"}%" />
+	</td>
+	
+	<td width="*" >
+   
+	  
+    %{section name=rowsec1 loop=$items[rowsec].data}%
+    	<div class="common_block" id="contact_block_%{$items[rowsec].id}%">
+        <img src="%{$items[rowsec].data[rowsec1].pc_icon}%" border="0" alt=" %{$items[rowsec].data[rowsec1].pc_name}%" title="%{$items[rowsec].data[rowsec1].pc_name}%" align="left" vspace="0" hspace="3" />
+        <input type="radio" name="selected_supplier_phone" id="selected_supplier_phone_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].data[rowsec1].id}%" />
+        
+        <input type="hidden" id="selected_contact_value_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].data[rowsec1].value|escape}% %{if $items[rowsec].data[rowsec1].value1!=""}%доб.%{/if}% %{$items[rowsec].data[rowsec1].value1|escape}%" />
+        
+        
+        <input type="hidden" id="selected_contact_name_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].name|escape}%, %{$items[rowsec].position|escape}%" />
+        
+        <input type="hidden" id="selected_contact_code_%{$items[rowsec].data[rowsec1].id}%" value="%{$items[rowsec].id}%" />
+        
+        
+         <input type="hidden" id="selected_supplier_code_%{$items[rowsec].data[rowsec1].id}%" value="%{$supplier_id}%" />
+        
+        
+        <label for="selected_supplier_phone_%{$items[rowsec].data[rowsec1].id}%">%{$items[rowsec].data[rowsec1].value}% 
+        %{if $items[rowsec].data[rowsec1].value1!=""}%
+        доб. %{$items[rowsec].data[rowsec1].value1}%
+        %{/if}%
+        </label>
+		 
+        </div>
+    %{/section}%
+    </td>
+    
+     
+      </td>
+	  
+	</tr>
+%{/section}%
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+        </td>
+ 
+  
+ 	

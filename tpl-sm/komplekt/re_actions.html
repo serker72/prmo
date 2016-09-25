@@ -1,0 +1,64 @@
+<div id="re_dialog" title="Рентабельность заявки" style="display:none;">
+
+	<div id="re_dialog_inner">
+    
+    </div>
+
+</div>
+<script type="text/javascript">
+ 
+	
+	
+	function re_GetData(id){
+		$.ajax({
+			async: true,
+			url: "/js/komplekt.php",
+			type: "POST",
+			data:{
+				"action":"view_re",
+				"id":id //$("#id").val()
+			},
+			beforeSend: function(){
+				$("#re_dialog_inner").html('<img src="/img/images/wait.gif" alt="подождите, пожалуйста..." border="0" width="32" height="32" />');
+			},
+			success: function(data){
+			  $("#re_dialog_inner").html(data);
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+
+	$("#view_re").bind("click", function(){
+		re_GetData($("#id").val());
+		
+		$("#re_dialog").dialog("open");
+		return false;
+	});
+	
+	
+	
+	$("#re_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1050,
+		height: 550,
+		buttons: {
+			"Готово": function(){
+				$(this).dialog("close"); 
+				
+			} 
+		}
+	});
+	
+ 
+
+function re_FromList(id){
+	re_GetData(id);
+		
+		$("#re_dialog").dialog("open");
+		return false;
+}
+</script>

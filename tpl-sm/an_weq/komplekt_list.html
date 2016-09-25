@@ -1,0 +1,375 @@
+%{section name=rowsec loop=$items}%%{/section}%
+%{if $has_header}%
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	
+});
+</script>
+
+
+
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form11">
+
+<input type="hidden" name="tab_page" value="1" />
+
+
+
+
+<h2 style="float:left;">Заявки без автовыравнивания</h2>
+
+
+
+
+<div style="float:right; margin-top:10px;">
+ 	
+    <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+    <input type="image" name="doFilter" src="/img/24.png" alt="Найти" />
+    </div>
+    
+    <a href="an_waaq.php?tab_page=1&doFilter=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+    
+    <a href="#" id="print_table" class="reestr_print reestr_right_button24" data-comment="Печать отчета" ></a> 
+    
+    %{include file="every_help_dialog.html" filename="an_weq.htm" prefix="" description="Заявки без автовыравнивания"  style="float:right;  margin-top:0px; margin-left:00px;" is_right=true}%
+    
+     <script type="text/javascript">
+  $(function(){
+	  $("#print_table").bind("click",function(){
+			//alert($("#supplier_id").serialize());
+			
+			
+		 	 window.open('an_waaq.php?tab_page=1&print='+'1'+'&sortmode='+'%{$sortmode}%'+'&doFilter=1&id='+$("#id").val()+'&code='+$("#code").val()+'&sector_id='+$("#sector_id").val()+'&storage_id='+$("#storage_id").val()+'&manager_name='+$("#manager_name").val()+'', 'weq','width=1200,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		
+		 return false; 
+	  });
+	  
+  });
+  </script>
+</div>
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    <th scope="col" width="60">
+    № п/п
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1&doFilter=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0&doFilter=1"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+      <th scope="col" width="60">
+    Дата создания
+    </th>
+    
+    
+  <th scope="col" width="60">
+    Заданный номер
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3&doFilter=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2&doFilter=1"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   
+  
+   
+   
+    <th scope="col" width="80">
+    Контрагент
+    </th>
+    
+   
+    
+    <th scope="col" width="100">Даты исполнения 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=9&doFilter=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=8&doFilter=1"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+      <th scope="col" width="100">Статус
+    
+    </th>
+    
+    <th scope="col" width="24">
+   
+   %{if $can_eq}%
+  
+      <a href="#" id="make_eq_komplekt" class="reestr_eq reestr_right_button24" data-comment="выровнять позиции с фактически полученными..." ></a>
+     <div id="eq_indicator" style="display:inline;">
+     
+     </div>
+     
+     
+     <script type="text/javascript">
+	$(function(){
+		$("#make_eq_komplekt").bind("click",function(){
+			//var state=$(this).prop("checked");
+			var cter=0; var args=new Array();
+			$.each($("input[id^=kompl_]"), function(k,v){
+				if($(v).prop("checked")){ 
+					cter++;
+					args.push($(v).val());
+				}
+			});
+			if(cter==0){
+				alert("Вы не выбрали ни одной заявки для выравнивания. Необходимо выбрать хотя бы одну заявку.");		
+			}else{
+				$.each(	args, function(k,v){
+					//alert(v);
+					$.ajax({
+							async: false,
+							url: "/js/an_weq.php",
+							type: "POST",
+							data:{
+								"action":"toggle_scan_kompl_eq",
+								"id":v
+							},
+							beforeSend: function(){
+								$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+							   //data - это сообщение
+							   //ОК - запуск выравнивания
+							   //Отмена - выход...
+							   
+							  
+							   if(window.confirm("Внимание! По заявке № "+v+": "+data+"")){
+								   $.ajax({
+									  async: false,
+									  url: "/js/an_weq.php",
+									  type: "POST",
+									  data:{
+										  "action":"toggle_kompl_eq",
+										  "id":v
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										//alert(data);
+										 //$("#eq_indicator").html(data); 
+									  },
+									  error: function(xhr, status){
+										  //alert("Ошибка добавления вопроса.");	
+									  }	 
+								  });
+							   }
+							   
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+				});
+				
+				
+				alert("Выравнивание заявок завершено.");
+				location.reload();
+			}
+			
+			
+			return false;
+		});
+	});
+	</script>
+     
+     
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для выравнивания позиций!'); return false;"><img src="/img/icons/eq-gr.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a>
+ %{/if}%
+   
+   </th>
+   
+  
+    
+    <th scope="col" width="100" >Создал документ
+   
+    </th>
+    
+    <th scope="col" width="100" >Утвердил без а/в 
+   
+    </th>
+   
+   
+   <td width="*" >
+    
+   
+   
+    
+    </td>
+   
+   
+ 
+</tr>
+<tr align="center" valign="top">
+	<td width="60">
+	 <input type="text" size="4" maxlength="255" value="%{$id}%" name="id" id="id" />
+    
+    </td>
+    
+     
+    <td width="60">&nbsp;
+    
+    </td>
+    
+    
+    <td width="60">
+	 <input type="text" size="4" maxlength="255" value="%{$code}%" name="code" id="code" />
+    
+    </td>
+    
+    
+     
+    
+	
+       <td width="80">
+   
+   
+    </td>
+    
+ 
+    
+      <td width="100">
+	
+    </td>
+  
+    <td width="100">
+    <select id="inner_status_id" style="width:100px;">
+  	<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все заявки</option>
+    <option value="2"  %{if $status_id==2}% selected="selected"%{/if}%>утверждена</option>
+    <option value="1"  %{if $status_id==1}% selected="selected"%{/if}%>не утверждена</option>
+    <option value="11"  %{if $status_id==11}% selected="selected"%{/if}%>новая</option>
+    <option value="12"  %{if $status_id==12}% selected="selected"%{/if}%>не выполнена</option>
+    <option value="13"  %{if $status_id==13}% selected="selected"%{/if}%>выполнена</option>
+    <option value="3"  %{if $status_id==3}% selected="selected"%{/if}%>аннулирована</option>
+   </select>  
+  
+   
+    </td>
+   
+ 	<th scope="col" width="24">
+    <input type="checkbox" id="select_all_kompls" value="1" />
+    <script type="text/javascript">
+	$(function(){
+		$("#select_all_kompls").bind("change",function(){
+			var state=$(this).prop("checked");
+			$.each($("input[id^=kompl_]"), function(k,v){
+				$(v).prop("checked",state);
+			});
+			
+		});
+	});
+	</script>
+    </th>
+    
+      <td width="100">
+   
+    <input type="text" size="15" maxlength="255" value="%{$manager_name}%" name="manager_name" id="manager_name" style="width:60px;" />
+   
+   </td>
+   
+    <td width="100">
+   
+    <input type="text" size="15" maxlength="255" value="%{$utv_name}%" name="utv_name" id="utv_name" style="width:60px;" />
+   
+   </td>
+   
+   
+    <th scope="col" width="24">&nbsp;</th>
+    
+   
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+%{/if}%
+	<td width="60" %{if $items[rowsec].status_id==3}% style="color:red;"%{else}%style="color:%{$items[rowsec].color}%;"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>%{$items[rowsec].id}% </td>
+    
+     <td width="60" style="color:%{$items[rowsec].color}%;">%{$items[rowsec].pdate}%&nbsp;</td>
+    
+    
+    <td width="60"  style="color:%{$items[rowsec].color}%;" >%{$items[rowsec].code}%&nbsp;</td>
+    
+    
+    
+   <td width="80" style="color:%{$items[rowsec].color}%;"> %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;</td>
+   
+    
+    
+    <td width="100" style="color:%{$items[rowsec].color}%;">
+    с %{$items[rowsec].begin_pdate}%
+    по %{$items[rowsec].end_pdate}%
+    
+    </td>
+    
+    
+    <td width="100" %{if $items[rowsec].status_id==3}% style="color:red;"%{else}%style="color:%{$items[rowsec].color}%;"%{/if}%>
+    
+    %{include file="komplekt/toggle_confirm.html" filename="komplekt.php" item=$items[rowsec] shorter=0}%
+    
+    &nbsp;</td>
+   
+   <th scope="col" width="24">
+    <input type="checkbox" id="kompl_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+    
+    </th>
+  
+    
+   
+     <td width="100" style="color:%{$items[rowsec].color}%;">
+    %{$items[rowsec].manager_name}%  
+    </td>
+    
+   
+  
+  <td width="100" style="color:%{$items[rowsec].color}%;">
+    %{$items[rowsec].utv_name}%   %{$items[rowsec].utv_pdate}%
+    </td>
+  	
+    
+    <td width="24" style="color:%{$items[rowsec].color}%;">
+    %{if $can_edit}%
+  
+    
+    <a href="ed_komplekt.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+    %{/if}%&nbsp;
+    </td>
+    
+   
+%{if $has_header}%    
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+
+%{$pages}%
+%{/if}%

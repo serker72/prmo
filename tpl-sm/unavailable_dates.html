@@ -1,0 +1,7 @@
+<script type="text/javascript">
+var closed_date=new Array();
+var interval_string="";
+%{section name=cdsec loop=$cdates}%
+closed_date.push(new Array('%{$cdates[cdsec].pdate_beg}%','%{$cdates[cdsec].pdate_end}%'));
+%{/section}%
+</script>

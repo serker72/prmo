@@ -1,0 +1,152 @@
+<script type="text/javascript" src="/js/gen_validatorv31.js"></script>
+   <script>
+$(function(){
+	$("#list").bind("keypress", function(){
+		min_rows=10;
+		lines=$(this).val().split("\n");
+		if(lines.length>min_rows){
+			$(this).prop("rows", lines.length);		
+		}else{
+			$(this).prop("rows", min_rows);	
+		}
+	});
+	$("#mode_change").buttonset();
+	
+	$("input[name=mode_change]").bind("change",function(){
+		if($(this).val()=="list"){
+			$("#mode_check").hide(200);
+			$("#mode_list").show(200);		
+			
+		}
+		if($(this).val()=="check"){
+			$("#mode_list").hide(200);
+			$("#mode_check").show(200);		
+			
+			$.ajax({
+			  async: true,
+			  url: "js/delivery_lists.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_users",
+				  "list_id":$("#list_id").val(),
+				  "current_id":$("#id").val()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#check").html('<img src="/img/wait.gif" width="32" height="32" alt=""/>');
+			  },
+			  success: function(data){
+				$("#check").html(data);
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		
+		}
+	});
+});
+</script> 
+
+
+<h1>Редактировать сегмент</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+<input type="hidden" name="id" id="id" value="%{$data.id}%">
+ 
+<input type="hidden" name="list_id" id="list_id" value="%{$data.list_id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+
+
+ 
+   
+   
+
+    <label for="name">Название:</label><br>
+    <input type="text" value="%{$data.name|escape:"html"}%" name="name" id="name" size="60" maxlength="255" />
+
+<br>
+<br>
+ 
+<h2>Подписчики в сегменте</h2>
+  
+<div id="mode_change">
+	<input name="mode_change" type="radio" value="list" id="mode_change_list"><label for="mode_change_list">Ввести списком</label> 
+
+
+	<input name="mode_change" type="radio" value="check" id="mode_change_check"><label for="mode_change_check">Выбрать из списка рассылки</label>
+</div> 
+ 
+ <br>
+
+<div id="mode_list" style="display:none;">
+    <label for="list">Введите список адресов электронной почты:</label><br>
+    <small>каждый адрес - с новой строки; адреса, которых нет в текущем списке, будут пропущены</small><br>
+    <input name="list_mode" type="radio" value="1" id="list_mode_1" checked><label for="list_mode_1">Добавить указанных подписчиков в сегмент</label> <br>
+
+	<input name="list_mode" type="radio" value="2" id="list_mode_2"><label for="list_mode_2">Удалить указанных подписчиков из сегмента</label> <br>
+    
+    <textarea id="list" name="list" cols="80" rows="10"></textarea>
+</div>
+
+<div id="mode_check" style="display:none;">
+	Выберите подписчиков:
+	<div id="check" style="min-width:720px; width:auto; height:500px; overflow:auto; border:1px solid silver;">
+    
+    </div>
+    
+</div>
+
+<br>
+
+  
+  
+
+<label for="comment">Комментарий:</label><br>
+<textarea id="comment" name="comment">%{$data.comment}%</textarea>
+<br>
+
+ 
+                    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+                    <script type="text/javascript">
+	CKEDITOR.replace( 'comment',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_delivery_template.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash'
+    				  }
+					 );
+	</script> 
+
+
+ 
+
+
+ 
+ 
+<input type="submit" name="doInp" id="doInp" value="Сохранить и перейти к списку сегментов" />
+<input type="submit" name="doApply" id="doApply" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='%{$list_pagename}%?id=%{$data.list_id}%';" />
+
+
+</form>
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+ 
+
+ 
+frmvalidator.addValidation("name","req","Укажите название сегмента!");
+ 
+ 
+</script>

@@ -1,0 +1,179 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 $("#bank_id").bind("click",function(){
+		//alert($(this).val());
+		
+		$.each($("#bank_id").val(), function(index, value){
+			
+			//множественный выбор
+			if(value==0){
+				$.each($("#bank_id option"), function(i, v){
+					if((v.value!=0)) v.selected=true;
+					if(v.value==0) v.selected=false;
+				});
+				
+			}
+			
+		});
+		
+	});
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#aed3ef;
+}
+.blacktable th.main{
+	background-color:#8bc1ea;
+}
+.blacktable th.contract, .blacktable  td.contract{
+	background-color:#d7e7f2;
+	font-weight:normal;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="tab_page" value="1" id="tab_page" />
+
+<div class="report_filter_right">
+
+	%{include file="every_help_dialog.html" filename="an_ds.htm" prefix="" description="отчет д/с"  style="float:right;  margin-right:0px;" is_right=true}%
+    
+	
+<div class="reestr_zoom reestr_right_button24" data-comment="Найти">    
+       <input type="image" src="/img/24.png"  alt="Вывести"   name="doSub"  />
+</div>       
+
+
+
+	
+    	<a href="an_ds.php?doSub=1&tab_page=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" ></a>
+
+
+ 
+    
+
+ %{if $can_print}%
+ 
+  <a href="#" id="print_table" class="reestr_print reestr_right_button24" data-comment="Печать..."  ></a>
+  
+  
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	  
+	  
+	  $("#print_table").bind("click",function(){
+		if($("#extended_an").prop("checked")) extended_an=1;
+		else extended_an=0;
+		
+		zc=window.open('an_ds.php?tab_page=1&print='+'1'+'&bank_name='+$("#bank_name").val()+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&extended_an='+extended_an+'&doSub=1&'+$("#bank_id").serialize(), 'ds','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			 
+			 if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."  ></a>
+ %{/if}%
+	
+
+</div>
+
+<div class="report_filter_left">
+    
+    <div class="report_filter" style="height:120px;">
+    
+    
+    
+    <label for="bank_id">Банк:</label><br />
+    <select id="bank_id" name="bank_id[]" size="5" multiple="multiple" style="width:150px;">
+    <option value="0">-все банки-</option>
+    %{html_options values=$bank_ids selected=$bank_id output=$bank_names}%
+    </select>
+    
+    </div>
+    
+    
+    <div class="report_filter" style="height:120px;">
+    <div style="float:left; margin-right:20px;">
+    <strong>Период</strong><br />
+    <label for="pdate1">с:</label><br />
+    <input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+    
+    <div style="float:left; margin-right:0px;">
+    <br />
+        <label for="pdate2">по:</label><br />
+        <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+    </div>
+    </div>
+    
+    
+    
+   <div class="report_filter"  style="height:120px;">
+   <br>
+
+    <input type="checkbox" name="extended_an" id="extended_an" value="1" %{if $extended_an==1}%checked="checked"%{/if}% />
+    <label for="extended_an">Расширенная ведомость</label>
+    
+    </div>
+</div>
+
+    
+ 
+
+<br clear="all" />
+
+
+</form>
+
+
+
+
+<small>
+1. <strong>Фильтр "Период".</strong> По умолчанию в отчет попадают оплаты с датами фактических платежных поручений за прошлые 3 месяца. Вы можете изменить период отчета, установив требуемые даты и нажав кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.<br />
+
+2. <strong>Фильтр "Банк".</strong> По умолчанию в отчет выводятся оплаты по всем банкам Вашей организации. 
+
+Вы можете осуществлять отбор по одному или нескольким банкам. Для этого в списке <strong>"Банк"</strong> нужно выбрать один или несколько банков (выбрать несколько банков можно, нажав и удерживая кнопку Ctrl, и кликая по нужным названиям) и нажать кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.<br />
+</small>
+
+
+<p />
+
+
+
+
+
+%{if $do_it}%
+%{include file="an_ds/an_ds_table.html"}%
+%{/if}%
+
+
+
+
+
+
+
+
+
+
+%{$pages}%

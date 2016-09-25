@@ -1,0 +1,35 @@
+
+<div class="gydex_delivery_navi">
+	%{if $step!=5}%
+    <a id="step_next"  class="gydex_delivery_next gydex_delivery_action" href="delivery_ed_campaign.php?id=%{$id}%&step=%{$step+1}%">Вперед ></a>
+	%{/if}%
+    
+    %{if $step!=1}%
+    <a class="gydex_delivery_back gydex_delivery_action" href="delivery_ed_campaign.php?id=%{$id}%&step=%{$step-1}%">< Назад</a>
+	%{/if}%
+	
+    <div class="gydex_delivery_links">
+    <a class="gydex_delivery_link gydex_delivery_action %{if $step==1}% gydex_delivery_active%{/if}%" href="delivery_ed_campaign.php?id=%{$id}%&step=1">Получатели</a> 
+   <div class="gydex_delivery_link"> > </div>
+   
+   
+   <a class="gydex_delivery_link gydex_delivery_action %{if $step==2}% gydex_delivery_active%{/if}%" href="delivery_ed_campaign.php?id=%{$id}%&step=2">Настройка</a> 
+   <div class="gydex_delivery_link"> > </div>
+   
+   <a class="gydex_delivery_link gydex_delivery_action %{if $step==3}% gydex_delivery_active%{/if}%" href="delivery_ed_campaign.php?id=%{$id}%&step=3">Шаблон</a> 
+   <div class="gydex_delivery_link"> > </div>
+   
+   <a class="gydex_delivery_link gydex_delivery_action %{if $step==4}% gydex_delivery_active%{/if}%" href="delivery_ed_campaign.php?id=%{$id}%&step=4">Дизайн</a> 
+   <div class="gydex_delivery_link"> > </div>
+   
+   <a class="gydex_delivery_link gydex_delivery_action %{if $step==5}% gydex_delivery_active%{/if}%" href="delivery_ed_campaign.php?id=%{$id}%&step=5">Подтверждение</a> 
+   
+    
+    </div>
+    
+    
+	
+	
+</div>
+
+ 

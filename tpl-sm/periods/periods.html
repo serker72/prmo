@@ -1,0 +1,176 @@
+%{if $has_header}%
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+
+
+});
+</script>
+
+
+%{include file="every_help_dialog.html" filename="periods.htm" prefix="" description="реестр отчетных периодов"  style="float:right;  margin-right:10px;"}%
+
+<label for="year">Выберите год:</label>
+<select name="year" id="year" style="width:100px;">
+%{html_options values=$years selected=$now_year output=$years}%
+</select>
+<script type="text/javascript">
+$(function(){
+	$("#year").bind("change", function(){
+		$.ajax({
+		  async: false,
+		  url: "/js/periods.php",
+		  type: "POST",
+		  data:{
+			  "action":"change_year",
+			  year: $("#year").val()
+		  },
+		  beforeSend: function(){
+			$("#periods").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="" />');
+		  },
+		  success: function(data){
+			$("#periods").html(data);
+		  },
+		  error: function(xhr, status){
+			  
+			 	
+		  }	 
+	  });
+	});
+});
+</script>
+<p />
+
+
+<table width="*" border="0" cellpadding="2" cellspacing="0" class="reptable">
+  <thead>
+<tr align="center" valign="top">
+	<th width="200" scope="col">
+    Период
+    </th>
+   
+    
+    <th width="500" scope="col">
+    Закрытие
+    </th>
+    
+   <!--  <th width="60" scope="col">
+    Распределить вх. оплаты по реализациям
+    </th>
+    -->
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=monsec loop=$month}%
+%{if $has_header}%
+<tr align="left" valign="top" id="row_num_%{$month[monsec].number}%" >
+%{/if}%
+	 <td width="200">
+     <h4>%{$month[monsec].number}% квартал %{$month[monsec].year}% г.</h4>
+     %{$month[monsec].pdate_beg}% - %{$month[monsec].pdate_end}%
+     <input type="hidden" id="pdate_beg_%{$month[monsec].number}%" value="%{$month[monsec].pdate_beg_unf}%" />
+     <input type="hidden" id="pdate_end_%{$month[monsec].number}%" value="%{$month[monsec].pdate_end_unf}%" />
+     <input type="hidden" id="year_%{$month[monsec].number}%" value="%{$month[monsec].year}%" />
+     
+     </td>
+  
+     
+     <td width="500">
+     %{if $month[monsec].enabled}%
+     
+     <input type="checkbox" id="is_confirmed_%{$month[monsec].number}%" %{if $month[monsec].is_confirmed==1}% checked="checked"%{/if}% %{if ($month[monsec].is_confirmed==0 and $can_confirm==false) or ($month[monsec].is_confirmed==1 and $can_unconfirm==false)}% disabled="disabled"%{/if}% /><label for="is_confirmed_%{$month[monsec].number}%">период закрыт</label>
+     <input type="button" value="Сохранить" id="do_save_%{$month[monsec].number}%" %{if ($month[monsec].is_confirmed==0 and $can_confirm==false) or ($month[monsec].is_confirmed==1 and $can_unconfirm==false)}% disabled="disabled"%{/if}% />
+     <br />
+	 
+     <div id="confirmer_%{$month[monsec].number}%">	
+     %{$month[monsec].confirm_pdate}%
+     %{$month[monsec].user_confirm}%
+     </div>
+     
+     
+     <script type="text/javascript">
+     $(function(){
+		$("#is_confirmed_%{$month[monsec].number}%").bind("change",function(){
+			
+			if(	this.checked) state=1;
+			else state=0;
+		
+			$.ajax({
+              async: true,
+              url: "/js/periods.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#confirmer_%{$month[monsec].number}%").html(data);
+                
+              },
+              error: function(xhr, status){
+                 	
+              }	 
+          });
+		});
+		
+		$("#do_save_%{$month[monsec].number}%").bind("click",function(){
+			if(	$("#is_confirmed_%{$month[monsec].number}%").prop("checked")) state=1;
+			else state=0;
+			//alert(state);
+			$.ajax({
+			  async: true,
+			  url: "/js/periods.php",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm",
+				  "year":$("#year_%{$month[monsec].number}%").val(),
+				  "pdate_beg": $("#pdate_beg_%{$month[monsec].number}%").val(),
+				  "pdate_end": $("#pdate_end_%{$month[monsec].number}%").val(),
+				  "state":state
+			  },
+			  beforeSend: function(){
+				$("#row_num_%{$month[monsec].number}%").html('<td colspan="3"><img src="/img/images/wait.gif" width="32" height="32" border="0" alt="" /></td>');	
+			  },
+			  success: function(data){
+				 
+				//  alert('Изменения сохранены.');
+				$("#row_num_%{$month[monsec].number}%").html(data);
+				
+			  },
+			  error: function(xhr, status){
+				//  alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+	 });
+	 </script>
+     %{/if}%
+     </td>
+     <!--
+        <td width="32" align="center">
+     %{if $can_bind_payments}%
+     
+     %{if $month[monsec].is_confirmed==0}%
+     <a href="periods.php?action=bind_pays_acc&pdate_beg=%{$month[monsec].pdate_beg_unf}%&pdate_end=%{$month[monsec].pdate_end_unf}%"><img src="/img/icons/wheel.png" alt="Распределить вход. оплаты по реализациям за период" title="Распределить вход. оплаты по реализациям за период" width="32" height="32" border=0 /></a>
+     %{else}%
+      <a href="#" onclick="alert('Невозможно распределить входящие оплаты по реализациям за период %{$month[monsec].pdate_beg}% - %{$month[monsec].pdate_end}%.'); return false;"><img src="/img/icons/wheel_in.png" alt="Распределить вход. оплаты по реализациям за период" title="Распределить вход. оплаты по реализациям за период" width="32" height="32" border=0 /></a>
+     %{/if}%
+     
+      %{else}%
+      <a href="#" onclick="alert('У Вас недостаточно прав для этого действия.'); return false;"><img src="/img/icons/wheel_in.png" alt="Распределить вход. оплаты по реализациям за период" title="Распределить вход. оплаты по реализациям за период" width="32" height="32" border=0 /></a>
+     %{/if}%
+     </td>-->
+%{if $has_header}%
+</tr>     
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+%{/if}%

@@ -1,0 +1,21 @@
+%{section name=rowsec loop=$items}%
+
+<div class="messenger_chat_message">
+	<div %{if $items[rowsec].from_id==$user_id}%class="messenger_from_title" %{else}%  class="messenger_to_title"%{/if}%>
+     <input type="hidden" id="messenger_message_id_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+     
+     %{if $items[rowsec].unread==1}%
+     <img src="/img/icons/message-anim.gif" border="0" width="13" height="10" alt="новое сообщение" id="messenger_message_newflag_%{$items[rowsec].id}%" />
+     <script type="text/javascript">
+	 //window.setTimeout('$("#messenger_message_newflag_%{$items[rowsec].id}%").remove();', 10000);
+	 </script> 
+     %{/if}%
+    
+    %{$items[rowsec].pdate}% %{$items[rowsec].s_name_s}%<!-- %{$items[rowsec].s_login}%-->:</div>
+    
+    <div class="messenger_chat_message_text">
+    %{$items[rowsec].txt}%
+    </div>
+
+</div>
+%{/section}%

@@ -1,0 +1,109 @@
+<!-- сокр. статистика по поставщикам -->
+<br />
+<br />
+
+
+<strong>¬сего  
+%{if $not_given}%
+
+  %{if ($pdate1=="" or $pdate1=="-") and ($pdate2!="" and $pdate2!="-")}%
+  за период c начала работы по %{$pdate2}%
+  %{elseif ($pdate1!="" and $pdate1!="-") and ($pdate2=="" or $pdate2=="-")}%
+  за период с %{$pdate1}% и до конца работы
+  %{elseif ($pdate1=="" or $pdate1=="-") and ($pdate2=="" or $pdate2=="-")}%
+  за весь период работы
+  %{else}%
+  за период с %{$pdate1}% по %{$pdate2}%
+  
+  %{/if}%
+  
+%{else}%  
+	%{if ($pdate2_1=="" or $pdate2_1=="-") and ($pdate2_2!="" and $pdate2_2!="-")}%
+  за период c начала работы по %{$pdate2_2}%
+  %{elseif ($pdate2_1!="" and $pdate2_1!="-") and ($pdate2_2=="" or $pdate2_2=="-")}%
+  за период с %{$pdate2_1}% и до конца работы
+  %{elseif ($pdate2_1=="" or $pdate2_1=="-") and ($pdate2_2=="" or $pdate2_2=="-")}%
+  за весь период работы
+  %{else}%
+  за период с %{$pdate2_1}% по %{$pdate2_2}%
+  
+  %{/if}%
+%{/if}%
+
+%{if $not_given}%
+задолженность 
+%{else}%
+выдано
+%{/if}%
+
+ %{$number_of_suppliers}%
+контрагентам
+
+%{if $not_given}%
+%{$amount_of_dolg}%
+%{else}%
+ %{$amount_of_given}%
+%{/if}%
+
+руб.:
+</strong>
+<br /><br />
+
+
+<table width="*" border="1" class="blacktable" cellpadding="2" cellspacing="0">
+<thead>
+<tr align="left" valign="top">
+	<th scope="col" width="*">
+     онтрагент
+    </th>
+    
+    %{if !$not_given}%
+    <th scope="col" width="50">
+    ¬ыдано, руб.
+    </th>
+     %{/if}%
+    %{if $not_given}%
+    <th scope="col" width="50">
+    «адолженность, руб.
+    </th>
+    %{/if}%
+     
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec2 loop=$by_suppliers}%
+<tr align="left" valign="top">
+	<td width="*">
+    %{$by_suppliers[rowsec2].capt_name}%
+    </td>
+     %{if !$not_given}%
+    <td width="50">
+    %{$by_suppliers[rowsec2].given}%
+    </td>
+     %{/if}%
+    %{if $not_given}%
+    <td width="50">
+   %{$by_suppliers[rowsec2].dolg}%
+    </td>
+    %{/if}%
+</tr>
+%{/section}%
+<tr align="left" valign="top">
+	<th scope="col" width="*">
+   »тог:
+    </th>
+    
+     %{if !$not_given}%
+    <th scope="col" width="50" style="white-space:nowrap;">
+   %{$amount_of_given}%
+   </th>
+   %{/if}%
+   
+   %{if $not_given}%
+    <th scope="col" width="50" style="white-space:nowrap;">
+   %{$amount_of_dolg}%
+    </th>
+    %{/if}%
+</tr>
+</tbody>
+</table>

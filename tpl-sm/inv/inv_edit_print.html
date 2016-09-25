@@ -1,0 +1,108 @@
+
+<h1 style="">Инвентаризационный акт № %{$bill.code}%</h1>
+
+<div style="float:left; margin-right:20px;">
+Номер:<br />
+
+<strong>%{$bill.code}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px; ">
+Дата инвентаризации:<br />
+
+<strong>%{$bill.inventory_pdate}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Заданный номер:<br />
+
+<strong>%{$bill.given_no}%</strong>
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+
+<strong>%{$org}%</strong>
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+%{$bill.pdate}%<br />
+<small>создан: %{$created_by}%</small>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Склад инвентаризации:<br />
+
+<select id="sector_id" name="sector_id" style="width:150px;" %{if !$can_modify}%disabled="disabled"%{/if}%>
+%{html_options values=$sector_ids selected=$sector_id output=$sector_names}%
+</select>
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+<strong>Позиции акта:</strong> 
+
+
+%{include file="inv/position_actions_print.html"  is_confirmed=$bill.is_confirmed}%
+ 
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" >
+        %{include file="inv/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    
+<p />    
+
+<br />
+<br />
+
+
+<div style="float:left; margin-right:20px;">
+%{if $bill.is_confirmed==1}% <strong>Утверждаю заполнение:</strong> %{$is_confirmed_confirmer}%
+<br />
+<br />
+<br />
+%{/if}% 
+
+
+
+<br />
+
+
+%{if $bill.is_confirmed_inv==1}% <strong>Утверждаю коррекцию складских остатков</strong>: %{$is_confirmed_inv_confirmer}%%{/if}% 
+
+
+</div>
+<br clear="all" />
+<p />
+<br />
+<br />
+<br />
+<br />
+
+
+
+

@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>Счет-фактура</title>
+
+
+<style>
+ 
+body, p{
+	8pt;
+}
+ 
+table{
+	border-collapse:collapse;
+}
+td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:9pt;
+}
+th{
+	font-weight:normal;
+}
+td.ten, th.ten, .ten{
+	font-size:8pt;
+}
+table.blacktable{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable, th.blacktable{
+	border: 1px solid black;
+}
+table.blacktable tr td, table.blacktable tr th{
+	border: 1px solid black;
+	
+}
+table.blacktable2{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable2, th.blacktable2, tr.blacktable2{
+	border: 2px solid black;
+}
+td p{
+	margin-bottom:0px;
+}
+ .colon{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:10pt;
+ }
+ 
+ .title{
+	font-family:Arial, Helvetica, sans-serif;
+	 font-size:13pt;
+ }
+ .header{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:13pt;
+ }
+</style>
+</head>
+<body>
+
+
+<p style="font-size:6pt;" align="right">
+Приложение № 1<br />
+
+к постановлению Правительства Российской Федерации<br />
+
+от 26 декабря 2011 г. № 1137																																																													
+
+</p>
+
+
+<p style="font-size:20px; font-weight:bold;">
+Счет-фактура № %{$acc.given_no}% от %{$given_pdate_date}% %{$given_pdate_month}% %{$given_pdate_year}% г.<br />
+
+Исправление № -- от--
+
+
+</p>
+
+<p style="font-size:8pt;">
+
+Продавец:  %{$print_org_opf.full_name}%	
+
+
+  %{if $print_org_fact.print_name!=""}%
+    %{$print_org_fact.print_name}%
+    %{else}%
+    "%{$print_org_fact.full_name}%" 
+    %{/if}%
+    
+    	<br />
+																								
+Адрес: %{$print_org.legal_address}%	<br />
+																								
+ИНН/КПП продавца: %{$print_org.inn}%/%{$print_org.kpp}%																									<br />
+
+Грузоотправитель и его адрес: %{$print_org_opf.full_name}%	 
+
+ %{if $print_org_fact.print_name!=""}%
+    %{$print_org_fact.print_name}%, 
+    %{else}%
+    "%{$print_org_fact.full_name}%", 
+    %{/if}% 
+
+
+%{$print_org.legal_address}%<br />
+																									
+Грузополучатель и его адрес: 
+
+%{if $suppliers_are_equal}%
+
+ %{$print_supplier_opf.full_name}% 
+
+ 
+
+ %{if $print_supplier.print_name!=""}%
+    %{$print_supplier.print_name}%, 
+    %{else}%
+    "%{$print_supplier.full_name}%", 
+    %{/if}%
+     
+
+
+ %{$print_supplier.legal_address}%																								
+%{else}%
+
+	
+         
+         
+          %{if $print_ship_supplier.print_name!=""}%
+        %{$print_ship_supplier.print_name}%, 
+        %{else}%
+        %{$print_ship_supplier_opf.full_name}% 
+         
+        "%{$print_ship_supplier.full_name}%", 
+        %{/if}%
+         
+          %{$print_ship_supplier.legal_address}%		
+%{/if}%
+
+<br />
+
+К платежно-расчетному документу  <!--№%{$acc.print_no}% от %{$acc.print_pdate}%	-->		
+%{section name=paysec loop=$binded_payments}%
+
+№ %{$binded_payments[paysec].given_no}% от %{$binded_payments[paysec].given_pdate}% <!--на сумму %{$binded_payments[paysec].value}%	 руб.-->%{if $smarty.section.paysec.last==false}%,%{/if}%
+
+%{sectionelse}%																						
+-- от --
+%{/section}%
+<br />
+
+Покупатель: %{$print_supplier_opf.full_name}% 
+
+
+ %{if $print_supplier.print_name!=""}%
+    %{$print_supplier.print_name}%
+    %{else}%
+    "%{$print_supplier.full_name}%" 
+    %{/if}%
+
+
+<br />
+Адрес: %{$print_supplier.legal_address}%																								
+<br />
+ИНН/КПП покупателя: %{$print_supplier.inn}%/%{$print_supplier.kpp}%																									
+<br />
+Валюта: наименование, код Российский рубль, 643		<br />
+
+															
+</p>
+
+
+
+%{include file="acc/positions_on_page_set_fakt.html" pospos=$print_positions1 change_low_mode=$acc.change_low_mode change_high_mode=$acc.change_high_mode}%
+
+
+
+
+<div style="page-break-inside:avoid; /*border:1px solid blue;*/  height:150px;">
+<br />
+<br />
+
+
+<table width="*" border="0" cellspacing="0" cellpadding="1" >
+  <tr align="left" valign="bottom">
+    <td class="ten" width="180">Руководитель организации<br />
+
+или иное уполномоченное лицо</td>
+    <td class="ten">
+    __________________________&nbsp;&nbsp;<br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(подпись)
+    </span>
+    
+    </td>
+    <td class="ten">
+    
+     %{$print_org.chief|default:"________________"}%__________&nbsp;&nbsp;<br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ф.и.о.)
+    </span>
+    
+    
+    </td>
+    <td class="ten" width="180">
+    Главный бухгалтер<br />
+
+или иное уполномоченное лицо
+
+    
+    </td>
+    <td class="ten">
+    
+     __________________________&nbsp;&nbsp;<br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(подпись)
+    </span>
+    
+    
+    </td>
+    <td class="ten">
+    
+    %{$print_org.main_accountant|default:"________________"}%__________&nbsp;&nbsp;<br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ф.и.о.)
+    </span>
+    
+    
+    
+    </td>
+  </tr>
+  <tr align="left" valign="bottom">
+    <td class="ten">&nbsp;<br />
+<br />
+</td>
+    <td class="ten">&nbsp;</td>
+    <td class="ten">&nbsp;</td>
+    <td class="ten">&nbsp;</td>
+    <td class="ten">&nbsp;</td>
+    <td class="ten">&nbsp;</td>
+  </tr>
+  <tr align="left" valign="bottom">
+    <td class="ten" width="180">
+    
+Индивидуальный предприниматель
+
+    
+    </td>
+    <td class="ten">
+    __________________________&nbsp;&nbsp;<br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(подпись)
+    </span>
+    
+    
+    
+    </td>
+    <td class="ten">
+    <span style="border-bottom:1px solid black;"> --&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ф.и.о.)
+    </span>
+    
+    
+    </td>
+    <td class="ten" colspan="3" >
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     <span style="border-bottom:1px solid black;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br />
+	<span style="font-size:6pt;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(реквизиты свидетельства о государственной 
+регистрации индивидуального предпринимателя)
+    </span>
+    
+    </td>
+   
+  </tr>
+</table>
+
+
+
+%{if $do_print_sign==1}%
+ 
+<div style="height:190px; /*border: 1px solid red;*/ position:relative; left: 0px; top:-130px;">
+<div style="position:absolute; z-index:-2; width:130px; height:130px;  left: 190px; top:-15px; "><img src="%{$print_org.print_sign_dir}%" border=0 alt="" />
+</div>
+
+ 
+<div style="position:absolute;z-index:-2; width:130px; height:130px;  left: 700px; top:-15px;  "><img src="%{$print_org.print_sign_buh}%" border=0 alt="" />
+</div>
+ 
+
+
+<!--<div style="position:absolute; z-index:-1;   width:200px; height:200px; left:0px; top:0px;  "><img src="/img/print/%{$print_org.print_print}%" border=0 alt="" /></div>-->
+
+</div>
+%{/if}%
+
+</div>
+
+
+</body>
+</html>
+
+

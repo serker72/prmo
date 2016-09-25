@@ -1,0 +1,253 @@
+<h1>Реестр контрагентов</h1>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Код:</strong><br />
+%{$code}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Полное наименование</strong><br />
+%{$full_name}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>ИНН </strong><br />
+%{$inn}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>КПП</strong><br />
+%{$kpp}%
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Страна</strong><br />
+%{$country}%
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Город</strong><br />
+%{$city}%
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Ответственный сотрудник</strong><br />
+%{$resp}%
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Юридический адрес</strong>
+<br />
+%{$legal_address}%
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Создал</strong>
+<br />
+%{$crea_name_s}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Холдинг</strong>
+<br />
+%{$holding}%
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Субхолдинг</strong>
+<br />
+%{$subholding}%
+
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Вы выбрали:</strong><br />
+
+%{if $is_active==1}%
+Активные контрагенты
+
+%{else}%
+Активные и неактивные контрагенты
+%{/if}%
+</div>
+
+ 
+<div style="float:left; margin-right:20px;  margin-bottom:15px; white-space:nowrap; overflow:hidden;">
+
+ 
+
+
+    <b>Виды контрагента:</b><br>
+ 	  
+    %{if $supplier_kind_1==1 or $all_supplier_kinds==1}% Покупатель<br>
+%{/if}% 
+    %{if $supplier_kind_2==1 or $all_supplier_kinds==1}% Поставщик<br>
+%{/if}% 
+    %{if $supplier_kind_3==1 or $all_supplier_kinds==1}% Партнер<br>
+%{/if}% 
+
+
+	%{if $supplier_kind_4==1 or $all_supplier_kinds==1}% Вид не указан<br>
+%{/if}% 
+     
+   
+   
+</div> 
+
+
+<br clear="all" />
+<p />
+
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+
+<table width="100%" border="1" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="50">Код
+    
+    </th>
+     
+    <th scope="col" width="50">ОПФ
+  
+   </th>
+    
+    <th scope="col" width="80">Полное наименование
+   
+    </th>
+    
+    <th scope="col" width="80">ИНН
+   
+    </th>
+    
+    <th scope="col" width="80">КПП
+   
+    </th>
+    
+   
+    
+     <th scope="col" width="80">Страна
+   
+    </th>
+    
+     <th scope="col" width="80">Город
+   
+    </th>
+    
+   
+    <th scope="col" width="*">Юридический адрес
+   
+    </th>
+    
+    <th scope="col" width="80">Тип контрагента
+   
+    </th>
+    
+     <th scope="col" width="*">Ответственный сотрудник
+     </th>
+    
+      <th scope="col" width="*">Создал
+    
+    </th>
+    
+</tr>
+
+
+
+</thead>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="50" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%><a name="user_%{$items[rowsec].id}%"></a>%{$items[rowsec].code}%</td>
+     <td width="50"  %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].opf_name}%</td>
+     
+     <td width="80"  %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].full_name}%</td>
+    
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].inn}%</td>
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].kpp}%</td>
+    
+  
+    
+    
+      <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+      %{foreach from=$items[rowsec].cities item=item}%
+	%{$item.country_name}%    
+    <br>
+
+    %{/foreach}%
+    
+    </td>
+    
+    <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+      %{foreach from=$items[rowsec].cities item=item}%
+	%{$item.name}%    
+    <br>
+
+    %{/foreach}%
+    
+    </td>
+    
+    
+    <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].legal_address}%</td>
+    
+       <td width="80" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    
+    %{if $items[rowsec].is_customer==1}% покупатель <br> %{/if}%
+    
+     %{if $items[rowsec].is_supplier==1}% поставщик <br> %{/if}%
+     
+      %{if $items[rowsec].is_partner==1}% партнер <br> %{/if}%
+    
+    
+    </td>
+    
+     <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    %{foreach from=$items[rowsec].resps item=item}%
+	%{$item.name_s}%    
+    <br>
+
+    %{/foreach}%
+    </td>
+    
+    
+      <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+     
+	%{$items[rowsec].crea_name_s}%    
+    
+    </td>
+</tr>
+%{/section}%
+</table>
+
+
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям контрагентов не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

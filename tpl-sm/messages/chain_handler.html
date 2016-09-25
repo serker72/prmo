@@ -1,0 +1,103 @@
+<strong>От:</strong>
+<a href="info.html?name=%{$s_login|replace:" (Вы)":""}%" target="_blank">
+%{if $s_user.group_id==3}%
+%{$s_user.name_d}%
+%{else}%
+%{$s_user.name_s}%
+%{/if}%
+
+%{$s_login}%</a>
+<br />
+
+<strong>Кому:</strong>
+<a href="info.html?name=%{$r_login|replace:" (Вы)":""}%" target="_blank">
+%{if $r_user.group_id==3}%
+%{$r_user.name_d}%
+%{else}%
+%{$r_user.name_s}%
+%{/if}%
+
+%{$r_login}%</a>
+<p />
+
+
+<strong>Сообщение:</strong>
+<div class="message">%{$message}%</div>
+<p />
+
+%{section name=filesec loop=$files}%%{/section}%
+%{if $smarty.section.filesec.total>0}%
+<strong>Вложения:</strong><br />
+%{section name=filesec loop=$files}%
+	<a href="attachment.html?id=%{$files[filesec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$files[filesec].orig_filename}%</a>
+    %{$files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+    <br />
+
+%{/section}%
+%{/if}%
+
+
+
+<div id="answers_block">
+%{$answers}%
+</div>
+
+
+%{if $can_answer}%
+<h4>Ответить на сообщение</h4>
+<input type="button" value="Расширенный ответ..." onclick="location.href='message_compose.php?parent_id=%{$id}%';" />
+
+<h4>или используйте краткий ответ на сообщение:</h4>
+
+<label for="txt_%{$id}%">Ответ:</label><br>
+<textarea name="txt_%{$id}%" id="txt_%{$id}%" cols="100" rows="5"></textarea>
+<p />
+
+<input type="hidden" name="parent_id_%{$id}%" value="%{$id}%" id="parent_id_%{$id}%" />
+
+<input type="hidden" name="to_%{$id}%" value="%{$to_id}%" id="to_%{$id}%" />
+<input id="answer_%{$id}%" type="button" value="Ответить" />
+
+<script type="text/javascript">
+$("#answer_%{$id}%").bind("click",function(){
+	if($("#txt_%{$id}%").val().length<3){
+		alert("Напишите текст ответа!");	
+		$("#txt_%{$id}%").focus();
+		return false;
+	}
+	
+	$.ajax({
+	  async: true,
+	  url: "/js/messages.php",
+	  type: "POST",
+	  data:{
+		  "action":"answer_message",
+		  "txt":$("#txt_%{$id}%").val(),
+		  "parent_id":$("#parent_id_%{$id}%").attr("value"),
+		  "to":$("#to_%{$id}%").attr("value")
+	  },
+	  beforeSend: function(){
+			
+	  },
+	  success: function(data){
+		 alert("Ваше сообщение отправлено!");
+		 $("#chain_%{$message_id}%").css("display","none");
+		 $("#main_%{$message_id}%").trigger("click");
+		 
+		  
+		 //перерисовать блок сообщений
+		 //location.reload();
+	  },
+	  error: function(xhr, status){
+		  alert("Ошибка отправки сообщения.");	
+	  }	 
+  });	
+	
+	
+});
+
+
+
+</script>
+<hr />
+%{/if}%

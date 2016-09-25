@@ -1,0 +1,257 @@
+
+	  
+    %{section name=rowsec loop=$items}%
+    <div style="float:left; margin-right:10px;">
+    	с
+        <strong>%{$items[rowsec].time_from_h_s|string_format:"%02d"}%:%{$items[rowsec].time_from_m_s|string_format:"%02d"}%
+        </strong>
+        
+        
+        
+        до
+<strong>        %{$items[rowsec].time_to_h_s|string_format:"%02d"}%:%{$items[rowsec].time_to_m_s|string_format:"%02d"}%
+</strong>        
+       
+
+    	<small>%{$items[rowsec].comments}%</small>
+	</div>	
+       
+        %{if $can_edit}%
+      <div style="float:left; margin-right:10px;">
+		<a href="#" id="edit_nest_%{$word}%_%{$items[rowsec].id}%" data-comment="редактировать %{$items[rowsec].value|escape:"html"}%" class="reestr_edit16 reestr_button24"> </a>
+       
+		
+        <a href="#" id="delete_nest_%{$word}%_%{$items[rowsec].id}%" data-comment="удалить %{$items[rowsec].value|escape:"html"}%" class="reestr_delete16 reestr_button24"> </a>
+       </div>
+		
+		%{/if}%
+        <br clear="all" />
+        
+        
+    %{/section}%
+    
+	
+
+
+
+
+
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_nest_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 450,
+    height: 250,
+    buttons: {
+        "Готово": function() { 
+        	
+         $(this).dialog("close"); }
+      }
+    
+    });
+	
+	
+	$("#add_%{$word}%").bind("click",function(){
+		
+		
+		$("#comments_%{$word}%").val('');
+		$("#time_from_h_s_%{$word}%").val("09");
+		$("#time_from_m_s_%{$word}%").val("00");
+		$("#time_to_h_s_%{$word}%").val("18");
+		$("#time_to_m_s_%{$word}%").val("00");
+		
+		
+		 $("#dialog_nest_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					
+					$.ajax({
+						async: true,
+						url: "/js/user_s.php",
+						type: "POST",
+						data:{
+							"action":"add_%{$word}%",
+							"time_from_h_s": $("#time_from_h_s_%{$word}%").val(),
+							"time_from_m_s": $("#time_from_m_s_%{$word}%").val(),
+							"time_to_h_s": $("#time_to_h_s_%{$word}%").val(),
+							"time_to_m_s": $("#time_to_m_s_%{$word}%").val(),
+							"comments": $("#comments_%{$word}%").val(),
+							"user_id":"%{$user_id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  alert("%{$named}% добавлено!"); 
+						   $.ajax({
+							  async: true,
+							  url: "/js/user_s.php",
+							  type: "POST",
+							  data:{
+								  "action":"redraw_%{$word}%",
+								  "user_id":"%{$user_id}%"
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								 //alert(data);
+								  $("#%{$word}%").html(data);
+								
+							  },
+							  error: function(xhr, status){
+									//alert('e');  
+							  }	 
+						  });
+						},
+						error: function(xhr, status){
+							alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+					
+					$(this).dialog("close");
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		
+		 $("#dialog_nest_%{$word}%").dialog("open");
+		 return false;
+	});
+	
+	%{section name=rowsec loop=$items}%
+	
+	
+	
+	
+	/*правка инт-ла*/
+	$("#edit_nest_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			
+			$("#time_from_h_s_%{$word}%").val("%{$items[rowsec].time_from_h_s|string_format:"%02d"}%");
+			$("#time_from_m_s_%{$word}%").val("%{$items[rowsec].time_from_m_s|string_format:"%02d"}%");
+			$("#time_to_h_s_%{$word}%").val("%{$items[rowsec].time_to_h_s|string_format:"%02d"}%");
+			$("#time_to_m_s_%{$word}%").val("%{$items[rowsec].time_to_m_s|string_format:"%02d"}%");
+			 
+			 $("#comments_%{$word}%").val("%{$items[rowsec].comments|regex_replace:"/[\n]/":"\\n"|regex_replace:"/[\r]/":"\\r"|regex_replace:"/&quot;/":"\\\""}%");
+			 
+			  $("#dialog_nest_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						$.ajax({
+							async: true,
+							url: "/js/user_s.php",
+							type: "POST",
+							data:{
+								"action":"edit_nest_%{$word}%",
+								"time_from_h_s": $("#time_from_h_s_%{$word}%").val(),
+							"time_from_m_s": $("#time_from_m_s_%{$word}%").val(),
+							"time_to_h_s": $("#time_to_h_s_%{$word}%").val(),
+							"time_to_m_s": $("#time_to_m_s_%{$word}%").val(),
+							"comments": $("#comments_%{$word}%").val(),
+								"id":"%{$items[rowsec].id}%",
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  
+							  $.ajax({
+								  async: true,
+								  url: "/js/user_s.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":"%{$user_id}%"
+								  },
+								  beforeSend: function(){
+										
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_nest_%{$word}%").dialog("open");
+			
+			
+			return false;
+		});
+	
+	
+	
+	
+	/*удаление контакта*/
+	$("#delete_nest_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+		if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_s.php",
+				type: "POST",
+				data:{
+					"action":"delete_nest_%{$word}%",
+					"id":"%{$items[rowsec].id}%",
+					"user_id":"%{$user_id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_s.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%",
+						  "user_id":"%{$user_id}%"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#%{$word}%").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("%{$named}%: Ошибка удаления.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+	
+	
+	
+	
+	%{/section}%
+	
+	
+				
+		
+	});
+</script>

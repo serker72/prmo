@@ -1,0 +1,40 @@
+<h1>Приход наличных</h1>
+
+
+
+ 
+
+<div style="float:left; margin-right:20px;">
+<strong>Период</strong> 
+<strong>с:</strong><br />
+%{$pdate1}%</div>
+
+<div style="float:left; margin-right:20px;">
+
+	<strong>по:</strong><br />
+    %{$pdate2}%
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+<script type="text/javascript">
+$(function(){
+	$("table.blacktable").attr('border','1');
+});
+</script>
+
+
+%{if $do_it}%
+%{include file="an_cash_in/an_cash_table.html"}%
+%{/if}%
+
+
+
+
+
+
+

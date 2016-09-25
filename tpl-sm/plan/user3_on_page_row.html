@@ -1,0 +1,24 @@
+<tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="*" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+        <input type="hidden" id="new_user3_hash_%{$pospos[pospossec].hash}%" name="new_user3_hash_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].hash}%" />
+        
+        <input type="hidden" id="new_user3_id_%{$pospos[pospossec].hash}%" name="new_user3_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].user_id}%" />
+        
+        %{$pospos[pospossec].name_s}%
+        </td>
+        
+        
+        <td width="24" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+       %{if $can_modify}%
+       
+      
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_button24" data-comment="удалить участника..."></a>
+        
+        
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_button24 reestr_inactive" data-comment="удалить участника..." ></a>
+        %{/if}%
+        </td>
+    </tr>

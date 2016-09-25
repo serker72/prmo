@@ -1,0 +1,208 @@
+<!-- таблица на странице -->
+
+<input type="hidden" id="not_changed_pos" value="%{if $not_changed_pos}%1%{else}%0%{/if}%" />
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">№ п/п</th>
+        <th scope="col" width="20">Код</th>
+         <th scope="col" width="50">Фото</th>
+       
+        <th scope="col" width="30%">Наименование</th>
+         <th scope="col" width="30%">Описание</th>
+         
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+         
+        <th scope="col" width="80" >Цена с НДС</th>
+        
+       	
+        
+        %{foreach from=$discs1 item=discs}%
+        
+        
+        <th scope="col" width="80" >%{$discs.name}%</th>
+        
+        %{/foreach}%
+        
+        
+        
+       <th scope="col" width="80" >Итоговая цена c НДС</th> 
+        <th scope="col" width="80"  style="display:none;">Сумма с учетом скидки</th>
+        <th scope="col" width="80">% НДС</th>
+        <th scope="col" width="80">Сумма НДС</th>
+        <th scope="col" width="80">Всего</th>
+      
+        
+        <th scope="col" width="24">&nbsp;
+     <input type="checkbox" title="выделить все позиции" 
+    id="table_select_all" 
+   %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    />
+    <script type="text/javascript">
+	$(function(){
+		$("#table_select_all").bind("click",function(){
+			
+				$.each( $("#bill_positions_table input[id^=to_ship_]"),function(k,v){
+					$(v).prop("checked",$("#table_select_all").prop("checked"));
+				});
+			
+		});
+	});
+	</script>
+     
+     </th>
+   
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+    %{include file="kp/positions_on_page_row.html"}%
+   
+    %{/section}%
+    </tbody>
+    </table>
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			
+			var complex_positions=new Array();
+			
+			
+			function BuildRows(){
+				complex_positions=new Array();
+				
+				$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+					hash=$(value).val();
+				
+					hashed_string='';
+					
+					dl_value_1=new Array();
+					dl_rub_or_percent_1=new Array();
+					
+					
+					hashed_string=$("#new_pl_position_id_"+hash).val();  //0
+					
+					hashed_string=hashed_string+';'+$("#new_quantity_"+hash).val(); //1
+					hashed_string=hashed_string+';'+$("#new_price_"+hash).val(); //2
+					hashed_string=hashed_string+';'+$("#new_pl_discount_id_"+hash).val(); //3
+					hashed_string=hashed_string+';'+$("#new_pl_discount_value_"+hash).val(); //4
+					hashed_string=hashed_string+';'+$("#new_pl_discount_rub_or_percent_"+hash).val(); //5
+					
+					//получить данные по введенным макс. скидкам
+					hashed_string=hashed_string+';'; 
+					dl_value_1=new Array();
+					%{foreach from=$discs1 item=discs}%
+						dl_value_1.push($("#new_dl_value_%{$discs.id}%_"+hash).val().replace("\,","\.")); 
+					%{/foreach}%
+					hashed_string=hashed_string+dl_value_1.join(','); //6
+					
+					hashed_string=hashed_string+';';
+					dl_value_2=new Array();
+					%{foreach from=$discs1 item=discs}%
+						dl_value_2.push($("#new_dl_rub_or_percent_%{$discs.id}%_"+hash).val().replace("\,","\."));  
+					%{/foreach}%
+					hashed_string=hashed_string+dl_value_2.join(','); //7
+					
+					hashed_string=hashed_string+';0'; //8
+					hashed_string=hashed_string+';0'; //9
+					hashed_string=hashed_string+';0'; //10
+					hashed_string=hashed_string+';0'; //11
+					
+					hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val(); //12
+					hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val(); //13
+					hashed_string=hashed_string+';0'; //14
+					
+					hashed_string=hashed_string+';0'; //15
+					
+					hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val(); //16
+					hashed_string=hashed_string+';'+$("#new_price_f_"+hash).val(); //17
+					
+					
+					
+					
+					
+					//alert(hashed_string);
+					complex_positions.push(hashed_string);
+					
+				});
+			  
+		}
+		
+		function new_del(hash){
+			%{if $can_modify}%
+				%{if $can_delete_positions}%
+				if(window.confirm('Вы действительно хотите удалить позицию коммерческого предложения?')){ 
+					$('#new_row_'+hash).remove();
+					BuildRows();
+					$.ajax({
+						  async: true,
+						  url: "/js/kp.php",
+						  type: "POST",
+						  data:{
+							  "action":"calc_new_total",
+							  "complex_positions[]":complex_positions
+						  },
+						  beforeSend: function(){
+							$("#positions_cost").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');
+						  },
+						  success: function(data){
+							$("#positions_cost").html(data); 
+						  },
+						  error: function(xhr, status){
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+						
+						$.ajax({
+						  async: true,
+						  url: "/js/kp.php",
+						  type: "POST",
+						  data:{
+							  "action":"calc_new_nds",
+							  
+							  "complex_positions[]":complex_positions
+						  },
+						  beforeSend: function(){
+							$("#positions_nds").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');
+						  },
+						  success: function(data){
+							$("#positions_nds").html(data); 
+						  },
+						  error: function(xhr, status){
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+						
+						var temp_cter=0;
+					$.each($("#bill_positions_table tbody tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first").html(temp_cter);
+					});
+							
+				}
+				%{else}%
+				alert("У Вас недостаточно прав для того, чтобы удалить позицию коммерческого предложения.");
+				%{/if}%
+				%{else}%
+				alert("Невозможно удалить позицию утвержденного коммерческого предложения.");
+				%{/if}%
+				return false;
+			
+		}
+		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].hash}%").bind("click",function(){
+				return new_del("%{$pospos[pospossec].hash}%");
+				
+			});
+			
+    	%{/section}%
+	
+	});
+      </script>

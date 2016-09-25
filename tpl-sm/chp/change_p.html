@@ -1,0 +1,57 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Смена пароля</a>
+    </li>
+  </ul>
+	 <div id="tabs-1">
+
+  
+
+
+<form action="chp.html" method="post" id="change_p_form">
+ 
+
+<label for="new_password">Введите Ваш новый пароль:</label><br />
+<small>минимальная длина 6 символов; допустимые символы - латинские буквы и цифры</small><br />
+<input type="text" name="new_password" id="new_password" size="40" maxlen="255" />
+
+<input type="submit" name="doNew" value="Сменить пароль" />
+
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#change_p_form").bind("submit", function(){
+		can_submit=true;
+		
+		
+		 if($("#new_password").attr("value").length<6) can_submit=can_submit&&false;
+		  
+		  reg1=new RegExp("[A-Za-z]+");
+		  reg2=new RegExp("[0-9]+");
+		  
+		  if($("#new_password").attr("value").search(reg1)==-1) can_submit=can_submit&&false;
+		  if($("#new_password").attr("value").search(reg2)==-1) can_submit=can_submit&&false;
+		  
+		  
+		  if(!can_submit){
+			  alert("Пароль должен быть 6 символов и длиннее и состоять только из латинских букв и цифр!");	
+			  $("#new_password").focus();
+		  }
+		
+		
+		return can_submit;
+	});
+});
+</script>
+
+	</div>
+</div>    

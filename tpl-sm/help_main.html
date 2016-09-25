@@ -1,0 +1,39 @@
+ <script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">GYDEX.Справка</a>
+    </li>
+  </ul>
+	 <div id="tabs-1">
+
+ 
+<h2>Выберите раздел справки:</h2>
+<div class="help_menu">
+%{foreach name=rowsec from=$menu item=item}%%{/foreach}%
+%{if $smarty.foreach.rowsec.total>0}%
+<ul>
+%{foreach name=rowsec from=$menu item=item}%
+%{include file="help_nested.html" item=$item}%
+%{/foreach}%
+
+</ul>
+%{/if}%
+</div>
+
+<a name="answer"></a>
+<div class="help_answer">
+%{if $hi}%
+<h1>%{$hi.name}%</h1>
+
+%{$hi.txt}%
+
+%{/if}%
+</div>
+
+</div>
+</div>

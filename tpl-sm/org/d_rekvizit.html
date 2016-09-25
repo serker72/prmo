@@ -1,0 +1,160 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+     %{if $can_edit}%
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" data-comment="удалить %{$named}%" class="reestr_delete16 reestr_button16" style="float:right;"> </a>        
+    <a href="#" id="edit_%{$word}%_%{$items[rowsec].id}%" data-comment="редактировать %{$named}%" class="reestr_edit16 reestr_button16" style="float:right;"></a>
+    %{/if}%
+    
+     %{if $items[rowsec].is_basic==1}%
+    <em>основные реквизиты:</em><br />
+    %{/if}%
+    
+    <em>Банк:</em><strong>%{$items[rowsec].bank}%</strong><br>
+
+    
+    <em>Город банка:</em><strong>%{$items[rowsec].city}%</strong>
+<br>
+    
+    <em>р/с:</em><strong>%{$items[rowsec].rs}%</strong>
+<br>
+    
+    <em>к/с:</em><strong>%{$items[rowsec].ks}%</strong>
+<br>
+    
+    <em>БИК:</em><strong>%{$items[rowsec].bik}%</strong>
+   
+    
+    
+   
+    </div>
+    %{if $can_edit}%
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")
+			%{if $items[rowsec].is_basic==1}%
+			&&window.confirm("Данные реквизиты являются основными реквизитами. Вы действительно хотите удалить реквизиты?")
+			%{/if}%
+			){
+				$.ajax({
+					async: true,
+					url: "/js/ed_org.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":%{$user_id}%
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/ed_org.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":%{$user_id}%
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 $("#%{$word}%_bank").attr("value",'%{$items[rowsec].bank|escape:"quotes"}%');
+			 $("#%{$word}%_bik").attr("value",'%{$items[rowsec].bik|escape:"quotes"}%');
+			 $("#%{$word}%_city").attr("value",'%{$items[rowsec].city|escape:"quotes"}%');
+			 $("#%{$word}%_rs").attr("value",'%{$items[rowsec].rs|escape:"quotes"}%');
+			 $("#%{$word}%_ks").attr("value",'%{$items[rowsec].ks|escape:"quotes"}%');
+			 %{if $items[rowsec].is_basic==1}%
+			 $("#%{$word}%_is_basic").attr("checked",true);
+			 %{else}%
+			 $("#%{$word}%_is_basic").attr("checked",false);
+			 %{/if}%
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						if($("#%{$word}%_is_basic").attr("checked")) is_basic=1;
+						else is_basic=0;
+						$.ajax({
+							async: true,
+							url: "/js/ed_org.php",
+							type: "POST",
+							data:{
+								"action":"edit_%{$word}%",
+								"bank": $("#%{$word}%_bank").attr("value"),
+								"bik": $("#%{$word}%_bik").attr("value"),
+								"city": $("#%{$word}%_city").attr("value"),
+								"rs": $("#%{$word}%_rs").attr("value"),
+								"ks": $("#%{$word}%_ks").attr("value"),
+								"id":"%{$items[rowsec].id}%",
+								"is_basic": is_basic,
+								"user_id":%{$user_id}%
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  $.ajax({
+								  async: true,
+								  url: "/js/ed_org.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":%{$user_id}%
+								  },
+								  beforeSend: function(){
+										
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

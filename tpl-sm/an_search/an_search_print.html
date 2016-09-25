@@ -1,0 +1,100 @@
+<h1>Поиск товара</h1>
+
+ 
+
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+</style>
+ 
+    
+
+
+%{if $id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Код позиции:</strong><br />
+%{$id2}%
+</div>
+%{/if}%
+
+
+%{if $name2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Наименование:</strong><br />
+%{$name2}%
+</div>
+%{/if}%
+
+%{if $group_id2!="" or $group_id!="" or $group_id3!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Товарная группа/ подгруппа 1 ур./ подгруппа 2 ур. :</strong><br />
+
+ %{section name=groupsec loop=$group}%
+    	 %{if $group[groupsec].is_current}%%{$group[groupsec].name}%%{/if}%
+    %{/section}%
+ %{section name=two_groupsec loop=$two_group}%
+    	%{if $two_group[two_groupsec].is_current}% - %{$two_group[two_groupsec].name}%%{/if}%
+    %{/section}%
+    
+   %{section name=three_groupsec loop=$three_group}%
+    	%{if $three_group[three_groupsec].is_current}% - %{$three_group[three_groupsec].name}%%{/if}%
+    %{/section}%
+
+</div>
+%{/if}%
+
+%{if $gost_tu2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ГОСТ/ТУ:</strong><br />
+%{$gost_tu2}%
+</div>
+%{/if}%
+
+%{if $dimension_id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ед.изм.:</strong><br />
+%{section name=dimsec loop=$dim}%
+    %{if $dim[dimsec].is_current}%%{$dim[dimsec].name}%%{/if}%
+%{/section}%
+</div>
+%{/if}%
+
+%{if $length2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Длина, мм :</strong><br />
+%{$length2}%
+</div>
+%{/if}%
+
+%{if $width2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Ширина, мм :</strong><br />
+%{$width2}%
+</div>
+%{/if}%
+
+%{if $height2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Высота/ толщина, мм :</strong><br />
+%{$height2}%
+</div>
+%{/if}%
+
+%{if $diametr2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Диаметр, мм: :</strong><br />
+%{$diametr2}%
+</div>
+%{/if}%
+
+
+<br clear="all" />
+<p />    
+    
+ 
+<p />
+%{include file="an_search/an_table.html"}%

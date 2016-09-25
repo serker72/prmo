@@ -1,0 +1,712 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#do_print_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('notes');
+});
+</script>
+<h1 style="">Редактирование реализации товара</h1>
+
+
+
+
+<form action="ed_acc.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id"  id="id" value="%{$acc.id}%" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$acc.bill_id}%" />
+<input type="hidden" name="sh_i_id" id="sh_i_id" value="%{$acc.sh_i_id}%" />
+<input type="hidden" id="supplier_id" value="%{$supplier_id}%" />
+
+<input type="hidden" name="current_status_id" value="%{$acc.status_id}%" />
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Номер:</strong><br />
+
+%{$acc.id}%
+</div>
+
+<div style="float:left; margin-right:10px;">
+<strong>Дата создания:</strong><br />
+
+%{$acc.pdate}%<br />
+<small>создано: %{$created_by}%</small>
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="given_no">Заданный номер с/ф:</label><br />
+
+<input type="text" size="10" maxlength="255" name="given_no" id="given_no" value="%{$acc.given_no}%"  %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px;" />
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="given_pdate">Заданная дата с/ф:</label><br />
+
+<input type="text" size="10" maxlength="10"  %{if $can_given_pdate}%  name="given_pdate" %{/if}% id="given_pdate" value="%{$acc.given_pdate}%"  %{if !$can_modify or !$can_given_pdate}% disabled="disabled"%{/if}% style="width:60px;" />
+
+%{if !$can_given_pdate}% 
+<input type="hidden" size="10" maxlength="10" name="given_pdate" id="given_pdate_hidden" value="%{$acc.given_pdate}%" />
+%{/if}% 
+
+<script type="text/javascript">
+/*$(function(){
+	$("#given_pdate").bind("change", function(){
+		if( ($("#given_pdate_hidden").val()!='-')&&($("#given_pdate_hidden").val()!=$("#given_pdate").val())&&(("%{$acc_ins}%").length>0) ){
+			if(window.confirm("Внимание!\nВы меняете заданную дату реализации.\nЕсть связанные поступления: %{$acc_ins}%.\nВы уверены?")){
+			}else $("#given_pdate").val($("#old_given_pdate").val());
+		}
+	});
+});*/
+</script>
+
+<input type="hidden" size="10" maxlength="10"  id="old_given_pdate" value="%{$acc.given_pdate}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id_string">Склад:</label><br />
+
+<input type="text" size="20" maxlength="255" id="sector_id_string" value="%{$sector_id_string}%" disabled="disabled" />
+</div>
+
+
+%{include file="every_help_dialog.html" filename="acc_edit.htm" prefix="" description="редактирование реализации"  style="float:right; margin-top:10px;  margin-left:10px;"}%
+
+
+<div style="float:right; padding-top:13px;">
+
+<input type="button" value="Файлы..." onclick="location.href='acc_files.php?acc_id=%{$acc.id}%';" style="width:70px;" />
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org|escape}%" disabled="disabled" />
+</div>
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Контрагент:</label><br />
+
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+
+</div>
+
+
+<div style="float:right; margin-top:0px; margin-right:00px; min-width:120px;" id="toggle_annul">
+%{include file="acc/toggle_annul_card.html"}%
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label><br />
+
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="contract_no">Договор №:</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$contract_no}%" id="contract_no" disabled="disabled"  style="width:100px;" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="contract_pdate">от:</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$contract_pdate}%" id="contract_pdate" disabled="disabled" style="width:60px;" />
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+
+
+
+
+
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="bottom">
+<td width="50%">
+
+ <strong>Позиции реализации:</strong>
+<!--<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_modify or !$can_add_positions}% disabled="disabled"%{/if}% />
+-->
+<input type="hidden" id="choice_was_made" value="0" />
+
+
+</td>
+<td width="50%" align="right">
+
+
+%{include file="acc/positions_edit_button.html"}%
+
+
+ %{if $can_email_pdf}%
+    	%{if $acc.is_confirmed==1}%
+        <a href="#" id="email_documents"><img src="/img/icons/emailr.png" width="24" height="24" alt="отправить pdf-документы на электронную почту..." title="отправить pdf-документы на электронную почту..." border="0" align="absmiddle" /></a>
+         %{include file="bills/pdf_actions.html" mode=2}%
+        
+        %{else}%
+        <a href="#" onclick="alert('В данном режиме  отправка pdf-документов на электронную почту недоступна. Пожалуйста, проставьте галочку: \'Утверждаю\'  и нажмите кнопку \'Сохранить и остаться\' для получения возможности  отправки pdf-документов на электронную почту.'); return false;"><img src="/img/icons/emailr_in.png" width="24" height="24" alt="отправить pdf-документы на электронную почту..." title="отправить pdf-документы на электронную почту..." border="0" align="absmiddle" /></a>
+        %{/if}%
+        
+    %{else}%
+    	
+    	 <a href="#"   onclick="alert('У Вас недостаточно прав для отправки pdf-документов на электронную почту.'); return false;"><img src="/img/icons/emailr_in.png" width="24" height="24" alt="отправить pdf-документы на электронную почту..." title="отправить pdf-документы на электронную почту..." border="0" align="absmiddle" /></a>
+    %{/if}%
+
+
+
+
+%{if $acc.is_confirmed==1}%
+ %{if $can_print}%
+ 
+ <a href="#" id="print_form"><img src="/img/icons/print.png" width="24" height="24" alt="печать реализации..." title="печать реализации..." border="0" align="absmiddle" /></a>
+ 
+ 	
+    <div id="is_print_dialog" title="Выберите форму для печати" style="display:none;">
+    <strong>Выберите форму для печати:</strong><br />
+
+    	<input type="checkbox" id="do_print_nakl" value="1" %{if $has_tov==false}% disabled="disabled"%{/if}%  /><label for="do_print_nakl">Товарная накладная</label><br />
+		<input type="checkbox" id="do_print_fakt" value="1" /><label for="do_print_fakt">Счет-фактура</label>
+        
+        <br />
+
+      <!--  <label for="do_print_no">№ плат. пор.:</label><input type="text" id="do_print_no" size="10" maxlength="255" value="%{$acc.print_no|escape}%" />&nbsp;&nbsp;&nbsp;
+        
+        <label for="do_print_pdate">дата плат. пор.:</label><input type="text" id="do_print_pdate" size="10" maxlength="255" value="%{$acc.print_pdate|escape}%" />
+        
+<br />-->
+        
+        
+       
+        <input type="checkbox" id="do_print_akt" %{if $has_usl==false}% disabled="disabled"%{/if}% value="1" /><label for="do_print_akt">Акт</label><br />
+        
+        <br />
+		<input type="checkbox" id="do_print_sign" value="1" /><label for="do_print_sign">Наличие подписи, печати</label><br />
+      
+        
+        <input type="checkbox" id="do_print_summ" value="1" checked="checked" /><label for="do_print_summ">Наличие цен, сумм</label><br />
+        <br />
+
+        <div id="album_warning" style="display:none;">
+          <img src="/img/voskl.png" width="64" height="64" alt=" " border="0" hspace="5" vspace="2" align="left" />
+          <b>Внимание!</b>
+          <br />
+			Для корректной печати товарной накладной или счета-фактуры в свойствах принтера необходимо установить ориентацию печати "альбомная"; масштаб печати - 100%.
+          </div>
+    </div>
+    
+    <script type="text/javascript">
+	$(function(){
+		$("#do_print_nakl").bind("click",function(){
+			if($("#do_print_nakl").prop("checked")){
+				$("#album_warning").css("display","block");
+			}else if(!$("#do_print_fakt").prop("checked")){
+				$("#album_warning").css("display","none");
+			}
+		});
+		
+		$("#do_print_fakt").bind("click",function(){
+			if($("#do_print_fakt").prop("checked")){
+				$("#album_warning").css("display","block");
+			}else if(!$("#do_print_nakl").prop("checked")){
+				$("#album_warning").css("display","none");
+			}
+		});
+		
+		$("#is_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 400,
+			height: 300,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					
+					do_print_sign=0;
+					if($("#do_print_sign").prop("checked")) do_print_sign=1;
+					
+					do_print_summ=0;
+					if($("#do_print_summ").prop("checked")) do_print_summ=1;
+					
+					
+					if($("#do_print_nakl").prop("checked")){
+						zc=window.open('ed_acc.php?action=1&id=%{$acc.id}%&print=1&printmode=0&print_pdate='+$("#do_print_pdate").val()+'&print_no='+$("#do_print_no").val()+'&do_print_sign='+do_print_sign+'&do_print_summ='+do_print_summ,'_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					if($("#do_print_fakt").prop("checked")){
+						zc=window.open('ed_acc.php?action=1&id=%{$acc.id}%&print=1&printmode=1&print_pdate='+$("#do_print_pdate").val()+'&print_no='+$("#do_print_no").val()+'&do_print_sign='+do_print_sign+'&do_print_summ='+do_print_summ,'_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					if($("#do_print_akt").prop("checked")){
+						zc=window.open('ed_acc.php?action=1&id=%{$acc.id}%&print=1&printmode=2&print_pdate='+$("#do_print_pdate").val()+'&print_no='+$("#do_print_no").val()+'&do_print_sign='+do_print_sign+'&do_print_summ='+do_print_summ,'_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					
+					$("#is_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#is_print_dialog").dialog("close");
+				}
+				
+			}
+		});
+		
+		$("#print_form").bind("click", function(){
+			$("#is_print_dialog").dialog("open");
+			
+			return false;
+		});
+		
+		%{if $force_print==1}%
+		$("#print_form").trigger("click");
+		%{/if}%
+		
+	});
+	</script>
+    
+    
+ %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати реализации.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать реализации..." title="печать реализации..." border="0" align="absmiddle"  /></a>
+ %{/if}%
+ 
+ 
+ %{else}%
+ <a href="#" target="_blank" onclick="alert('В данном режиме печать реализации недоступна. Пожалуйста, утвердите реализацию.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать реализации..." title="печать реализации..." border="0" align="absmiddle" /></a>
+ %{/if}%
+    
+ </td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2"> 
+
+%{include file="acc/position_actions.html" change_low_mode=$acc.change_low_mode change_high_mode=$acc.change_high_mode}%
+
+</td>
+</tr>
+</table> 
+   
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="acc/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$acc.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="acc/d_notes_dialog.html" word="notes" named="Примечания" user_id=$acc.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1" onchange="" %{if $acc.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю</label>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');    
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+
+
+</div>
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к исходящему счету" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='ed_bill.php?action=1&id=%{$acc.bill_id}%';
+}else location.href='ed_bill.php?action=1&id=%{$acc.bill_id}%';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	//var page_choice_was_made=true;
+	var page_low_mode_made=false;
+	var page_high_mode_made=false;
+	var do_stay=true;
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+				  if(isNaN(x) || isNaN(n)) return false;
+				  var m = Math.pow(10,n);
+				  return Math.round(x*m)/m;
+				}
+	
+	function RotPos(){
+		var can_ret=true;
+		
+		
+		if($("#positions_on_page_table tbody tr").length==0){
+			alert('Невозможно сохранить реализацию без позиций! Пожалуйста, укажите позиции реализации!');
+			can_ret=can_ret&&false;
+			return false;
+		}
+		
+		
+		if(!PeriodChecker('given_pdate', '%{$pch_date}%')){
+			alert("Заданная дата с/ф должна быть не ранее %{$pch_date}%!");
+			can_ret=can_ret&&false;
+			return false;
+		}
+		
+		if(!PeriodCheckerByPeriod('given_pdate', closed_date )){
+			alert('Заданная дата с/ф не должна попадать в закрытый период '+interval_string+'!');
+			can_ret=can_ret&&false;
+			return false;	
+		}
+		
+		
+		//добавить проверки на утверждение
+		if($("#is_confirmed").prop("checked")&&("%{$acc.is_confirmed}%"=="0")){
+			
+			if(($("#given_pdate").val()=='-')||($("#given_pdate").val()=='')||($("#given_pdate").val().length<10)){
+				alert("Для утверждения реализации необходимо заполнить заданную дату с/ф!");
+				$("#given_pdate").focus(); //trigger("click");
+				return false;		
+			}else{
+				now=new Date();
+				check_date=new Date($("#given_pdate").val().substring(6,10), $("#given_pdate").val().substring(3,5)-1, $("#given_pdate").val().substring(0,2), 0,0,0,0 );
+				
+				/*if(check_date>now){
+					alert("Невозможно утвердить реализацию. Заданная дата с/ф превышает текущую!");
+					$("#given_pdate").focus(); //trigger("click");
+					return false;	
+				}*/
+			}
+			
+			
+			if(($("#given_no").val()=='')){
+				alert("Для утверждения реализации необходимо заполнить заданный номер с/ф!");
+				$("#given_no").focus(); //trigger("click");
+				return false;		
+			}
+			
+			//контроль простановки утверждения: число свободных позиций по заявке д.быть больше
+			//чем 1,1*кол-во в реализации
+			//ajax
+			
+			$.ajax({
+				async: false,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_by_pos",
+					id: "%{$acc.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить реализацию. Причина: "+data+"."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния реализации. Пожалуйста, попытайтесь сохранить реализацию снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			
+			/*контроль даты связанного поступления*/
+			if(can_ret) $.ajax({
+				async: false,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_by_pdate",
+					"id": "%{$acc.id}%",
+					"pdate": $("#given_pdate").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить реализацию. Причина: "+data+"."); 
+					
+					 can_ret=can_ret&&false;
+				  }else{
+					 can_ret=can_ret&&true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния реализации. Пожалуйста, попытайтесь сохранить реализацию снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			
+		   if(can_ret) $.ajax({
+				async: false,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_accs_by_given_pdate",
+					"supplier_id": $("#supplier_id").val(),
+					"given_pdate": $("#given_pdate").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					 
+					 //alert("Невозможно утвердить реализацию. Причина: "+data+"."); 
+					// can_ret=false;
+					 can_ret=can_ret&&window.confirm("Внимание!\По данному контрагенту есть более поздние реализации №№ "+data+".\nПри утверждении реализации входящие оплаты будут перераспределены в счетах-фактурах данной реализации и реализаций №№ "+data+".\nВы уверены?");
+				  }else{
+					 can_ret=can_ret&&true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния реализации. Пожалуйста, попытайтесь сохранить реализацию снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			//return can_ret;
+			%{if $bill_has_pms and $acc.inventory_id==0 and $cannot_unconfirm}%
+			//подтверждение утверждения поступления...
+			
+			if(window.confirm("ВНИМАНИЕ! ВЫ УТВЕРДИЛИ РЕАЛИЗАЦИЮ! У ВАС НЕТ ПРАВА СНЯТЬ УТВЕРЖДЕНИЕ ДАННОЙ РЕАЛИЗАЦИИ!\nСнять утверждение с реализации имеют право следующие сотрудники: %{$can_unconfirm_users}%.\nПожалуйста, проверьте корректность внесенных данных.\nВы уверены, что стоит утвердить реализацию?")){
+				if(window.confirm("Вы уверены, что данные внесены корректно и нужно утвердить реализацию?")){
+					
+				}else{
+					can_ret=can_ret&&false;
+					$("#is_confirmed").prop("checked", false);
+					
+					//запись в журнал событий
+					$.ajax({
+					  async: true,
+					  url: "/js/acc.php",
+					  type: "POST",
+					  data:{
+						  "action":"refuse_to_confirm",
+						  id: "%{$acc.id}%",
+						  refuse: "2"
+					  },
+					  success: function(data){
+						
+					  }
+				  });
+					
+					
+				}
+	
+			}else{
+				can_ret=can_ret&&false;
+				$("#is_confirmed").prop("checked", false);
+				
+				//запись в журнал событий
+				$.ajax({
+					  async: true,
+					  url: "/js/acc.php",
+					  type: "POST",
+					  data:{
+						  "action":"refuse_to_confirm",
+						  id: "%{$acc.id}%",
+						  refuse: "1"
+					  },
+					  success: function(data){
+						
+					  }
+				 });
+			}
+			
+			%{/if}%	
+			
+		}
+		
+		
+		
+		//контроль возможности снять утверждение!
+		if((!$("#is_confirmed").prop("checked"))&&("%{$acc.is_confirmed}%"=="1")){
+			
+			
+			//выполнить проверку наличия связанных реализаций
+			$.ajax({
+				async: false,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_binded_docs",
+					"id": "%{$acc.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 can_ret=window.confirm("Внимание!\nС данной реализацией связаны следующие документы:"+data+"\nСнятие утверждения реализации приведет к автоматическому снятию утверждения документов.\nПродолжить?");
+					
+					
+				  }else can_ret=true;
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния поступления. Пожалуйста, попытайтесь сохранить поступление снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			
+			
+			
+			$.ajax({
+				async: false,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$acc.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение реализации. Причина: "+data+"."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния реализации. Пожалуйста, попытайтесь сохранить реализацию снова.");
+					can_ret=false;	
+				}	 
+			});
+		}
+		
+		return can_ret;
+		
+		
+		
+		
+		
+	}
+	
+	$("#doEdit").bind("click",function(){
+		do_stay=false;
+		return RotPos();
+	});
+	
+	$("#doEditStay").bind("click",function(){
+		do_stay=true;
+		return RotPos();
+	});
+	
+});
+</script>
+

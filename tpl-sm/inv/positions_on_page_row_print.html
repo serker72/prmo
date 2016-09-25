@@ -1,0 +1,70 @@
+ <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        <span>%{$smarty.section.pospossec.index+1}%</span>
+        </td>
+        <td width="24">
+         %{$pospos[pospossec].position_id|string_format:"%05d"}%
+        </td>
+        <td width="*">
+        <span id="name_%{$pospos[pospossec].id}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].id}%" name="new_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].id}%" />
+         <input type="hidden" id="new_pl_position_id_%{$pospos[pospossec].id}%" name="new_pl_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].pl_position_id}%" />
+       
+        </td>
+        <td width="60">
+        <span id="dim_name_%{$pospos[pospossec].id}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].id}%" name="new_dimension_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+     
+        
+        
+        <td width="60">
+        %{$pospos[pospossec].quantity_as_is}%
+        <input type="hidden" id="new_quantity_as_is_%{$pospos[pospossec].id}%" name="new_quantity_as_is_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity_as_is}%"  />
+    	</td>
+        
+       
+        
+        
+         <td width="60">
+          <span id="kol_%{$pospos[pospossec].id}%">%{$pospos[pospossec].quantity_fact}%</span>
+        <input type="hidden" id="new_quantity_fact_%{$pospos[pospossec].id}%" name="new_quantity_fact_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity_fact}%"  />
+         </td>
+         
+         
+          
+          <td width="60" id="izb_%{$pospos[pospossec].id}%">
+          %{if ($pospos[pospossec].quantity_fact-$pospos[pospossec].quantity_as_is)>0}%
+          <span style="color:red;">%{$pospos[pospossec].quantity_fact-$pospos[pospossec].quantity_as_is}%</span>
+          %{else}%
+          0
+          %{/if}%
+          </td>
+          
+           <td width="60" id="nedost_%{$pospos[pospossec].id}%">
+          %{if ($pospos[pospossec].quantity_as_is-$pospos[pospossec].quantity_fact)>0}%
+          <span style="color:red;">%{$pospos[pospossec].quantity_as_is-$pospos[pospossec].quantity_fact}%</span>
+          %{else}%
+          0
+          %{/if}%
+          </td>
+          
+           <td width="60">
+          %{$pospos[pospossec].quantity_by_program}%
+        </td>
+        
+         <td width="60">
+        %{$pospos[pospossec].in_acc}%
+        </td>
+        
+         <td width="60">
+        %{$pospos[pospossec].in_wf}%
+        </td>
+          
+          
+          
+       
+        
+    </tr>
+    

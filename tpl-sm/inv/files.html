@@ -1,0 +1,33 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Файлы распоряжения на инвентаризацию № %{$bill.code}%</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <input type="button" value="Перейти к распоряжению..." onclick="location.href='ed_inv.php?action=1&id=%{$bill.id}%';" /><br />
+
+    
+    %{$log}%
+    
+    </p>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

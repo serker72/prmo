@@ -1,0 +1,1660 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/md5.js"></script>
+<script type="text/javascript" src="/js/jquery.price_format.1.7.min.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#supplier_bill_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_shipping_plan").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_payment_contract").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 
+	$("#pdate_payment_ind").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('suppliers');
+	touchScroll('bdetails');
+	touchScroll('notes');
+	touchScroll('condetails');
+});
+</script>
+<h1 style="float:left; margin-right:20px;">Редактирование исходящего счета</h1>
+
+%{include file="every_help_dialog.html" filename="bill_edit.htm;bill_delivery.htm;bill_exped.htm;bill_eq.html" prefix="" description="редактирование исходящего счета"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+
+<div style="float:right; margin-right:10px;">
+
+
+
+
+<input type="button" value="Файлы..." onclick="location.href='bill_files.php?bill_id=%{$bill.id}%';" />
+
+
+</div>
+
+
+
+
+<br clear="all" />
+
+<form action="ed_bill.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+<input type="hidden" name="komplekt_ved_id" id="komplekt_ved_id" value="%{$bill.komplekt_ved_id}%" />
+
+
+<input type="hidden" name="current_status_id" value="%{$bill.status_id}%" />
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Номер:</strong><br />
+
+%{$bill.code}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+
+%{$bill.pdate}%<br />
+<small>создан: %{$created_by}%</small>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled"  style="width:200px;" />
+<input type="hidden" value="%{$org_id}%" id="org_id" />
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id">Склад:</label><br />
+
+<select name="sector_id" id="sector_id" style="width:200px;" %{if !$can_modify}% disabled="disabled"%{/if}%>
+%{html_options values=$group_ids selected=$bill.sector_id output=$group_names}%
+</select>
+</div>
+
+
+
+
+<div style="float:right; margin-right:0px; min-width:110px;" id="toggle_annul">
+%{include file="bills/toggle_annul_card.html"}%
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:36px;">
+<label for="supplier_bill_no">
+Заданный № счета:</label><br />
+
+<input type="text" value="%{$bill.supplier_bill_no}%" name="supplier_bill_no" id="supplier_bill_no" size="40" maxlength="255" style="width:145px;" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:00px;">
+
+<label for="supplier_id">Покупатель:</label><br />
+
+<input type="text" size="40" maxlength="255" value="%{$bill.supplier_id_string}%" id="supplier_id_string" disabled="disabled" style="width:520px;" />
+
+%{if $bill.komplekt_ved_id==0}%
+ <input type="button" id="supplier_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="supplier_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+%{/if}%
+
+
+<input type="hidden"  value="%{$bill.supplier_id}%" name="supplier_id" id="supplier_id" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; width:145px; margin-right:36px;">
+<label for="suppliers_are_equal">Покупатель = грузополучатель</label> 
+<input type="checkbox" %{if $bill.suppliers_are_equal==1}% checked %{/if}% value="1" name="suppliers_are_equal" id="suppliers_are_equal" %{if !$can_modify}% disabled="disabled"%{/if}% />
+<script type="text/javascript">
+$(function(){
+	$("#suppliers_are_equal").bind("change", function(){
+		if($("#suppliers_are_equal").prop("checked")){
+			$("#ship_supplier_id").val($("#supplier_id").val());
+			$("#ship_supplier_id_string").val($("#supplier_id_string").val());
+			$("#ship_supplier_select").prop("disabled", true);
+			$("#ship_supplier_clear").prop("disabled", true);
+		}
+		else{
+			$("#ship_supplier_id").val("");
+			$("#ship_supplier_id_string").val("");
+			$("#ship_supplier_select").prop("disabled", false);
+			$("#ship_supplier_clear").prop("disabled", false);
+		}
+	});
+});
+</script>
+
+</div>
+<div style="float:left; margin-right:0px;">
+
+<label for="ship_supplier_id">
+Грузополучатель:</label><br />
+<input type="text" size="40" maxlength="255" value="%{$bill.ship_supplier_id_string}%" id="ship_supplier_id_string" disabled="disabled" style="width:520px;" />
+<input type="button" id="ship_supplier_select" %{if !$can_modify or $bill.suppliers_are_equal==1}% disabled="disabled"%{/if}% value="..." />
+<input type="button" id="ship_supplier_clear" %{if !$can_modify or $bill.suppliers_are_equal==1}% disabled="disabled"%{/if}%  value="x" /> 
+
+
+<input type="hidden"  value="%{$bill.ship_supplier_id}%" name="ship_supplier_id" id="ship_supplier_id" %{if !$can_modify}% disabled="disabled"%{/if}%  />
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Фактическая <br />
+дата поставки:</strong><br />
+%{$fact_days}%
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="pdate_shipping_plan">Плановая <br />
+дата поставки:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_shipping_plan}%" name="pdate_shipping_plan" id="pdate_shipping_plan" %{if !$can_change_pdate_shipping_plan}% disabled="disabled"%{/if}% style="width:60px;" />
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="pdate_payment_contract">Дата оплаты <br />
+по договору:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_payment_contract}%" name="pdate_payment_contract" id="pdate_payment_contract" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px;" />
+<input type="hidden"  id="ethalon_pdate_payment_contract" value="" />
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//блок проверки дат
+	//смена плановой даты поставки - задаем эталонную дату
+	$("#pdate_shipping_plan").bind("change",function(){
+		if($("#pdate_shipping_plan").val().length>0){
+			$.ajax({
+	  		  async: true,
+			  url: "/js/bill.php",
+			  type: "POST",
+			  data:{
+				  "action":"retrieve_ethalon_pdate_payment_contract",
+				  "supplier_id":$("#supplier_id").val(),
+				  			"contract_id":$("#contract_id").val(),
+				  "pdate_shipping_plan":$("#pdate_shipping_plan").val()
+			  },
+			  beforeSend: function(){
+					
+			  },
+			  success: function(data){
+				  $("#ethalon_pdate_payment_contract").attr("value",data);
+				  
+				  
+				  if(($("#pdate_payment_contract").val().length==0)||($("#pdate_payment_contract").val()=="-")){
+					$.ajax({
+						async: true,
+						url: "/js/bill.php",
+						type: "POST",
+						data:{
+							"action":"retrieve_ethalon_full_pdate_payment_contract",
+							"supplier_id":$("#supplier_id").val(),
+				  			"contract_id":$("#contract_id").val(),
+							"pdate_shipping_plan":$("#pdate_shipping_plan").val()
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+							$("#pdate_payment_contract").attr("value",data);
+							
+						},
+						error: function(xhr, status){
+							//alert("%{$named}%: Ошибка удаления.");	
+						}	 
+					});
+					  
+				  }
+				  
+				  
+				  $("#ethalon_pdate_payment_contract").trigger("change");
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("%{$named}%: Ошибка удаления.");	
+			  }	 
+		  });	
+
+		
+		}else{
+			$("#ethalon_pdate_payment_contract").attr("value","");
+			$("#ethalon_pdate_payment_contract").trigger("change");
+		}
+	});
+	
+	//смена даты оплаты по договору - сравниваем с эталоном и предупреждаем
+	$("#pdate_payment_contract").bind("change",function(){
+		if(($("#pdate_payment_contract").val().length>0)&&($("#pdate_payment_contract").val()!="-")&&($("#ethalon_pdate_payment_contract").val().length>0)){
+			$.ajax({
+	  		  async: true,
+			  url: "/js/bill.php",
+			  type: "POST",
+			  data:{
+				  "action":"compare_pdate_payment",
+				  "pdate_payment_contract":$("#pdate_payment_contract").val(),
+				  "ethalon_pdate_payment_contract":$("#ethalon_pdate_payment_contract").val(),
+			  },
+			  beforeSend: function(){
+					
+			  },
+			  success: function(data){
+				 if(data!=""){
+					alert(data); 
+				 }
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("%{$named}%: Ошибка удаления.");	
+			  }	 
+		  });
+			
+				
+		}
+	});
+	
+	//смена эталона - вызвать проверку даты оплаты
+	$("#ethalon_pdate_payment_contract").bind("change",function(){
+		if(($("#pdate_payment_contract").val().length>0)&&($("#pdate_payment_contract").val()!="-")&&($("#ethalon_pdate_payment_contract").val().length>0)){
+			$("#pdate_payment_contract").trigger("change");
+		}
+		
+	});
+	
+});
+</script>
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="pdate_payment_ind">Фактическая <br />
+дата оплаты:</label><br />
+%{$fact_pays|default:"-"}%
+<!--<input type="text" size="10" maxlength="10" value="%{$bill.pdate_payment_ind}%" name="pdate_payment_ind" id="pdate_payment_ind" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px;" />
+-->
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+<label for="contract_no">Договор №</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$bill.contract_no}%" id="contract_no_string" disabled="disabled" style="width:100px;" />
+<!--<input type="hidden" name="contract_no" id="contract_no" value="%{$bill.contract_no}%" %{if !$can_modify}% disabled="disabled"%{/if}% />-->
+
+
+<input type="hidden"  value="%{$bill.contract_id}%" name="contract_id" id="contract_id"  %{if !$can_modify}% disabled="disabled"%{/if}%  />
+
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+<label for="contract_pdate">от</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$bill.contract_pdate}%" id="contract_pdate_string" disabled="disabled" style="width:60px;" />
+<input type="hidden" name="contract_pdate" id="contract_pdate" value="%{$bill.contract_pdate}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+<div style="float:left; margin-right:10px; margin-top:35px;">
+
+<input type="button" id="contract_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="contract_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="bdetails_id">Реквизиты контрагента:</label><br />
+<input type="text" size="40" maxlength="255" id="bdetails_id_string" value="%{$bill.bdetails_id_string|escape:"html"}%" disabled="disabled" style="width:650px;" />
+<input type="hidden" name="bdetails_id" id="bdetails_id" value="%{$bill.bdetails_id}%" />
+<input type="button" id="bdetails_select" value="..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" id="bdetails_clear" value="x" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+%{include file="bills_in/supplier_actions.html" current_supplier=$bill.supplier_id pos=$bill.bdetails pos2=$bill.condetails suppliers=$suppliers current_bank=$bill.bdetails_id}%
+
+%{include file="bills/ship_supplier_actions.html" current_supplier=$bill.ship_supplier_id suppliers=$suppliers }%
+
+
+<!-- конец блока контрагента -->
+
+
+
+
+
+
+
+
+
+
+
+<input type="hidden" name="komplekt_ved_id" id="komplekt_ved_id" value="%{$bill.komplekt_ved_id}%" />
+
+<input type="hidden" name="storage_id" id="storage_id" value="%{$bill.storage_id}%" />
+<!--<input type="hidden" name="sector_id" id="sector_id" value="%{$bill.sector_id}%" />-->
+
+<!-- конец блока комплектовочной ведомости -->
+
+
+
+<strong>Позиции счета:</strong> 
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+</td>
+<td width="50%" align="right">
+	
+
+ 
+ %{if $bill.is_confirmed_shipping==0}% <a href="#" onclick="alert('Отгрузка не утверждена. Пожалуйста, утвердите отгрузку!'); return false;" class="reestr_new reestr_inactive reestr_right_button24" data-comment="создать новую реализацию" ></a> 
+      
+      %{elseif $bill.is_confirmed_shipping==1}%
+    	<a href="#" id="make_bill" class="reestr_new   reestr_right_button24" data-comment="создать новую реализацию..."  ></a>
+        
+        <script type="text/javascript">
+        $(function(){
+			$("#make_bill").bind("click",function(){
+			
+			%{if $not_in_closed_period}%
+				//to_bill_
+				counter=0; var kols=0; 
+				var is_not_different=true; 
+				 
+				var sector_id=$("#sector_id").val(); 
+				var komplekt_ved_id=$("#komplekt_ved_id").val(); var first_step=true;
+				var position_id=0;
+				
+				$.each($("#bill_positions_table input[type=checkbox][id^=to_ship_]:checked"), function(index, value) { 
+				  counter++;
+				 
+				  //kols=kols+parseFloat(value.value);
+				  
+				  _pairs=$(value).val().split(';');
+				  $.each(_pairs, function(k,v){
+					   
+					  pair=v.replace(/^\(/,'').replace(/\)$/, '').split(',');
+					  
+					  kols=kols+parseFloat(pair[1]);
+					  // alert(pair[1]);
+					  					  
+				  });
+				  
+				 
+				  thash=$(value).attr("id").replace(/^to_ship_/,"");
+				  
+				   
+				  
+				 
+				  
+				  komplekt_ved_id=$("#new_komplekt_ved_id_"+thash).val();
+				  position_id=$("#new_position_id_"+thash).val();
+				  
+				 
+				  
+				  
+				  
+				});
+				
+			 
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для добавления в реализацию.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(kols==0){
+					 
+					alert("Невозможно создать реализацию.\nПричина: по счету выписаны все позиции, либо не создано/не утверждено поступление по связанному входящему счету.");
+					return false;
+				}
+				
+				
+				url='ed_acc.php?';
+				url=url+"bill_id="+"%{$bill.id}%";
+			 
+				url=url+"&sector_id="+sector_id;
+				url=url+"&komplekt_ved_id="+komplekt_ved_id;
+				
+				url=url+"&to_back_bill=1";
+				url=url+"&from_begin=1";
+				
+				$.each($("#bill_positions_table tr td input[type=checkbox][id^=to_ship_]:checked"), function(key, value){
+					
+					 thash=$(value).attr("id").replace(/^to_ship_/,"");
+					 
+					  _pairs=$(value).val().split(';');
+					  $.each(_pairs, function(k,v){
+						   
+						  pair=v.replace(/^\(/,'').replace(/\)$/, '').split(',');
+						  
+						
+						  url=url+"&"+$(value).attr("id")+k+"="+$("#new_position_id_"+thash).val()+";"+pair[1]+";"+$("#new_komplekt_ved_id_"+thash).val()+';'+pair[0];
+											  
+					  });
+					 
+					 
+					// url=url+"&"+$(value).attr("id")+"="+$("#new_position_id_"+thash).val()+";"+value.value+";"+$("#new_komplekt_ved_id_"+thash).val();
+					 
+				});
+				
+				/*
+				alert(url); 
+				return false;*/
+				
+				
+				location.href=url;
+				
+				%{else}%
+				alert("Невозможно создать реализацию. Причина: %{$closed_period_reason}%");
+				
+				%{/if}%
+				return false;
+			});
+		});
+        </script>
+    %{/if}%
+    
+    
+     %{if $can_edit_quantities}%
+     %{if $bill.is_leading==0}%
+     
+     <a href="#" onclick="alert('Невозможно редактировать количества позиций: счет автоматически создан при копировании из другой организации. Отредактируйте количество позиций в исходной заявке в родительской организации.'); return false;" class="reestr_edit reestr_inactive reestr_right_button24" data-comment="редактировать количество..."  ></a>
+      %{else}%
+        
+       
+        <a href="#" id="edit_quantities" class="reestr_edit   reestr_right_button24" data-comment="редактировать количество..."  ></a>
+         <script type="text/javascript">
+        $(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+			
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#bill_positions_table input[id^=to_ship_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#bill_positions_table input[id^=to_ship_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).attr('id').replace(/^to_ship_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text(), $('#new_span_quantity_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<=0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text()+'. Пожалуйста, введите правильное значение.');
+					}else{
+					
+						%{if !$can_exclude_positions}%
+					
+						  if(res>parseFloat($("#new_span_max_quantity_"+id).text())){
+							alert('Введенное количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text()+' превышает максимально доступное количество по заявке ('+$("#new_span_max_quantity_"+id).text()+'). Уменьшите количество позиции.'); 
+							  
+						  }else usl=false; 
+						%{else}%
+					
+						  if(roundPlus(res,3)>roundPlus(parseFloat($("#new_span_max_quantity_"+id).text())*parseFloat("%{$BILLUP}%"),3)){
+							  
+							  
+							  
+							 alert('Введенное количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text()+' превышает максимально доступное количество по заявке + 10% ('+$("#new_span_max_quantity_"+id).text()+'). Уменьшите количество позиции.');
+						  }else if(
+						  
+						  (roundPlus(res,3)<=roundPlus(parseFloat($("#new_span_max_quantity_"+id).text())*parseFloat("%{$BILLUP}%"),3))
+						  
+						  && (roundPlus(res,3)>roundPlus(parseFloat($("#new_span_max_quantity_"+id).text()),3))
+						  
+						  ){
+							  if(window.confirm('Внимание! Вы превышаете доступное количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_position_dim_name_'+id).text()+' по заявке ('+$("#new_span_max_quantity_"+id).text()+'). Продолжить?')){
+								 usl=false;  
+							  }
+							  
+						  }else usl=false; 
+						%{/if}%
+					
+					 
+					 
+					 
+					}
+					 
+					 
+					  
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#new_span_quantity_'+id).html(res);
+					 $('#new_quantity_'+id).val(res);
+					 
+					
+					 new_total=roundPlus(res*parseFloat($('#check_new_price_pm_'+id).val()), 2);
+					 
+					 $('#new_total_'+id).html(new_total);
+					 $('#check_new_total_'+id).val(new_total);
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+     %{/if}%  
+    %{else}%
+    	%{if $bill.is_confirmed_price==1}% 
+    	<a href="#" onclick="alert('Невозможно редактировать количества позиций: у счета утверждены цены. Снимите утверждение цен для редактирования количества.'); return false;" class="reestr_edit reestr_inactive reestr_right_button24" data-comment="редактировать количество..."  ></a>
+        %{else}%
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций. Причина: %{$cannot_edit_reason}% у Вас недостаточно прав для данного действия.'); return false;"  class="reestr_edit reestr_inactive reestr_right_button24" data-comment="редактировать количество..." ></a>
+        %{/if}%
+    %{/if}%
+    
+    
+    %{if $can_modify_pms}%
+       <a href="#" id="edit_pms" class="reestr_impm  reestr_right_button24" data-comment="корректировка +/-"  ></a> 
+    %{include file="bills/position_actions_pm.html" bill=$bill action=1}%
+    
+    %{/if}%
+    
+    
+    
+    %{if $can_make_cash}%
+    	%{if $bill.is_confirmed_shipping==1}%
+        %{include file="bills/cash_delivery.html"}%
+        %{include file="bills/cash_exped.html"}%
+        
+        
+        %{include file="bills/code_actions.html"}%
+        %{include file="bills/driver_actions.html"}%
+        %{include file="bills/exped_actions.html"}%
+        
+        %{else}%
+        	 <a href="#"  onclick="alert('В данном режиме создание внутренней доставки недоступно. Пожалуйста, проставьте обе галочки утверждения: \'Утверждаю цену\'  и нажмите кнопку \'Сохранить и остаться\', затем \'Утверждаю отгрузку\'  и нажмите кнопку \'Сохранить и остаться\' для получения возможности создания внутренней доставки.'); return false;" class="reestr_delivery reestr_inactive reestr_right_button24" data-comment="создать внутреннюю доставку..."  ></a>
+     
+     		  <a href="#" onclick="alert('В данном режиме создание экспедирования недоступно. Пожалуйста, проставьте обе галочки утверждения: \'Утверждаю цену\'  и нажмите кнопку \'Сохранить и остаться\', затем \'Утверждаю отгрузку\'  и нажмите кнопку \'Сохранить и остаться\' для получения возможности создания экспедирования.'); return false;" class="reestr_exped reestr_inactive reestr_right_button24" data-comment="создать экспедирование..."  ></a>
+      
+      
+        %{/if}%
+    
+    %{else}%
+    	 <a href="#"  onclick="alert('У Вас недостаточно прав для создания внутренней доставки.'); return false;" class="reestr_delivery reestr_inactive reestr_right_button24" data-comment="создать внутреннюю доставку..."  ></a>
+     
+       <a href="#" onclick="alert('У Вас недостаточно прав для создания экспедирования.'); return false;" class="reestr_exped reestr_inactive reestr_right_button24" data-comment="создать экспедирование..." border="0" /></a>
+      
+    %{/if}%
+    
+    %{if $can_email_pdf}%
+    	%{if $bill.is_confirmed_price==1}%
+        <a href="#" id="email_documents" class="reestr_email  reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..." border="0" /></a>
+         %{include file="bills/pdf_actions.html" mode=0}%
+        
+        %{else}%
+        <a href="#" onclick="alert('В данном режиме  отправка pdf-документов на электронную почту недоступна. Пожалуйста, проставьте галочку: \'Утверждаю цену\'  и нажмите кнопку \'Сохранить и остаться\' для получения возможности  отправки pdf-документов на электронную почту.'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..." ></a>
+        %{/if}%
+        
+    %{else}%
+    	
+    	 <a href="#"   onclick="alert('У Вас недостаточно прав для отправки pdf-документов на электронную почту.'); return false;"  class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..." ></a>
+    %{/if}%
+    
+    
+    %{if $can_print}% 
+    
+    
+    <a href="#" id="print_form"  class="reestr_print   reestr_right_button24" data-comment="печать счета..."  ></a>
+    
+    <div id="print_select_dialog" title="Выберите печатную форму" style="display:none;">
+    	<input id="print_1" value="1" type="checkbox" /><label for="print_1">Форма счета без подписи, печати</label><br />
+
+        <input id="print_2" value="2" type="checkbox" /><label for="print_2">Форма счета с подписью, печатью</label>
+    </div>
+    <script type="text/javascript">
+	$(function(){
+		$("#print_select_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					if($("#print_1").prop("checked")){
+						zc=window.open('ed_bill.php?action=1&id=%{$bill.id}%&print=1&printmode=1','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати распоряжения на межсклад.');
+						
+					}
+					
+					if($("#print_2").prop("checked")){
+						zc=window.open('ed_bill.php?action=1&id=%{$bill.id}%&print=1&printmode=2','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.');
+						
+					}
+					
+					 
+					$("#print_select_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#print_select_dialog").dialog("close");
+				}
+				
+			}
+		});
+		
+		$("#print_form").bind("click", function(){
+			$("#print_select_dialog").dialog("open");
+			
+			return false;
+		});
+		
+		%{if $force_print==1}%
+		$("#print_form").trigger("click");
+		%{/if}%
+	});
+	</script>
+    
+     
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати счета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать счета..." ></a>
+ %{/if}%
+ 
+ 	%{if $can_eq}%
+    %{if $bill.is_confirmed_shipping==0}%
+    <a href="#" onclick="alert('Для выравнивания позиций необходимо утвердить отгрузку по счету!'); return false;"  class="reestr_eq  reestr_right_button24" data-comment="выровнять позиции с фактически полученными..." ></a>
+    %{elseif $bill.is_confirmed_shipping==1}%
+     <a href="#" id="make_eq"  class="reestr_eq reestr_inactive reestr_right_button24" data-comment="выровнять позиции с фактически полученными..."  ></a>
+     <div id="eq_indicator" style="display:inline;">
+     
+     </div>
+     
+      <div id="eq_dialog" title="Выравнивание позиций" style="display:none;">
+     	<div id="eq_dialog_info"></div>
+     
+     </div>
+     
+      <script type="text/javascript">
+        $(function(){
+			
+			$("#eq_dialog").dialog({
+			  autoOpen: false,
+			  dialogClass: 'semi_auth',
+			  modal: true,
+			  width: 900,
+			  height: 600,
+			  buttons: {
+				  "Закрыть": function(){
+				   $(this).dialog("close");	
+				  }
+				}
+			 });
+			
+			
+			var args=new Array();
+			
+			//итерация выравнивания
+			function EqIteration(){
+				
+			 
+						
+						//console.log('scanning: '+v);
+						$.ajax({
+							async: false,
+							url: "/js/bill.php",
+							type: "POST",
+							data:{
+								"action":"togglemass_scan_eq",
+								"id":$("#id").val(),
+								'not_cut_html':'1',
+								"args[]": args
+							},
+							beforeSend: function(){
+								$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+								//console.log('scanning complete');
+								
+								$("#eq_dialog_info").html(data);
+								$("#eq_dialog").dialog({
+									 buttons: {
+									  "Выровнять позиции": function(){
+										 $("#eq_dialog").dialog("close");	
+										   DoEq(args);
+										 
+									  },
+									  "Прекратить выравнивание": function(){
+									   $("#eq_dialog").dialog("close");	
+									   alert("Выравнивание позиций завершено.");
+											location.reload();
+									   
+									  }
+									}
+								});
+								//console.log('opening dialog');
+								$("#eq_dialog").dialog("open");
+								
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+					 
+				 
+				
+			}
+			
+			//вызываем из диалога - выравнивание выбранных данных
+			function DoEq(targs){
+				// console.log('eq: '+targs);
+				 $.ajax({
+									  async: false,
+									  url: "/js/bill.php",
+									  type: "POST",
+									  data:{
+										  "action":"togglemass_eq",
+										  "id":$("#id").val(),
+										  "args[]": targs
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										// alert(data);
+										// $("#eq_indicator").html(data);
+										 //console.log('eq complete: '+targs); 
+										 //EqIteration();
+										 	alert("Выравнивание позиций завершено.");
+											location.reload();
+							
+									  },
+									  error: function(xhr, status){
+										  //alert("Ошибка добавления вопроса.");	
+									  }	 
+								  });
+			}
+			
+			/*var targs = new Array(); //массив с текущей строкой
+			
+			//итерация выравнивания
+			function EqIteration(){
+				
+				v=args.pop();
+				if(v!=undefined){
+					 
+						targs=new Array();
+						targs.push(v);
+						//alert(v);
+						
+						//console.log('scanning: '+v);
+						$.ajax({
+							async: false,
+							url: "/js/bill.php",
+							type: "POST",
+							data:{
+								"action":"toggle_scan_eq",
+								"id":$("#id").val(),
+								'not_cut_html':'1',
+								"args[]": targs
+							},
+							beforeSend: function(){
+								$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+								//console.log('scanning complete');
+								
+								$("#eq_dialog_info").html("Внимание!<br>"+data);
+								$("#eq_dialog").dialog({
+									 buttons: {
+									  "Выровнять позицию": function(){
+										 $("#eq_dialog").dialog("close");	
+										  DoEq(targs);
+										 
+									  },
+									  "Прекратить выравнивание": function(){
+									   $("#eq_dialog").dialog("close");	
+									   alert("Выравнивание позиций завершено.");
+										location.reload();
+									   
+									  }
+									}
+								});
+								//console.log('opening dialog');
+								$("#eq_dialog").dialog("open");
+								
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+					 
+				}else{
+					alert("Выравнивание позиций завершено.");
+					location.reload();	
+				
+				}
+			}
+			
+			
+			//вызываем из диалога - выравнивание выбранных данных
+			function DoEq(targs){
+				// console.log('eq: '+targs);
+				 $.ajax({
+									  async: false,
+									  url: "/js/bill.php",
+									  type: "POST",
+									  data:{
+										  "action":"toggle_eq",
+										  "id":$("#id").val(),
+										  "args[]": targs
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										// alert(data);
+										// $("#eq_indicator").html(data);
+										 //console.log('eq complete: '+targs); 
+										 EqIteration();
+									  },
+									  error: function(xhr, status){
+										  //alert("Ошибка добавления вопроса.");	
+									  }	 
+								  });
+			}
+			*/
+			
+			
+			$("#make_eq").bind("click",function(){
+				
+				
+				counter=0; args=new Array(); 
+				$.each($("#bill_positions_table input[type=checkbox][id^=to_ship_]:checked"), function(index, value) { 
+				  //alert(index + ': ' + value); 
+				  counter++;
+				  
+				  thash=$(value).attr("id").replace(/^to_ship_/,"");
+				  args.push($("#new_position_id_"+thash).val()+";"+$("#new_quantity_"+thash).val()+";"+$("#new_storage_id_"+thash).val()+";"+$("#new_sector_id_"+thash).val()+";"+$("#new_komplekt_ved_id_"+thash).val());
+				  
+				  				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для выравнивания.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(window.confirm("Вы уверены, что хотите выровнять выбранные позиции с фактически полученными?")){
+				//	alert(args);
+					EqIteration();
+					
+					 
+					
+				}
+				return false;
+			});
+		});
+      </script>
+     %{/if}%
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для выравнивания позиций!'); return false;"  class="reestr_eq reestr_inactive reestr_right_button24" data-comment="выровнять позиции с фактически полученными..."  ></a>
+ %{/if}%
+   
+</td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="16" id="positions_list_block">
+
+
+%{include file="bills/position_actions.html" bill=$bill action=1}%
+</td>
+</tr>
+</table>
+<input type="hidden" id="can_change_cascade" name="can_change_cascade" value="1" /> 
+<input type="hidden" id="can_add_to_payments" name="can_add_to_payments" value="0" /> 
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="bills/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="bills/d_notes_dialog.html" word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+<div style="float:left; margin-right:10px;">
+<input type="checkbox"  id="is_confirmed_price" name="is_confirmed_price" value="1" onchange="" %{if $bill.is_confirmed_price==1}% checked="checked"%{/if}% %{if $can_confirm_price==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_price">Утверждаю цену</label>
+%{if $can_confirm_price==false}% 
+
+%{/if}%
+
+<span id="is_confirmed_price_confirmer">%{$is_confirmed_price_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_price").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_shipping").prop("disabled",true);
+		
+		//запрос об исключении из оплат
+		if((parseInt("%{$bill.is_confirmed_price}%")==1)&&($("#is_confirmed_price").prop("checked")==false)&&("%{$binded_payments}%"!="")){
+			if(window.confirm("Внимание! По данному счету была оплачена сумма %{$binded_payments_summ}% руб. (утвержденные оплаты %{$binded_payments}%).\nСнятие утверждения оплаты счета приведет к исключению данного счета из реестра оплат.\nСумма %{$binded_payments_summ}% руб. будет автоматически распределена по неоплаченным счетам контрагента.\nЕсли неоплаченных счетов нет, то сумма %{$binded_payments_summ}% руб. будет перечислена на карту контрагента как авансовый платеж.")){
+					if(window.confirm("Вы уверены, что хотите снять утверждение оплаты счета?")){
+					
+					}else{
+					  $("#is_confirmed_price").prop("checked",true);
+					  $("#is_confirmed_shipping").prop("disabled",false);
+					  return false; 
+					}
+					
+				}else{
+					$("#is_confirmed_price").prop("checked",true);
+					$("#is_confirmed_shipping").prop("disabled",false);
+					return false;	
+				}	
+		}
+		
+		//alert('%{$sum_by_bill}%');
+		//запрос о включении в оплаты
+		if((parseInt("%{$bill.is_confirmed_price}%")==0)&&($("#is_confirmed_price").prop("checked")==true)&&(parseFloat("%{$avans_payments_summ}%")>0)&&(parseFloat($("#positions_cost").html())>parseFloat("%{$sum_by_bill}%"))){
+			
+			if(window.confirm("Внимание! У выбранного контрагента имеются авансовые платежи на сумму %{$avans_payments_summ}% руб. по утвержденным оплатам %{$avans_payments}%.\nЖелаете ли вы включить в эти оплаты платежи по данному счету?")){
+				$("#can_add_to_payments").val(1);	
+			}else{
+				$("#can_add_to_payments").val(0);
+			}
+		}
+		
+		$.ajax({
+              async: true,
+              url: "/js/bill.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_price_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_price_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 $("#is_confirmed_shipping").prop("checked",false);
+			 $("#is_confirmed_shipping").trigger("click");
+			  $("#is_confirmed_shipping").prop("checked",false);
+		}
+	});
+});
+</script>
+
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_shipping" name="is_confirmed_shipping" value="1" onchange="" %{if $bill.is_confirmed_shipping==1}% checked="checked"%{/if}% %{if $can_confirm_shipping==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_shipping">Утверждаю отгрузку</label>
+%{if $can_confirm_shipping==false}%
+
+%{/if}%
+
+<span id="is_confirmed_shipping_confirmer">%{$is_confirmed_shipping_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_shipping").bind("click",function(){
+		
+		if(	$("#is_confirmed_shipping").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/bill.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_shipping_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_shipping_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_shipping_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+<div style="float:right;">
+<input type="checkbox" id="cannot_eq" name="cannot_eq" value="1" %{if !$can_super_neq and !$can_neq}% disabled="disabled"%{elseif !$can_super_neq and $can_neq and $bill.is_confirmed_shipping!=0}% onchange="alert('Внимание! Отключение автовыравнивания счета производится только до момента утверждения отгрузки.'); $(this).prop('checked',%{$bill.cannot_eq}%);"%{/if}% %{if $bill.cannot_eq==1}% checked="checked"%{/if}% title="на исходящий счет не распространяется автовыравнивание" /><label for="cannot_eq" title="на исходящий счет не распространяется автовыравнивание" >без автовыравнивания</label>
+<br />
+<input type="checkbox" id="cannot_an" name="cannot_an" value="1" %{if !$can_super_an and !$can_an}% disabled="disabled"%{elseif !$can_super_an and $can_an and $bill.is_confirmed_shipping!=0}% onchange="alert('Внимание! Отключение автоаннулирования счета производится только до момента утверждения отгрузки.'); $(this).prop('checked',%{$bill.cannot_an}%);"%{/if}%  %{if $komplekt_ved.cannot_an==1}% checked="checked"%{/if}% %{if $bill.cannot_an==1}% checked="checked"%{/if}% title="на исходящий счет не распространяется автоаннулирование" /><label for="cannot_an" title="на исходящий счет не распространяется автоаннулирование" >без автоаннулирования</label>
+
+
+</div>
+
+<div style="float:right; margin-right:10px;">
+<input type="button" id="doBillIn" value="Создать входящий счет..."  %{if ($bill.is_confirmed_shipping==0 and $bill.is_confirmed_price==0) or $can_create_incoming_bill==false}% disabled="disabled"%{else}% onclick="location.href='ed_bill_in.php?action=0&out_bill_id=%{$bill.id}%&from_begin=1';"  %{/if}%   />
+
+</div>
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку исходящих счетов" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='bills.php';
+}else location.href='bills.php';" />
+
+
+</form>
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	if($("#bill_positions_table tbody tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить исходящий счет без позиций! Пожалуйста, укажите позиции счета!');
+		return false;
+	}
+	
+	if($("#suppliers_are_equal").prop("checked")==false){
+		if(($("#ship_supplier_id").val()==0)||($("#ship_supplier_id").val()==undefined)||($("#ship_supplier_id").val()==null)){
+			sfm_show_error_msg('Выберите грузополучателя!');
+			return false;
+		}
+	}
+	
+	
+	return true;
+}
+
+frmvalidator.addValidation("supplier_id","req","Выберите контрагента!");
+
+frmvalidator.addValidation("bdetails_id","req","Выберите реквизиты контрагента!");
+
+frmvalidator.addValidation("contract_id","req","Выберите договор контрагента!");
+
+frmvalidator.addValidation("sector_id","gt=0","Выберите склад!");
+
+%{if $can_modify}%
+frmvalidator.addValidation("supplier_bill_no","req","Укажите заданный номер счета!");
+
+frmvalidator.addValidation("pdate_payment_contract","req","Укажите дату оплаты по договору!");
+%{/if}%
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+<script type="text/javascript">
+$(function(){
+	var old_pos_arr=new Object();
+	var old_quant_arr=new Object();
+	var new_pos_arr=new Array();
+	
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+	
+	%{section name=pospossec loop=$positions}%
+	
+	
+	old_pos_arr["%{$positions[pospossec].pl_position_id}%_%{$positions[pospossec].position_id}%_%{$positions[pospossec].pl_discount_id}%_"+roundPlus(parseFloat("%{$positions[pospossec].pl_discount_value}%"), 2)+"_%{$positions[pospossec].pl_discount_rub_or_percent}%"+"_%{$positions[pospossec].kp_id}%"]=(parseFloat("%{$positions[pospossec].price_pm}%"));
+	
+	old_quant_arr["%{$positions[pospossec].pl_position_id}%_%{$positions[pospossec].position_id}%_%{$positions[pospossec].pl_discount_id}%_"+roundPlus(parseFloat("%{$positions[pospossec].pl_discount_value}%"),2)+"_%{$positions[pospossec].pl_discount_rub_or_percent}%"+"_%{$positions[pospossec].kp_id}%"]=(parseFloat("%{$positions[pospossec].quantity}%"));
+	
+	
+	
+	%{/section}%
+	
+	
+	
+	
+	function GetBack(){
+		$.ajax({
+              async: false,
+              url: "/js/bill.php",
+              type: "POST",
+              data:{
+                  "action":"draw_positions",
+				  "id":"%{$bill.id}%"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+               
+				$("#positions_list_block").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		alert("В счете сохранены прежние цены!");
+	}
+	
+	function RetRet(){
+		
+		
+		//проверка дат...
+		/*if(!PeriodChecker('supplier_bill_pdate', '%{$pch_date}%')){
+			alert("Дата счета контрагента должна быть не ранее %{$pch_date}%!");
+			return false;
+		}*/
+		
+		if(!PeriodChecker('pdate_shipping_plan', '%{$pch_date}%')){
+			alert("Плановая дата поставки должна быть не ранее %{$pch_date}%!");
+			return false;
+		}
+		
+		if(!PeriodChecker('pdate_payment_contract', '%{$pch_date}%')){
+			alert("Дата оплаты по договору должна быть не ранее %{$pch_date}%!");
+			return false;
+		}
+		
+		
+		/*if(!PeriodCheckerByPeriod('supplier_bill_pdate', closed_date )){
+			alert('Дата счета контрагента не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		}*/
+		
+		if(!PeriodCheckerByPeriod('pdate_shipping_plan', closed_date )){
+			alert('Плановая дата поставки не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		}
+		
+		if(!PeriodCheckerByPeriod('pdate_payment_contract', closed_date )){
+			alert('Дата оплаты по договору не должна попадать в закрытый период '+interval_string+'!');
+			return false;
+		}
+		
+		
+		
+		//мы утверждаем счет! счет не был утвержден!
+		//проверка ненулевых цен
+		/*if($("#is_confirmed_price").prop("checked")&&($("#is_confirmed_price").prop("disabled")==false)&&($("#org_id").val()!=$("#supplier_id").val())){
+			var price_not_null=true;
+			$.each($("#bill_positions_table input[id^='new_price_']"), function(key, value){
+				if(parseFloat(value.value)==0) price_not_null=price_not_null&&false;
+			});
+			
+			if(!price_not_null){
+				alert("Невозможно утвердить счет с нулевыми ценами. Проставьте, пожалуйста, цены!");
+				return false;	
+			}
+			
+			//проверка периода...
+		}
+		
+		*/	
+		
+		
+		has_rasp_or_post=%{$has_rasp_or_post}%;
+		
+		//не меняли позиции - not_changed_pos=1
+		if($("#not_changed_pos").val()!=1){
+			//alert('zz');
+			
+			var new_pos_arr=new Array();
+			var price_changed=false;
+			var quantity_changed=false;
+			
+			
+			$.each($("#bill_positions_table input[id^='new_hash_']"), function(key, value){
+				thash=$(value).val();
+				
+				////$f['hash']=md5($f['pl_position_id'].'_'.$f['position_id'].'_'.$f['pl_discount_id'].'_'.$f['pl_discount_value'].'_'.$f['pl_discount_rub_or_percent']);
+				
+				if((old_pos_arr[parseInt($("#new_pl_position_id_"+thash).val())+"_"+parseInt($("#new_position_id_"+thash).val())+"_"+parseInt($("#new_pl_discount_id_"+thash).val())+"_"+parseInt($("#new_pl_discount_value_"+thash).val())+"_"+parseInt($("#new_pl_discount_rub_or_percent_"+thash).val())+"_"+parseInt($("#new_kp_id_"+thash).val()) ])!=parseFloat($("#check_new_price_pm_"+thash).val()))  price_changed= price_changed||true;
+				
+				zc=old_quant_arr[parseInt($("#new_pl_position_id_"+thash).val())+"_"+parseInt($("#new_position_id_"+thash).val())+"_"+parseInt($("#new_pl_discount_id_"+thash).val())+"_"+parseInt($("#new_pl_discount_value_"+thash).val())+"_"+parseInt($("#new_pl_discount_rub_or_percent_"+thash).val())+"_"+parseInt($("#new_kp_id_"+thash).val())];
+				
+				if(zc!=parseFloat($("#new_quantity_"+thash).val()))  quantity_changed= quantity_changed||true;
+				
+				
+				
+			});
+				
+			if(price_changed&&(has_rasp_or_post>0)){
+				//alert('ceny izm!');
+				if(window.confirm("Внимание! Вы изменяете цены в счете! При сохранении счета будут изменены цены в реализациях: %{$rasp_or_post_list}%. Продолжить?")){
+					if(window.confirm("Внимание! Вы уверены, что хотите продолжить изменение цен?")){
+						
+					}else{
+						//вернуть цены, позиции обратно	
+						GetBack();
+						//return false;
+					}
+				}else{
+					//вернуть цены, позиции обратно	
+					GetBack();
+					//return false;
+				}
+				
+			}
+			
+			
+			
+			if(quantity_changed){
+				if(window.confirm("Внимание! Вы изменили количество позиций в счете? Вы уверены, что хотите сохранить изменения?")){
+				}else{
+					//вернуть количества обратно
+						$.each($("#bill_positions_table input[id^='new_hash_']"), function(key, value){
+							thash=$(value).val();
+							
+							//$f['hash']=md5($f['pl_position_id'].'_'.$f['position_id'].'_'.$f['pl_discount_id'].'_'.$f['pl_discount_value'].'_'.$f['pl_discount_rub_or_percent']);
+				
+							try{
+								
+								//alert(parseInt($("#new_pl_position_id_"+thash).val())+"_"+parseInt($("#new_position_id_"+thash).val())+"_"+parseInt($("#new_pl_discount_id_"+thash).val())+"_"+roundPlus(parseFloat($("#new_pl_discount_value_"+thash).val()),2)+"_"+parseInt($("#new_pl_discount_rub_or_percent_"+thash).val()) );
+								
+								zc=old_quant_arr[parseInt($("#new_pl_position_id_"+thash).val())+"_"+parseInt($("#new_position_id_"+thash).val())+"_"+parseInt($("#new_pl_discount_id_"+thash).val())+"_"+roundPlus(parseFloat($("#new_pl_discount_value_"+thash).val()),2)+"_"+parseInt($("#new_pl_discount_rub_or_percent_"+thash).val())+"_"+parseInt($("#new_kp_id_"+thash).val()) ];
+								//alert(zc);
+								
+								$("#new_quantity_"+thash).val(zc);
+								$("#new_span_quantity_"+thash).html(zc);
+								
+								
+								 new_total=roundPlus(zc*parseFloat($('#check_new_price_pm_'+thash).val()), 2);
+								 new_cost_f=roundPlus(zc*parseFloat($('#new_price_f_'+thash).val()), 2);
+								 
+								 $('#new_total_'+thash).html(new_total);
+								 $('#check_new_total_'+thash).val(new_total);
+								 $("#new_cost_f_"+thash).html(new_cost_f);
+								
+							}catch(e){
+								
+							}
+							
+							
+						});
+						alert("В счете сохранены прежние количества!");
+						//return false;
+						
+				}
+			}
+			
+			
+		}
+		
+		//проверка доступности снятия утверждения отгрузки
+		if((%{$bill.is_confirmed_shipping}%==1)&&($("#is_confirmed_shipping").prop("checked")==false)){
+			
+			
+			var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/bill.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение отгрузки счета. Причина: "+data+"\nДля снятия утверждения отгрузки счета необходимо снять утверждения всех связанных документов."); 
+					 can_ret=false;
+				  }else{
+					 //can_ret=window.confirm("Вы уверены, что хотите снять утверждение отгрузки счета %{$bill.code}%?");
+					 //проверить, есть ли связанные утв. вход. счета
+					 //если есть - вывести их список, если нет - просто запрос подтверждения
+					 $.ajax({
+						async: false,
+						url: "/js/bill.php",
+						type: "POST",
+						data:{
+							"action":"check_unconfirm_binded_bills",
+							id: "%{$bill.id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  if(data!=0){
+							 
+							can_ret=window.confirm("Внимание! По счету есть связанные входящие счета:"+data+"\nПри снятии утверждения счета также будет снято утверждение приемки этих счетов.\nВы уверены, что хотите снять утверждение отгрузки счета %{$bill.code}%?")
+							 
+						  }else{
+							 
+						  }
+						},
+						error: function(xhr, status){
+							
+							alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+							can_ret=false;	
+						}	
+						
+						
+					});
+					
+					//проверить наличие утв. связ. затрат
+					/*if(can_ret) $.ajax({
+						async: false,
+						url: "/js/bill.php",
+						type: "POST",
+						data:{
+							"action":"check_unconfirm_binded_cash",
+							id: "%{$bill.id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  if(data!=0){
+							 
+							can_ret=window.confirm("Внимание! По счету есть связанные затраты:"+data+"\nПри снятии утверждения счета также будет снято утверждение этих затрат.\nВы уверены, что хотите снять утверждение отгрузки счета %{$bill.code}%?")
+							 
+						  }else{
+							 
+						  }
+						},
+						error: function(xhr, status){
+							
+							alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+							can_ret=false;	
+						}	
+						
+						
+					});*/
+					
+					
+					if(can_ret) can_ret=window.confirm("Вы уверены, что хотите снять утверждение отгрузки счета %{$bill.code}%?");
+						 
+					
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			return can_ret;
+		}
+		
+		
+		//проверка доступности  утверждения отгрузки
+		if((%{$bill.is_confirmed_shipping}%==0)&&($("#is_confirmed_shipping").prop("checked"))){
+			var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/bill.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить отгрузку счета. Причина: "+data+""); 
+					 can_ret=false;
+				  }else{
+					 //can_ret=true;
+					 //проверить, есть ли связ. неутв. вход счета.
+					 $.ajax({
+						async: false,
+						url: "/js/bill.php",
+						type: "POST",
+						data:{
+							"action":"check_binded_bills_to_confirm",
+							id: "%{$bill.id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  if(data!=0){
+							 
+							can_ret=window.confirm("Внимание! По счету есть связанные входящие счета с утвержденной ценой и неутвержденной приемкой:"+data+"\nПри утверждении отгрузки счета также будет утверждена приемка этих счетов.\nВы уверены, что хотите утвердить отгрузку счета %{$bill.code}%?")
+							 
+						  }else{
+							 can_ret=true;
+						  }
+						},
+						error: function(xhr, status){
+							
+							alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+							can_ret=false;	
+						}	 
+					});
+					 
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			return can_ret;
+		
+		}
+		
+	
+	
+	
+	
+	//проверка доступности снятия утверждения цены
+		if((%{$bill.is_confirmed_price}%==1)&&($("#is_confirmed_price").prop("checked")==false)){
+			
+			
+			var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/bill.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение цен счета. Причина: "+data+""); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			return can_ret;
+		}
+		
+		
+		//проверка доступности  утверждения цены
+		if((%{$bill.is_confirmed_price}%==0)&&($("#is_confirmed_price").prop("checked"))){
+			var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/bill.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить цены счета. Причина: "+data+""); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния счета. Пожалуйста, попытайтесь сохранить счет снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			return can_ret;
+		
+		}
+		
+		return true;	
+	}
+	
+	
+	
+	
+	$("#doEditStay").bind("click",RetRet);
+	$("#doEdit").bind("click",RetRet);
+	
+	
+
+	
+});
+</script>

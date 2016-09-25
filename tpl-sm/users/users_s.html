@@ -1,0 +1,48 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+   %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==2}%	
+	selected: 1
+%{elseif $tab_page==3}%	
+	selected: 2
+
+%{/if}%	
+   });
+});
+</script>
+
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Сотрудники</a></li>
+    <li><a href="#tabs-3">Вопросы, курируемые сотрудниками</a></li>
+    %{if $has_virtual}%
+    <li><a href="#tabs-2">Виртуальные сотрудники</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  <div id="tabs-3">
+    <p>
+    %{$users_quests}%
+    
+    </p>
+  </div>
+  
+  %{if $has_virtual}%
+  <div id="tabs-2">
+    <p>
+    %{$virtual}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

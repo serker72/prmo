@@ -1,0 +1,50 @@
+<!-- таблица в диалоге -->
+
+
+<strong>Выберите счет:</strong>   
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="except_ids">
+    <thead>
+    <tr align="center" valign="top">
+    	%{if $pay_mode==1}%
+        <th scope="col" width="24">&nbsp;</th>
+        %{/if}%
+        <th scope="col" width="80">Код
+        
+        <div class="sort_dir">
+    <a href="#" onclick="$('#sort_mode').val('1');  $('#add_pos').trigger('click');  return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="$('#sort_mode').val('0');  $('#add_pos').trigger('click'); return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+        
+        </th>
+        <th scope="col" width="80">Дата создания</th>
+        <th scope="col" width="80">№ исходящего
+счета поставщика
+
+	<div class="sort_dir">
+    <a href="#" onclick="$('#sort_mode').val('3');  $('#add_pos').trigger('click'); return false;"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="#" onclick="$('#sort_mode').val('2');  $('#add_pos').trigger('click'); return false;"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+</th>
+        <th scope="col" width="80">Дата счета
+поставщика</th>
+
+		<th scope="col" width="*">Дата оплаты по договору</th>
+        <th scope="col" width="*"  style="min-width:250px !important;">Фактическая дата оплаты</th>
+        
+        <th scope="col" width="80">Сумма счета, руб.</th>
+        
+        <th scope="col" width="80">Ранее оплачено, руб.</th>
+        <th scope="col" width="80">Сумма оплаты, руб.</th>
+       <th scope="col" width="80">Остаток оплаты по счету, руб.</th>
+    </tr>
+    </thead>
+    <tbody>
+   
+    %{section name=pospossec loop=$pospos}%
+   
+   %{include file="pay_in/positions_edit_row.html"}%
+    
+    
+    %{/section}%
+    </tbody>
+    </table>

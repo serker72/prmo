@@ -1,0 +1,663 @@
+<a href="#" id="cash_delivery_create" class="reestr_edelivery reestr_right_button24" data-comment="создать внутреннюю доставку..."  ></a>
+
+
+<div id="cash_delivery_warning_dialog" title="Внимание!" style="display:none;">
+    Внимание!<br />
+    По данному счету
+    
+    %{section name=disec loop=$another_nested_d}%%{/section}%
+    %{if $smarty.section.disec.total>0}%
+    и другим счетам: 
+    %{section name=disec loop=$another_nested_d}%
+        <a href="ed_bill.php?id=%{$another_nested_d[disec].id}%&action=1" target="_blank">№ %{$another_nested_d[disec].code}%</a>%{if !$smarty.section.disec.last}%, %{/if}%
+    %{/section}%
+    %{/if}%
+    
+     уже создана доставка:
+    %{section name=dsec loop=$dostavki}%%{/section}%
+    
+    %{section name=dsec loop=$dostavki}%
+         <a href="ed_cash.php?id=%{$dostavki[dsec].id}%&action=1" target="_blank">№ %{$dostavki[dsec].code}%</a>%{if !$smarty.section.dsec.last}%, %{/if}%
+    %{/section}%<br />
+    <br />
+    Вы действительно хотите создать доставку?
+</div>
+
+
+<div id="cash_delivery_dialog" title="Внутренняя доставка" style="display:none;">
+	
+    <div style="float:left; margin-right:10px;">
+    <label for="cash_delivery_route">Маршрут:</label><br />
+    <textarea id="cash_delivery_route" cols="26" rows="3" style="width:180px; height:130px;"></textarea>
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+    <b>Счета:</b><br />
+    
+    %{include file="bills/cash_bills.html" fieldname="cash_delivery_"}%
+    
+    </div>
+    
+    
+    <br clear="all" />
+    <p />
+    
+    <label for="cash_delivery_code_id">Код оплаты:</label><br />
+
+
+    <input type="text" size="40" maxlength="255" id="cash_delivery_code_id_string" value="" disabled="disabled" style="width:398px;"  />
+    <input type="hidden"  id="cash_delivery_code_id" value="" />
+    
+    <input type="button" id="cash_delivery_code_select" value="..." />
+    <input type="button" id="cash_delivery_code_clear" value="x" />
+	<p />
+    
+    
+    
+    <div style="float:left; margin-right:20px;">
+     <label for="cash_delivery_weight">Вес груза, кг:</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_delivery_weight" value=""  style="width:100px;"  />
+    </div>
+    
+    <div style="float:left; margin-right:20px;">
+     <label for="cash_delivery_number_pieces">Кол-во точек загрузки-выгрузки:</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_delivery_number_pieces" value=""  style="width:100px;"  />
+    </div>
+    
+    <div style="float:left; margin-right:20px;">
+    <b>Премия за дальность:</b><br />
+    <input type="radio" name="cash_delivery_distance_bonus" id="cash_delivery_distance_bonus_0" value="0" checked />
+    <label for="cash_delivery_distance_bonus_0">0 руб.</label><br>
+    <input type="radio" name="cash_delivery_distance_bonus" id="cash_delivery_distance_bonus_500" value="500" />
+    <label for="cash_delivery_distance_bonus_500">500 руб.</label><br>
+	<input type="radio" name="cash_delivery_distance_bonus" id="cash_delivery_distance_bonus_1000" value="1000"  />
+    <label for="cash_delivery_distance_bonus_1000">1000 руб.</label>
+	</div>
+    
+    <br clear="all" />
+    <p />
+    
+    
+    
+    <input type="checkbox" value="1" id="has_cash_delivery_chief_bonus" />
+    <label for="has_cash_delivery_chief_bonus">Премия руководителя:</label>
+        
+    <div id="cash_delivery_chief_bonus_block" style="display:none;">
+    	<div style="float:left; margin-right:10px;">
+        
+        <input type="radio" name="cash_delivery_chief_bonus" id="cash_delivery_chief_bonus_500" value="500" checked />
+        <label for="cash_delivery_chief_bonus_500">500 руб.</label><br>
+        <input type="radio" name="cash_delivery_chief_bonus" id="cash_delivery_chief_bonus_1000" value="1000"  />
+        <label for="cash_delivery_chief_bonus_1000">1000 руб.</label>
+    	</div>
+		
+        <div style="float:left; margin-right:10px;">
+        <label for="cash_delivery_chief_bonus_reason">причина:</label><br>
+        <textarea id="cash_delivery_chief_bonus_reason" cols="40" rows="2"></textarea>
+        </div>
+    
+    </div>
+    
+    <p />
+    <br clear="all" />
+    
+    
+    
+    <label for="cash_delivery_driver_id">Водитель:</label><br />
+
+
+    <input type="text" size="40" maxlength="255" id="cash_delivery_driver_id_string" value="" disabled="disabled" style="width:398px;"  />
+    <input type="hidden"  id="cash_delivery_driver_id" value="" />
+    
+    <input type="button" id="cash_delivery_driver_select" value="..." />
+    <input type="button" id="cash_delivery_driver_clear" value="x" />
+	<p />
+    
+    
+    <label for="cash_delivery_responsible_user_id">Сотрудник-получатель платежа:</label><br />
+
+<select id="cash_delivery_responsible_user_id"   style="width:400px;">
+
+</select>
+    <p />
+    
+    
+    <label for="cash_delivery_value">Сумма, руб.:</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_delivery_value" value="0" disabled="disabled" style="width:100px;"  />
+    
+	
+	
+</div>
+
+
+<script type="text/javascript">
+function IsCorrectRout(){
+	res=true;
+	
+	if($("#cash_delivery_route").val().length<5){
+		$("#cash_delivery_route").addClass("wrong");	
+		alert("Некорректно заполнен Маршрут!");
+		$("#cash_delivery_route").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_route").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+function IsCorrectCode(){
+	res=true;
+	if($("#cash_delivery_code_id").val().length==0){
+		$("#cash_delivery_code_id_string").addClass("wrong");	
+		alert("Не выбран код оплаты!");
+		$("#cash_delivery_code_select").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_code_id_string").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+function IsCorrectWeight(){
+	res=true;
+	if(
+		($("#cash_delivery_weight").val().length==0)||
+		(isNaN($("#cash_delivery_weight").val()))||
+		(parseFloat($("#cash_delivery_weight").val())<=0)
+	){
+		$("#cash_delivery_weight").addClass("wrong");	
+		//alert("Некорректо задан вес груза!");
+		$("#cash_delivery_weight").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_weight").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+function IsCorrectNumberPieces (){
+	res=true;
+	if(
+		($("#cash_delivery_number_pieces").val().length==0)||
+		(isNaN($("#cash_delivery_number_pieces").val()))||
+		(parseInt($("#cash_delivery_number_pieces").val())<=0)||
+		
+		(Math.round($("#cash_delivery_number_pieces").val())!=$("#cash_delivery_number_pieces").val())
+	){
+		$("#cash_delivery_number_pieces").addClass("wrong");	
+		//alert("Некорректо задано количество мест!");
+		$("#cash_delivery_number_pieces").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_number_pieces").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+ 
+	
+function IsCorrectChief_bonus(){
+	res=true;
+	if(
+		$("#has_cash_delivery_chief_bonus").prop("checked")&&($("#cash_delivery_chief_bonus_reason").val().length<3)
+	){
+		$("#cash_delivery_chief_bonus_reason").addClass("wrong");	
+		alert("Введите причину премии руководителя!");
+		$("#cash_delivery_chief_bonus_reason").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_chief_bonus_reason").removeClass("wrong");
+	}
+	
+	return res;
+ 
+}
+function IsCorrectDriver(){
+	res=true;
+	if($("#cash_delivery_driver_id").val().length==0){
+		$("#cash_delivery_driver_id_string").addClass("wrong");	
+		alert("Не выбран водитель!");
+		$("#cash_delivery_driver_select").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_driver_id_string").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+function IsCorrectResponsibleUser(){
+	res=true;
+	if(($("#cash_delivery_responsible_user_id").val()==null)||($("#cash_delivery_responsible_user_id").val()==0)||($("#cash_delivery_responsible_user_id").val()==undefined)){
+		$("#cash_delivery_responsible_user_id").addClass("wrong");	
+		alert("Выберите сотрудника-получателя платежа!");
+		$("#cash_delivery_responsible_user_id").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_responsible_user_id").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+//контроль выбора хотя бы одного счета
+function IsBillSelected(){
+	res=true;
+	
+	if($("input[type=checkbox][id^=cash_delivery_bill_checked_]:checked").length==0){
+		$("#cash_delivery_bills_list").addClass("wrong");	
+		alert("Выберите хотя бы один счет!");
+		res=res&&false;	
+	}else{
+		$("#cash_delivery_bills_list").removeClass("wrong");	
+	}
+	 
+	return res;
+}
+
+function CalcCashSum(){
+	ret=true;
+	
+	if(ret) ret=ret&& IsCorrectWeight();
+	if(ret) ret=ret&& IsCorrectNumberPieces();
+	
+	if(ret){
+		//считаем сумму
+		sum=0;
+		
+		//вес
+		weight=parseFloat($("#cash_delivery_weight").val());
+		
+		if(weight<2000){
+			
+		}else if((weight>=2000)&&(weight<2500)){
+			sum+=500;
+		}else if((weight>=2500)&&(weight<3000)){
+			sum+=1000;				
+		}else if((weight>=3000)&&(weight<3500)){
+			sum+=1500;				
+		}else if((weight>=3500)&&(weight<4000)){
+			sum+=2000;				
+		}else if((weight>=4000)&&(weight<4500)){
+			sum+=2500;				
+		}else if((weight>=4500)&&(weight<5000)){
+			sum+=3000;				
+		}else if((weight>=5000)){
+			sum+=3500;				
+		}
+		
+		
+		//кол-во мест
+		np=parseInt($("#cash_delivery_number_pieces").val());
+		if(np<=3){
+			sum+=3000;	
+		}else if(np>3){
+			sum+=3000 + (np-3)*500;	
+		}
+		
+		//премия за дальность
+		sum+=parseFloat($("input[id^=cash_delivery_distance_bonus_]:checked").val());
+		
+		//премия рук-ля
+		if($("#has_cash_delivery_chief_bonus").prop("checked")){
+			sum+=parseFloat($("input[id^=cash_delivery_chief_bonus_]:checked").val());
+		}
+		
+		$("#cash_delivery_value").val(sum);	
+	}
+}
+
+
+function AddCashDelivery(){
+	ret=true;
+	
+	if(ret) ret=ret&&IsBillSelected();
+	
+	if(ret) ret=ret&& IsCorrectRout();
+	if(ret) ret=ret&& IsCorrectCode();
+	if(ret) ret=ret&& IsCorrectWeight();
+	if(ret) ret=ret&& IsCorrectNumberPieces();
+	
+	if(ret) ret=ret&& IsCorrectChief_bonus();
+	if(ret) ret=ret&& IsCorrectDriver();
+	if(ret) ret=ret&& IsCorrectResponsibleUser();
+	
+	if(ret){
+		
+		cash_delivery_chief_bonus=0;
+		has_cash_delivery_chief_bonus=0; cash_delivery_chief_bonus_reason='';
+		if($("#has_cash_delivery_chief_bonus").prop("checked")){
+			cash_delivery_chief_bonus=parseFloat($("input[id^=cash_delivery_chief_bonus_]:checked").val());
+			has_cash_delivery_chief_bonus=1;
+			cash_delivery_chief_bonus_reason=$("#cash_delivery_chief_bonus_reason").val();
+		}
+		
+		var selected_bills=new Array();
+		$("input[type=checkbox][id^=cash_delivery_bill_checked_]:checked").each(function(index, el) {
+            selected_bills.push($(el).val());
+        });
+		
+		$.ajax({
+			async: true,
+			url: "/js/cash.php",
+			type: "POST",
+			data:{
+				"action":"add_cash",
+				"bill_id":$("#id").val(),
+				"kind_id":2,
+				"rout":$("#cash_delivery_route").val(),
+				"weight":$("#cash_delivery_weight").val(),
+				"number_pieces":$("#cash_delivery_number_pieces").val(),
+				"distance_bonus":$("input[id^=cash_delivery_distance_bonus_]:checked").val(),
+				"has_chief_bonus":has_cash_delivery_chief_bonus,
+				"chief_bonus":cash_delivery_chief_bonus,
+				"chief_bonus_reason":cash_delivery_chief_bonus_reason,
+				"driver_id":$("#cash_delivery_driver_id").val(),
+				
+				"responsible_user_id":$("#cash_delivery_responsible_user_id").val(),
+				"code_id":$("#cash_delivery_code_id").val(),
+				"value":$("#cash_delivery_value").val(),
+				
+				"selected_bills[]":selected_bills
+			},
+			beforeSend: function(){
+			  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			},
+			success: function(data){
+			   //alert(data);
+				//$("#code_list").html(data);
+				alert("Доставка по счету создана!");
+			  	location.reload();
+			},
+			error: function(xhr, status, m){
+				  //alert('e '+status+m);  
+			}	 
+		});
+		
+	}
+	
+	return ret;
+}
+
+$(function(){
+	
+	
+	$("#cash_delivery_route").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsCorrectRout();
+		return ret;
+	});
+	
+	$("#cash_delivery_weight").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsCorrectWeight();
+		
+		if(ret) CalcCashSum();
+		return ret;
+	});
+	
+	$("#cash_delivery_number_pieces").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsCorrectNumberPieces();
+		
+		if(ret) CalcCashSum();
+		return ret;
+	});
+	
+	$("#cash_delivery_chief_bonus_reason").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsCorrectChief_bonus();
+		return ret;
+		
+		
+	});
+	
+	$("input[id^=cash_delivery_distance_bonus_]").bind("change", function(){
+		ret=true;
+		
+		if(ret) ret=ret&& IsCorrectWeight();
+		if(ret) ret=ret&& IsCorrectNumberPieces();
+		
+		if(ret) CalcCashSum();
+		
+		return ret;
+	});
+	
+	$("input[id^=cash_delivery_chief_bonus_]").bind("change", function(){
+		ret=true;
+		
+		if(ret) ret=ret&& IsCorrectWeight();
+		if(ret) ret=ret&& IsCorrectNumberPieces();
+		
+		if(ret) CalcCashSum();
+		
+		return ret;
+	});
+	
+	$("#has_cash_delivery_chief_bonus").bind("change", function(){
+		ret=true;
+		
+		if(ret) ret=ret&& IsCorrectWeight();
+		if(ret) ret=ret&& IsCorrectNumberPieces();
+		
+		if(ret) CalcCashSum();
+		
+		return ret;
+		
+	});
+	
+	
+	$("#cash_delivery_chief_bonus_reason").bind("change", function(){
+		ret=true;
+		
+	 
+		if(ret) ret=ret&& IsCorrectWeight();
+		if(ret) ret=ret&& IsCorrectNumberPieces();
+		
+		if(ret) CalcCashSum();
+		
+		return ret;
+		
+	});
+	 
+	 
+	
+	$("#cash_delivery_warning_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,		 
+		height: 250
+		
+	});
+	
+	
+	$("#cash_delivery_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,		 
+		height: 650,
+		buttons:{
+			"Готово": function(){
+				
+				ret=AddCashDelivery();
+				
+				if(ret) {
+					$(this).dialog("close");
+					//location.reload();
+				}
+					
+			},
+			"Отмента": function(){
+				
+				$(this).dialog("close");
+			}
+		}
+	});
+	
+	
+	
+	$("#cash_delivery_create").bind("click", function(){
+		
+		%{if $smarty.section.dsec.total>0}%
+		$("#cash_delivery_warning_dialog").dialog({
+			buttons: {"Да": function(){
+		%{/if}%
+		
+			$.ajax({
+				async: true,
+				url: "/js/cash.php",
+				type: "POST",
+				data:{
+					"action":"redraw_resp_users" 
+				},
+				beforeSend: function(){
+				  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+				},
+				success: function(data){
+				   //alert(data);
+					$("#cash_delivery_responsible_user_id").html(data);
+				  
+				},
+				error: function(xhr, status){
+					  //alert('e');  
+				}	 
+			});
+			
+			
+			$("#cash_delivery_dialog").dialog("open");
+			
+		%{if $smarty.section.dsec.total>0}%
+				$("#cash_delivery_warning_dialog").dialog("close");
+			},
+			"Нет": function(){
+				$("#cash_delivery_warning_dialog").dialog("close");
+			}
+			}
+		});
+		$("#cash_delivery_warning_dialog").dialog("open");
+		%{/if}%
+		
+		
+		return false;
+	});
+	
+	%{if $force_make_delivery==1}%
+	$("#cash_delivery_create").trigger("click");
+	%{/if}%
+	
+	
+	$("#cash_delivery_code_select").bind("click",function(){
+		$.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_codes",
+									  "current_id":$("#cash_delivery_code_id").val()
+								  },
+								  beforeSend: function(){
+									$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#code_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							  
+							  
+		$("#code_dialog").dialog({
+			buttons: {
+				"Готово": function(){
+					field_id='cash_delivery_';
+					codebuild(field_id);
+					$("#code_dialog").dialog("close"); 
+				},
+				"Отмена": function(){
+					 $("#code_dialog").dialog("close"); 
+				}
+			}
+		});
+			 
+		$("#code_dialog").dialog("open");	
+		
+	});
+	
+	$("#cash_delivery_code_clear").bind("click",function(){
+		//очистка  
+		$("#cash_delivery_code_id_string").attr("value","");
+		$("#cash_delivery_code_id").attr("value","");
+		
+	});
+	
+	$("#has_cash_delivery_chief_bonus").bind("change", function(){
+		if($("#has_cash_delivery_chief_bonus").prop("checked")) $("#cash_delivery_chief_bonus_block").show();
+		else  $("#cash_delivery_chief_bonus_block").hide(); 
+	});
+	
+	
+	
+	$("#cash_delivery_driver_select").bind("click",function(){
+		$.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_drivers",
+									  "current_id":$("#cash_delivery_driver_id").val()
+								  },
+								  beforeSend: function(){
+									$("#driver_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#driver_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							  
+							  
+		$("#driver_dialog").dialog({
+			buttons: {
+				"Готово": function(){
+					field_id='cash_delivery_';
+					driverbuild(field_id);
+					$("#driver_dialog").dialog("close"); 
+				},
+				"Отмена": function(){
+					 $("#driver_dialog").dialog("close"); 
+				}
+			}
+		});
+			 
+		$("#driver_dialog").dialog("open");	
+		
+	});
+	
+	
+	$("#cash_delivery_driver_clear").bind("click",function(){
+		//очистка  
+		$("#cash_delivery_driver_id_string").attr("value","");
+		$("#cash_delivery_driver_id").attr("value","");
+		
+	});
+	
+	
+});
+</script>

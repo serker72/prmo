@@ -1,0 +1,39 @@
+ 
+<h1>Файлы без описания</h1>
+
+ 
+<b>Вы выбрали виды файлов:</b><br />
+ 
+ 
+%{foreach from=$fields item=field}%
+%{if $field.kind==-1}%
+  %{if $field.is_active}% %{$field.name}%,
+%{/if}%
+%{elseif $field.kind==0}%
+<!--<b>%{$field.name}%:</b><br />-->
+
+%{elseif $field.kind==1}%
+
+%{/if}%
+%{/foreach}%
+ 
+ 
+
+
+
+
+
+
+ 
+<br clear="all" />
+<p />
+
+ 
+
+ 
+
+
+
+%{if $do_it}%
+%{include file="an_files/an_files_table.html" }%
+%{/if}%

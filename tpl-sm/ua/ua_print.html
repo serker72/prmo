@@ -1,0 +1,74 @@
+<style type="text/css">
+table.reptable{
+	
+}
+table.reptable tr td, table.reptable tr th{
+	font-size:10px;
+}
+</style>
+
+%{section name=uusec loop=$users_globals}%
+%{if $users_globals[uusec].login==$user}% 
+<h3>Пользователь: </h3>
+%{$users_globals[uusec].login}% %{$users_globals[uusec].name_s}%
+%{/if}%
+%{/section}%
+<br />
+
+<strong>с:</strong> %{$pdate11}%
+<br />
+
+
+<strong>по: </strong>%{$pdate12}%
+
+
+%{if $user!=""}%
+
+<h3>Время работы в системе</h3>
+
+
+<table width="*" border="1" cellpadding="2" cellspacing="0" class="reptable2">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="100">
+    Дата
+    </th>
+    <th scope="col" align="left">
+    Вход-выход
+    </th>
+    <th scope="col">Время работы</th>
+</tr>
+</thead>
+%{section name=rowsec loop=$works}%  
+<tr align="center" valign="top">
+	<td width="100">
+    %{$works[rowsec].pdate}%
+    </td>
+    <td align="left">
+    %{$works[rowsec].ptimes}%
+    </td>
+    <td valign="bottom">
+    %{$works[rowsec].psrok}%
+    </td>
+</tr> 
+  
+%{/section}%
+<tr align="center" valign="top">
+	<td width="100">
+    <strong>Итого:</strong>
+    </td>
+    <td>
+   
+    </td>
+    <td>
+    <strong>%{$total}%</strong> 
+    </td>
+</tr> 
+</table>
+
+<h3>Журнал системы</h3>
+
+%{$syslog}%
+%{/if}%
+
+

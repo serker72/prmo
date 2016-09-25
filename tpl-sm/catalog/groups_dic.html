@@ -1,0 +1,111 @@
+%{section name=rowsec loop=$items}%
+
+<div style="white-space:nowrap;"><input type="text" size="35" maxlength="255" id="group_%{$items[rowsec].id}%" value="%{$items[rowsec].name|escape:"html"}%" style="width:250px; background-color:silver;" />
+<a href="#" id="edit_group_%{$items[rowsec].id}%" title="редактировать группу"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_group_%{$items[rowsec].id}%" border="0" alt="" /></a>
+<a href="#" id="delete_group_%{$items[rowsec].id}%" title="удалить группу"><img src="/img/del.gif" width="15" height="15" border="0" alt="" /></a>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#edit_group_%{$items[rowsec].id}%").bind("click",function(){
+		/*alert('editing');
+		*/
+		if($("#icon_group_%{$items[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			//включаем редактирование
+			$("#icon_group_%{$items[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#group_%{$items[rowsec].id}%").css("background-color","white");
+		}else{
+			//вносим изменения
+			
+			$.ajax({
+				async: true,
+				url: "/js/position.php",
+				type: "POST",
+				data:{
+					"action":"edit_group",
+					"group":$("#group_%{$items[rowsec].id}%").attr("value"),
+					"id":"%{$items[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/position.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_groups"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#groups_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования группы.");	
+				}	 
+			});
+		}
+		
+		return false;
+	});
+	
+	$("#group_%{$items[rowsec].id}%").bind("click",function(){
+		if($("#icon_group_%{$items[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_group_%{$items[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#group_%{$items[rowsec].id}%").css("background-color","white");
+		}
+	});
+	
+	//удаление
+	$("#delete_group_%{$items[rowsec].id}%").bind("click",function(){
+		if(window.confirm("Вы действительно хотите удалить группу %{$items[rowsec].name|escape:"html"}%?")){
+			$.ajax({
+				async: true,
+				url: "/js/position.php",
+				type: "POST",
+				data:{
+					"action":"delete_group",
+					"id":"%{$items[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/position.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_groups"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#groups_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления группы.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+});
+</script>
+%{/section}%

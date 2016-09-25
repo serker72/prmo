@@ -1,0 +1,71 @@
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="*">
+    Город
+    </th>
+    <th scope="col" width="20">&nbsp;
+    
+    </th>
+    </tr>
+    </thead>
+ <tbody id="supplier_cities_tbody">
+%{section name=citisec loop=$cities}%
+  <tr align="left" valign="top">
+    	
+    
+    <td width="*">
+      %{$cities[citisec].name}%, %{$cities[citisec].okrug_name}%, %{$cities[citisec].region_name}%,  %{$cities[citisec].country_name}%
+      
+      <input type="hidden" id="sce_phone_code_%{$cities[citisec].id}%" value="%{$cities[citisec].phone_code}%" />
+    </td>
+    <td width="20">
+  
+     %{if $can_modify}% 
+    <a href="#" id="delete_sce_%{$cities[citisec].id}%" data-comment="удалить" class="reestr_delete16 reestr_button16"></a>
+  
+    %{/if}%
+    </td>
+    
+   </tr> 
+%{/section}%
+</tbody>
+</table>
+<script type="text/javascript">
+$(function(){
+%{section name=citisec loop=$cities}%
+
+$("#delete_sce_%{$cities[citisec].id}%").bind("click", function(){
+	if(window.confirm("Вы уверены, что хотите удалить город %{$cities[citisec].name|escape}% из карты организации?")){
+		
+	//  alert("%{$cities[citisec].city_id}%"+" %{$user.id}%");	
+	  
+	  $.ajax({
+						async: true,
+						url: "/js/ed_org.php",
+						type: "POST",
+						data:{
+							"action":"del_city_to_supplier",
+							"city_id":"%{$cities[citisec].city_id}%",
+							"supplier_id":"%{$user.id}%"
+						},
+						beforeSend: function(){
+							$("#supplier_cities").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+						},
+						success: function(data){
+						  //alert(data);
+						  RedrawSupplierCities();
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+					
+	}
+	return false;
+});
+
+%{/section}%
+});
+</script>

@@ -1,0 +1,60 @@
+%{if $folder_id>0}%
+<tr align="center" valign="top">
+	<td width="*" align="left" style="white-space:nowrap;">
+    
+    
+    <a href="%{$this_pagename}%?folder_id=%{$parent_id}%&%{$doc_id_name}%=%{$doc_id}%%{$e_path}%"><img src="/img/icons/folder_up.png" width="24" height="17" border="0" align="left" /><b> .. в родительскую папку</b></a>
+    
+    </td>
+    
+    
+    <td width="100">
+    -
+    </td>
+   
+    <td width="*">
+    -
+    </td>
+    <td width="150" align="left" >
+    
+   -
+    
+    </td>
+    <td width="100">
+  -
+    </td>
+    
+</tr>
+
+%{/if}%
+
+%{section name=rowsec1 loop=$folders}%
+<tr align="center" valign="top">
+	<td width="*" align="left">
+   
+   <b>%{$folders[rowsec1].filename}%</b> 
+    </td>
+     
+    
+    <td width="100">
+    -
+    </td>
+   
+    <td width="*"> 
+    %{if $folders[rowsec1].u_group_id==3}%%{$folders[rowsec1].u_name_s}%%{else}%%{$folders[rowsec1].u_name_s}%%{/if}%  </td>
+    <td width="150" align="left" id="fmore_info%{$prefix}%_%{$folders[rowsec1].id}%" title="%{$folders[rowsec1].filename|escape}%|%{$folders[rowsec1].txt|escape}%">
+    
+    %{$folders[rowsec1].txt|truncate:80:"..."}%
+    
+     
+    
+    </td>
+    <td width="100">
+    %{$folders[rowsec1].pdate}%
+    </td>
+    
+     
+   
+  
+</tr>
+%{/section}%

@@ -1,0 +1,537 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+$(function(){
+	touchScroll('contact');
+});
+</script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pasp_kogda").datepicker({changeYear:true, yearRange: '1900:2012'});
+	 $("#pasp_bithday").datepicker({changeYear:true, yearRange: '1900:2012'});
+	 $("#vacation_till_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	 $.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+<form action="%{$pagename}%" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$user.id}%" />
+
+%{include file="every_help_dialog.html" filename="user_edit.htm" prefix="" description="редактирование карты сотрудника"  style="float:right;  margin-right:10px;"}%
+
+
+%{if $can_common}%
+<div style="float:left; margin-right:20px;">
+<label for="login">Логин:</label><br>
+<strong>%{$user.login}%</strong>
+
+</div>
+%{/if}%
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_active" id="is_active" value="1" %{if $user.is_active==1}%checked="checked"%{/if}% %{if ($user.is_active==0 and $can_unblock==false) or($user.is_active==1 and $can_block==false)}% disabled="disabled"%{/if}% />
+<label for="is_active">Карта пользователя активна</label><br>
+<p />
+</div>
+
+<br clear="all" />
+<p />
+
+
+%{if $can_common}%
+<label for="password">Новый пароль:</label><br>
+<small><em>Если смена пароля не требуется, оставьте поле пустым</em><br />
+<em>При смене пароля: минимальная длина 6 символов; допустимые символы - латинские буквы и цифры</em></small><br />
+<input type="text" size="20" maxlength="255" name="password" id="password" %{if $cannot_change_password}% disabled="disabled"%{/if}% />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="name_s">Ф.И.О.:</label><br>
+<input type="text" size="40" maxlength="255" name="name_s" value="%{$user.name_s|escape:"html"}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="position_s">Должность:</label><br>
+<input type="text" size="40" maxlength="255" name="position_s" value="%{$user.position_s|escape:"html"}%" />
+</div>
+
+
+
+
+
+
+<p />
+<br clear="all" />
+
+ 
+
+<input type="hidden" name="group_id" id="group_id" value="2" />
+
+
+
+
+
+ 
+
+ 
+
+%{/if}%
+
+%{if $can_photo}%
+
+<div style="float:left; margin-right:20px;">
+
+<strong>Фото сотрудника:</strong><br />
+<input type="hidden" name="photo" id="photo" value="%{$user.photo|escape:"html"}%" />
+<img src="%{$user.photo}%" alt="" id="user_photo" border="0" />
+<div id="user_photo_warning" style="display:none; color:red;">Для сохранения загруженного фото нажмите кнопку "Сохранить и перейти к списку пользователей, или "Сохранить и остаться".</div>
+<p />
+
+<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+    <script type="text/javascript">
+		var swfu;
+		
+		window.onload = function() {
+			var settings = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "/swfupl-js/upload_user_s_photo.php",
+				post_params: {"PHPSESSID" : "%{$session_id}%",
+							  "id": "%{$user.id}%"
+								
+				},
+				file_size_limit : "6 MB",
+				file_types : "*.jpg;*.jpe;*.jpeg;*.gif;*.png",
+				file_types_description : "Веб-изображения",
+				file_upload_limit : 1000,
+				file_queue_limit : 1,
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_text: '<span class="theFont">Выберите и загрузите файл...</span>',
+				button_width: 199,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload3.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu = new SWFUpload(settings);
+			
+			
+			
+	     };
+	</script>
+    <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+    
+    <div id="uploader_block">    
+        <div class="fieldset flash" id="fsUploadProgress">
+                <span class="legend"></span>
+        </div>
+        <div id="divStatus"></div>
+        <div>
+                        <span id="spanButtonPlaceHolder"></span>
+                        
+                        <input id="btnCancel" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+                        
+        </div>
+    </div>
+	
+  <em>максимальный размер файла: 6M</em>  
+  <p />
+</div>  
+%{/if}%
+
+%{if $can_common}%
+ 
+
+
+<!--
+<strong>Контактная информация:</strong>
+
+
+<div id="contact" style="border:1px solid silver; width:720px; height:150px; overflow:auto;">
+        %{include file="users/contacts.html" items=$contacts word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    </div>
+    %{if $can_cont_edit}%
+    %{include file="users/contact_dialog.html" word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    %{/if}%
+
+
+
+<br clear="all" />
+<p />
+
+-->
+<!--
+<strong>Время работы (МСК):</strong>
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_from_h_s">с:</label>
+<select name="time_from_h_s" style="width:60px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m_s" style="width:60px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_to_h_s">по:</label>
+<select name="time_to_h_s" style="width:60px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m_s" style="width:60px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="is_in_vacation">В отпуске</label>
+<input type="checkbox" name="is_in_vacation" id="is_in_vacation" value="1" %{if $user.is_in_vacation==1}%checked="checked"%{/if}% />
+&nbsp;
+
+<script type="text/javascript">
+$(function(){
+	$("#is_in_vacation").bind("click",function(){
+		if(this.checked){
+			$("#vacation_till_pdate_block").css("display","inline");
+			$("#vacation_till_pdate").trigger("focus");
+		}else{
+			$("#vacation_till_pdate_block").css("display","none");
+		}
+	});
+});
+</script>
+
+<div id="vacation_till_pdate_block" style="display: %{if $user.is_in_vacation==1}%inline;%{else}%none;%{/if}%">
+<label for="vacation_till_pdate">до:</label>
+<input type="text" size="15" maxlength="255" name="vacation_till_pdate" id="vacation_till_pdate" value="%{$user.vacation_till_pdate|escape:"html"}%" />
+</div>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<strong>Дополнительное время работы (МСК):</strong><br />
+
+<div id="ints" style="/*border:1px solid silver; width:720px; height:150px; overflow:scroll;*/">
+        %{include file="users/userint.html"  word="ints" named="время работы" items=$ints user_id=$user.id can_edit=$can_cont_edit}%
+    </div>
+    %{if $can_cont_edit}%
+ %{include file="users/userint_dialog.html" word="ints" named="время работы" user_id=$user.id can_edit=$can_cont_edit}%   
+    %{/if}%
+   
+
+<br clear="all" />
+<p />-->
+
+
+
+
+%{/if}%
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Вопросы, которые курирует сотрудник:</strong><br>
+<div id="questions" style="/*border:1px solid silver; width:450px; height:200px; overflow:scroll;*/">
+%{include file="users/s_user_questions.html"  can_edit_questions=$can_edit_questions}%
+</div>
+<br clear="all" />
+%{if $can_expand_questions}%
+<br>
+<input type="button" value="Добавить вопросы..." id="show_questions" />
+<div id="questions_dialog" title="Вопросы, которые курируют сотрудники">
+%{include file="users/allquestions.html"}%
+<script type="text/javascript">
+$(function(){
+	
+	
+});
+</script>
+
+</div>
+<script type="text/javascript">
+$(function(){
+  $("#questions_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#questions_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics_page",
+				"user_id":"%{$user.id}%"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				$("#questions").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_questions").bind("click",function(){
+	  $("#questions_dialog").dialog("open");
+  });
+  
+  function RedrawDic(){
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dics",
+				"user_id":"%{$user.id}%"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#questions_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_question").bind("click", function(){
+		if($("#new_question").attr("value").length<3){
+			$("#new_question").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"add_question",
+				"question":$("#new_question").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Ваш вопрос добавлен!"); 
+			   $("#new_question").attr("value","");
+			   RedrawDic();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+%{/if}%
+
+ <br clear="all" />
+ <p />
+ 
+<!--<h4>Паспортные данные:</h4>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_ser">Серия:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_ser" value="%{$user.pasp_ser|escape:"html"}%" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_no">№:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_no" value="%{$user.pasp_no|escape:"html"}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_kogda">Дата выдачи:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_kogda" id="pasp_kogda" value="%{$user.pasp_kogda|escape:"html"}%" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pasp_kogda">Дата рождения:</label><br />
+<input type="text" size="15" maxlength="255" name="pasp_bithday" id="pasp_bithday" value="%{$user.pasp_bithday|escape:"html"}%" />
+</div>-->
+
+%{if $can_pasp_button}%
+<div style="float:left; margin-right:20px;">
+<br />
+
+<input type="button" value="Документы сотрудника..." onclick="location.href='user_v_pasp.php?user_id=%{$user.id}%';" />
+</div>
+%{/if}%
+
+<br clear="all" />
+<p />
+
+<!--
+<div style="float:left; margin-right:20px;">
+<label for="pasp_kem">Кем выдан:</label><br />
+<textarea cols="30" rows="5" name="pasp_kem" style="height:40px;">%{$user.pasp_kem|escape:"html"}%</textarea>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="pasp_reg">Адрес регистрации:</label><br />
+<textarea cols="60" rows="5" name="pasp_reg" style="height:40px;">%{$user.pasp_reg|escape:"html"}%</textarea>
+</div>
+
+
+<br clear="all" />
+<p />-->
+ 
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку пользователей" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='users_s.php?tab_page=3';
+}else location.href='users_s.php?tab_page=3';" />
+
+%{if $can_delete}%
+<p />
+<input type="submit" name="doDelete" id="doDelete" value="Удалить пользователя" />
+
+%{/if}%
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	
+	
+	$("#crea_form").bind("submit",function(){
+		//проверка пароля - мин 6 символов, лат буквы+цифры
+		can_submit=true;
+		
+		if($("#password").attr("value").length>0){
+		  if($("#password").attr("value").length<6) can_submit=can_submit&&false;
+		  
+		  reg1=new RegExp("[A-Za-z]+");
+		  reg2=new RegExp("[0-9]+");
+		  
+		  if($("#password").attr("value").search(reg1)==-1) can_submit=can_submit&&false;
+		  if($("#password").attr("value").search(reg2)==-1) can_submit=can_submit&&false;
+		  
+		  
+		  if(!can_submit){
+			  alert("Пароль должен быть 6 символов и длиннее и состоять только из латинских букв и цифр!");	
+			  $("#password").focus();
+		  }
+		}
+		return can_submit;
+	});
+	
+	$("#doDelete").bind("click", function(e){
+		%{if $can_delete_user}%
+		
+		res=window.confirm("Вы действительно хотите удалить пользователя %{$user.login|escape:"html"}%?");
+		if(res==true){
+			$("#crea_form").unbind("submit");
+			
+		}
+		return res;
+		%{else}%
+		
+		alert("Невозможно удалить карту сотрудника. Причина: у данного сотрудника есть утвержденные документы.");
+		return false;
+		%{/if}%
+		
+	});
+});
+		
+</script>

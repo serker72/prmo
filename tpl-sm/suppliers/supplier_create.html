@@ -1,0 +1,376 @@
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#contract_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});	 
+
+});
+</script>
+<form action="supplier.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+<input type="hidden" name="code" value="%{$code}%" />
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="full_name">Полное наименование (без кавычек):</label><br />
+<input type="text" size="35" maxlength="255" name="full_name" id="full_name" value="" style="width:206px;" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="print_name">Наименование для печатных форм:</label><br />
+<input type="text" size="35" maxlength="255" name="print_name" value="" style="width:206px;" /><br />
+<small><em>если не заполнено, в печатных формах <br />
+документов используется полное наименование</em></small>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<br />
+<select style="width:100px;" name="ur_or_fiz">
+<option value="0" selected="selected">Юр. лицо</option>
+<option value="1">Физ. лицо</option>
+</select>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="opf_id">ОПФ:</label><br>
+<select name="opf_id" id="opf_id" style="width:100px;">
+%{html_options values=$opf_ids selected=$opf output=$opfs}%
+</select>
+
+ 
+  <input type="button" value="Редактировать..." id="expand_opf" %{if !$can_expand_opf}% disabled="disabled"%{/if}% />
+  <div id="opf_dialog" title="Виды ОПФ">
+  <div id="opf_dic">
+  %{include file="suppliers/d_opfs.html"}%
+  </div>
+  
+  Новый вид ОПФ:<br>
+  <input type="text" id="new_opf" size="30" maxlength="255" />
+  <input type="button" value="Добавить ОПФ" id="add_new_opf" %{if !$can_expand_opf}% disabled="disabled"%{/if}% />
+  </div>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+    $("#opf_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 350,
+    height: 490,
+    buttons: {
+        "Готово": function() { 
+        	$.ajax({
+              async: true,
+              url: "/js/supplier.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+          
+          $.ajax({
+              async: true,
+              url: "/js/supplier.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_page"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                  $("#opf_id").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+        
+        $(this).dialog("close"); }
+      }
+    
+    });
+    $("#expand_opf").bind("click",function(){
+        $("#opf_dialog").dialog("open");
+    });
+    
+    function RedrawDic(){
+          $.ajax({
+              async: true,
+              url: "/js/supplier.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+      }
+      
+      $("#add_new_opf").bind("click", function(){
+          if($("#new_opf").attr("value").length<3){
+              $("#new_opf").focus();
+              return false;
+          }
+          
+          $.ajax({
+              async: true,
+              url: "/js/supplier.php",
+              type: "POST",
+              data:{
+                  "action":"add_opf",
+                  "opf":$("#new_opf").attr("value")
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                 alert("Вид ОПФ добавлен!"); 
+                 $("#new_opf").attr("value","");
+                 RedrawDic();
+                // location.reload();
+              },
+              error: function(xhr, status){
+                  alert("Ошибка добавления ОПФ.");	
+              }	 
+          });
+          
+      });
+    
+  });
+  </script>
+  
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:10px;">
+<label for="contract_pdate">Лимит дебиторской задолженности, руб.:<br />
+<small>оставьте это поле пустым, если нет ограничений</small>
+</label><br />
+
+<input type="text" size="20" maxlength="128" name="lim_deb_debt" id="lim_deb_debt" value="" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<!--
+<div style="float:left; margin-right:20px;">
+<label for="chief">Генеральный директор</label><br />
+<input type="name"  name="chief" id="chief" size="30" maxlength="255"  />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="main_accountant">Главный бухгалтер</label><br />
+<input type="name"name="main_accountant" id="main_accountant" size="30" maxlength="255"  />
+</div>-->
+
+<br clear="all" />
+<p />
+
+<label for="legal_address">Юридический адрес:</label><br>
+<textarea cols="100" rows="3" name="legal_address" id="legal_address"></textarea>
+<p />
+
+<div style="float:left; margin-right:10px;">
+<label for="inn">ИНН:</label>
+<input type="text" size="15" maxlength="255" name="inn" id="inn" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="kpp">КПП:</label>
+<input type="text" size="15" maxlength="255" name="kpp" id="kpp" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="okpo">ОКПО:</label>
+<input type="text" size="15" maxlength="255" name="okpo" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<strong>Расписание работы (МСК):</strong>
+<div style="float:left; margin-right:20px; white-space:nowrap;">
+<label for="time_from_h">с:</label>
+<select name="time_from_h" style="width:60px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m" style="width:60px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:20px; white-space:nowrap;">
+<label for="time_to_h">по:</label>
+<select name="time_to_h" style="width:60px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m" style="width:60px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+<br clear="all" />
+<p />
+
+
+    
+
+
+
+
+
+<h4>Для заполнения полей:<br />
+-Контактная информация<br />
+-Реквизиты<br />
+-Фактические адреса<br />
+-Договор<br />
+-Учредительные документы<br />
+
+
+необходимо нажать кнопку "Продолжить создание контрагента"
+
+</h4>
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Продолжить создание контрагента" />
+%{/if}%
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Сохранить и выйти" />
+%{/if}%
+
+
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='suppliers.php';
+}else location.href='suppliers.php';" />
+
+
+</form>
+
+<script type="text/javascript">
+$(function(){
+
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		
+		
+		if((res)&&($("#full_name").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+			res=res&&false;
+			alert("Заполните поле Полное наименование!");
+			$("#full_name").focus();	
+		}
+		
+		/*
+		if((res)&&($("#inn").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+			res=res&&false;
+			alert("Заполните поле ИНН!");
+			$("#inn").focus();	
+		}
+		
+		if($("#opf_id").val()!=3){
+		  if((res)&&($("#kpp").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+			  res=res&&false;
+			  alert("Заполните поле КПП!");
+			  $("#kpp").focus();	
+		  }
+		}
+		
+		if((res)&&($("#legal_address").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3)){
+			res=res&&false;
+			alert("Заполните поле Юридический адрес!");
+			$("#legal_address").focus();	
+		}
+		*/
+		
+		
+		/*
+		временно отключено
+		if(res){
+			
+				$.ajax({
+					async: false,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"check_inn",
+						"id":"%{$user.id}%",
+				 
+						"inn":$("#inn").val()
+						
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					 	if(data!=0) {
+							res=false;
+							alert("Невозможно сохранить контрагента. Причина: контрагент с таким ИНН уже существует.");	
+						}
+					  
+					},
+					error: function(xhr, status){
+						//alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+		}*/
+		
+		
+		
+		return res;
+	});
+	
+
+});
+</script>

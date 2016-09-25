@@ -1,0 +1,143 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+
+
+
+
+<div id="tabs">
+  <ul>
+    <li>
+    <a href="#tabs-1">
+
+%{if $work_mode==0}%
+Мой профиль
+%{else}%
+Пользователь %{$user.login}%
+%{/if}%
+	</a>
+    </li>
+  </ul> 
+  
+    <div id="tabs-1">
+   
+   %{include file="every_help_dialog.html" filename="info.htm" prefix="" description="Просмотр карты сотрудника"  style="float:right;"}%
+
+<div style="float:left; margin-right:20px;">
+<h4>Ф.И.О.:</h4>
+%{$user.name_s}%
+ 
+</div>
+
+<div style="float:left; margin-right:20px;">
+<h4>Логин:</h4>
+%{$user.email_s}%
+
+(%{$user.login}%)
+ 
+
+</div>
+
+
+
+%{if $work_mode==0}%
+<div style="float:left; margin-right:20px;">
+<h4>Пароль:</h4>
+<a href="chp.html">Сменить пароль</a>
+</div> 
+
+
+<div style="float:left; margin-right:20px;">
+<script type="text/javascript">
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 $("#pasp_bithday").datepicker({changeYear:true, yearRange: '1900:2012'});
+});
+</script>
+<form action="info.html" method="get">
+<input type="hidden" name="name" value="%{$user.login}%" />
+<h4>Дата рождения:</h4>
+<input type="text" size="10" maxlength="20" value="%{$user.pasp_bithday}%" id="pasp_bithday" name="pasp_bithday"%{if !$user.can_change_birthdate}% disabled="disabled"%{/if}% />
+<input type="submit" name="doChBd" value="Сменить" %{if !$user.can_change_birthdate}% disabled="disabled"%{/if}%  />
+</form>
+
+</div>
+%{else}%
+<div style="float:left; margin-right:20px;">
+%{$user.pasp_bithday}%
+</div>
+%{/if}%
+
+<div class="clear"></div>
+<p />
+
+
+
+%{if $user.photo!="/img/no.gif" and $user.photo!=""}%
+<img src="%{$user.photo}%" border="0" alt="" />
+<p />
+%{/if}%
+
+
+
+<div style="float:left; margin-right:20px;">
+<h4>Должность:</h4>
+%{$user.position_s}%
+</div>
+
+<div style="float:left; margin-right:20px;">
+<h4>Время работы:</h4>
+с <strong>%{$user.time_from_h_s}%:%{$user.time_from_m_s|string_format:"%02d"}%</strong>  
+до <strong>%{$user.time_to_h_s}%:%{$user.time_to_m_s|string_format:"%02d"}%</strong> 
+%{if $user.is_in_vac}%
+    <span style="color:red;">
+    <br />
+	в отпуске до %{$user.vacation_till_pdate}%
+    </span>
+    %{/if}%
+    
+    
+    
+  
+<div id="ints">
+        %{include file="users/userint.html" items=$user.ints word="ints" named="время работы" user_id=$user.id can_edit=false}%
+    </div>
+    %{if $can_cont_edit}%
+    %{include file="users/userint_dialog.html" word="ints" named="время работы" user_id=$user.id can_edit=false}%
+    %{/if}%  
+    
+</div>
+
+
+<div class="clear"></div>
+<p />
+
+
+ 
+<h4>Контактная информация:</h4>
+
+
+ 
+        %{include file="users/contacts.html" items=$user.contacts word="contact" named="Контакты" user_id=$user.id can_edit=false}%
+    
+    %{if $can_cont_edit}%
+    %{include file="users/contact_dialog.html" word="contact" named="Контакты" user_id=$user.id can_edit=false}%
+    %{/if}%
+ 
+<p />
+
+
+ 
+
+
+<h4>Вопросы, которые курирует сотрудник:</h4>
+<ul type="disc">
+%{section name=bdsec loop=$user.questions}%
+<li>%{$user.questions[bdsec].name}%</li>
+%{/section}%
+</ul>
+ 
+    </div>

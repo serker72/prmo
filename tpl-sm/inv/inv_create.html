@@ -1,0 +1,238 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+var old_inventory_pdate='%{$now}%';
+var old_sector_id=0;
+var old_storage_id=0;
+
+
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#inventory_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	touchScrollXY('pos_rows');
+	
+});
+</script>
+<div style="float:left; margin-right:20px;"><h1>Создание инвентаризационного акта</h1></div>
+
+%{include file="every_help_dialog.html" filename="inv_edit.htm" prefix="" description="создание инвентаризационного акта корректировки остатков"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+
+
+
+<br clear="all" />
+<p />
+
+<form action="noscripts.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+
+<div style="float:left; margin-right:20px;  padding-top:3px;">
+<strong>Номер:</strong>
+<input type="hidden" name="code" value="%{$code}%" />
+<input type="text" size="11" maxlength="12"  value="%{$code}%" id="code" disabled="disabled" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер:</label>
+<input type="text" size="10" maxlength="512" value="" name="given_no" id="given_no" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+<div style="float:right; margin-right:00px; min-width:120px; margin-top:-5px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;">
+</a>
+
+<strong>Статус:</strong><br />
+
+не утверждено 
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;  padding-top:3px;">
+<label for="pdate">Дата инвентаризации:</label>
+<input type="text" size="10" maxlength="12"  value="%{$now}%" name="inventory_pdate" id="inventory_pdate" />
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id">Участок инвентаризации:</label>
+<select id="sector_id" name="sector_id" style="width:150px;">
+<option value="0" selected="selected">-выберите-</option>
+%{html_options values=$sector_ids selected=$sector_id output=$sector_names}%
+</select>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Позиции акта:</strong> 
+
+
+%{include file="inv/position_actions.html"  is_confirmed=0 is_new=1}%
+ 
+<p />
+
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать акт" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать акт и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='invent.php';
+}else location.href='invent.php';" />
+
+
+</form>
+ 
+<script type="text/javascript">
+ $(function(){
+	
+	$("#crea_form").attr("action",'ed_inv.php');
+	
+	$("#crea_form").bind("submit",function(){
+		var can_go=true;
+		
+		
+		//проверка дат
+		if(!PeriodChecker('inventory_pdate', '%{$pch_date}%')){
+			alert("Дата инвентаризации должна быть не ранее %{$pch_date}%!");
+			can_go=can_go&&false;
+			return false;
+		}
+		
+		if(!PeriodCheckerByPeriod('inventory_pdate', closed_date )){
+			alert('Дата инвентаризации не должна попадать в закрытый период '+interval_string+'!');
+			can_go=can_go&&false;
+			return false;	
+		}
+		
+			if(can_go&&($("#sector_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Укажите склад инвентаризации!");
+		}
+		
+		
+		
+		//проверка даты инвентаризации
+		if(can_go&&($("#inventory_pdate").val()=='')){
+			can_go=can_go&&false;
+			alert("Укажите дату инвентаризации!");
+		}
+		
+		
+		if(can_go){
+			dateObj = new Date();
+			 d=dateObj.getDate();
+		  
+			 m=dateObj.getMonth();
+				
+				   
+			dateObj_now=new Date(dateObj.getFullYear(),m,d,0,0,0,0); 
+			dateObj1= new Date( $("#inventory_pdate").val().substring(6,10), parseFloat($("#inventory_pdate").val().substring(3,5))-1, $("#inventory_pdate").val().substring(0,2));
+			
+			//alert("i"+($("#inventory_pdate").val()).substring(6,10)+" j"+(parseFloat($("#inventory_pdate").val().substring(3,5)))+" k"+$("#inventory_pdate").val().substring(0,2)+" "+dateObj1+dateObj_now);
+			//can_go=can_go&&false;
+			if(dateObj1>dateObj_now){
+				can_go=can_go&&false;
+				alert("Невозможно сохранить акт с датой инвентаризации позже сегодняшней!");
+			}
+			
+		}
+		
+		
+		if(can_go&&( $("#positions table tbody tr").length==0)){
+			can_go=can_go&&false;
+			alert("Выберите позиции для создания инвентаризационного акта!");
+		}
+		
+		
+		//контроль даты создания...
+		if(can_go){
+			$.ajax({
+			  async: false,
+			  url: "/js/invent.php",
+			  type: "POST",
+			  data:{
+				  "action":"check_inventory_pdate",
+				  "pdate":$("#inventory_pdate").val(),
+				  "sector_id":$("#sector_id").val(),
+				  "id":0
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				if(data!=0){
+					
+					can_go=can_go&&false;
+					alert("Внимание! Вы выбрали недопустимую дату, так как по состоянию на выбранную дату "+data+"\nПожалуйста, выберите более позднюю дату.");
+				}
+			  },
+			  error: function(xhr, status){
+			//	 alert("Ошибка загрузки реквизитов.");	
+				can_go=can_go&&false;
+				alert("Ошибка. Невозможно проверить акты по дате инвентаризации. Пожалуйста, повторите попытку позже.");
+			  }	 
+			});
+			
+		}
+		
+		
+		
+		return can_go;
+	});
+  });
+ 
+</script>

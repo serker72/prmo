@@ -1,0 +1,525 @@
+<script type="text/javascript">
+function ControlSumm(){
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+	  if(isNaN(x) || isNaN(n)) return false;
+	  var m = Math.pow(10,n);
+	  return Math.round(x*m)/m;
+	}
+	
+	if(isNaN($("#supplier_id").val())||(parseInt($("#supplier_id").val())==0)){
+		return;
+	}
+	
+	if(isNaN($("#contract_id").val())||(parseInt($("#contract_id").val())==0)){
+		return;
+	}
+	
+	
+	var vv=0.0;
+	$.each($("#bill_positions_table tbody tr input[type=hidden][id^='new_hash_']"), function(k,v){
+		//alert(v);
+		
+		vv=vv+parseFloat($("#new_value_"+$(v).val()).val().replace("\,","\."));
+		
+	});
+	
+	if(parseFloat($("#value").val().replace("\,","\."))>vv){
+		//обработка превышения 
+		if(window.confirm("Внимание! У Вас остаток по данной оплате "+roundPlus((parseFloat($("#value").val().replace("\,","\."))-vv),2)+" руб. Предлагаем привязать его к неоплаченным счетам контрагента.")){
+			//alert('Вы превышаете');	
+			var bill_ids=new Array(); 
+			var values=new Array();
+			
+			var delta=parseFloat($("#value").val().replace("\,","\."))-vv;
+			
+			
+			
+			var complex_positions=new Array();
+			
+			$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				
+				//вычленить айди позиции, заполнить массивы данными
+				
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_kind_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val().replace("\,","\.");
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);	
+				
+			});
+			
+			
+			
+			$.ajax({
+			  async: false,
+			  url: "/js/pay_in.php",
+			  type: "POST",
+			  data:{
+				  "action":"check_new_positions",
+				  "pay_id":"%{$ship.id}%",
+				  "supplier_id":$("#supplier_id").val(),
+				  "contract_id":$("#contract_id").val(),
+				  "complex_positions[]":complex_positions,
+				 
+				  "value":$("#value").val().replace("\,","\."),
+				  "delta":delta
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				//alert(data);
+				if(parseFloat(data)>0) alert("Внимание! Неоплаченных счетов выбранного контрагента недостаточно для распределения суммы оплаты. Остаток "+data+" руб. попадет на карту контрагента как авансовый платеж.");
+				$.ajax({
+					async: false,
+					url: "/js/pay_in.php",
+					type: "POST",
+					data:{
+						"action":"apply_new_positions",
+						"pay_id":"%{$ship.id}%",
+						"supplier_id":$("#supplier_id").val(),
+						"contract_id":$("#contract_id").val(),
+						"complex_positions[]":complex_positions,
+						
+						"value":$("#value").val(),
+						"delta":delta
+					},
+					beforeSend: function(){
+					  //alert("Загрузка реквизитов.");
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#positions").html(data); 
+					  
+					  //нужно как-то определять, что больше неопл. счетов нет, а сумма не израсходована!
+					  
+					  $("#pay_for_bill").prop("checked",false);
+					  $("#pay_for_dogovor").prop("checked",true);
+					  $("#bill_id").val(""); 
+					  //??? ControlSumm();
+					},
+					error: function(xhr, status){
+					  // alert("Ошибка загрузки реквизитов.");	
+					}	 
+				  });
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+		}else{
+			alert('Сумма '+roundPlus((parseFloat($("#value").val().replace("\,","\."))-vv),2)+" руб. попадет на карту контрагента как авансовый платеж.");		
+		}
+		
+	}else if(parseFloat($("#value").val().replace("\,","\."))<vv){
+		//alert('Вы уменьшаете');	
+		
+		var delta=vv-parseFloat($("#value").val().replace("\,","\."));
+		//обработка уменьшения позиций
+		
+		
+		var complex_positions=new Array();
+			
+			$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				
+				//вычленить айди позиции, заполнить массивы данными
+				
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_kind_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val().replace("\,","\.");
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);	
+				
+			});
+			
+		
+		
+		
+		$.ajax({
+		  async: false,
+		  url: "/js/pay_in.php",
+		  type: "POST",
+		  data:{
+			  "action":"find_unpayed_positions",
+			  "pay_id":"%{$ship.id}%",
+			  "supplier_id":$("#supplier_id").val(),
+			  "contract_id":$("#contract_id").val(),
+			  "complex_positions[]":complex_positions,
+			  "value":$("#value").val(),
+			  "delta":delta
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			//$("#positions_dialog_table").html(data);  
+			if(data.length>0) alert('Внимание! Сумма платежей по счетам превышает сумму данной оплаты. Счета '+data+' не будут оплачены.');
+			else alert('Внимание! Сумма платежей по счетам превышает сумму данной оплаты.');
+			
+			$.ajax({
+			  async: false,
+			  url: "/js/pay_in.php",
+			  type: "POST",
+			  data:{
+				  "action":"apply_unpayed_positions",
+				  "pay_id":"%{$ship.id}%",
+				  "supplier_id":$("#supplier_id").val(),
+				  "contract_id":$("#contract_id").val(),
+				 
+				  "complex_positions[]":complex_positions,
+				  "value":$("#value").val(),
+			  	   "delta":delta
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				//alert(delta);
+				$("#positions").html(data);  
+				$("#pay_for_bill").prop("checked",false);
+				$("#pay_for_dogovor").prop("checked",true);
+				$("#bill_id").val(""); 
+				
+			  },
+			  error: function(xhr, status){
+				//alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		
+	}
+}
+</script>
+<div id="positions" style=" width: 100%; ">
+
+%{include file="pay_in/positions_on_page_set.html" pospos=$positions}%
+
+</div>
+
+
+
+<div id="info_positions_dialog" title="Оплаты по счету">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 450,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+
+
+
+
+<div id="positions_dialog" title="Выберите счета">
+
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	
+	var old_value=parseFloat($("#value").val().replace("\,","\."));
+	
+	$("#value").bind("focus",function(){
+		old_value=parseFloat($("#value").val().replace("\,","\."));
+		//alert('zz');
+	});
+	
+	
+	
+	
+	$("#value").bind("change",function(){
+		ControlSumm();
+		
+	});
+	
+	
+	//обработка нажатия Выбрать позиции
+	$("#add_pos").bind("click",function(){
+		if(!$("#pay_for_bill").prop("checked")&&!$("#pay_for_dogovor").prop("checked")){
+			alert("Выберите режим оплаты: оплату по договору или оплату по счету!");
+			
+		}else if( ($("#supplier_id").attr("value").length==0)||($("#supplier_id").attr("value")==0) ){
+			alert("Выберите контрагента!");
+			$("#supplier_id").focus();
+			
+		
+		}else if( ($("#contract_id").attr("value").length==0)||($("#contract_id").attr("value")==0) ){
+			alert("Выберите договор контрагента!");
+			$("#supplier_id").focus();
+			
+		}else{
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			
+			var bill_ids=new Array(); 
+			var values=new Array();
+			
+			var complex_positions=new Array();
+			
+			$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				
+				//вычленить айди позиции, заполнить массивы данными
+				
+				
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_kind_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val().replace("\,","\.");
+				complex_positions.push(hashed_string);	
+				
+			});
+			
+			
+			//pay_mode
+			pay_mode=0;
+			if($("#pay_for_dogovor").prop("checked")) pay_mode=0;
+			else if($("#pay_for_bill").prop("checked")) pay_mode=1;
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/pay_in.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "pay_id":"%{$ship.id}%",
+				  "supplier_id":$("#supplier_id").val(),
+				  "pay_mode":pay_mode,
+				  "contract_id":$("#contract_id").val(),
+				  "complex_positions[]":complex_positions,
+				  "sort_mode":$("#sort_mode").val()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#positions_dialog_table").html('<img src="/img/wait.gif" width="32" height="32" alt=" " />');
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data);  
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			//$("#positions_dialog_komplekt_name").html($("#komplekt_ved_id_string").attr("value"));
+			if(isTouchDevice()){
+				$("#positions_dialog_table").css("overflow","scroll");
+				$("#positions_dialog_table").css("width","800");
+				$("#positions_dialog_table").css("height","450");
+				touchScrollXY('positions_dialog_table');	
+			}
+			$("#positions_dialog").dialog("open");
+		}
+		
+	});
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+			  if(isNaN(x) || isNaN(n)) return false;
+			  var m = Math.pow(10,n);
+			  return Math.round(x*m)/m;
+			}
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 900,
+		height: 490,
+		position: "center",
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				
+				var pay_mode=0;
+				if($("#pay_for_dogovor").prop("checked")) pay_mode=0;
+				else if($("#pay_for_bill").prop("checked")) pay_mode=1;
+				
+				
+				 $.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+				
+						position_id=value.value;
+						
+						//цена
+						
+						//добавка цены
+						local_put=true;
+						if($("#value_"+position_id).attr("value").length==0){
+							can_put=can_put&&false;
+							local_put=local_put&&false;	
+						}
+						if(isNaN($("#value_"+position_id).attr("value").replace("\,","\."))||(parseFloat($("#value_"+position_id).attr("value").replace("\,","\."))<0)){
+							can_put=can_put&&false;
+							local_put=local_put&&false;
+						}
+						
+						
+						//если оплата по счету - то давать выбрать только один счет
+						//выбрать - значит задать ненулевую оплату
+						if($("#pay_for_bill").prop("checked")){
+						  var no_pos=true;
+						  $.each($("input[id^=value_]"), function(kkey, vvalue){
+							  if((parseFloat($(vvalue).val().replace("\,","\."))!=0.0)&&( $(vvalue).attr("id")!="value_"+position_id )&&(parseFloat($("#value_"+position_id).attr("value").replace("\,","\."))!=0)){
+								  
+								  no_pos=no_pos&&false;	
+							  }
+						  });
+						  
+						  if(!no_pos){
+							  //alert("Вы можете выбрать только один счет в режиме 'Оплата по счету'!");
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+						  }
+						}
+						
+						
+						//не можем написать сумму больше, чем в остатке
+						if(!isNaN($("#value_"+position_id).attr("value").replace("\,","\."))&&(roundPlus((parseFloat($("#summ_"+position_id).html())-parseFloat($("#payed_"+position_id).html()),2))>=0)){
+								
+								if(parseFloat($("#value_"+position_id).val().replace("\,","\."))>(roundPlus(parseFloat($("#summ_"+position_id).html())-parseFloat($("#payed_"+position_id).html()),2))){
+									
+									can_put=can_put&&false;
+							  		local_put=local_put&&false;
+								}
+							
+						}else if(!isNaN($("#value_"+position_id).attr("value").replace("\,","\."))&&(roundPlus(parseFloat($("#summ_"+position_id).html())-parseFloat($("#payed_"+position_id).html()),2)<0)){
+								
+								if(parseFloat($("#value_"+position_id).val())>0){
+									can_put=can_put&&false;
+							  		local_put=local_put&&false;
+								}
+						}
+						
+						
+						
+						
+						
+						if(local_put){
+							$("#value_"+position_id).removeClass("wrong");	
+						}else $("#value_"+position_id).addClass("wrong");
+						
+						
+						
+					//}
+					
+					
+				});
+				
+				//return;
+				
+				
+				if(pay_mode==1){
+				  var was_chosen_ch=false;
+				  $.each($("#positions_dialog_table table tbody tr td input[id^=choosen_bill_]"), function(key, value){
+					  was_chosen_ch=was_chosen_ch||$(value).prop("checked");
+				  });
+				  if(!was_chosen_ch) can_put=false;
+				}
+				if(can_put) {
+					//перенос данных в таблицу на странице
+					
+					
+					var complex_positions=new Array();
+			
+					$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+						
+						//вычленить айди позиции, заполнить массивы данными
+						
+						hash=$(value).val();
+						
+						hashed_string='';
+						hashed_string=$("#kind_"+hash).val();
+						hashed_string=hashed_string+';'+$("#position_id_"+hash).val();
+						hashed_string=hashed_string+';'+$("#value_"+hash).val().replace("\,","\.");
+						complex_positions.push(hashed_string);	
+						
+					});
+					
+					
+					
+					
+					//pay_mode
+					pay_mode=0;
+					if($("#pay_for_dogovor").prop("checked")) pay_mode=0;
+					else if($("#pay_for_bill").prop("checked")) pay_mode=1;
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/pay_in.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_positions",
+						  "id":$("#id").attr("value"),
+						  "supplier_id":$("#supplier_id").attr("value"),
+						  "pay_mode":pay_mode,
+						  "contract_id":$("#contract_id").val(),
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+						$("#positions").html('<img src="/img/wait.gif" width="32" height="32" alt=" " />');
+					  },
+					  success: function(data){
+						$("#positions").html(data); 
+						
+						ControlSumm();
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					$(this).dialog("close"); 
+				}else{
+					if((pay_mode==1)&&(!was_chosen_ch)){
+						alert("Выберите счет!");	
+					}else alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

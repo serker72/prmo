@@ -1,0 +1,53 @@
+
+    <div class="common_block" id="%{$word}%_%{$tempid}%">
+	 
+     %{if $can_edit}%
+<a href="#" id="delete_%{$word}%_%{$tempid}%" class="reestr_delete16 reestr_button16" data-comment="удалить %{$named}%" style="float:right;"></a>          
+    <a href="#" id="edit_%{$word}%_%{$tempid}%"  data-comment="редактировать %{$named}%" class="reestr_edit16 reestr_button16" style="float:right;"></a>
+    %{/if}%
+    
+    <em>Дата:</em><strong>%{$pdate}%</strong>
+    %{$user_name_s}% (%{$user_login}%)
+    <br />
+
+    
+    <em>Примечания:</em><strong><span id="notes_span_%{$tempid}%">%{$note}%</span></strong>
+	<input type="hidden" id="notes_textarea_%{$tempid}%" name="notes_textarea_%{$tempid}%" value="%{$note|escape}%" />
+   
+    </div>
+    %{if $can_edit}%
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$tempid}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$("#%{$word}%_%{$tempid}%").remove();	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$tempid}%").bind("click",function(){
+			 $("#%{$word}%_note").val($("#notes_span_%{$tempid}%").html());
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						
+						$("#notes_textarea_%{$tempid}%").val($("#%{$word}%_note").attr("value"));
+						$("#notes_span_%{$tempid}%").html( $("#%{$word}%_note").attr("value"));
+						
+						
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+    %{/if}%

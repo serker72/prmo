@@ -1,0 +1,339 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $has_header}%
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	 $("#pdate_bill1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_bill2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+});
+</script>
+
+%{$pages}%
+
+
+%{include file="annul_dialog.html" prefix="_bill"}%
+
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+
+
+<strong>Утвержденные счета</strong><input type="radio" name="bill_status_id" id="bill_status_id2" value="2" %{if $bill_status_id==2}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong> Неутвержденные счета</strong><input type="radio" name="bill_status_id" id="bill_status_id1" value="1" %{if $bill_status_id==1}% checked="checked"%{/if}%  /> 
+
+
+&nbsp;
+<strong>Невыполненные счета</strong><input type="radio" name="bill_status_id" id="bill_status_id9" value="9" %{if $bill_status_id==9}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong> Выполненные счета</strong><input type="radio" name="bill_status_id" id="bill_status_id10" value="10" %{if $bill_status_id==10}% checked="checked"%{/if}%  /> 
+
+
+&nbsp;
+<strong>Аннулированные счета</strong><input type="radio" name="bill_status_id" id="bill_status_id3" value="3" %{if $bill_status_id==3}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong>Все счета</strong><input type="radio" name="bill_status_id" id="bill_status_id0" value="0" %{if $bill_status_id==0}% checked="checked"%{/if}%  /> 
+
+<a href="#" id="bill_save_sort_mode"><img src="/img/icons/save.png" width="24" height="24" alt="Сохранить" align="absmiddle" title="Сохранить" border="0" /></a>
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		if($.cookie('bill_status_id')==null){
+			$.cookie('bill_status_id', 0, { expires: 14 });		
+		}
+		
+		
+		$("#bill_save_sort_mode").bind("click",function(){
+			//alert($("input[name=sort_mode]:checked").val());
+			$.cookie('bill_status_id', $("input[name=bill_status_id]:checked").val(), { expires: 14 });
+			
+			return false;	
+		});
+		
+	
+	});
+	</script>
+
+<p />
+
+
+
+<input type="hidden" name="do_show_bills" value="1" />
+
+<input type="hidden" name="from_bill" value="0" />
+<input type="hidden" name="to_page_bill" value="%{$to_page_bill}%" />
+<input type="hidden" name="sortmode_bill" value="%{$sortmode_bill}%" />
+
+<input type="hidden" name="action" value="%{$action}%" />
+<input type="hidden" name="id" value="%{$id}%" />
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+     <th scope="col" width="40">
+    Номер 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode_bill=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode_bill=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+     <th scope="col" width="60">
+    Дата 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode_bill=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode_bill=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    	
+   
+    
+    <th scope="col" width="40">
+   № вх. сч. пост. 
+
+   
+    </th>
+    
+    <th scope="col" width="40">
+    Сумма
+   
+    </th>
+   
+   
+    <th scope="col" width="70">
+    Контрагент
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode_bill=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode_bill=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+   
+    
+    
+    <th scope="col" width="100">
+    Статус
+        </th>
+    
+    
+    
+    <th scope="col" width="*">
+    Утверждение цены
+   
+   
+    </th>
+    
+     <th scope="col" width="*">
+    Утверждение отгрузки
+   
+   
+    </th>
+    
+  
+    <th scope="col" width="*">Примечания 
+   
+    </th>
+     <th scope="col" width="100">
+    Создал
+   
+   
+    </th>
+   
+    <th scope="col" width="24">&nbsp;</th>
+    <th scope="col" width="24">&nbsp;</th>
+   
+</tr>
+<tr align="center" valign="top">
+	<td width="40">
+    
+    <input type="text" size="8" maxlength="255" value="%{$code_bill}%" name="code_bill" id="code_bill" style="width:40px;" />
+	 
+    </td>
+    
+    <td width="60">
+    
+    	&nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate_bill1" id="pdate_bill1" size="10" maxlength="10" value="%{$pdate_bill1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="pdate_bill2" id="pdate_bill2" size="10" maxlength="10" value="%{$pdate_bill2}%" style="width:60px;" /><br />
+	 
+    
+    </td>
+    
+    
+     <td width="40">&nbsp;
+    
+    </td>
+    
+	<td width="40">&nbsp;
+  
+    </td>
+    <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name_bill" id="supplier_name_bill" style="width:60px;" />
+   
+ 
+    </td>
+    
+ 
+   
+   
+   <td width="100">
+   <select id="inner_status_id" style="width:100px;">
+  	<option value="0"  %{if $bill_status_id==0}% selected="selected"%{/if}%>все счета</option>
+    <option value="2"  %{if $bill_status_id==2}% selected="selected"%{/if}%>утвержден</option>
+    <option value="1"  %{if $bill_status_id==1}% selected="selected"%{/if}%>не утвержден</option>
+    <option value="9"  %{if $bill_status_id==9}% selected="selected"%{/if}%>не выполнен</option>
+    <option value="10"  %{if $bill_status_id==10}% selected="selected"%{/if}%>выполнен</option>
+    <option value="3"  %{if $bill_status_id==3}% selected="selected"%{/if}%>аннулирован</option>
+   </select>  
+   <script type="text/javascript">
+   $(function(){
+	  $("#inner_status_id").bind("change", function(){
+		 $("#bill_status_id"+ $("#inner_status_id").val()).prop("checked",true);
+		 $("#bill_status_id"+ $("#inner_status_id").val()).trigger("click");
+	  });
+   });
+   </script>
+   
+   </td>
+   <td width="*">&nbsp;
+   
+   </td>
+   
+   <td width="*">&nbsp;
+   
+   </td>
+   
+   <td width="*">&nbsp;
+   
+   </td>
+   
+   <td width="100">
+  
+  
+   </td>
+   
+    <td width="24">
+    <input name="doFilter" type="submit" value="Найти" />
+    </td>
+    
+     <td width="24">&nbsp;
+     
+     </td>
+    
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%  
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+%{/if}%
+	
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0}%class="item_inactive"%{/if}%>%{$items[rowsec].code}%&nbsp;</td>
+    
+    <td width="60" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+   %{$items[rowsec].pdate}%
+    
+    </td>
+    
+    
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].supplier_bill_no}%&nbsp;</td>
+    
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].total_cost}%&nbsp;руб.
+    </td>
+    <td width="70" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </a>
+    </td>
+    
+    
+    
+    
+        <td width="100" %{if $items[rowsec].is_confirmed_price==0}%class="item_inactive"%{/if}%>
+     %{if $items[rowsec].status_id==1}%
+    не утвержден
+    %{elseif $items[rowsec].status_id==2}%
+    утвержден
+    %{elseif $items[rowsec].status_id==3}%
+    аннулирован
+    %{elseif $items[rowsec].status_id==9}%
+    не выполнен
+    %{elseif $items[rowsec].status_id==10}%
+    выполнен
+    %{/if}%
+    </td>
+  
+    
+     <td width="*" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+    <div id="status_price_%{$items[rowsec].id}%">%{include file="invcalc/toggle_confirm_price_bill.html" filename="invcalc_bill.php" item=$items[rowsec] shorter=1}%</div>
+    
+    </td>
+    
+    <td width="*" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+    <div id="status_shipping_%{$items[rowsec].id}%">%{include file="invcalc/toggle_confirm_ship_bill.html" filename="invcalc_bill.php" item=$items[rowsec] shorter=1}%</div>
+    
+    
+    </td>
+    
+    
+    
+   
+    
+    <td align="left" width="*" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+    %{$items[rowsec].notes[notesec].user_login}%:
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    </td>
+    
+      <td width="100" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    </td>
+    
+    
+    <td width="24" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+    
+    <a href="ed_bill.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+    %{/if}%&nbsp;
+    </td>
+    
+  
+     <td width="24" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{include file="invcalc/toggle_annul_bill.html" prefix="_bill"}%
+    </td>
+    
+ %{if $has_header}%  
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям входящих счетов не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%

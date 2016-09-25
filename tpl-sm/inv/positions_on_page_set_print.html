@@ -1,0 +1,29 @@
+<!-- таблица на странице -->
+
+
+<table width="100%" cellpadding="2" cellspacing="0" border="1" class="blacktable" id="inv_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	 <th scope="col" width="20">№ п/п</th>
+        <th scope="col" width="24">Код</th>
+        <th scope="col" width="*">Номенклатура</th>
+        <th scope="col" width="60">Ед. изм.</th>
+        <th scope="col" width="60">Исходное кол-во по программе</th>
+        
+        <th scope="col" width="60">Факт. кол-во</th>
+        
+        <th scope="col" width="60">Исходная недостача</th>
+        <th scope="col" width="60">Исходные излишки</th>
+        <th scope="col" width="60">Текущее кол-во по программе</th>
+        <th scope="col" width="60">В связ. поступлениях</th>
+        <th scope="col" width="60">В связ. реализациях</th>
+        
+    </tr>
+    </thead>
+    <tbody id="inv_positions">
+    
+    %{include file="inv/positions_on_page_rows_print.html"}%
+    
+    </tbody>
+    </table>
+   

@@ -1,0 +1,107 @@
+
+
+	
+    <td width="20" class="small">
+    <span id="no_%{$items[rowsec].positions[possec].position_id}%" class="small">%{$smarty.section.possec.index+1}%</span>
+    </td>
+    <td width="*" class="small">
+    <span id="name_%{$items[rowsec].positions[possec].position_id}%" class="small">%{$items[rowsec].positions[possec].position_name}%</span>
+	
+    
+    </td>
+    <td width="20" class="small"  style="min-width:20px; width:20px; max-width:30px;">
+    <span id="dim_name_%{$items[rowsec].positions[possec].position_id}%">%{$items[rowsec].positions[possec].dim_name}%</span>
+    </td>
+	<td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+    <span id="kol_init_%{$items[rowsec].positions[possec].position_id}%">%{$items[rowsec].positions[possec].quantity_initial}%</span>
+    </td>
+    <td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+   
+    
+    <span id="kol_%{$items[rowsec].positions[possec].position_id}%" %{if $items[rowsec].positions[possec].quantity_confirmed!=$items[rowsec].positions[possec].quantity_initial and ($items[rowsec].positions[possec].quantity_confirmed!=$items[rowsec].positions[possec].in_pol or $items[rowsec].positions[possec].quantity_confirmed==0) and ($items[rowsec].status_id==1 or $items[rowsec].status_id==2 or $items[rowsec].status_id==12)}%style=" font-weight:bold; "%{/if}%>%{$items[rowsec].positions[possec].quantity_confirmed}%</span>
+  
+    
+    </td>
+    
+    %{if $not_fulfiled}%
+    
+    <td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+     %{$items[rowsec].positions[possec].in_bills_in}% 
+    </td>
+   
+    
+    %{/if}%
+    
+    <td width="30" %{if $not_fulfiled}% class="small"%{/if}% style="min-width:30px; width:30px; max-width:50px; %{if !$not_fulfiled}%font-weight:bold;%{/if}%">
+    %{$items[rowsec].positions[possec].in_pol_in}% 
+    
+    
+      
+    
+    
+    </td>
+    
+     %{if !$not_fulfiled}%
+     <td width="40" class="small" style="min-width:30px; width:40px; max-width:60px;">
+    %{$items[rowsec].positions[possec].given_pdate}%
+    </td>
+    %{/if}%
+    
+     %{if !$not_fulfiled}%
+     <td width="40" class="small" style="min-width:30px; width:40px;">
+   %{$items[rowsec].positions[possec].supplier_name}%,         %{$items[rowsec].positions[possec].opf_name}% 
+    
+   
+    </td>
+    %{/if}%
+    
+    
+     %{if $not_fulfiled}%
+    <td width="30" %{if $not_fulfiled==false}% class="small"%{/if}% style="min-width:30px; width:30px; max-width:50px; %{if $not_fulfiled}%font-weight:bold;%{/if}%">
+   
+    
+    <span id="in_free_in_%{$items[rowsec].positions[possec].position_id}%">%{$items[rowsec].positions[possec].quantity_confirmed-$items[rowsec].positions[possec].in_bills_in-$items[rowsec].positions[possec].in_pol_in|string_format:"%.3f"}%</span>
+    
+    
+    
+   
+    </td>
+    %{/if}%
+    
+    
+    
+    
+    <!-- out -->
+    
+      %{if $not_fulfiled}%
+    
+    <td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+    %{$items[rowsec].positions[possec].in_bills}% 
+    </td>
+   
+    
+    %{/if}%
+    
+    <td width="30" %{if $not_fulfiled}% class="small"%{/if}% style="min-width:30px; width:30px; max-width:50px; %{if !$not_fulfiled}%font-weight:bold;%{/if}%">
+     %{$items[rowsec].positions[possec].in_pol}% 
+    
+    
+    
+    </td>
+    
+    
+   %{if $not_fulfiled}%
+    <td width="30" %{if $not_fulfiled==false}% class="small"%{/if}% style="min-width:30px; width:30px; max-width:50px; %{if $not_fulfiled}%font-weight:bold;%{/if}%">
+   
+    
+    <span id="in_free_%{$items[rowsec].positions[possec].position_id}%">%{$items[rowsec].positions[possec].quantity_confirmed-$items[rowsec].positions[possec].in_bills-$items[rowsec].positions[possec].in_pol|string_format:"%.3f"}%</span>
+    
+    
+    
+   
+    </td>
+    %{/if}%
+
+ <td width="30"   style="min-width:30px; width:30px; max-width:50px; font-weight:bold; ">
+    %{$items[rowsec].positions[possec].itog}% 
+    </td>

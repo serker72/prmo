@@ -1,0 +1,178 @@
+<form action="message_compose.php" method="post" enctype="multipart/form-data" id="form_message">
+
+<h2>Ответить на сообщение</h2>
+
+<strong>От: </strong>
+<a href="info.html?name=%{$older_user.login}%">%{$older_user.login}%</a>
+<p />
+
+<strong>Сообщение:</strong>
+<div class="message" style="width:550px; height:150px; padding:2px 2px; border:1px solid silver; overflow:scroll;">%{$older_message.txt}%</div>
+<p />
+
+
+%{section name=filesec loop=$files}%%{/section}%
+%{if $smarty.section.filesec.total>0}%
+<strong>Вложения:</strong><br />
+%{section name=filesec loop=$files}%
+	<a href="attachment.html?id=%{$files[filesec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$files[filesec].orig_filename}%</a><br />
+
+%{/section}%
+%{/if}%
+
+<h2>Ваш ответ:</h2>
+
+<input type="hidden" name="parent_id" value="%{$parent_id}%" />
+
+<label for="topic_s">Тема:</label><br />
+<input type="text" size="100" maxlength="255" value="Re: %{$older_message.topic|escape}%" id="topic_s" name="topic_s" style="width:550px;" />
+<p />
+
+<label for="txt_s">Текст сообщения:</label><br />
+<textarea id="txt_s" name="txt_s" cols="100" rows="20" style="width:550px;"></textarea>
+<p />
+
+
+
+
+	<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+    <script type="text/javascript">
+		var swfu;
+		function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		window.onload = function() {
+			var settings = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "swfupl-js/upload_file_message.php",
+				post_params: {"PHPSESSID" : "%{$session_id}%"
+				},
+				file_size_limit : "6 MB",
+				file_types : "*.*",
+				file_types_description : "Все файлы",
+				file_upload_limit : 1000,
+				file_queue_limit : 1,
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_text: '<span class="theFont">Выберите файл...</span>',
+				button_width: 130,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload2.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu = new SWFUpload(settings);
+			
+			
+			
+	     };
+	</script>
+    <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+
+<div id="uploaded_files">
+	
+</div>
+
+<strong>Приложите файл:</strong>
+
+
+
+<div class="fieldset flash" id="fsUploadProgress">
+			<span class="legend"></span>
+</div>
+<div id="divStatus"></div>
+<div>
+				<span id="spanButtonPlaceHolder"></span>
+                
+                <input id="btnCancel" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+				
+</div>
+<em>максимальный размер файла: 6M</em>  
+
+<p />
+
+
+<input type="submit" value="Отправить сообщение" id="send_s" name="send_s" style="width:250px; font-weight:bold;" />
+
+
+</form>
+<script type="text/javascript">
+/*$(function(){
+   $("#txt_s").ckeditor({
+	   customConfig : '/ckeditor/config_mini.js',
+	   skin : 'v2' 
+	});
+});*/
+</script>
+
+<script type="text/javascript">
+$(function(){
+	
+	//обработчик отправки сообщения
+	$("#form_message").bind("submit",function(){
+		can_send=true;
+		
+		
+		
+		if($("#txt_s").val().length<=3){
+			can_send=can_send&&false;
+			alert("Напишите текст сообщения!");
+			$("#txt_s").focus();
+			return false;
+		}
+		
+		return true;
+		
+		
+	});
+});
+</script>

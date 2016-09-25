@@ -1,0 +1,141 @@
+<script type="text/javascript">
+	
+	
+	
+	function bdbuildorg(){
+		  var selected_bdetails=0;
+		  $.each($("#org_bdetails table tr td input[type=radio]"), function(key, value){
+			  if(value.checked){
+				  selected_bdetails=value.value;
+			  }
+		  });
+		  
+		  if($("#org_bdetails_id").attr("value")!=selected_bdetails){
+			  
+			  //подгружаем все данные по реквизитам
+			  if(selected_bdetails>0){
+				  $.ajax({
+					async: true,
+					url: "/js/cash.php",
+					type: "GET",
+					dataType: "json",
+					data:{
+						"action":"retrieve_bdetails",
+						"id":selected_bdetails
+					},
+					beforeSend: function(){
+					  
+					},
+					success: function(data){
+					  $("#org_bdetails_id_string").attr("value",'р/с '+data.rs+', '+data.bank+', '+data.city);
+					  $("#org_bdetails_id").attr("value",data.id);
+					  
+					},
+					error: function(xhr, status){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					}	 
+				  });
+			  }
+			  
+		  }
+		 
+		  $("#org_bdetails_dialog").dialog("close"); 
+	}
+	
+	
+	
+$(function(){
+	
+	
+	
+	
+	
+	
+	$("#org_bdetails_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,
+		height: 290,
+		buttons: {
+			"Готово": bdbuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	
+	$("#org_bdetails_select").bind("click",function(){
+		//раскрывать, только если выбран п-к
+		
+			$("#org_bdetails_dialog").dialog("open");	
+		
+	});
+	
+	$("#org_bdetails_clear").bind("click",function(){
+		//очистка банковского счета
+		$("#org_bdetails_id_string").attr("value","");
+		$("#org_bdetails_id").attr("value","");
+		
+	});
+	
+	 
+});
+</script>
+
+
+
+<div id="org_bdetails_dialog" title="Выберите реквизиты" style="display:none;">
+
+
+
+<a href="#" id="org_more_bd_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="absmiddle" vspace="3" hspace="5" /></a>
+    
+    <div id="org_bd_dialog_help" title="Информация о выборе реквизитов" style="display:none;">
+    
+    В этом диалоге Вы можете выбрать реквизиты поставщика.
+    
+    <br />
+	<br />
+	
+    Чтобы выбрать реквизиты поставщика, выполните двойной клик по строчке с требуемыми реквизитами.
+    <br />
+
+    При этом реквизиты поставщика будут подставлены в оплату. <br />
+	
+<br />
+	
+    
+    </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#org_bd_dialog_help").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 600,
+		  height: 180,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#org_more_bd_info").bind("click", function(){
+			$("#org_bd_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+	<div style="width:510px; height:160px; border:1px solid gray; overflow:auto;" id="org_bdetails">
+    %{include file="cash/org_bdetails_list.html" pos=$orgpos}%
+    </div>
+
+</div>

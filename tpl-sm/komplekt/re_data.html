@@ -1,0 +1,218 @@
+
+<strong>Рентабельность по заявке: %{if $can_rub}% %{$rent_value}% руб., %{/if}% %{$rent_percent}%%.</strong><br>
+<br>
+
+
+<strong>Оформленные позиции:</strong><br>
+
+<table border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+	<th width="*" style="min-width:150px;">Наименование</th>
+    <th width="40">Ед. изм.</th>
+    <th width="40">Всего по заявке</th>
+    
+    
+    <th width="60"  class="kompl1">Кол-во во вх. счетах</th>
+    <th width="60"  class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма во вх. счетах, руб.</th>
+    
+    
+    
+    <th width="60" class="kompl1">Кол-во в пост-иях</th>
+    <th width="60"  class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма в пост-иях, руб.</th>
+    
+   
+   
+   
+    <th width="60"  class="kompl2" >Кол-во в исх. счетах</th>
+	
+    <th width="60"  class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>Цена в исх. счетах, руб.</th>   
+    
+    <th width="60"  class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма в исх. счетах, руб.</th>    
+    
+    
+    
+     <th width="60"  class="kompl2" >Кол-во в реал-иях</th>
+    <th width="60"  class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма в реал-иях, руб.</th>
+    
+    
+   
+        
+    <th width="60" %{if !$can_rub}% style="display:none;"%{/if}%>+/- в исх. счетах (на ед-цу товара)</th>
+    
+    <th width="60" %{if !$can_rub}% style="display:none;"%{/if}%>дисконт +/- в исх. счетах  (на ед-цу товара)</th>
+    
+    <th width="60" %{if !$can_rub}% style="display:none;"%{/if}%>+/- к выдаче в исх. счетах, руб.</th>
+    
+    <th width="60" %{if !$can_rub}% style="display:none;"%{/if}%>% на +/- по коду 2.1.08, руб.</th>
+    
+    <th width="60"  class="kompl3" %{if !$can_rub}% style="display:none;"%{/if}%>Прибыль, руб.</th>
+    <th width="60"  class="kompl3" >Прибыль, %</th>
+    
+</tr>
+</thead>
+<tbody>
+%{foreach from=$items item=pos}%
+%{if $pos.is_ofor}% 
+<tr align="left" valign="top">
+	<td width="*">%{$pos.position_name}%</td>
+    <td width="40">%{$pos.dim_name}%</td>
+    <td width="40">%{$pos.quantity_confirmed}%</td>
+    
+     <td width="60" class="kompl1">%{if $pos.q_acc_in==0}%%{$pos.q_bill_in}%%{else}%-%{/if}%</td>
+    <td width="60" class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>%{if $pos.q_acc_in==0}%%{$pos.sum_bill_in}%%{else}%-%{/if}%</td>
+    
+    
+    
+    <td width="60" class="kompl1">%{$pos.q_acc_in}%</td>
+    
+    <td width="60" class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.sum_acc_in}%</td>
+    
+    
+   
+     <td width="60" class="kompl2">%{if $pos.q_acc==0}%%{$pos.q_bill}%%{else}%-%{/if}%</td>
+    
+     <td width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>
+    %{if $pos.q_acc==0}%
+    %{foreach from=$pos.pms item=mmm}% 
+    %{$mmm.price_pm}%
+    %{/foreach}%
+    %{else}%-%{/if}%
+    </td>
+    
+     <td width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>%{if $pos.q_acc==0}%%{$pos.sum_bill}%%{else}%-%{/if}%</td>
+    
+   
+    
+     <td width="60" class="kompl2">%{$pos.q_acc}%</td>
+    <td width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.sum_acc}%</td>
+    
+    
+    <!--       +/-         -->
+   
+    
+    <td width="60" %{if !$can_rub}% style="display:none;"%{/if}%>
+    %{foreach from=$pos.pms item=mmm}%
+    %{if $mmm.value>0}%
+    %{$mmm.value}%
+    %{if $mmm.rub_or_percent==1}%%%{else}%руб.%{/if}%
+     %{if $mmm.rub_or_percent==1}%
+    <small>(%{$mmm.value_from_percent}% руб.)</small> 
+     %{/if}%
+     <br>
+	%{/if}%
+    
+    %{/foreach}%
+    
+    
+    </td>
+    <td width="60" %{if !$can_rub}% style="display:none;"%{/if}%>
+    %{foreach from=$pos.pms item=mmm}%
+    %{if $mmm.discount_value>0}%
+    %{$mmm.discount_value}%
+    %{if $mmm.discount_rub_or_percent==1}%%%{else}%руб.%{/if}%
+     %{if $mmm.discount_rub_or_percent==1}%
+    <small>(%{$mmm.discount_value_from_percent}% руб.)</small> <br>
+     %{/if}%
+	%{/if}%
+    
+    %{/foreach}%
+    
+    
+    
+    </td>
+    <td width="60" %{if !$can_rub}% style="display:none;"%{/if}%>
+     %{foreach from=$pos.pms item=mmm}%	
+    %{$mmm.pm_to_give}%<br>
+
+    %{/foreach}%
+    </td>
+    <td width="60" %{if !$can_rub}% style="display:none;"%{/if}%>
+     %{foreach from=$pos.pms item=mmm}%	
+    %{$mmm.percent}%
+    
+    <small>(%{$mmm.percent_percent}%%)</small>
+    <br>
+
+    %{/foreach}%
+    
+    </td>
+    
+     <td width="60"  class="kompl3" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.profit}%</td>
+     <td width="60"  class="kompl3" >%{$pos.profit_percent}%</td>
+   
+</tr>
+%{/if}%
+%{/foreach}%
+
+</tbody>
+</table>
+
+
+<br>
+
+
+<strong>Неоформленные позиции:</strong><br>
+
+
+<table border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+	<th width="*" style="min-width:150px;">Наименование</th>
+    <th width="40">Ед. изм.</th>
+    <th width="40">Всего по заявке</th>
+    
+     <th width="60" class="kompl1">Кол-во во вх. счетах</th>
+    <th width="60" class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма во вх. счетах, руб.</th>
+    
+    
+    
+    <th width="60" class="kompl1">Кол-во в пост-иях</th>
+    <th width="60" class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма в пост-иях, руб.</th>
+    
+   
+    <th width="60" class="kompl2">Кол-во в исх. счетах</th>
+    <th width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма в исх. счетах, руб.</th>
+    
+   
+      <th width="60" class="kompl2">Кол-во в реал-иях</th>
+    <th width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>Сумма в реал-иях, руб.</th>
+    
+   
+</tr>
+</thead>
+<tbody>
+%{foreach from=$items item=pos}%
+%{if $pos.is_ofor==false}% 
+<tr align="left" valign="top">
+	<td width="*">%{$pos.position_name}%</td>
+    <td width="40">%{$pos.dim_name}%</td>
+    <td width="40">%{$pos.quantity_confirmed}%</td>
+    
+     <td width="60" class="kompl1">%{$pos.q_bill_in}%</td>
+    <td width="60" class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.sum_bill_in}%</td>
+    
+     
+    
+    
+    <td width="60" class="kompl1">%{$pos.q_acc_in}%</td>
+    <td width="60" class="kompl1" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.sum_acc_in}%</td>
+    
+   
+     
+    <td width="60" class="kompl2">%{$pos.q_bill}%</td>
+    <td width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.sum_bill}%</td>
+    
+    
+   
+    <td width="60" class="kompl2">%{$pos.q_acc}%</td>
+    <td width="60" class="kompl2" %{if !$can_rub}% style="display:none;"%{/if}%>%{$pos.sum_acc}%</td>
+    
+   
+</tr>
+%{/if}%
+%{/foreach}%
+
+</tbody>
+</table> 
+

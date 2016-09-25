@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.FormNavigate.js"></script>
+
+</head>
+<body style="font-family:'Arial',Georgia,Serif">
+
+<h3>This is an Example of using jquery.FormNavigate.js</h3>
+<code>
+/** <br />
+ * jQuery.FormNavigate.js<br />
+ * jQuery Form onChange Navigate Confirmation plugin<br />
+ * Browser Compatibility : IE 6.0, 7.0, 8.0; Firefox 2.0+;  Safari 3+; Opera 9+; Chrome 1+;<br />
+ * <br />
+ * Copyright (c) 2009 Law Ding Yong<br />
+ * <br />
+ * Licensed under the MIT license:<br />
+ * http://www.opensource.org/licenses/mit-license.php<br />
+ * <br />
+ * See the file license.txt for copying permission.<br />
+ * <br />
+ * Example Code:<br />
+ * ------------------------------------------------------------------<br />
+ * $("#myForm").FormNavigate("Leaving the page will lost in unsaved data!"); <br />
+ */ <br />
+</code>
+<p style="color: maroon">
+<b><i>How to use example ?</b></i><br />
+Change on any value of the input fields and click on testing link, you will see a navigation confimation prompt. <br />
+Note: Default  window.onbeforeunload event OFF.
+</p>
+<br />
+
+<fieldset style="padding:5px">
+<legend style="border: 1px grey solid; background-Color:#e1e1e1; padding:3px"><b>Example Form with id = "myForm"</b></legend>
+<form id="myForm" name="myForm" action="www.google.com" method="get" >
+<input id="user" name="user" type="text" value="nananana" />
+<input id="pw" name="pw" type="password" value="123" /><br />
+<textarea>ABAB</textarea>
+<textarea>ABAB</textarea><br />
+<input type="checkbox" />
+<input type="radio" />
+<input type="file" /><br /><br />
+<input id="submit" type="submit" value="submit form" />
+</form>
+</fieldset>
+<br /><b style="Color:grey">Form Navigation Testing Link : <a href="http://www.google.com">google</a> | <a href="http://www.yahoo.com">yahoo</a></b><br /><br />
+
+
+
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#myForm").FormNavigate("Leaving the page will lost in unsaved data!");
+    });
+</script>
+</html>

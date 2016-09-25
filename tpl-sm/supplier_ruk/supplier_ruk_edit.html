@@ -1,0 +1,102 @@
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#begin_pdate").datepicker();
+	 
+	 
+
+});
+</script> 
+<form action="ed_supplier_ruks.php" method="post">
+
+%{include file="every_help_dialog.html" filename="supplier_ruks.htm" prefix="" description="Блок Руководители организации"  style="float:right;  margin-right:10px;"  is_right=true}%
+
+<input type="hidden" name="id" value="%{$user.id}%" />
+<!--<input type="hidden" name="supplier_id" value="%{$user.supplier_id}%" />
+-->
+<input type="hidden" name="action" value="1" />
+
+<div style="float:left; margin-right:10px;">
+<label for="begin_pdate">Дата назначения:</label><br />
+
+<input type="text" size="10" maxlength="255" name="begin_pdate" id="begin_pdate" value="%{$user.begin_pdate}%" />
+</div>
+
+
+ 
+<div style="float:left; margin-right:10px;">
+<label for="full_name">Ф.И.О.:</label><br />
+
+<input type="text" size="50" maxlength="255" name="fio" value="%{$user.fio}%" />
+</div>
+
+ 
+
+<div style="float:left; margin-right:10px;">
+<label for="kind_id">Должность</label><br />
+<select style="width:150px;" name="kind_id">
+%{foreach from=$kinds item=kind}%
+<option value="%{$kind.id}%" %{if $kind.is_current}% selected="selected" %{/if}%>%{$kind.name}%</option>
+ 
+%{/foreach}%
+</select>
+</div>
+ 
+
+<br clear="all" />
+<p />
+
+<strong>Образец подписи:</strong><br />
+<input type="file"   id="sign" value="%{$user.sign}%" />
+<input type="hidden" name="sign" id="sign_" value="%{$user.sign}%" />
+<img src="%{$user.sign}%" alt="" id="user_photo" border="0" />
+<div id="user_photo_warning" style="display:none; color:red;">Для сохранения загруженного фото нажмите кнопку "Сохранить и перейти к списку руководителей" или "Сохранить и остаться".</div>
+<p />
+<script type="text/javascript" src="/uploadify/jquery.uploadify.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/uploadify/uploadify.css" />
+<script type="text/javascript">
+$(function(){
+		$('#sign').uploadify({
+			'swf'      : '/uploadify/uploadify.swf',
+			'uploader' : '/swfupl-js/upload_ruk.php',
+			'buttonText' : 'выберите...',
+			'fileTypeDesc' : 'Файлы изображений',
+        	'fileTypeExts' : '*.jpg; *.jpeg;  *.jpe; *.gif; *.png', 
+			'queueSizeLimit' : 1,
+			'fileSizeLimit' : '%{php}%echo ini_get("post_max_size");%{/php}%B',
+			 'formData': {"PHPSESSID" : "%{$session_id}%" 
+								
+				}, 
+			'onUploadSuccess' : function(file, data, response) {
+				//alert(data);
+				//alert('Файл загружен, начинаю обработку...'+data);
+				filename=data;
+				eval(data);
+				//вызов обработчика....
+				
+			},
+			 
+			'debug'    : false
+		});  
+ 
+});
+ </script>
+<br clear="all" />
+<p />
+
+ 
+
+%{if $can_edit}%
+<input type="submit" id="doEdit" name="doEdit" value="Сохранить и перейти к списку руководителей" />
+<input type="submit" id="doEditStay" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick=" location.href='supplier_ruks.php?supplier_id=%{$supplier_id}%';" />
+
+
+</form>

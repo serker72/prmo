@@ -1,0 +1,59 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==2}%	
+	selected: 1
+%{elseif $tab_page==3}%	
+	selected: 2
+%{/if}%	
+  
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+     %{if $has_1}%
+    <li><a href="#tabs-1">Инвентаризация складских остатков</a></li>
+    %{/if}%
+    
+     %{if $has_2}%
+    <li><a href="#tabs-2">Инвентаризация расчетов с контрагентами</a></li>
+    %{/if}%
+    
+    %{if $has_admin}%
+    <li><a href="#tabs-3">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  %{if $has_1}%
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+   %{if $has_2}%
+   <div id="tabs-2">
+    <p>
+    
+    %{$log2}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+  %{if $has_admin}%
+  <div id="tabs-3">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

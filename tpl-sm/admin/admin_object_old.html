@@ -1,0 +1,141 @@
+<script type="text/javascript">
+$(function(){
+	$(".tableone").columnHover({eachCell:true, hoverClass:'hover', includeSpans:true}); 
+	$(".tableone tr:even").addClass("even");
+});
+
+</script>
+
+
+<h3>%{$obj.name}%</h3>
+<div style="border:1px solid gray; width:300px; height:400px; overflow:scroll; padding:2 2 2 2; text-align:left;">
+<table width="*" cellspacing="0" cellpadding="4" border="0" class="tableone">
+<!-- группы объектов -->
+<tr align="center" valign="top">
+	<th scope="col" width="160" colspan="2">
+    Группы+пользователи/ Объект
+    </th>
+    
+
+<!-- объекты -->
+
+	<th scope="col" width="80">
+    <div id="obj_%{$obj.id}%" title="Объект %{$obj.name|escape}%|%{$obj.description|escape}%">%{$obj.name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#obj_%{$obj.id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </th>
+
+
+    
+</tr>
+<!-- группы пользователей + пользователи -->
+%{section name=usec loop=$u}%
+<tr align="left" valign="top">
+	<!-- группы пользователей -->
+    %{if $u[usec].to_change}%
+    <td width="80" rowspan="%{$u[usec].users_count}%">
+    <!--  -->
+    <div id="ug_%{$u[usec].id}%" title="Группа пользователей %{$u[usec].g_name|escape}%|%{$u[usec].g_description|escape}%" style="font-weight:bold;">%{$u[usec].g_name}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#ug_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    %{/if}%
+    
+    <!-- пользователи -->
+    <td width="80">
+    <div id="u_%{$u[usec].id}%" title="Пользователь %{$u[usec].login|escape}%|%{if $u[usec].group_id==3}%%{$u[usec].name_d|escape}%%{else}%%{$u[usec].name_s|escape}%%{/if}%" style="font-weight:bold;">%{$u[usec].login}%</div>
+    <script type="text/javascript">
+	$(function(){
+		$("#u_%{$u[usec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    </td>
+    
+    <!-- права пользователей по объектам -->
+   %{section name=rsec loop=$u[usec].rights_arr}%
+	<td width="*" align="center" title="Пользователь %{$u[usec].login}%| Права на объект %{$u[usec].rights_arr[rsec].object_name}%" id="column_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%">
+    	<script type="text/javascript">
+		$(function(){
+			$("#column_%{$u[usec].rights_arr[rsec].object_id}%_%{$u[usec].id}%").cluetip({
+			  splitTitle: "|"
+			});
+		});
+		</script>
+    	%{section name=rrsec loop=$u[usec].rights_arr[rsec].rights}%
+        	%{if $u[usec].rights_arr[rsec].rights[rrsec].has_access}%
+            
+            <input type="hidden" value="1" name="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" id="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" />
+            <div id="right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" class="active">
+            %{else}%
+             <input type="hidden" value="0" name="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" id="state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" />
+            
+            <div id="right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" class="inactive">
+            %{/if}%
+            %{$u[usec].rights_arr[rsec].rights[rrsec].letter}%
+           
+            %{if $u[usec].rights_arr[rsec].rights[rrsec].has_access}%
+            </div>
+            %{else}%
+            </div>
+            %{/if}%
+            <input type="hidden" value="0" name="do_edit_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" id="do_edit_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%" />
+            
+            <script type="text/javascript">
+			$(function(){
+				
+				
+				
+				$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").bind("mousemove",function(){
+					$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").css("cursor","pointer");
+				});
+				$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").bind("mouseout",function(){
+					$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").css("cursor","arrow");
+				});
+				
+				$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").bind("click",function(){
+					//запускаем переключатель редактирования
+					$("#do_edit_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").attr("value",1);
+					
+					
+					//меняем режим права
+					if($("#state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").attr("value")==0){
+						$("#state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").attr("value",1);
+						$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").removeClass("inactive");
+						$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").removeClass("inactive_changed");
+						
+						$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").addClass("active_changed");
+					}else{
+						$("#state_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").attr("value",0);
+						$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").removeClass("active");
+						$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").removeClass("active_changed");
+						
+						$("#right_%{$u[usec].rights_arr[rsec].rights[rrsec].letter}%_%{$u[usec].rights_arr[rsec].rights[rrsec].object_id}%_%{$u[usec].id}%").addClass("inactive_changed");
+					}
+						
+				});
+			});
+			</script>
+            
+        %{/section}%
+    </td>
+    
+    %{/section}%
+</tr>
+
+
+%{/section}%
+</table>
+</div>
+<br />

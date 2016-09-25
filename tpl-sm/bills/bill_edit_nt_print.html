@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<link href="/tpl-sm/bills/print.css?i=1" rel="stylesheet" type="text/css" />
+<title>%{$SITETITLE}%</title>
+
+
+<style>
+ 
+
+</style>
+</head>
+
+<body>
+
+
+
+
+<table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr align="left" valign="top">
+<td width="35%">
+<img src="/img/print/%{$bill.org.print_logo}%"  border="0" width="75" height="68"   />
+</td>
+<td valign="middle" align="right" class=" " style="border:1px solid black;">
+   %{$bill.opf.full_name}% %{strip}%
+ %{if $print_org_fact.print_name!=""}%
+    %{$print_org_fact.print_name}% 
+    %{else}%
+    "%{$print_org_fact.full_name}%" 
+    %{/if}%%{/strip}%,<br />
+ ИНН %{$bill.org.inn}%, КПП %{$bill.org.kpp}%, <br />
+%{$bill.org.legal_address}%
+																								
+
+
+</td>
+
+</tr>
+</table>
+
+
+<h1 style=" text-align:center; border-bottom:none; text-decoration:underline;">СЧЕТ № %{$bill.supplier_bill_no}% от %{$bill.pdate_print}%</h1>
+
+
+ 
+
+<table width="100%" border="0" cellpadding="5" cellspacing="0">
+ 
+
+
+<tr align="left" valign="top">
+	<td width="80" >
+    Получатель платежа:					
+    </td>
+    <td width="*"   style="border-bottom:1px solid black;">
+      %{$bill.opf.full_name}%
+    
+    
+     %{if $print_org_fact.print_name!=""}%
+    %{$print_org_fact.print_name}% 
+    %{else}%
+    "%{$print_org_fact.full_name}%" 
+    %{/if}%, ИНН %{$bill.org.inn}%, КПП %{$bill.org.kpp}%, 
+    
+    р/с %{$bill.bd_print.rs}%,
+    к/с %{$bill.bd_print.ks}%,
+    БИК %{$bill.bd_print.bik}%,
+    %{$bill.bd_print.bank}%,
+    г. %{$bill.bd_print.city}%
+    
+    </td>
+	
+</tr>
+
+
+
+<tr align="left" valign="top">
+	<td width="80"    >
+    Плательщик:					
+					
+
+    </td>
+    <td width="*"  style="border-bottom:1px solid black;">
+     %{$bill.si_opf.full_name}%
+    %{if $bill.supplier.print_name!=""}%
+    %{$bill.supplier.print_name}% 
+    %{else}%
+    "%{$bill.supplier.full_name}%" 
+    %{/if}%, ИНН %{$bill.supplier.inn}%, КПП %{$bill.supplier.kpp}%, %{$bill.supplier.legal_address}%
+    </td>
+	
+</tr>
+
+
+<tr align="left" valign="top">
+	<td width="80"    >
+    Грузополучатель:					
+					
+
+    </td>
+    <td width="*"  style="border-bottom:1px solid black;">
+     %{if $bill.suppliers_are_equal==1}%
+    
+         %{$bill.si_opf.full_name}%
+        %{if $bill.supplier.print_name!=""}%
+        %{$bill.supplier.print_name}% 
+        %{else}%
+        "%{$bill.supplier.full_name}%" 
+        %{/if}%, ИНН %{$bill.supplier.inn}%, КПП %{$bill.supplier.kpp}%, %{$bill.supplier.legal_address}%
+        
+      %{else}%
+    
+          
+      
+      %{if $bill.ship_supplier.print_name!=""}%
+      %{$bill.ship_supplier.print_name}% 
+      %{else}%
+       %{$bill.ship_si_opf.full_name}%
+      "%{$bill.ship_supplier.full_name}%" 
+      %{/if}%, ИНН %{$bill.ship_supplier.inn}%, КПП %{$bill.ship_supplier.kpp}%, %{$bill.ship_supplier.legal_address}%
+
+    
+    %{/if}%   
+    </td>
+	
+</tr>
+
+</table>
+ 
+   
+<br />
+
+
+
+
+
+%{section name=pospossec loop=$positions}%
+
+%{if $smarty.section.pospossec.first}%
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="tpos" >
+<thead>
+<tr align="center" valign="top">
+	<th width="30">
+    №		
+    </th>
+    <th width="*">
+    
+	Предмет счета
+    </th>
+    <th width="50">
+    
+    Кол-во</th>
+    <th width="35">
+    			Ед.	
+    </th>
+    <th width="60">
+     	Цена	
+     </th>
+     <th width="70">
+     
+     			Сумма				
+	</th>                
+
+</tr>
+</thead>
+<tbody >
+
+
+%{/if}%
+
+
+
+
+
+
+
+
+<tr align="center" valign="top">
+	<td width="30">
+     %{$smarty.section.pospossec.index+1}%		
+    </td>
+    <td width="*" align="left">
+    
+	 %{$positions[pospossec].position_name}%
+    </td>
+    <td width="50" align="right">
+    	 %{$positions[pospossec].quantity}%
+  
+     </td>
+    <td width="35" align="left">
+    			%{$positions[pospossec].dim_name}%
+    </td>
+    <td width="60" align="right">
+     	%{$positions[pospossec].price_pm}%	
+     </td>
+     <td width="70" align="right">
+     
+     		%{$positions[pospossec].total}%			
+	</td>     
+</tr>
+
+%{if $positions[pospossec].break_after and !$smarty.section.pospossec.last}%
+
+ 
+</tbody>
+</table>
+<div style="page-break-after:always;">&nbsp;</div>
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="tpos" >
+<thead>
+<tr align="center" valign="top">
+	<th width="30">
+    №		
+    </th>
+    <th width="*">
+    
+	Предмет счета
+    </th>
+    <th width="50">
+    
+    Кол-во</th>
+    <th width="35">
+    			Ед.	
+    </th>
+    <th width="60">
+     	Цена	
+     </th>
+     <th width="70">
+     
+     			Сумма				
+	</th>                
+
+</tr>
+</thead>
+<tbody >
+%{/if}%
+
+%{if $smarty.section.pospossec.last}%
+<tr align="left" valign="top">
+<td width="30">&nbsp;
+    
+    </td>
+    <td width="*" align="left">&nbsp;
+    
+ 
+    </td>
+    <td width="50" align="right">&nbsp;
+     
+  
+     </td>
+    <td width="35" align="left">
+    		 
+    </td>
+    <td width="60" align="right">
+      
+     </td>
+     <td width="70" align="right">
+     
+     	 	
+	</td>    
+</tr> 
+
+
+<tr align="left" valign="top">
+<td width="*" colspan="5">
+   Итого
+    </td>
+    
+     <td width="70" align="right">
+     
+     	%{$total_cost}% 	
+	</td>    
+</tr>
+
+<tr align="left" valign="top">
+<td width="*" colspan="5">
+    В том числе НДС
+    </td>
+    
+     <td width="70" align="right">
+     
+     	%{$total_nds}% 	
+	</td>    
+</tr>
+<tr align="left" valign="top">
+<td width="*" colspan="5">
+    Всего к оплате
+    </td>
+    
+     <td width="70" align="right">
+     
+     	%{$total_cost}% 	
+	</td>    
+</tr> 
+</tbody>
+</table>
+<!--<div style="float:right; text-align:right; padding-right:0px; ">
+<strong>Итого:&nbsp;</strong><span id="positions_cost">%{$total_cost}%</span><br />
+<strong>В том числе НДС:&nbsp;</strong><span id="positions_nds">%{$total_nds}%</span><br />
+
+<strong>Всего к оплате:&nbsp;</strong><span id="positions_cost">%{$total_cost}%</span> 
+</div>-->
+
+<br clear="all" />
+
+%{/if}%
+
+
+ 
+
+%{/section}%
+
+
+
+
+ 
+
+
+																																			
+
+<h2 style="border-bottom:none">К оплате: %{$total_cost_rub_propis}% %{$total_cost_kop_propis}%, в т.ч. НДС %{$total_nds}% руб.	</h2>
+
+
+
+
+
+<div style="page-break-inside:avoid !important;  /*border:1px solid blue;*/">
+
+%{if $printmode==2}%
+<div style="position:relative; z-index:1; width:auto; height:100px; border:0px solid green;">
+%{/if}%
+
+<p>
+Генеральный директор: %{$bill.org.chief}%
+
+</p>
+
+<p>
+Исполнитель: %{$bill.org.cont}%
+
+</p>
+
+ 
+
+
+%{if $printmode==2}%
+<div style="position:absolute; z-index:-2; width:150px; height:150px; left:380px; top:-70px; border: 0px solid red;   "><img src="%{$bill.org.print_sign_dir}%" border=0 alt="" />
+</div>
+
+
+<div style="position:absolute; z-index:-1;   width:160px; height:160px; left:500px; top:-45px;  border: 0px solid yellow;  "><img src="/img/print/%{$bill.org.print_print}%" width="160" height="158" border=0 alt="" /></div>
+
+
+</div>
+
+%{/if}%
+</div>
+
+%{if $smarty.section.pospossec.total>10 and $smarty.section.pospossec.total<39}%
+<div style="page-break-after:always;">&nbsp;</div>
+%{/if}%
+
+
+ <div class="foot" >
+
+%{$bill.org.bill_comments}%																													
+
+</div>
+ 
+
+
+
+</body>
+</html>

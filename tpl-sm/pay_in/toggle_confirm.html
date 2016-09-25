@@ -1,0 +1,166 @@
+
+<td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% id="pay_inv_status%{$prefix}%_%{$items[rowsec].id}%">
+
+%{if $item.status_id==3}%
+   
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="pay_deaunnul%{$prefix}%_%{$item.id}%" />
+    %{/if}%
+%{elseif $item.is_confirmed==0}%
+   
+    %{if $can_confirm}%
+    <input type="button" value="Утвердить" id="pay_confirm%{$prefix}%_%{$item.id}%" />
+    %{/if}% 
+    %{else}%
+   
+    %{if  ($can_confirm and $item.user_confirm_id==$user_id) or $can_super_confirm}%
+    <input type="button" value="Не утвердить" id="pay_confirm%{$prefix}%_%{$item.id}%" />
+    %{/if}% 
+%{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}%   %{$item.confirm_pdate}%
+    
+   
+    <script type="text/javascript">
+	$(function(){
+		 %{if $can_confirm or $can_super_confirm}%
+		$("#pay_confirm%{$prefix}%_%{$item.id}%").bind("click",function(){
+			//
+			
+			%{if $item.is_confirmed==0 and $item.can_confirm==false}%
+			alert("Невозможно утвердить входящую оплату. Причина: %{$item.can_confirm_reason}%.");
+			return false;
+			%{/if}%
+			
+			
+			
+			%{if $item.is_confirmed==0}%
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					"id": "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 // alert(data);
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить входящую оплату. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния входящей оплаты. Пожалуйста, попытайтесь утвердить входящую оплату снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			
+			
+			if(can_ret==false) return can_ret;
+			%{elseif $item.is_confirmed==1}%
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					"id": "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение входящей оплаты. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния входящей оплаты. Пожалуйста, попытайтесь утвердить входящую оплату снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			
+			
+			if(can_ret==false) return can_ret;
+			%{/if}%
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm",
+				  "id":"%{$item.id}%",
+				  "shorter":"%{$shorter}%"
+			  },
+			  beforeSend: function(){
+					$("#pay_item_row%{$prefix}%_%{$item.id}%").html('<td colspan="%{if $shorter==0}%13%{else}%14%{/if}%"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+				//alert(data);
+				 $("#pay_item_row%{$prefix}%_%{$item.id}%").html(data);
+				
+			  },
+			  error: function(xhr, status){
+				//  alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+		%{/if}%
+		
+		 %{if $item.status_id==3 and $can_restore}%
+		  $("#pay_deaunnul%{$prefix}%_%{$item.id}%").bind("click",function(){
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$item.id}%",
+					  "bill_id":"%{$bill_id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#pay_item_row%{$prefix}%_%{$item.id}%").html('<td colspan="%{if $shorter==0}%13%{else}%14%{/if}%"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					  // alert(data);
+					   $("#pay_item_row%{$prefix}%_%{$item.id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+    
+    
+   </td> 

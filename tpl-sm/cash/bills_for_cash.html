@@ -1,0 +1,15 @@
+%{foreach from=$bills_to_cash item=item}%
+<tr align="left" valign="top">
+	<td width="50">%{$item.code}%</td>
+    <td width="50">%{$item.supplier_bill_no}%</td>
+    <td width="*">
+    %{$item.opf_name}% %{$item.supplier_name}%
+    </td>
+    <td width="50">%{$item.total_cost}%</td>
+    <td width="24">
+    <input type="checkbox" id="%{$fieldname}%bill_checked_%{$item.id}%" value="%{$item.id}%" %{if $item.is_checked}% checked="checked"%{/if}% />
+    
+    </td>
+
+</tr>
+%{/foreach}%

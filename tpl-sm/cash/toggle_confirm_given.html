@@ -1,0 +1,134 @@
+%{if $item.status_id==3}%
+<nobr><strong>не утв.</strong></nobr>
+%{elseif $item.is_confirmed_given==0}%
+    <nobr><strong>выдача не утв.</strong></nobr>
+    %{if $can_confirm_given}%
+    <input type="button" value="Утвердить" id="confirm_shipping%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed==0}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{else}%
+    <nobr><strong>выдача утв.</strong></nobr>
+    
+    %{if  ($can_unconfirm_given )  }%
+    
+    <input type="button" value="Не утвердить" id="confirm_shipping%{$prefix}%_%{$item.id}%" />
+    
+    %{/if}% 
+%{/if}%
+    <br />
+
+    %{$item.confirmed_given_name}% %{$item.confirmed_given_pdate}%
+    
+    %{if $can_confirm_given  }%
+    <script type="text/javascript">
+	$(function(){
+		$("#confirm_shipping%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			
+			%{if $item.is_confirmed_given==1}%
+			//сделать проверку по аджакс
+			
+			
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_given",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение выдачи суммы по расходу %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния расхода. Пожалуйста, попытайтесь сохранить расход снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			if(can_ret){
+			if(window.confirm("Вы уверены, что хотите снять утверждение  выдачи суммы расхода %{$item.code}%?")){
+			%{elseif $item.is_confirmed_given==0}%
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm_given",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить  выдачу суммы  расхода %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния расхода. Пожалуйста, попытайтесь сохранить расход снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			if(can_ret){	
+			%{/if}%
+				
+				
+				
+				
+				$.ajax({
+				  async: true,
+				  url: "/js/%{$filename}%",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_confirm_given",
+					  "id":"%{$item.id}%",
+							"shorter":"%{$shorter}%"
+				  },
+				  beforeSend: function(){
+						$("#pay_item_row%{$prefix}%_%{$items[rowsec].id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#pay_item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+					
+					
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			  
+			  
+			%{if $item.is_confirmed_given==1 }%
+			}
+			}else{
+					
+			}
+			%{elseif $item.is_confirmed_given==0 }%
+			}
+			%{/if}%
+		  	
+			
+			
+		  
+		});
+	});
+	</script>
+    %{/if}%
+    
+    

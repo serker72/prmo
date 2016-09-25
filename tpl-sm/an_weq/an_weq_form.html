@@ -1,0 +1,57 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs1").tabs({
+  	cookie: { expires: 14, name: 'dsTabWeq' }
+  });
+});
+</script>
+
+
+<div id="tabs1">
+  <ul>
+  	  %{if $has_3}%
+    <li><a href="#tabs1-2">Заявки без автовыравнивания</a></li>
+     %{/if}%
+  
+  
+      %{if $has_1}%
+    <li><a href="#tabs1-1">Входящие счета без автовыравнивания</a></li>
+     %{/if}%
+     
+      %{if $has_2}%
+     <li><a href="#tabs1-3">Исходящие счета без автовыравнивания</a></li>
+     %{/if}%
+  
+  </ul>
+   %{if $has_3}%
+  <div id="tabs1-2">
+    <p>
+    
+    %{$log3}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+  
+   %{if $has_1}%
+  <div id="tabs1-1">
+    <p>
+    
+    %{$log}%
+    
+    </p>
+  </div>
+  %{/if}%
+   %{if $has_2}%
+   <div id="tabs1-3">
+    <p>
+    
+    %{$log2}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

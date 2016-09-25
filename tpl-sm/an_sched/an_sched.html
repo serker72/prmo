@@ -1,0 +1,193 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	  VidgetMultiReport('%{$prefix}%statuses', 'Выберите статус', 'Все статусы', 'Cнять выбор', '# из # выбрано', "Выбраны статусы: ", 'Статусы не выбраны' );
+	  
+	  VidgetMultiReport('%{$prefix}%kinds', 'Выберите вид', 'Все виды', 'Cнять выбор', '# из # выбрано', "Выбраны виды: ", 'Виды не выбраны' );
+	 
+	
+});
+</script>
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+</style>
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form2">
+<!--<input type="hidden" name="print" value="0" id="print" />-->
+ 
+
+
+%{include file="every_help_dialog.html" filename="an_sched.htm" prefix="" description="отчет Планировщик"  style="float:right;  margin-right:0px;"}%
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:10px; white-space:nowrap; overflow:hidden;">
+  
+
+    <label for="%{$prefix}%kinds" class="statuses_report_label">Виды:</label>
+    <select id="%{$prefix}%kinds" name="%{$prefix}%kinds[]" multiple="multiple">
+    <option value="3" %{if $kind_id_3==1 or $all_kinds==1}% selected%{/if}% >Встречи</option>
+    <option value="1" %{if $kind_id_1==1 or $all_kinds==1}% selected%{/if}% >Задачи</option>
+    <option value="5" %{if $kind_id_5==1 or $all_kinds==1}% selected%{/if}% >Заметки</option>
+    <option value="4" %{if $kind_id_4==1 or $all_kinds==1}% selected%{/if}% >Звонки</option>
+     
+    <option value="2" %{if $kind_id_2==1 or $all_kinds==1}% selected%{/if}% >Командировки</option>
+     
+    </select>
+    
+    
+    
+    &nbsp;&nbsp;
+    
+    <div id="%{$prefix}%kinds_caption" class="statuses_report_caption">
+    
+    </div>
+
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:10px; white-space:nowrap; overflow:hidden;">
+
+ 
+
+
+    <label for="%{$prefix}%statuses" class="statuses_report_label">Статусы:</label>
+    <select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+    <option value="18" %{if $status_id_18==1 or $all_statuses==1}% selected%{/if}% >Создан(а)</option>
+    <option value="23" %{if $status_id_23==1 or $all_statuses==1}% selected%{/if}% >Ждет выполнения</option>
+    <option value="24" %{if $status_id_24==1 or $all_statuses==1}% selected%{/if}% >Выполняется</option>
+    <option value="25" %{if $status_id_25==1 or $all_statuses==1}% selected%{/if}% >Отложена</option>
+     
+    <option value="10" %{if $status_id_10==1 or $all_statuses==1}% selected%{/if}% >Выполнен(а)</option>
+    <option value="26" %{if $status_id_26==1 or $all_statuses==1}% selected%{/if}% >Ждет контроля</option>
+     
+    
+     
+    <option value="2"  %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}%>Утвержден</option>
+    <option value="22" %{if $status_id_22==1 or $all_statuses==1}% selected%{/if}% >Запланирован</option>
+     
+    <option value="3"  %{if $status_id_3==1 or $all_statuses==1}% selected%{/if}%>Аннулирован</option>
+    </select>
+    
+    
+    
+    &nbsp;&nbsp;
+    
+    <div id="%{$prefix}%statuses_caption" class="statuses_report_caption">
+    
+    </div>
+
+
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:10px; white-space:nowrap;">
+<strong>Период:</strong>
+  &nbsp;&nbsp; 
+
+<label for="pdate_1">с:</label><input type="text" id="pdate_1" name="pdate_1" value="%{$pdate_1}%" size="10" maxlength="10" />
+ &nbsp;&nbsp;
+<label for="pdate_2">по:</label><input type="text" id="pdate_2" name="pdate_2" value="%{$pdate_2}%" size="10" maxlength="10" />
+
+</div>
+
+
+
+ 
+
+
+<div style="float:left;  margin-right:00px; white-space:nowrap; overflow:hidden;">
+ 
+        
+        
+
+<input type="image" name="doSub" id="doSub" src="/img/icons/old-zoom-original.png" border="0" alt="Найти" title="Найти" style="display:block; float:left; margin-right:10px;" />
+ 
+
+<a href="an_sched.php" style="display:block; float:left; margin-right:10px;" ><img src="/img/icons/old-zoom-deselect.png" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" border="0"  /></a>
+
+  
+  %{if $can_print}%
+  
+   
+  
+  <a href="#" id="print_table" style="display:block; float:left; margin-right:0px;" ><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	  
+	  
+	  
+	  
+	  $("#print_table").bind("click",function(){
+			// $("#print").val(1);
+	 		//alert('doSub=1&print=1&'+$("#rep_form2").serialize());
+			 
+			
+		 	 window.open('an_sched.php?'+'doSub=1&print=1&'+$("#rep_form2").serialize(), 'an_sched','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		   
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+  
+ 
+</div> 
+<br clear="all" />
+
+ 
+ 
+</form>
+ 
+
+
+<small>
+1. <strong>Фильтр Период</strong>: поиск записей планировщика осуществляется по попаданию в выбранный период следующей даты:<br>
+<ul>
+
+<li><strong>Встречи</strong> - дата  встречи</li>
+<li><strong>Задачи</strong> - крайний срок выполнения задачи</li>
+<li><strong>Заметки</strong> - дата создания заметки</li>
+<li><strong>Звонки</strong> - дата звонка</li>
+<li><strong>Командировки</strong> - дата начала командировки</li>
+
+ </ul>
+ 
+ </small>
+ <br />
+
+
+
+
+
+%{if $do_it}%
+%{include file="an_sched/an_table.html"}%  
+%{/if}%

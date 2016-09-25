@@ -1,0 +1,46 @@
+<h1>Движение денежных средств</h1>
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Банк:</strong><br />
+
+%{section name=obsec loop=$bank_names_selected}%
+%{$bank_names_selected[obsec]}%%{if $smarty.section.obsec.last==false}%,%{/if}%
+%{/section}%
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Период</strong> 
+<strong>с:</strong><br />
+%{$pdate1}%</div>
+
+<div style="float:left; margin-right:20px;">
+
+	<strong>по:</strong><br />
+    %{$pdate2}%
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+<script type="text/javascript">
+$(function(){
+	$("table.blacktable").attr('border','1');
+});
+</script>
+
+
+%{if $do_it}%
+%{include file="an_ds/an_ds_table.html"}%
+%{/if}%
+
+
+
+
+
+
+

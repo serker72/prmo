@@ -1,0 +1,704 @@
+<a href="#" id="cash_exped_create" class="reestr_exped reestr_inactive reestr_right_button24" data-comment="создать экспедирование..." ></a>
+
+<div id="cash_exped_warning_dialog" title="Внимание!" style="display:none;">
+    Внимание!<br />
+    По данному счету
+    
+    %{section name=eisec loop=$another_nested_e}%%{/section}%
+    %{if $smarty.section.eisec.total>0}%
+    и другим счетам: 
+    %{section name=eisec loop=$another_nested_e}%
+        <a href="ed_bill.php?id=%{$another_nested_e[eisec].id}%&action=1" target="_blank">№ %{$another_nested_e[eisec].code}%</a>%{if !$smarty.section.eisec.last}%, %{/if}%
+    %{/section}%
+    %{/if}%
+    
+     уже создано экспедирование:
+    %{section name=esec loop=$exped}%%{/section}%
+    
+    %{section name=esec loop=$exped}%
+         <a href="ed_cash.php?id=%{$exped[esec].id}%&action=1" target="_blank">№ %{$exped[esec].code}%</a>%{if !$smarty.section.esec.last}%, %{/if}%
+    %{/section}%<br />
+    <br />
+    Вы действительно хотите создать экспедирование?
+</div>
+
+
+
+<div id="cash_exped_dialog" title="Экспедирование" style="display:none;">
+	 
+      <div style="float:left; margin-right:10px;">
+    <b>Счета:</b><br />
+    
+    %{include file="bills/cash_bills.html" fieldname="cash_exped_"}%
+    
+    </div>
+    
+     <div style="float:left; margin-right:0px;">
+   <br />
+<br />
+
+    <strong>Время работы:</strong><br />
+   
+    <label for="time_from_h">&nbsp;&nbsp;&nbsp;с:</label>
+    <select id="time_from_h" style="width:60px">
+        %{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+    </select>час. 
+    <select id="time_from_m" style="width:60px">
+        %{html_options values=$from_ms selected=$from_m output=$from_ms}%
+    </select>мин.
+  <br />
+
+    <label for="time_to_h">по:</label>
+    <select id="time_to_h" style="width:60px">
+        %{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+    </select>час. 
+    <select id="time_to_m" style="width:60px">
+        %{html_options values=$to_ms selected=$to_m output=$to_ms}%
+    </select>мин.
+    
+    <p />
+  
+    <label for="cash_exped_time">Общее время работы, час:мин</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_exped_time" value="9:00" disabled="disabled" style="width:100px;"  />
+    
+	
+    </div>
+     
+    
+  
+    
+    
+    <br clear="all" />
+    <p />
+     
+     
+    
+    <label for="cash_exped_code_id">Код оплаты:</label><br />
+
+
+    <input type="text" size="40" maxlength="255" id="cash_exped_code_id_string" value="" disabled="disabled" style="width:398px;"  />
+    <input type="hidden"  id="cash_exped_code_id" value="" />
+    
+    <input type="button" id="cash_exped_code_select" value="..." />
+    <input type="button" id="cash_exped_code_clear" value="x" />
+	<p />
+    
+    
+     
+    
+    <div style="float:left; margin-right:20px;">
+     <label for="cash_exped_number_pieces">Кол-во принятых машин:</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_exped_number_pieces" value=""  style="width:100px;"  />
+    </div>
+   
+    <br clear="all" /> 
+   <p />
+    
+    
+     <input type="checkbox" value="1" id="has_cash_exped_chief_bonus" />
+    <label for="has_cash_exped_chief_bonus">Премия руководителя:</label>
+        
+    <div id="cash_exped_chief_bonus_block" style="display:none;">
+    	<div style="float:left; margin-right:10px;">
+        
+        <input type="radio" name="cash_exped_chief_bonus" id="cash_exped_chief_bonus_500" value="500" checked />
+        <label for="cash_exped_chief_bonus_500">500 руб.</label><br>
+        <input type="radio" name="cash_exped_chief_bonus" id="cash_exped_chief_bonus_1000" value="1000"  />
+        <label for="cash_exped_chief_bonus_1000">1000 руб.</label>
+    	</div>
+		
+        <div style="float:left; margin-right:10px;">
+        <label for="cash_exped_chief_bonus_reason">причина:</label><br>
+        <textarea id="cash_exped_chief_bonus_reason" cols="40" rows="2"></textarea>
+        </div>
+    
+    </div>
+    
+    <p />
+    <br clear="all" />
+    
+    
+    
+    
+    <label for="cash_exped_driver_id">Экспедитор груза:</label><br />
+
+
+    <input type="text" size="40" maxlength="255" id="cash_exped_driver_id_string" value="" disabled="disabled" style="width:398px;"  />
+    <input type="hidden"  id="cash_exped_driver_id" value="" />
+    
+    <input type="button" id="cash_exped_driver_select" value="..." />
+    <input type="button" id="cash_exped_driver_clear" value="x" />
+	<p />
+    
+    
+    <label for="cash_exped_responsible_user_id">Сотрудник-получатель платежа:</label><br />
+
+<select id="cash_exped_responsible_user_id"   style="width:400px;">
+
+</select>
+    <p />
+    
+    
+    <label for="cash_exped_value">Сумма, руб.:</label><br />
+    <input type="text" size="40" maxlength="255" id="cash_exped_value" value="0" disabled="disabled" style="width:100px;"  />
+    
+	<p />
+    
+    
+  
+    
+    
+	
+</div>
+
+
+<script type="text/javascript">
+
+//корректность времен
+function IsExCorrectTime(){
+	res=true;
+	
+	//час с >  часа по
+	//или если час с= час по и минута с<минуты по
+	//иначе - неверно!!!!
+	from_h=parseInt($("#time_from_h").val());
+	from_m=parseInt($("#time_from_m").val());
+	
+	to_h=parseInt($("#time_to_h").val());
+	to_m=parseInt($("#time_to_m").val());
+	
+	if( ( (to_h>from_h) ||
+		((from_h==to_h) && (from_m<to_m)) )
+		){
+			$("#time_from_h").removeClass("wrong");	
+			$("#time_from_m").removeClass("wrong");	
+			$("#time_to_h").removeClass("wrong");	
+			$("#time_to_m").removeClass("wrong");
+			
+		}else{
+			
+			$("#time_from_h").addClass("wrong");	
+			$("#time_from_m").addClass("wrong");	
+			$("#time_to_h").addClass("wrong");	
+			$("#time_to_m").addClass("wrong");	
+			alert("Время работы выбрано некорректно!");	
+			
+			res=res&&false;	
+		}
+	
+	 
+	return res;
+	
+}
+ 
+ 
+ 
+function IsExCorrectCode(){
+	res=true;
+	if($("#cash_exped_code_id").val().length==0){
+		$("#cash_exped_code_id_string").addClass("wrong");	
+		alert("Не выбран код оплаты!");
+		$("#cash_exped_code_select").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_exped_code_id_string").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+ 
+
+function IsExCorrectNumberPieces (){
+	res=true;
+	if(
+		($("#cash_exped_number_pieces").val().length==0)||
+		(isNaN($("#cash_exped_number_pieces").val()))||
+		(parseInt($("#cash_exped_number_pieces").val())<=0)||
+		
+		(Math.round($("#cash_exped_number_pieces").val())!=$("#cash_exped_number_pieces").val())
+	){
+		$("#cash_exped_number_pieces").addClass("wrong");	
+		//alert("Некорректо задано количество мест!");
+		$("#cash_exped_number_pieces").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_exped_number_pieces").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+ 
+function IsExCorrectDriver(){
+	res=true;
+	if($("#cash_exped_driver_id").val().length==0){
+		$("#cash_exped_driver_id_string").addClass("wrong");	
+		alert("Не выбран экспедитор!");
+		$("#cash_exped_driver_select").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_exped_driver_id_string").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+function IsExCorrectResponsibleUser(){
+	res=true;
+	if(($("#cash_exped_responsible_user_id").val()==null)||($("#cash_exped_responsible_user_id").val()==0)||($("#cash_exped_responsible_user_id").val()==undefined)){
+		$("#cash_exped_responsible_user_id").addClass("wrong");	
+		alert("Выберите сотрудника-получателя платежа!");
+		$("#cash_exped_responsible_user_id").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_exped_responsible_user_id").removeClass("wrong");
+	}
+	
+	return res;
+}
+
+
+function IsExCorrectChief_bonus(){
+	res=true;
+	if(
+		$("#has_cash_exped_chief_bonus").prop("checked")&&($("#cash_exped_chief_bonus_reason").val().length<3)
+	){
+		$("#cash_exped_chief_bonus_reason").addClass("wrong");	
+		alert("Введите причину премии руководителя!");
+		$("#cash_exped_chief_bonus_reason").focus();
+		res=res&&false;	
+	}else{
+		$("#cash_exped_chief_bonus_reason").removeClass("wrong");
+	}
+	
+	return res;
+ 
+}
+
+//контроль выбора хотя бы одного счета
+function IsExBillSelected(){
+	res=true;
+	
+	if($("input[type=checkbox][id^=cash_exped_bill_checked_]:checked").length==0){
+		$("#cash_exped_bills_list").addClass("wrong");	
+		alert("Выберите хотя бы один счет!");
+		res=res&&false;	
+	}else{
+		$("#cash_exped_bills_list").removeClass("wrong");	
+	}
+	 
+	return res;
+}
+
+
+function CalcExCashSum(){
+	ret=true;
+	
+ 
+	if(ret) ret=ret&& IsExCorrectNumberPieces();
+	if(ret) ret=ret&& IsExCorrectChief_bonus();
+	
+	if(ret){
+		//считаем сумму
+		sum=0;
+		
+		 
+		//кол-во мест
+		np=parseInt($("#cash_exped_number_pieces").val());
+		sum+=np*1000;
+		
+		 
+		//премия рук-ля
+		if($("#has_cash_exped_chief_bonus").prop("checked")){
+			sum+=parseFloat($("input[id^=cash_exped_chief_bonus_]:checked").val());
+		}
+		
+		
+		
+		$("#cash_exped_value").val(sum);	
+	}
+}
+
+function CalcExWorkTime(){
+	times='';
+	
+	//dateObj = new Date(year, month, date[, hours, minutes, seconds, ms] )
+	
+	date_to=new Date(1970,1,1, $("#time_to_h").val(), $("#time_to_m").val(), 0,0);
+	date_from=new Date(1970,1,1, $("#time_from_h").val(), $("#time_from_m").val(), 0,0);
+	//alert(date_from); alert(date_to);	
+	
+	date_in=date_to.getTime()-date_from.getTime();
+	hours=Math.floor(date_in/1000/60/60);
+	mins=Math.floor( (date_in-hours*1000*60*60)/1000/60);
+	
+	//alert(mins);
+	
+	minss=mins+'';
+	if(minss.length==1) minss='0'+minss;
+	
+	times=hours+':'+minss;
+	
+	$("#cash_exped_time").val(times);
+}
+
+
+function AddCashEx(){
+	ret=true;
+	
+	if(ret) ret=ret&& IsExCorrectTime();
+	
+	if(ret) ret=ret&&IsExBillSelected();
+ 	if(ret) ret=ret&& IsExCorrectCode();
+	if(ret) ret=ret&& IsExCorrectNumberPieces();
+	
+	if(ret) ret=ret&& IsExCorrectChief_bonus();
+	 
+	if(ret) ret=ret&& IsExCorrectDriver();
+	if(ret) ret=ret&& IsExCorrectResponsibleUser();
+	
+	
+	if(ret){
+		
+		cash_delivery_chief_bonus=0;
+		has_cash_delivery_chief_bonus=0; cash_delivery_chief_bonus_reason='';
+		if($("#has_cash_exped_chief_bonus").prop("checked")){
+			cash_delivery_chief_bonus=parseFloat($("input[id^=cash_exped_chief_bonus_]:checked").val());
+			has_cash_delivery_chief_bonus=1;
+			cash_delivery_chief_bonus_reason=$("#cash_exped_chief_bonus_reason").val();
+		}
+		
+		
+		var selected_bills=new Array();
+		$("input[type=checkbox][id^=cash_exped_bill_checked_]:checked").each(function(index, el) {
+            selected_bills.push($(el).val());
+        }); 
+		
+		$.ajax({
+			async: true,
+			url: "/js/cash.php",
+			type: "POST",
+			data:{
+				"action":"add_cash_exped",
+				"bill_id":$("#id").val(),
+				"kind_id":3,
+				 
+				"number_pieces":$("#cash_exped_number_pieces").val(),
+				
+				"has_chief_bonus":has_cash_delivery_chief_bonus,
+				"chief_bonus":cash_delivery_chief_bonus,
+				"chief_bonus_reason":cash_delivery_chief_bonus_reason,
+				
+				"driver_id":$("#cash_exped_driver_id").val(),
+				
+				"responsible_user_id":$("#cash_exped_responsible_user_id").val(),
+				"code_id":$("#cash_exped_code_id").val(),
+				"value":$("#cash_exped_value").val(),
+				"selected_bills[]":selected_bills,
+				
+				"time_from_h":$("#time_from_h").val(),
+				"time_from_m":$("#time_from_m").val(),
+				"time_to_h":$("#time_to_h").val(),
+				"time_to_m":$("#time_to_m").val()
+			},
+			beforeSend: function(){
+			  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			},
+			success: function(data){
+			   //alert(data);
+				//$("#code_list").html(data);
+				alert("Экспедирование по счету создано!");
+			  	location.reload();
+			},
+			error: function(xhr, status, m){
+				  //alert('e '+status+m);  
+			}	 
+		});
+		
+	}
+	
+	return ret;
+}
+
+$(function(){
+	$("#time_from_h").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	
+	$("#time_from_m").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	
+	$("#time_to_h").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	
+	$("#time_to_m").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectTime();
+		if(ret) CalcExWorkTime();
+		return ret;
+	});
+	 
+	 
+	$("#cash_exped_number_pieces").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectNumberPieces();
+		
+		if(ret) CalcExCashSum();
+		return ret;
+	});
+	
+	 
+	 $("#cash_exped_chief_bonus_reason").bind("change", function(){
+		ret=true;
+		
+		ret=ret&& IsExCorrectChief_bonus();
+		return ret;
+		
+		
+	});
+	
+ 
+	
+	$("input[id^=cash_exped_chief_bonus_]").bind("change", function(){
+		ret=true;
+		
+
+		if(ret) ret=ret&& IsExCorrectNumberPieces();
+		
+		if(ret) CalcExCashSum();
+		
+		return ret;
+	});
+	
+	$("#has_cash_exped_chief_bonus").bind("change", function(){
+		ret=true;
+		
+	 
+		if(ret) ret=ret&& IsExCorrectNumberPieces();
+		
+		if(ret) CalcExCashSum();
+		
+		return ret;
+		
+	});
+	
+	$("#cash_exped_chief_bonus_reason").bind("change", function(){
+		ret=true;
+		
+	 
+		if(ret) ret=ret&& IsExCorrectNumberPieces();
+		
+		if(ret) CalcExCashSum();
+		
+		return ret;
+		
+	});
+	 
+	$("#cash_exped_warning_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,		 
+		height: 250
+		
+	}); 
+	 
+	
+	$("#cash_exped_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,		 
+		height: 600,
+		buttons:{
+			"Готово": function(){
+				
+				ret=AddCashEx();
+				
+				if(ret) {
+					$(this).dialog("close");
+					//location.reload();
+				}
+					
+			},
+			"Отмента": function(){
+				
+				$(this).dialog("close");
+			}
+		}
+	});
+	
+	
+	$("#cash_exped_create").bind("click", function(){
+		
+		%{if $smarty.section.esec.total>0}%
+		$("#cash_exped_warning_dialog").dialog({
+			buttons: {"Да": function(){
+		%{/if}%
+		
+		
+			$.ajax({
+				async: true,
+				url: "/js/cash.php",
+				type: "POST",
+				data:{
+					"action":"redraw_resp_users" 
+				},
+				beforeSend: function(){
+				  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+				},
+				success: function(data){
+				   //alert(data);
+					$("#cash_exped_responsible_user_id").html(data);
+				  
+				},
+				error: function(xhr, status){
+					  //alert('e');  
+				}	 
+			});
+			
+			
+			$("#cash_exped_dialog").dialog("open");
+			
+				
+		%{if $smarty.section.esec.total>0}%
+				$("#cash_exped_warning_dialog").dialog("close");
+			},
+			"Нет": function(){
+				$("#cash_exped_warning_dialog").dialog("close");
+			}
+			}
+		});
+		$("#cash_exped_warning_dialog").dialog("open");
+		%{/if}%
+		
+			
+		return false;
+	});
+	
+	%{if $force_make_exped==1}%
+	$("#cash_exped_create").trigger("click");
+	%{/if}%
+	
+	$("#cash_exped_code_select").bind("click",function(){
+		$.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_codes",
+									  "current_id":$("#cash_exped_code_id").val()
+								  },
+								  beforeSend: function(){
+									$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#code_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							  
+							  
+		$("#code_dialog").dialog({
+			buttons: {
+				"Готово": function(){
+					field_id='cash_exped_';
+					codebuild(field_id);
+					$("#code_dialog").dialog("close"); 
+				},
+				"Отмена": function(){
+					 $("#code_dialog").dialog("close"); 
+				}
+			}
+		});
+			 
+		$("#code_dialog").dialog("open");	
+		
+	});
+	
+	$("#cash_exped_code_clear").bind("click",function(){
+		//очистка  
+		$("#cash_exped_code_id_string").attr("value","");
+		$("#cash_exped_code_id").attr("value","");
+		
+	});
+	
+	$("#has_cash_exped_chief_bonus").bind("change", function(){
+		if($("#has_cash_exped_chief_bonus").prop("checked")) $("#cash_exped_chief_bonus_block").show();
+		else  $("#cash_exped_chief_bonus_block").hide(); 
+	});
+	
+	
+	
+	$("#cash_exped_driver_select").bind("click",function(){
+		$.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_exped",
+									  "current_id":$("#cash_exped_driver_id").val()
+								  },
+								  beforeSend: function(){
+									$("#exped_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#exped_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							  
+							  
+		$("#exped_dialog").dialog({
+			buttons: {
+				"Готово": function(){
+					field_id='cash_exped_';
+					expedbuild(field_id);
+					$("#exped_dialog").dialog("close"); 
+				},
+				"Отмена": function(){
+					 $("#exped_dialog").dialog("close"); 
+				}
+			}
+		});
+			 
+		$("#exped_dialog").dialog("open");	
+		
+	});
+	
+	
+	$("#cash_exped_driver_clear").bind("click",function(){
+		//очистка  
+		$("#cash_exped_driver_id_string").attr("value","");
+		$("#cash_exped_driver_id").attr("value","");
+		
+	});
+	
+	
+});
+</script>

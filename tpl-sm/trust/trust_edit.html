@@ -1,0 +1,429 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('notes');
+});
+</script>
+
+
+
+
+<form action="ed_trust.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$ship.id}%" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$ship.bill_id}%" />
+<input type="hidden" name="current_status_id" value="%{$ship.status_id}%" />
+
+<h1 style="float:left; margin-right:10px;">Редактирование доверенности</h1>
+
+
+%{include file="every_help_dialog.html" filename="trust_edit.htm" prefix="" description="редактирование доверенности"  style="float:right; padding-top:13px;   margin-right:0px;" is_right=true}%
+
+<div style="float:right; padding-top:13px; margin-right:10px;">
+
+<input type="button" value="Файлы..." onclick="location.href='trust_files.php?trust_id=%{$ship.id}%';" style="width:70px;" />
+
+
+</div>
+<br clear="all" />
+
+<div style="float:left; margin-right:20px;">
+<strong>Номер:</strong>
+%{$ship.id}%
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Дата создания:</strong>
+
+%{$ship.pdate}% <small>создана: %{$created_by}%</small>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:10px; padding-top:5px;">
+<label for="given_no">Заданный номер:</label>
+
+<input type="text" size="10" maxlength="255" value="%{$ship.given_no}%" id="given_no" name="given_no" style="width:60px;" %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+
+</div>
+
+
+<div style="float:left; margin-right:10px; padding-top:5px;">
+<label for="pdate">Выберите сотрудника:</label>
+
+<select name="user_id" id="user_id" style="width:230px;" %{if !$can_modify}% disabled="disabled"%{/if}%>
+%{html_options values=$user_ids selected=$user_id output=$user_names}%
+</select>
+
+</div>
+
+
+<div style="float:right; margin-right:00px; min-width:120px;" id="toggle_annul">
+%{include file="trust/toggle_annul_card.html"}%
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:10px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" style="width:225px;" />
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+<!-- блок выбора поставщика -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Контрагент:</label>
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" style="width:235px;" />
+<input type="hidden"  value="%{$supplier_id}%" id="supplier_id"  />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label>
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" style="width:305px;" />
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+
+
+<label for="contract_no">Договор №</label>
+
+
+<input type="text" size="10" maxlength="255" value="%{$contract_no}%" id="contract_no_string" disabled="disabled" style="width:100px;" />
+
+<input type="hidden"  value="%{$contract_id}%" name="contract_id" id="contract_id"  disabled="disabled" />
+&nbsp;
+
+<label for="contract_pdate">от</label>
+
+<input type="text" size="10" maxlength="255" value="%{$contract_pdate}%" id="contract_pdate_string" disabled="disabled" style="width:60px;" />
+
+
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+%{include file="trust/another_pos.html"}%
+
+
+
+<br clear="all" />
+<p />
+
+<strong>Позиции счета:</strong> 
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_modify or !$can_add_positions}% disabled="disabled"%{/if}% />
+
+</td>
+<td width="50%" align="right">
+
+
+%{if $ship.is_confirmed==1}%
+
+%{if $can_print}%
+<a href="#" id="print_form" class="reestr_print  reestr_right_button24" data-comment="печать доверенности..." ></a>
+
+	<div id="print_select_dialog" title="Выберите печатную форму" style="display:none;">
+    	<input id="print_1" value="1" type="checkbox" /><label for="print_1">Форма доверенности без подписи, печати</label><br />
+
+        <input id="print_2" value="2" type="checkbox" /><label for="print_2">Форма доверенности с подписью, печатью</label>
+    </div>
+	
+    <script type="text/javascript">
+	$(function(){
+		$("#print_select_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					if($("#print_1").prop("checked")){
+						zc=window.open('ed_trust.php?action=1&id=%{$ship.id}%&print=1&printmode=1','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати распоряжения на межсклад.');
+						
+					}
+					
+					if($("#print_2").prop("checked")){
+						zc=window.open('ed_trust.php?action=1&id=%{$ship.id}%&print=1&printmode=2','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.');
+						
+					}
+					
+					 
+					$("#print_select_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#print_select_dialog").dialog("close");
+				}
+				
+			}
+		});
+		
+		$("#print_form").bind("click", function(){
+			$("#print_select_dialog").dialog("open");
+			
+			return false;
+		});
+	});
+	</script>
+
+
+	 <a href="#" id="email_documents" class="reestr_email   reestr_right_button24" data-comment="отправить доверенность на эл. почту..." ></a>
+
+	   %{include file="trust/pdf_actions.html" mode=0}%
+
+%{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати доверенности.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать доверенности..."  ></a>
+  
+  
+  <a href="#" onclick="alert('У Вас недостаточно прав для отправки доверенности на электронную почту.'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить доверенность на эл. почту..."  ></a>
+  
+ %{/if}%
+ 
+%{else}%
+<a href="#" onclick="alert('Извините, распечатать можно только утвержденную доверенность.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать доверенности..."  ></a>
+
+<a href="#" onclick="alert('Извините, отправить на электронную почту можно только утвержденную доверенность.'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить доверенность на эл. почту..." ></a>
+
+
+%{/if}%
+
+
+ </td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2"> 
+
+%{include file="trust/position_actions.html"}%
+ 
+ 
+ 
+</td>
+</tr>
+</table>
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="trust/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="trust/d_notes_dialog.html" word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1" onchange="" %{if $ship.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю</label>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/trust.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');    
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+
+
+</div>
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку доверенностей" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='trust.php?bill_id=%{$ship.bill_id}%';
+}else location.href='trust.php?bill_id=%{$ship.bill_id}%';" />
+
+</form>
+<script type="text/javascript">
+ //var frmvalidator  = new Validator("crea_form");
+ 
+ //frmvalidator.addValidation("user_id","dontselect=0","Выберите сотрудника!");
+$(function(){
+ 	function RotPos(){
+		var can_ret=true;
+ 		if($("#user_id").val()==0){
+			can_ret=false;
+			alert("Выберите сотрудника!");
+			$("#user_id").focus();
+			return false;	
+		}
+		
+		
+		
+		if($("#ship_positions_table tbody tr").length==0){
+			alert('Невозможно сохранить доверенность без позиций! Пожалуйста, укажите позиции доверенности!');
+			can_ret=false;
+			return false;
+		}
+		
+		//добавить проверки на утверждение
+		if($("#is_confirmed").prop("checked")&&("%{$ship.is_confirmed}%"=="0")){
+			$.ajax({
+				async: false,
+				url: "/js/trust.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					"id": "%{$ship.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить доверенность. Причина: "+data+"."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния доверенности. Пожалуйста, попытайтесь сохранить доверенность снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+		}
+		
+		if(!$("#is_confirmed").prop("checked")&&("%{$ship.is_confirmed}%"=="1")){
+			$.ajax({
+				async: false,
+				url: "/js/trust.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					"id": "%{$ship.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение доверенности. Причина: "+data+"."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния доверенности. Пожалуйста, попытайтесь сохранить доверенность снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+		}
+		
+		
+		return can_ret;
+	}
+	
+	$("#doEdit").bind("click",function(){
+		do_stay=false;
+		return RotPos();
+	});
+	
+	$("#doEditStay").bind("click",function(){
+		do_stay=true;
+		return RotPos();
+	});
+ });
+</script>

@@ -1,0 +1,242 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+
+
+<form action="message_compose.php" method="post" enctype="multipart/form-data" id="form_message">
+
+  %{include file="every_help_dialog.html" filename="message_new.html" prefix="_mess_new" description="Информация о выборе адресата"  style="float:right; margin-right:0px;  margin-top:0px;"}%
+    
+
+
+
+<h2>Новое сообщение</h2>
+
+
+<label for="who">Кому:</label><br />
+ <small><em>для выбора адресата начните печатать его ФИО в поле и выберите необходимого адресата из доступных вариантов, либо нажмите кнопку "..." для выбора адресата из списка.</em></small>
+ 
+<br clear="all" />
+ 
+<div style="width:100%; min-width:550px; white-space:nowrap;">    
+<input type="text" value="" id="who" name="who" size="60" maxlength="512" style="min-width:500px; width:95%;"  />&nbsp;&nbsp; 
+<input type="button" value="..." id="who_select" />
+
+</div>
+%{include file="messages1/who_actions.html"}% 
+ 
+  
+<br clear="all" />
+  
+ 
+<label for="topic_s">Тема:</label><br />
+<input type="text" size="100" maxlength="255" value="%{$resend_topic}%" id="topic_s" name="topic_s" style="min-width:550px; width:100%;" />
+<p />
+
+
+
+
+
+<div style="min-width:550px; width:99%;">
+<label for="txt_s">Текст сообщения:</label><br />
+<textarea id="txt_s" name="txt_s" cols="100" rows="20" style="width:550px;">%{$resend_text}%</textarea>
+</div>
+<p />
+ <script type="text/javascript" src="/ckeditor4/ckeditor.js"></script>
+ <script type="text/javascript">
+	CKEDITOR.replace( 'txt_s',
+					 
+					 {
+						 customConfig : '/ckeditor4/config-smiles.js',
+						 width: '100%'
+    				  }
+					 );
+	</script>
+
+
+
+
+
+
+
+
+
+ 
+
+<div id="uploaded_files">
+%{$resend_files}%
+</div><br />
+
+
+<strong>Приложите файл:</strong>
+
+ 
+<input type="file" id="file" /> 
+<em>максимальный размер файла: 6M</em>  
+
+
+ 
+
+<script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+
+<div id="queue"></div>
+
+<script type="text/javascript">
+$(function(){
+			function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		
+		$('#file').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите файл...',
+			'fileTypeDesc' : 'Все файлы',
+        	'fileTypeExts' : '*.*', 
+				'fileSizeLimit' : '6 MB', 
+				'width'           : 120,
+				'formData'         : {
+									   "PHPSESSID" : "%{$session_id}%"
+				                     },
+				'queueID'          : 'queue',
+				'uploadScript'     : '/swfupl-js/upload_file_message.php',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				}
+			});
+		
+	 
+});
+ </script>
+
+
+<p />
+
+
+<input type="submit" value="Отправить сообщение" id="send_s" name="send_s" style="width:250px; font-weight:bold;" />
+
+
+</form>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/messages.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				
+			//	data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}	
+	
+	
+	SelectGo2("who");
+	
+	
+	
+	 
+	
+	//обработчик отправки сообщения
+	$("#form_message").bind("submit",function(){
+		can_send=true;
+		
+		
+		 
+		 
+		
+		/*alert($("#who").select2("val").length);
+		alert($.isArray($("#who").select2("val")));*/
+		
+		
+		if(can_send&&( ($("#who").select2("val")=='')||($("#who").select2("val")==null)||($("#who").select2("val")==undefined)||($("#who").select2("val").length==0)  ) ){
+			can_send=can_send&&false;
+			alert("Выберите получателя сообщения!");
+			$("#who").focus();
+			
+			return false;	
+		}
+		
+		
+		//can_send=false;
+		
+		if(can_send) $(window).unbind("beforeunload");
+		return can_send;
+		
+		
+	});
+	
+	
+	
+	
+	$(window).bind("beforeunload",function(){
+		 if ( (CKEDITOR.instances.txt_s.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '')).length >0 ){
+		  
+		 	return 'Вы собираетесь покинуть раздел "Сообщения". Текст письма будет потерян. Вы уверены?';
+		  
+	  	}
+	});
+	
+	
+});
+</script>

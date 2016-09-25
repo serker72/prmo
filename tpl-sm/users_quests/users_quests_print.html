@@ -1,0 +1,36 @@
+<h1>Вопросы, курируемые сотрудниками</h1>
+
+
+
+Выбранные вопросы:<br />
+
+%{section name=rowsec1 loop=$qsts}%
+
+%{if $smarty.section.rowsec1.index is div by $per_page}%
+<ul style="float:left; margin-right:20px;">
+%{/if}%
+
+%{if $qsts[rowsec1].is_checked}%<li><strong>%{$qsts[rowsec1].name}%</strong></li>%{/if}% 
+
+
+
+%{if $smarty.section.rowsec1.index_next is div by $per_page or $smarty.section.rowsec1.last}%
+</ul>
+%{/if}%
+
+%{/section}%
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+%{if $do_it}%
+%{include file="users_quests/users_quests_table.html"}%
+%{/if}%
+

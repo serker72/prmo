@@ -1,0 +1,483 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+
+
+%{include file="every_help_dialog.html" filename="pos_create.htm" prefix="" description="создание позиции номенклатуры"  style="float:right;  margin-left:10px;" is_right=true}%
+
+
+
+<form action="position.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+
+
+<table width="*" border="0" cellspacing="0" cellpadding="0">
+  <tr align="left" valign="top">
+    <td>
+    <div style="float:left; margin-right:20px;">
+<label for="name">Наименование позиции:</label><br />
+<input type="text" name="name" size="40" maxlength="255" value="" />
+
+</div>
+    
+    </td>
+    <td>
+    <div style="float:left; margin-right:10px;">
+<label for="group_id">Товарная группа:</label><br />
+<select name="group_id" id="group_id" style="width:150px;">
+%{include file="catalog/groups_opt.html"}%
+</select>
+</div>
+    
+    </td>
+    <td>
+    <div style="float:left; margin-right:10px;">
+<label for="group_id2">Подгруппа 1 ур.:</label><br />
+<select name="group_id2" id="group_id2" style="width:150px;">
+</select>
+</div>
+    
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <div style="float:left; margin-right:20px;">
+<label for="gost_tu">ГОСТ/ТУ:</label><br />
+<input type="text" name="gost_tu" size="40" maxlength="255" value="" />
+
+</div>
+    
+    </td>
+    <td>
+    
+<div style="float:left; margin-right:20px;">
+<label for="dimension_id">Ед. изм.:</label><br />
+<select name="dimension_id" id="dim_id" style="width:80px;">
+%{include file="catalog/dims_opt.html"}%
+</select>
+
+%{if $can_expand_dims}%
+<input type="button" value="Единицы..." id="show_dims" />
+
+<div id="dims_dialog" title="Единицы измерения">
+%{include file="catalog/alldims.html"}%
+</div>
+
+<script type="text/javascript">
+$(function(){
+  $("#dims_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#dims_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims_page"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				sel=$("#dim_id").val();
+				
+				$("#dim_id").html(data);
+				$("#dim_id").val(sel);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_dims").bind("click",function(){
+	  $("#dims_dialog").dialog("open");
+  });
+  
+  function Redrawdims(){
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#dims_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_dim").bind("click", function(){
+		if($("#new_dim").attr("value").length<1){
+			$("#new_dim").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"add_dim",
+				"question":$("#new_dim").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Единица измерения добавлена!"); 
+			   $("#new_dim").attr("value","");
+			   Redrawdims();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления единицы измерения.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+%{/if}%
+
+</div>
+    
+    </td>
+    <td>
+    <div style="float:left; margin-right:10px;">
+<label for="group_id3">Подгруппа 2 ур.:</label><br />
+<select name="group_id3" id="group_id3" style="width:150px;">
+</select>
+</div>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#group_id").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	});
+	</script>
+
+
+
+%{if $can_expand_groups}%
+<!--
+<input type="button" value="Группы..." id="show_groups" />
+
+<div id="groups_dialog" title="Товарные группы">
+%{include file="catalog/allgroups.html"}%
+</div>
+-->
+<script type="text/javascript">
+$(function(){
+  $("#groups_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#groups_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups_page"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				
+				sel=$("#group_id").val();
+				
+				$("#group_id").html(data);
+				$("#group_id").val(sel);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_groups").bind("click",function(){
+	  $("#groups_dialog").dialog("open");
+  });
+  
+  function RedrawGroups(){
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#groups_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_group").bind("click", function(){
+		if($("#new_group").attr("value").length<3){
+			$("#new_group").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"add_group",
+				"question":$("#new_group").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Группа добавлена!"); 
+			   $("#new_group").attr("value","");
+			   RedrawGroups();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления группы.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+%{/if}%
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<label for="notes">Примечания:</label><br />
+<textarea cols="100" rows="5" name="notes" style="width:600px;"></textarea>
+<p />
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="length">Длина, мм:</label><br />
+<input type="text" name="length" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="width">Ширина, мм:</label><br />
+<input type="text" name="width" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="height">Высота/ толщина, мм:</label><br />
+<input type="text" name="height" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="weight">Вес 1 единицы, кг:</label><br />
+<input type="text" name="weight" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px; margin-top:-3px;">
+<label for="volume">Объем 1 единицы, м<sup>3</sup>:</label><br />
+<input type="text" name="volume" size="7" maxlength="255" />
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="volume">Диаметр, мм:</label><br />
+<input type="text" name="diametr" size="7" maxlength="255" />
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left;">
+<input type="checkbox" value="1" name="is_active" id="is_active" %{if !$can_active_position}% disabled="disabled"%{/if}% /><label for="is_active">Позиция активна</label>
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать позицию" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать позицию и перейти к редактированию" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='catalog.php';
+}else location.href='catalog.php';" />
+
+
+</form>
+<script type="text/javascript">
+
+ var frmvalidator  = new Validator("crea_form");
+ 
+ frmvalidator.addValidation("dim_id","req","Укажите единицы измерения!");
+  frmvalidator.addValidation("dim_id","gt=0","Укажите единицы измерения!");
+ 
+</script>

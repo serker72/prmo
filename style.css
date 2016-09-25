@@ -1,0 +1,340 @@
+body{
+	/*background-image:url(/img/dis/fon-mini.jpg);*/
+	background-position: left top;
+	background-repeat:repeat-x;
+	background-color:#edebe8;
+	color:#1d4671;
+	margin:0 0;
+	padding:0 0;
+}
+body, td, th{
+	font-family:Tahoma, Geneva, sans-serif;
+	color:#1d4671;
+	font-size:11px;
+		
+}
+
+td strong, th strong{
+	font-weight:bold;
+}
+h1,h2,h3,h4,h5,h6{
+	font-family:Tahoma, Geneva, sans-serif;
+	color:#130856;
+	
+}
+h1,h2{
+	font-weight:400;
+}
+
+a, a:link, a:visited, a:hover{
+	color:#182750;
+	text-decoration:underline;	
+}
+a:hover{
+	text-decoration:none;
+}
+
+
+td small{
+/*	font-family:Arial, Helvetica, sans-serif;*/
+	font-size:9px;
+}
+
+
+
+
+
+label{
+	font-weight:bold;
+}
+input, textarea, select{
+	font-family:Arial;
+	font-size:11px;	
+}
+input.wrong,textarea.wrong,select.wrong{
+	border:1px solid red;
+}
+option.inactive{
+	color:red;
+/*	font-family: Arial, Helvetica, sans-serif;*/
+	font-size:11px;	
+	display:block;
+}
+table.blacktable, table.blacktable1{
+	border-collapse:collapse;
+}
+table.blacktable tr td, table.blacktable tr th, table.blacktable1 tr td, table.blacktable1 tr th{
+	border: 1px solid black;
+/*	font-family:Arial, Helvetica, sans-serif;*/
+	font-size:11px;
+		
+}
+
+.error_message{
+	color:red;
+	font-weight:bold;
+}
+/*
+ul.mainmenu{
+	list-style-type:none;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	
+	overflow:visible;
+}
+ul.mainmenu li{
+	list-style-type:none;
+	font-size:14px;
+	
+	min-height:15px;
+	padding-top:5px;
+	padding-left:0px;
+	
+	padding-bottom:0px;
+	
+	margin-bottom:5px;
+	
+	
+}
+
+ul.mainmenu li.cat{
+ 
+	background-position:top left;
+	background-repeat:no-repeat;
+	padding-left:20px;
+	padding-top:0px;
+	
+	margin-bottom:15px;
+	margin-bottom:15px;
+	
+	
+}*/
+
+ul.mainmenu{
+	list-style-type:none;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	/*width:225px;*/
+	overflow:visible;
+}
+
+ul.mainmenu li{
+	list-style-type:none;
+	font-size:12px;
+	/*background:url(/img/left.png) no-repeat;*/
+	min-height:15px;
+	padding-top:5px;
+	padding-left:5px;
+	margin-bottom:5px;
+	padding-bottom:0px;
+}
+
+ul.mainmenu li a{
+	text-decoration:none; font-weight:bold;
+}
+ul.submenu{
+	list-style-type:none;
+	margin:5px 0 0 0;
+	padding:0 0 0 0;
+	overflow:hidden;
+}
+ul.submenu li{
+	font-size:11px; 
+	background:url(/img/menu_left_strelka.png) no-repeat 0 0px;
+	padding-left:10px;
+	margin-left:5px;
+	margin-bottom:0px;
+	padding-bottom:0px;
+	margin-top:0px;
+	padding-top:0px;
+	min-height:8px;
+}
+ul.submenu li a{
+	 font-weight:normal;  
+}
+
+.submenu img{
+	float:left;
+	display:block;
+	
+	margin-left:2px;
+	margin-bottom:2px;
+}
+/*
+
+ul.mainmenu li a{
+	text-decoration:none; font-weight:bold;
+}
+ul.submenu{
+	list-style-type:none;
+	margin:5px 0 0 -20px;
+	padding:0 0 0 0;
+	background-image:url(/img/dis/pic8.gif);
+	background-position:left top;
+	background-repeat:repeat-x;
+	padding-left:0px;
+}
+ul.submenu li{
+	font-size:11px; 
+	
+	padding-left:0px;
+	margin-left:0px;
+	margin-bottom:0px;
+	padding-bottom:0px;
+	margin-top:0px;
+	padding-top:0px;
+	min-height:8px;
+}
+ul.submenu li.innercat{
+	margin-left:10px;
+	background-image:url(img/dis/arrowcat1.gif);
+	background-position:0 3px;
+	background-repeat:no-repeat;
+	padding-left:15px;
+	padding-top:0px;
+}
+ul.submenu li a{
+	 font-weight:normal;
+	 text-decoration:underline;  
+}*/
+/*ul.mainmenu li a:visited, ul.submenu li a:visited{color:#000080;}
+ul.mainmenu li a:hover, ul.submenu li a:hover{color:red;}*/
+#tableone, .tableone{
+	border-top: 1px dashed #aaaaaa;
+	border-left:1px dashed #aaaaaa;
+}
+#tableone tr td, #tableone tr th, .tableone tr td, .tableone tr th
+{
+	border-right: 1px dashed #aaaaaa;
+	border-bottom:1px dashed #aaaaaa;
+}
+
+#tableone tbody tr:hover, .tableone tbody tr:hover, .reptable tbody tr:hover, .reptable thead tr:hover,
+.blacktable1 tbody tr:hover, .blacktable1 thead tr:hover
+{
+	background-color: #eaeaea;
+}
+.even {
+  background: #ededed;
+  font-weight:normal;
+}
+.oldmess {
+  background: #ededed;
+  font-weight:normal;
+}
+.newmess{
+	font-weight:bold;
+}
+.message{
+	width: 600px;
+	border:1px dashed #999;
+	text-align:justify;
+	background-color:#FFC;
+	padding:3 3 3 3;
+	font-size:11px;
+}
+.reptable, .messagetable{
+	border-left:1px dashed #aaaaaa;
+	border-top:1px dashed #aaaaaa;border-right:1px dashed #aaaaaa;
+}
+.reptable tr td, .reptable tr th{
+	
+	border-bottom:1px dashed #aaaaaa;
+	font-size:11px;
+}
+.messagetable tr td, .messagetable tr th{border-bottom:1px dashed #aaaaaa;}
+.messagetable tr th{background-color: #ededed}
+
+.active, .active_changed{
+	display:inline;
+	font-size:14px;
+	font-weight:bold;
+	color:black;
+}
+.inactive, .inactive_changed{
+	display:inline;
+	font-size:14px;
+	font-weight:normal;
+	color:silver;
+}
+.active_changed, .inactive_changed{
+	border:1px solid #FC0;	
+}
+
+
+.alblinks{
+	text-align:center;
+	margin-top:10px; 
+}
+.alblinks1{
+	text-align:center;
+	margin-bottom:10px;
+}
+.sort_dir{
+	display:inline-block;  white-space:nowrap;
+	
+}
+.common_block{
+	margin: 1px 1px 1px 1px;
+	padding: 3px 3px 3px 3px;
+	border: 1px solid gray;
+	background-color:#E2E2E2;	
+}
+.answers_block{
+	border-bottom:1px dashed gray;
+}
+.answer_item{
+	border-top:1px dashed gray;
+	border-bottom:1px dashed gray;
+}
+
+
+.item_inactive{
+	color:red;
+}
+
+.item_active{
+	color:green;
+	
+}
+
+
+.kompl3{
+	background-color:#eaf1dd;
+}
+.kompl2{
+	background-color:#ddd9c3;
+}
+.kompl1{
+	background-color:#dbeef3;
+}
+table.blacktable1 tr:hover th.kompl1, table.blacktable1 tr:hover td.kompl1
+{
+	background-color: #eaeaea;
+}
+table.blacktable1 tr:hover th.kompl2, table.blacktable1 tr:hover td.kompl2
+{
+	background-color: #eaeaea;
+}
+table.blacktable1 tr:hover th.kompl3, table.blacktable1 tr:hover td.kompl3
+{
+	background-color: #eaeaea;
+}
+
+
+label.changed{
+	background-color:#FF6;
+	color:red;
+	font-size:200%;
+/*	border: double 2px #00F;
+	text-decoration:underline;*/
+	/*border:3px solid #FF6;
+	width:100px;
+	height:100px;*/
+}
+ 
+ .item_conflict{
+	color:white !important;
+	font-weight:bold;
+	background-color:#e9510f !important;
+}

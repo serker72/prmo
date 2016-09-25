@@ -1,0 +1,61 @@
+<h1>Отчет Рентабельность бизнеса</h1>
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong><br />
+<strong>с:</strong><br />
+%{$pdate1}%
+</div>
+
+<div style="float:left; margin-right:10px;">
+<br />
+	<strong>по:</strong><br />
+    %{$pdate2}%
+</div>
+
+
+ %{if $extended_an==1 or $by_org==1}%
+
+<div style="float:left; margin-right:10px;">
+<strong>Вы выбрали:</strong><br />
+
+
+
+%{if $extended_an==1}%
+Расширенная ведомость<br />
+
+%{/if}%
+
+
+
+%{if $by_org==1}%С разбивкой по организациям<br />
+%{/if}% 
+
+</div>
+%{/if}%
+
+
+<br clear="all" />
+
+
+
+<p />
+
+
+
+%{if $do_it}%
+%{include file="an_rent/an_rent_table.html"}%
+%{/if}%
+
+
+
+
+

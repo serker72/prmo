@@ -1,0 +1,69 @@
+%{if $has_header}%
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="*">
+    <strong>Контрагент</strong>
+    </th>
+   
+    
+    <th scope="col" width="*">
+   <strong> Примечания </strong>
+    </th>
+    <th scope="col" width="20">&nbsp;
+    
+    </th>
+    </tr>
+    </thead>
+ <tbody id="suppliers_tbody">
+ %{/if}%
+%{section name=supsec loop=$suppliers}%
+  <tr align="left" valign="top" id="our_supplier_row_%{$suppliers[supsec].id}%">
+    	
+    
+    <td width="*" >
+    	<input type="hidden" id="supplier_id_%{$suppliers[supsec].id}%" name="supplier_id_%{$suppliers[supsec].id}%" value="%{$suppliers[supsec].id}%" />
+    
+      <span id="supplier_string_%{$suppliers[supsec].id}%">%{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%</span>
+      
+      
+       <a href="supplier.php?action=1&id=%{$suppliers[supsec].id}%&show_actions=1" target="_blank" class="reestr_edit reestr_button24" data-comment="перейти во вкладку Действия по контрагенту" ></a> 
+    </td>
+    
+    
+    
+    <td width="*">
+     
+        <textarea %{if !$can_modify}% disabled %{/if}%  cols="70" rows="2" id="supplier_note_%{$suppliers[supsec].id}%"  name="supplier_note_%{$suppliers[supsec].id}%"  style="width:100%; height:50px;">%{$suppliers[supsec].note|escape:"html"}%</textarea>
+    
+    </td>
+    <td width="20">
+  
+     %{if $can_modify}% 
+    <a href="#" id="delete_sup_%{$suppliers[supsec].id}%" data-comment="удалить" class="reestr_delete16 reestr_button16"></a>
+  	<script type="text/javascript">
+	$(function(){
+	
+	
+		$("#delete_sup_%{$suppliers[supsec].id}%").bind("click", function(){
+			if(window.confirm("Вы уверены, что хотите удалить контрагента из карты?")){
+				$("#our_supplier_row_%{$suppliers[supsec].id}%").remove(); 
+			 
+							
+			}
+			return false;
+		});
+		
+	});
+	</script>
+    %{/if}%
+    </td>
+    
+   </tr> 
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+%{/if}%
+

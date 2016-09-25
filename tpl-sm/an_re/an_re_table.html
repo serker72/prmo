@@ -1,0 +1,648 @@
+
+
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="0" cellspacing="0" class="fancyTable" id="re_table">
+<thead id="re_table_head">
+<tr align="center" valign="top">
+  <!--<th scope="col" width="40" class="main">
+    Дата
+
+  </th>-->
+	 <th scope="col" width="*" class="main" style="min-width:350px;">
+     Наименование продукции
+     
+     %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+     
+  </th>
+  <th scope="col" width="40" class="main"  >
+    Ед. Изм.
+	  %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+   <th scope="col" width="60" class="main"  >
+    К-во, ед. изм.
+	
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+
+  </th>
+   <th scope="col" width="60" class="main" >
+  Цена закупки с НДС, руб.	
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+   <th scope="col" width="60" class="main"  >
+  Сумма закупки с НДС, руб.
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+	</th>
+    <th scope="col" width="150" class="main" style="min-width:150px;" >
+    Поставщик	
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    </th>
+    <th scope="col" width="60" class="main"  > 
+   № с/ф
+   
+     %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+   
+    </th>
+     <th scope="col" width="60" class="main"  >
+    Дата отг- ки
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=15"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=14"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+	</th>
+    
+     <th scope="col" width="60" class="main"  >
+    Цена базовая с НДС, руб.
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=17"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=16"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    </th>
+     <th scope="col" width="60" class="main"  >
+    	Цена итоговая с НДС, руб.	
+        
+          %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=19"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=18"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    </th>
+     <th scope="col" width="60" class="main" >    
+        
+        Сумма продажи с НДС, руб
+        
+          %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=21"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=20"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+        
+     </th>
+     
+      <th scope="col" width="150" class="main" style="min-width:150px;" >
+    Покупатель
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=23"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=22"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%	
+    </th>   
+	
+    <th scope="col" width="60" class="main"  >  
+    № счета
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=25"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=24"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    </th>
+    
+    <th scope="col" width="60" class="main"  >  
+    № с/ф	
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=27"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=26"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    </th>
+    
+    <th scope="col" width="60" class="main"  >  
+    Дата отгрузки
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=29"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=28"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+	</th>
+    
+    <th scope="col" width="80" class="main" >  
+    Транс- т, руб
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=31"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=30"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%	
+    </th>
+     <th scope="col" width="80" class="main" >  
+    Экспед- ие, руб	
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=33"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=32"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+    </th>
+     <th scope="col" width="80" class="main" >  
+    Проч., руб	
+    
+   <!--   %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=35"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=34"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%-->
+    </th>
+     <th scope="col" width="150" class="main" >  
+    Примечание
+    
+     <!-- %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=37"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=36"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%-->
+	</th>
+     <th scope="col" width="30" class="main" >
+    %
+    
+      %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=39"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=38"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+  
+  <th scope="col" width="60" class="main"  >
+  Затраты кеша, руб.
+  
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=41"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=40"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+  	
+  <th scope="col" width="60" class="main"  >  
+  Сумма +/-, руб.
+  
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=43"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=42"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%	
+  </th>
+  
+  <th scope="col" width="60" class="main"  >
+  К выдаче +/-, руб.	
+  
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=45"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=44"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+  
+  <th scope="col" width="40" class="main" >
+  Выдано +/-, руб.	
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=47"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=46"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+  
+  <th scope="col" width="40" class="main"  >
+  Прибыль
+    %{if $print==0}%
+       <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=49"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=48"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     %{/if}%
+  </th>
+
+    
+</tr>
+</thead>
+<tbody id="re_table_body">
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+ <!--<td  width="40" class="">
+    %{$items[rowsec].out_bill_pdate}%
+
+  </td> -->
+	 <td   width="*" class="">
+    %{$items[rowsec].name}%
+  </td>
+  <td  width="40" class="">
+    %{$items[rowsec].dimension}%
+
+  </td>
+   <td width="60" class="">
+     %{$items[rowsec].out_ap_quantity}%
+
+
+  </td>
+   <td width="60" class="">
+     %{foreach from=$items[rowsec].ins item=doc}%
+     
+     %{$doc.price_pm}%<br />
+
+	 %{/foreach}%
+
+  </td>
+   <td width="60" class="">
+     %{$items[rowsec].in_ap_total}%
+
+  </td>
+  
+  <td width="60" class="" style="white-space:nowrap;">
+   %{foreach from=$items[rowsec].ins item=doc}%
+     <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">%{$doc.supplier_name}%, %{$doc.opf_name}%</a><br />
+
+   %{/foreach}%
+  </td>
+  
+  <td width="60" class="">
+      %{foreach from=$items[rowsec].ins item=doc}%
+     
+     <a href="ed_acc_in.php?action=1&id=%{$doc.acceptance_id}%" target="_blank">%{$doc.given_no}%</a><br />
+
+	 %{/foreach}%
+  </td>
+  
+  <td width="60" class="">
+      %{foreach from=$items[rowsec].ins item=doc}%
+     
+     %{$doc.given_pdate}%<br />
+
+	 %{/foreach}%
+
+  </td>
+  
+  <td width="60" class="">
+   %{$items[rowsec].price}%
+
+  </td>
+  <td width="60" class="">
+   %{$items[rowsec].price_pm}%
+
+  </td>
+  <td width="60" class="">
+   %{$items[rowsec].out_ap_total}%
+  </td>
+  
+   <td width="60" class="" style="white-space:nowrap;">
+   %{foreach from=$items[rowsec].outs item=doc}%
+     <a href="supplier.php?action=1&id=%{$doc.supplier_id}%" target="_blank">%{$doc.supplier_name}%, %{$doc.opf_name}%</a><br />
+
+   %{/foreach}%
+  </td>
+  
+  <td width="60" class="">
+   <a href="ed_bill.php?action=1&id=%{$items[rowsec].bill_id}%" target="_blank">%{$items[rowsec].supplier_bill_no}%</a>
+  </td>
+  
+  <td width="60" class="">
+     %{foreach from=$items[rowsec].outs item=doc}%
+     
+     <a href="ed_acc.php?action=1&id=%{$doc.acceptance_id}%" target="_blank">%{$doc.given_no}%</a><br />
+
+	 %{/foreach}%
+  </td>
+  <td width="60" class="">
+     %{foreach from=$items[rowsec].outs item=doc}%
+     
+     %{$doc.given_pdate}%<br />
+
+	 %{/foreach}%
+  </td>
+  
+   <td width="60" class="">
+   %{$items[rowsec].sum_2}%
+   </td>
+  <td width="60" class="">
+    %{$items[rowsec].sum_3}%
+   </td>
+   </td>
+   <td width="60" class="">
+   
+   </td>
+   <td width="150" class="">
+   
+   </td>
+   
+    <td width="30" class="">
+    %{$items[rowsec].percent.percent}%
+   </td>
+   
+   <td width="40" class="">
+   %{$items[rowsec].cash}%
+   </td>
+   
+   <td width="40" class="">
+   %{$items[rowsec].pm_res}%
+   </td>
+   
+   <td width="40" class="">
+   %{$items[rowsec].pm_to_give}%
+   </td>
+   
+   <td width="40" class="">
+   %{$items[rowsec].pm_given}%
+   </td>
+   
+   <td width="40" class="">
+   %{$items[rowsec].pribyl}%
+   </td>
+   
+   
+  
+</tr>
+%{/section}%
+</tbody>
+<tfoot id="re_table_foot">
+
+<tr align="center" valign="top">
+  <!--<th scope="col" width="40" >
+    Дата
+
+  </th>-->
+	 <th  width="*"   style="min-width:200px;">
+      
+  </th>
+  <th  width="40"   >
+    
+
+  </th>
+   <th  width="60"    >
+  
+
+  </th>
+   <th  width="60"   >
+   
+  </th>
+   <th  width="60"   >
+  %{$total_in}%
+	</th>
+    <th  width="150" >
+    
+    </th>
+    <th  width="60"    > 
+    
+    </th>
+     <th  width="60" >
+    
+	</th>
+    
+     <th  width="60"   >
+    
+    </th>
+     <th  width="60"   >
+    	 
+    </th>
+     <th  width="60"   >    
+        
+      %{$total_out}%
+        
+     </th>   
+	
+    <th  width="60"   >  
+    
+    </th>
+      <th  width="60"   >  
+    
+    </th>
+    
+    <th  width="60"   >  
+    
+    </th>
+    
+    <th  width="60"   >  
+    
+	</th>
+    
+    <th  width="80"   >  
+    
+    </th>
+     <th  width="80"  >  
+   
+    </th>
+     <th  width="80"   >  
+    
+    </th>
+     <th  width="150"   >  
+     
+	</th>
+     <th  width="30"   >
+    
+  </th>
+  
+  <th  width="60"    >
+  
+  </th>
+  	
+  <th  width="60"  >  
+ %{$total_pm}%
+  </th>
+  
+  <th  width="60"   >
+ %{$total_to_give_pm}%	
+  </th>
+  
+  <th  width="40" >
+  	
+  </th>
+  
+  <th  width="40"    >
+  %{$total_pribyl}%
+  </th>
+
+    
+</tr>
+
+</tfoot>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+ %{if $print==0}%
+ 
+ 
+<script type="text/javascript">
+
+ 
+function CompressTable(id, tb_id){
+	wb=1100;
+		hb=1200;
+		
+		//alert($('#'+ id).height());
+		
+		 do_it=($('#'+id).width()>wb)||($('#'+ id).height()>hb);
+		 
+		 if($('#'+id).width()>wb){
+			 w=wb;
+		 }else w=parseInt($('#'+id).width());//+20;
+		 
+		 if($('#'+ id).height()>hb){
+			h=hb; 
+		 }else{
+			 
+			 koef=1.5; scrollb=25;
+			 var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+				// Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
+			var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+			var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+				// At least Safari 3+: "[object HTMLElementConstructor]"
+			var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
+			var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+			
+			if(isChrome){
+				 koef=1.7;
+				  
+			}
+			
+						 
+			  h=parseFloat($('#'+ id).height())+parseFloat(($('#'+ id+"_body tr").length*koef))+scrollb;
+			//  alert(koef);
+			  h=Math.round(h);
+			 
+		 }
+	 
+		
+		 if(do_it){ 
+		 // alert(''+w+''+';'+h+'');
+		   
+		
+		   $('#'+id).fixedHeaderTable({
+	   
+			  width:          ''+w+'',
+			  height:         ''+h+'',
+			  themeClass:     'fht-default',
+			  
+			  fixedColumns:    1, // fixed first columns
+			  fixedColumn:     true, // For backward-compatibility
+			  sortable:        false,
+			  autoShow:        true, // hide table after its created
+			  footer:          true, // show footer
+			  cloneHeadToFoot: false, // clone head and use as footer
+			  autoResize:      false, // resize table if its parent wrapper changes size
+			  create:          null // callback after plugin completes
+ 			});	
+			
+			//alert($(".fht-thead").height()+$(".fht-tbody").height()+$(".fht-tbody").height());
+		 }
+}
+
+$(function(){
+	 CompressTable('re_table', 're_tbody');
+		
+	 
+		
+		//прокрутка сложных таблиц
+	function isTouchDevice(){
+				try{
+					document.createEvent("TouchEvent");
+					return true;
+				}catch(e){
+					return false;
+				}
+	}
+	
+	
+	  $.each(document.getElementsByClassName('fht-tbody'), function(k,v){	
+
+			if(isTouchDevice()){ //if touch events exist...
+					
+
+					
+					var scrollStartPos=0;
+					var scrollStartPosX=0;
+					
+					v.addEventListener("touchstart", function(event) {
+						scrollStartPos=this.scrollTop+event.touches[0].pageY;
+						scrollStartPosX=this.scrollTop+event.touches[0].pageX;
+
+					},false);
+					
+					v.addEventListener("touchmove", function(event) {
+						this.scrollTop=scrollStartPos-event.touches[0].pageY;
+						this.scrollLeft=scrollStartPosX-event.touches[0].pageX;
+						event.preventDefault();
+					},false);
+					
+					
+				}
+
+	});
+	});
+</script>
+%{/if}%
+

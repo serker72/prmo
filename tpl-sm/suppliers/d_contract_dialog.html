@@ -1,0 +1,224 @@
+%{if $can_add_contract}%  
+
+<div style="float:right;  margin-right: 0px; margin-bottom:5px;">
+<a href="#" id="add_%{$word}%" class="reestr_plus reestr_right_button24" data-comment="Добавить %{$named}%..."></a>
+</div>
+
+
+%{/if}%
+
+
+<div id="dialog_%{$word}%" title="%{$named}%"  style="display:none;">
+	
+    <input type="radio" id="%{$word}%_is_incoming_1" name="%{$word}%_is_incoming" value="1" checked="checked" /><em>Входящий договор</em><br />
+<input type="radio" id="%{$word}%_is_incoming_0" name="%{$word}%_is_incoming" value="0" /><em>Исходящий договор</em><p />
+    
+    
+    <em>№ договора:</em><br>
+    <input type="text" size="10" maxlength="255" id="%{$word}%_contract_no" style=" width:60px;" />
+    <p />
+    
+    <em>отсрочка по договору, дней:</em><br>
+	<input type="text" size="3" maxlength="255" id="%{$word}%_contract_prolongation" style="width:30px;" />
+    <p />
+    
+    <em>дни:</em><br>
+	
+    <select id="%{$word}%_contract_prolongation_mode" style="width:90px;" >
+        <option value="0">банковские</option>
+        <option value="1">календарные</option>
+    </select>
+    <p />
+    
+    
+    <em>дата договора:</em><br>
+<input type="text" size="40" maxlength="255" id="%{$word}%_contract_pdate" style="width:60px;" /><p>
+<p />
+    
+  
+
+<input type="checkbox" id="%{$word}%_is_basic" /><em>Основной договор</em>
+	<p />
+    
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 300,
+    height: 370,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#%{$word}%_contract_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	$("#wo_contract").bind("change", function(){
+		if($(this).prop("checked")&&($("#contract input").length>0)){
+			if(window.confirm("Внимание!\nВы выбираете режим 'Без договора'.\nПо контрагенту ранее были введены договора.\nПри продолжении работы введенные договора будут удалены.\nВы уверены?")){
+				//удаление
+				$("#contract").empty();
+				
+				/*$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"delete_contracts",
+					 
+						"user_id":"%{$user_id}%"
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  // alert(data);
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	*/
+				
+			}else{
+				$(this).prop("checked",false);
+			}
+		}
+	});
+	
+
+
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 
+		 if($("#wo_contract").prop("checked")){
+				alert("Добавление договора невозможно, если выбран режим 'Без договора'. Чтобы добавить договор, снимите галочку 'Без договора'.");
+				return false; 
+		 }
+		 
+
+		 
+		 if(!$("#is_customer").prop("checked")&&!$("#is_supplier").prop("checked")){
+			 
+			 alert("Для добавления договора необходимо, чтобы был выбран хотя бы один из режимов контрагента: покупатель или поставщик.\nРежим Покупатель позволяет вводить исходящий договор.\nРежим Поставщик позволяет вводить входящий договор."); 
+			 return false;
+		 }
+		 
+		 $("#%{$word}%_is_incoming_1").prop("disabled", !$("#is_supplier").prop("checked"));
+		 if(!$("#is_supplier").prop("checked")) {
+			 $("#%{$word}%_is_incoming_1").prop("checked", false);
+		 }
+		 
+		 $("#%{$word}%_is_incoming_0").prop("disabled", !$("#is_customer").prop("checked"));
+		 if(!$("#is_customer").prop("checked")){
+			  $("#%{$word}%_is_incoming_0").prop("checked", false);
+			  
+		 }
+		 
+		 
+		 $("#%{$word}%_contract_no").val('');
+			 
+		 $("#%{$word}%_contract_prolongation").val('');
+		 $("#%{$word}%_contract_prolongation_mode").val(0);
+		 $("#%{$word}%_contract_pdate").val('');
+		 $("#%{$word}%_is_basic").prop("checked",false);		 
+		// $("#%{$word}%_is_incoming_0").prop("checked",true);		 
+			
+		
+		
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					if($("#%{$word}%_is_basic").prop("checked")) is_basic=1;
+					else is_basic=0;
+					
+					res=true;
+					if($("#%{$word}%_contract_no").val().length==0){
+						alert('Заполните поле № договора!');
+						$("#%{$word}%_contract_no").focus();
+						res=res&&false;	
+					}
+					if(res&&($("#%{$word}%_contract_prolongation").val().length==0)){
+						alert('Заполните поле Отсрочка по договору, дней!');
+						$("#%{$word}%_contract_prolongation").focus();
+						res=res&&false;	
+					}
+					
+					if(res&&($("#%{$word}%_contract_pdate").val().length==0)){
+						alert('Заполните поле Дата договора!');
+						$("#%{$word}%_contract_pdate").focus();
+						res=res&&false;	
+					}
+					
+					
+					
+					
+					if(res){
+					  $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"add_%{$word}%",
+							  "contract_no": $("#%{$word}%_contract_no").val(),
+							  "contract_prolongation": $("#%{$word}%_contract_prolongation").val(),
+							  "contract_prolongation_mode": $("#%{$word}%_contract_prolongation_mode").val(),
+							  "contract_pdate": $("#%{$word}%_contract_pdate").val(),
+							  "is_incoming": $("input[id^=%{$word}%_is_incoming_]:checked").val(),	  
+							  "is_basic": is_basic,
+							  "user_id":"%{$user_id}%"
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+							 alert("%{$named}% добавлен!"); 
+							 $.ajax({
+								async: true,
+								url: "/js/supplier.php",
+								type: "POST",
+								data:{
+									"action":"redraw_%{$word}%",
+									"user_id":"%{$user_id}%"
+								},
+								beforeSend: function(){
+									  $("#%{$word}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="Пожалуйста, подождите..." border="0" />');  
+								},
+								success: function(data){
+									$("#%{$word}%").html(data);
+								  
+								},
+								error: function(xhr, status){
+									
+								}	 
+							});
+							
+							
+						  },
+						  error: function(xhr, status){
+							  alert("Ошибка добавления %{$named}%.");	
+						  }	 
+					  });
+						  
+					  $(this).dialog("close");
+					}
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$("#dialog_%{$word}%").dialog("open");
+		return false;
+	});
+	
+});
+</script>

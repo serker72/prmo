@@ -1,0 +1,135 @@
+<script type="text/javascript" src="/js/gen_validatorv31.js"></script>
+  
+
+
+<h1>Создать подписчика</h1>
+
+<form action="%{$pagename}%" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+ 
+<input type="hidden" name="list_id" id="list_id" value="%{$list_id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+
+ 
+
+    <label for="email">Электронная почта:</label><br>
+    <input type="text" value="" name="email" id="email" size="60" maxlength="255" />
+
+<br>
+<br>
+
+ <label for="f">Фамилия:</label><br>
+    <input type="text" value="" name="f" id="f" size="60" maxlength="255" />
+
+<br>
+<br>
+
+ <label for="i">Имя:</label><br>
+    <input type="text" value="" name="i" id="i" size="60" maxlength="255" />
+
+<br>
+<br>
+
+ <label for="o">Отчество</label><br>
+    <input type="text" value="" name="o" id="o" size="60" maxlength="255" />
+
+<br>
+<br>	
+  
+ 
+
+
+<label for="comment">Комментарий:</label><br>
+<textarea id="comment" name="comment"></textarea>
+<br>
+
+ 
+                    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+                    <script type="text/javascript">
+	CKEDITOR.replace( 'comment',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_delivery_template.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash'
+    				  }
+					 );
+	</script> 
+
+
+<input type="checkbox" id="do_update" name="do_update" value="1" /><label for="do_update">Если подписчик уже в текущем списке, обновить его профиль</label>
+<br>
+<br>
+
+
+
+ 
+<input type="submit" value="Создать подписчика" name="doInp" />
+
+
+<input type="submit" name="doApply"  id="doApply" value="Создать подписчика и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" onclick="location.href='%{$list_pagename}%';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+function DoCustomValidation()
+{
+	
+	if(!$("#do_update").prop("checked")){
+		var can=true;
+		
+		$.ajax({
+		  async: false,
+		  url: "js/delivery_lists.php",
+		  type: "POST",
+		  data:{
+			  "action":"check_email_user",
+			  "list_id":$("#list_id").val(),
+			  "email":$("#email").val(),
+			  "current_id":0
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			
+			//alert(data); can=false;
+			
+			if(data==1){
+				
+				can=false;
+			}
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		if(!can){
+			alert('Подписчик с указанной электронной почтой уже существует в этом списке!');	
+			return false;
+		}		
+	}
+	
+	
+	return true; 
+}
+
+ 
+frmvalidator.addValidation("email","req","Укажите адрес электронной почты!");
+frmvalidator.addValidation("email","email","Укажите адрес электронной почты!");
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+ 
+</script>

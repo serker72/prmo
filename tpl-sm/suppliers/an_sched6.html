@@ -1,0 +1,398 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate_1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	 VidgetMultiReport('%{$prefix}%statuses', 'Выберите статус', 'Все статусы', 'Cнять выбор', '# из # выбрано', "Выбраны статусы: ", 'Статусы не выбраны', 200);
+	 
+	   
+	  VidgetMultiReport('%{$prefix}%kinds', 'Выберите вид', 'Все виды', 'Cнять выбор', '# из # выбрано', "Выбраны виды: ", 'Виды не выбраны', 200 );
+	  
+	   VidgetMultiReport('%{$prefix}%is_fulfil', 'Выберите действия', 'Все действия', 'Cнять выбор', '# из # выбрано', "Выбраны действия: ", 'Действия не выбраны', 200 ); 
+	
+	  
+	  
+	/*
+	 
+	  
+	    VidgetMultiReport('%{$prefix}%planfact', 'Выберите план/факт', 'План+факт', 'Cнять выбор', '# из # выбрано', "Выбрано: ", 'План/факт не выбран' );
+	*/
+	 
+	 	
+	function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	 
+	
+	 
+	
+	
+	SelectGo2("user%{$prefix}%");
+ 	//SelectSupplierGo2("supplier%{$prefix}%");
+	 
+	$("#sc_new_dialog%{$prefix}%").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 250,
+		height: 250,
+		dialogClass: 'semi_auth',
+		buttons:{
+			"OK":function(){
+				if(($("input[type=radio][id^=sc_kind_]:checked").val()!=undefined)){
+					
+					if($("input[type=radio][id^=sc_kind_]:checked").val()==1){
+						url='ed_sched_task.php?action=0&kind_id='+$("input[type=radio][id^=sc_kind_]:checked").val()+'&supplier_id=%{$id}%';
+					}else{
+						url='ed_sched.php?action=0&kind_id='+$("input[type=radio][id^=sc_kind_]:checked").val()+'&supplier_id=%{$id}%';
+					
+					}
+					
+					 location.href=url;
+				}
+				
+				
+				$("#sc_new_dialog%{$prefix}%").dialog("close");
+				 
+			},
+			"Отмена":function(){
+				
+				$("#sc_new_dialog%{$prefix}%").dialog("close");
+				 
+			}
+		}
+	});
+	
+	
+	$("#sc_new%{$prefix}%").bind("click", function(){
+		
+		$("#sc_new_dialog%{$prefix}%").dialog("open");
+	});
+	
+});
+</script>
+
+
+ <div id="sc_new_dialog%{$prefix}%" title="Я хочу запланировать..." style="display:none;">
+    
+    	<img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+
+		<div style="float:left; padding-top:5px; margin-bottom:10px;">
+    
+            <input type="hidden" id="sc_time" value="" />
+            
+            <h2>Я хочу запланировать:</h2>
+            <input type="radio" name="sc_kind" id="sc_kind_3" value="3" /><label for="sc_kind_3">Встречу</label><br>
+            <input type="radio" name="sc_kind"  id="sc_kind_1" value="1" /><label for="sc_kind_1">Задачу</label><br>
+            <input type="radio" name="sc_kind"  id="sc_kind_5" value="5" /><label for="sc_kind_5">Заметку</label><br>
+            
+            <input type="radio" name="sc_kind"  id="sc_kind_4" value="4" /><label for="sc_kind_4">Звонок</label><br>
+            <input type="radio" name="sc_kind"  id="sc_kind_2" value="2" /><label for="sc_kind_2">Командировку</label>
+        </div>
+		<br clear="all" />
+
+		
+    </div>
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" /> 
+ 
+ 
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$id}%" /> 
+
+
+
+<div style="float:left;  margin-right:10px; ">
+
+<input type="button" value="Создать событие..." id="sc_new%{$prefix}%" %{if $is_active==0}% disabled%{/if}% />
+
+</div>
+
+
+
+
+
+
+
+
+<div class="report_filter_right">
+ 
+        
+        
+    
+     <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+
+     <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти"  />
+     </div>
+    
+    <a href="an_sched.php?doSub%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+
+  
+  
+  %{if $can_print}%
+  
+   
+  
+   <a href="#" id="print_table%{$prefix}%"   class="reestr_print reestr_right_button24" data-comment="Печать..."></a>
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	  
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+			// $("#print").val(1);
+	 		//alert('doSub=1&print=1&'+$("#rep_form2").serialize());
+			 
+			
+		 	 window.open('an_sched.php?'+'doSub%{$prefix}%=1&print=1&supplier%{$prefix}%=%{$id}%&'+$("#rep_form%{$prefix}%").serialize(), 'an_sched','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		   
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+ <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."</a>
+ %{/if}%
+  	
+    
+    
+%{include file="every_help_dialog.html" filename="an_sched.html;an_sched_6.html" prefix=$prefix description="отчет Планировщик"  style="display:inline-block; margin-right:0px;" is_right=true}%
+
+
+
+
+ 
+</div> 
+ 
+<br clear="all" />
+<p />
+
+<div class="report_filter_left">
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:15px; white-space:nowrap;">
+<strong>Период:</strong>
+<br>
+
+
+<label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10" class="sched_report_field" />
+ &nbsp;&nbsp;
+<label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10" class="sched_report_field" />
+
+</div>
+
+
+ 
+
+ 
+ 
+<div style="float:left; margin-right:20px;     margin-bottom:15px;   overflow:hidden;">
+
+ 
+
+
+    <label for="%{$prefix}%kinds" class="statuses_report_label">Виды действий:</label><br>
+
+    <select id="%{$prefix}%kinds" name="%{$prefix}%kinds[]" multiple="multiple">
+   
+    <option value="3" %{if $kind_id_3==1 or $all_kinds==1}% selected%{/if}% >Встреча</option>
+    <option value="1" %{if $kind_id_1==1 or $all_kinds==1}% selected%{/if}% >Задача</option>
+    <option value="5" %{if $kind_id_5==1 or $all_kinds==1}% selected%{/if}% >Заметка</option>
+    <option value="4" %{if $kind_id_4==1 or $all_kinds==1}% selected%{/if}% >Звонок</option>
+    <option value="2" %{if $kind_id_2==1 or $all_kinds==1}% selected%{/if}% >Командировка</option>
+     
+     
+     
+   
+    
+    </select>
+    
+    
+    
+    <br clear="all" />
+    
+    <div id="%{$prefix}%kinds_caption" class="statuses_report_caption" style="width:200px !important;">
+    
+    </div>
+
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;     margin-bottom:15px;   overflow:hidden;">
+
+
+	<label for="%{$prefix}%is_fulfil" class="statuses_report_label">Совершенные/несовершенные действия:</label><br>
+
+    <select id="%{$prefix}%is_fulfil" name="%{$prefix}%is_fulfil[]" multiple="multiple">
+   
+    <option value="1" %{if $is_fulfil_1==1 or $all_is_fulfil==1}% selected%{/if}% >Совершенные</option>
+    <option value="2" %{if $is_fulfil_2==1 or $all_is_fulfil==1}% selected%{/if}% >Несовершенные</option>
+    
+    </select>
+    
+    
+    
+    <br clear="all" />
+    
+    <div id="%{$prefix}%is_fulfil_caption" class="statuses_report_caption" style="width:200px !important;">
+    
+    </div>
+
+	
+
+</div>
+   
+
+
+ 
+<div style="float:left; margin-right:10px;     margin-bottom:15px;   overflow:hidden;">
+
+ 
+
+
+    <label for="%{$prefix}%statuses" class="statuses_report_label">Статусы:</label><br>
+
+    <select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+   
+    <option value="23" %{if $status_id_23==1 or $all_statuses==1}% selected%{/if}% >Ждет выполнения</option>
+    <option value="24" %{if $status_id_24==1 or $all_statuses==1}% selected%{/if}% >Выполняется</option>
+    <option value="25" %{if $status_id_25==1 or $all_statuses==1}% selected%{/if}% >Отложена</option>
+     <option value="9" %{if $status_id_9==1 or $all_statuses==1}% selected%{/if}% >Не выполнен(а)</option>
+    <option value="10" %{if $status_id_10==1 or $all_statuses==1}% selected%{/if}% >Выполнен(а)</option>
+    <option value="26" %{if $status_id_26==1 or $all_statuses==1}% selected%{/if}% >Ждет контроля</option>
+    
+     
+    <option value="2"  %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}%>Утвержден</option>
+    <option value="22" %{if $status_id_22==1 or $all_statuses==1}% selected%{/if}% >Запланирован</option>
+     
+     
+   
+    
+    </select>
+    
+    
+    
+    <br clear="all" />
+    
+    <div id="%{$prefix}%statuses_caption" class="statuses_report_caption" style="width:190px !important;">
+    
+    </div>
+
+
+</div>
+
+
+
+<div style="float:left; margin-right:0px; margin-bottom:15px; max-width:250px;">
+<label for="user%{$prefix}%">Сотрудник:</label><br />
+<input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:240px;"  />
+</div>
+ </div>
+
+<br clear="all" />
+ 
+</form>
+ 
+
+
+<small>
+1. <strong>Фильтр Период</strong>: поиск записей планировщика осуществляется по попаданию в выбранный период следующей даты: 
+<ul style="display:inline-block;">
+
+
+<li style="display:inline-block;"><strong>Встречи</strong> - дата  встречи</li>
+<li style="display:inline-block;"><strong>Задачи</strong> - крайний срок выполнения задачи</li>
+<li style="display:inline-block;"><strong>Звонки</strong> - дата звонка</li>
+<li style="display:inline-block;"><strong>Заметки</strong> - дата создания заметки</li>
+<li  style="display:inline-block;"><strong>Командировки</strong> - дата начала командировки</li>
+ </ul>
+ 
+ </small>
+ <br />
+<br>
+
+
+
+
+
+%{if $do_it}%
+
+%{if $prefix==1}%
+%{include file="an_sched/table_1.html"}% 
+%{elseif $prefix==2}%
+%{include file="an_sched/table_2.html"}% 
+%{elseif $prefix==3}%
+%{include file="an_sched/table_3.html"}% 
+%{elseif $prefix==4}%
+%{include file="an_sched/table_4.html"}% 
+%{elseif $prefix==5}%
+%{include file="an_sched/table_5.html"}% 
+%{elseif $prefix==6}%
+%{include file="an_sched/table_6.html"}% 
+%{else}%
+%{include file="an_sched/table.html"}%  
+%{/if}%
+
+%{/if}%

@@ -1,0 +1,558 @@
+<br>
+
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" %{if !$can_add_contact}% disabled="disabled"%{/if}% />
+
+<div id="dialog_%{$word}%" title="%{$named}%" style="display:none;">
+
+    <label for="%{$word}%_fio">Фамилия, имя, отчество:</label><br>
+    <input type="text" size="40" maxlength="255" id="%{$word}%_fio" /><p>
+
+    
+    <label for="%{$word}%_position">Должность:</label><br>
+	<input type="text" size="40" maxlength="255" id="%{$word}%_position" /><p>
+
+    
+     <label for="%{$word}%_birthdate">Дата рождения:</label><br>
+	<input type="text" size="10" maxlength="10" id="%{$word}%_birthdate" /><p>
+
+</div>
+
+
+
+<div id="dialog_copy_%{$word}%" title="Копировать %{$named}%" style="display:none;">
+	<input type="hidden" value="" id="%{$word}%_old_contact_id">
+    
+    <label for="%{$word}%_copy_fio">Фамилия, имя, отчество:</label><br>
+    <input type="text" size="40" maxlength="255" id="%{$word}%_copy_fio" /><p>
+
+    
+    <label for="%{$word}%_copy_position">Должность:</label><br>
+	<input type="text" size="40" maxlength="255" id="%{$word}%_copy_position" /><p>
+
+    
+     <label for="%{$word}%_copy_birthdate">Дата рождения:</label><br>
+	<input type="text" size="10" maxlength="10" id="%{$word}%_copy_birthdate" /><p>
+    
+    <strong>Копируемые рабочие телефоны:</strong><br>
+	<em>Просьба указать добавочный номер для каждого из рабочих телефонов, <br>
+    если добавочный номер не требуется, отметьте галочку <strong>"без доб. номера"</strong>.<br>
+    Если копирование определенного рабочего телефона не требуется, просьба удалить его из списка.
+    </em><br>
+    
+    <div id="%{$word}%_copy_phones" style="border:1px solid silver;  min-width:450px; width:auto;  height:120px; overflow:auto;">
+    
+    </div>
+
+
+</div>
+
+
+
+
+<script type="text/javascript">
+  $(function(){
+	
+	$("#%{$word}%_copy_birthdate").datepicker({
+changeMonth: true,
+ changeYear: true,
+ yearRange: "1900:n+00"
+});  
+
+$("#%{$word}%_birthdate").datepicker({
+changeMonth: true,
+ changeYear: true,
+ yearRange: "1900:n+00"
+});  
+	  
+	$("#dialog_copy_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 500,
+    height: 450,
+    buttons: {
+		"Копировать": function() { 
+        	
+			res=true;
+			var error_fields=new Array();
+			
+			
+			$(".blue").removeClass("blue");
+			
+			//проверки корректности
+			 
+			//тест на длину
+			if($.trim($("#%{$word}%_copy_fio").val()).length<3){
+			
+				res=res&&false;
+				
+				error_fields.push({
+					"id":"%{$word}%_copy_fio",
+					"name":"Фамилия, имя, отчество",
+					"error":"Заполните поле Фамилия, имя, отчество!"
+				});						 
+			}
+			
+			//тест на повтор символов
+			re=new RegExp(/(.)\1{2,}/);
+			 
+			if(re.test( $.trim($("#%{$word}%_copy_fio").val()) )){
+					res=res&&false;
+				error_fields.push({
+					"id":"%{$word}%_copy_fio",
+					"name":"Фамилия, имя, отчество",
+					"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - введены повторяющиеся более 2 раз символы!"
+				});		
+			}
+			
+			//тест на только буквы, пробелы, точки
+			re=new RegExp(/[^a-zA-Zа-яА-Я\s\.\-]+/);
+			if(re.test( $.trim($("#%{$word}%_copy_fio").val()) )){
+					res=res&&false;
+				error_fields.push({
+					"id":"%{$word}%_copy_fio",
+					"name":"Фамилия, имя, отчество",
+					"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - недопустимые символы в поле!"
+				});		
+			}
+			
+			//минимум 2 слова
+			re=new RegExp(/[a-zA-Zа-яА-Я\.\-].\s[a-zA-Zа-яА-Я\.\-]./);
+			if(!re.test( $.trim($("#%{$word}%_copy_fio").val()) )){
+					res=res&&false;
+				error_fields.push({
+					"id":"%{$word}%_copy_fio",
+					"name":"Фамилия, имя, отчество",
+					"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - необходимо указать как минимум фамилию и имя!"
+				});		
+			}
+			
+			
+			
+			 
+			//тест на длину
+			if($.trim($("#%{$word}%_copy_position").val()).length<3){
+			
+				res=res&&false;
+				
+				error_fields.push({
+					"id":"%{$word}%_copy_position",
+					"name":"Должность",
+					"error":"Заполните поле Должность!"
+				});					 
+			}
+			
+			//тест на повтор символов
+			re=new RegExp(/(.)\1{2,}/);
+			 
+			if(re.test( $.trim($("#%{$word}%_copy_position").val()) )){
+					res=res&&false;
+				error_fields.push({
+					"id":"%{$word}%_copy_position",
+					"name":"Должность",
+					"error":"Вы вводите некорректное значение в поле Должность - введены повторяющиеся более 2 раз символы!"
+				});		
+			}
+			
+			//тест на только буквы, пробелы, точки
+			re=new RegExp(/[^a-zA-Zа-яА-Я0-9\s\.№\-]+/);
+			if(re.test( $.trim($("#%{$word}%_copy_position").val()) )){
+					res=res&&false;
+				error_fields.push({
+					"id":"%{$word}%_copy_position",
+					"name":"Должность",
+					"error":"Вы вводите некорректное значение в поле Должность - недопустимые символы в поле!"
+				});		
+			}
+			 
+			//также проверить корректность добавочных телефонов
+			 
+			$.each($("input[id^=value1_copy_%{$word}%_]"), function(k,v){
+				id=$(v).attr("id");
+				hash=id.replace(/^value1_copy_%{$word}%_/,'');
+				if(($(v).val().length==0)&&(!$("#wo_value1_copy_%{$word}%_"+hash).prop("checked"))){
+					res=res&&false;
+					error_fields.push({
+						"id":id,
+						"name":"Добавочный телефон",
+						"error":"Введите добавочный телефон или отметьте галочку без доб. номера!"
+					});			
+				}
+				
+			});
+			
+			
+			if(res){
+        		//копируем контакт
+				
+				phones=new Array();
+				$.each($("input[id^=value_copy_%{$word}%_]"), function(k,v){
+					id=$(v).attr("id");
+					hash=id.replace(/^value_copy_%{$word}%_/,'');
+					phones.push($(v).val()+"|"+$("#value1_copy_%{$word}%_"+hash).val());
+				});
+				
+				
+				//alert(phones);
+				$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"copy_contact_%{$word}%",
+						"fio": $("#%{$word}%_copy_fio").val(),
+						"position": $("#%{$word}%_copy_position").val(),
+						"birthdate": $("#%{$word}%_copy_birthdate").val(),
+						"user_id":"%{$user_id}%",
+						"old_contact_id":$("#%{$word}%_old_contact_id").val(),
+						"phones[]":phones
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					   //alert("%{$named}% добавлены!"); 
+					   $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":"%{$user_id}%"
+						  },
+						  beforeSend: function(){
+							$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');	
+						  },
+						  success: function(data){
+							 //alert(data);
+							  $("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+								//alert('e');  
+						  }	 
+					  });
+					  
+					  
+					},
+					error: function(xhr, status, m){
+						alert("Ошибка добавления %{$named}%."+status+m);	
+					}	 
+				});
+				
+				
+				$(this).dialog("close"); 
+				
+			}else{
+					var tt='<ul>';
+					$.each(error_fields,function(k,v){
+						tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+						
+						$("#"+v.id).addClass("blue");
+					});
+					
+					tt+='</ul>';
+					
+					$("#error_window_text").empty();
+					$("#error_window_text").html(tt);
+					
+					$("#error_window_dialog").dialog("open");
+					
+					 max_height=700; min_height=140;
+					 
+						 
+					 our_height=parseInt($("#error_window_text").height());
+					  
+					  
+					  
+					 if(our_height>max_height) our_height=max_height;
+					 if(our_height<min_height) our_height=min_height;
+					 
+					 
+					 
+					 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+					
+			}
+		
+		
+		},
+        "Отмена": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });  
+	  
+	  
+	  
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 300,
+    height: 270,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	 
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 $("#%{$word}%_fio").val("");
+ 		 $("#%{$word}%_position").val("");
+		 $("#%{$word}%_birthdate").val("");
+		
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					
+					res=true;
+					var error_fields=new Array();
+					
+					
+					$(".blue").removeClass("blue");
+					
+					//тест на длину
+					if($.trim($("#%{$word}%_fio").val()).length<3){
+					
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_fio",
+							"name":"Фамилия, имя, отчество",
+							"error":"Заполните поле Фамилия, имя, отчество!"
+						});						 
+					}
+					
+					//тест на повтор символов
+					re=new RegExp(/(.)\1{2,}/);
+					 
+					if(re.test( $.trim($("#%{$word}%_fio").val()) )){
+							res=res&&false;
+						error_fields.push({
+							"id":"%{$word}%_fio",
+							"name":"Фамилия, имя, отчество",
+							"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - введены повторяющиеся более 2 раз символы!"
+						});		
+					}
+					
+					//тест на только буквы, пробелы, точки
+					re=new RegExp(/[^a-zA-Zа-яА-Я\s\.\-]+/);
+					if(re.test( $.trim($("#%{$word}%_fio").val()) )){
+							res=res&&false;
+						error_fields.push({
+							"id":"%{$word}%_fio",
+							"name":"Фамилия, имя, отчество",
+							"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - недопустимые символы в поле!"
+						});		
+					}
+					
+					//минимум 2 слова
+					re=new RegExp(/[a-zA-Zа-яА-Я\.\-].\s[a-zA-Zа-яА-Я\.\-]./);
+					if(!re.test( $.trim($("#%{$word}%_fio").val()) )){
+							res=res&&false;
+						error_fields.push({
+							"id":"%{$word}%_fio",
+							"name":"Фамилия, имя, отчество",
+							"error":"Вы вводите некорректное значение в поле Фамилия, имя, отчество - необходимо указать как минимум фамилию и имя!"
+						});		
+					}
+					
+					
+					
+					 
+					//тест на длину
+					if($.trim($("#%{$word}%_position").val()).length<3){
+					
+						res=res&&false;
+						
+						error_fields.push({
+							"id":"%{$word}%_position",
+							"name":"Должность",
+							"error":"Заполните поле Должность!"
+						});					 
+					}
+					
+					//тест на повтор символов
+					re=new RegExp(/(.)\1{2,}/);
+					 
+					if(re.test( $.trim($("#%{$word}%_position").val()) )){
+							res=res&&false;
+						error_fields.push({
+							"id":"%{$word}%_position",
+							"name":"Должность",
+							"error":"Вы вводите некорректное значение в поле Должность - введены повторяющиеся более 2 раз символы!"
+						});		
+					}
+					
+					//тест на только буквы, пробелы, точки
+					re=new RegExp(/[^a-zA-Zа-яА-Я0-9\s\.№\-]+/);
+					if(re.test( $.trim($("#%{$word}%_position").val()) )){
+							res=res&&false;
+						error_fields.push({
+							"id":"%{$word}%_position",
+							"name":"Должность",
+							"error":"Вы вводите некорректное значение в поле Должность - недопустимые символы в поле!"
+						});		
+					}
+					
+					 
+					
+					 
+					
+					
+					if(res){
+					
+						//код добавки
+						if($("#%{$word}%_is_basic").prop("checked")) is_basic=1;
+						else is_basic=0;
+						$.ajax({
+							async: true,
+							url: "/js/supplier.php",
+							type: "POST",
+							data:{
+								"action":"add_%{$word}%",
+								"fio": $("#%{$word}%_fio").val(),
+								"position": $("#%{$word}%_position").val(),
+								"birthdate": $("#%{$word}%_birthdate").val(),
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							   //alert("%{$named}% добавлены!"); 
+							   $.ajax({
+								  async: true,
+								  url: "/js/supplier.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":"%{$user_id}%"
+								  },
+								  beforeSend: function(){
+									$("#%{$word}%").html('<img src="/img/wait.gif" alt="подождите, пожалуйста" />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							  
+							  
+							},
+							error: function(xhr, status, m){
+								alert("Ошибка добавления %{$named}%."+status+m);	
+							}	 
+						});
+							
+						$(this).dialog("close");
+					
+					}else{
+						
+						var tt='<ul>';
+						$.each(error_fields,function(k,v){
+							tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+							
+							$("#"+v.id).addClass("blue");
+						});
+						
+						tt+='</ul>';
+						
+						$("#error_window_text").empty();
+						$("#error_window_text").html(tt);
+						
+						$("#error_window_dialog").dialog("open");
+						
+						 max_height=700; min_height=140;
+						 
+							 
+						 our_height=parseInt($("#error_window_text").height());
+						  
+						  
+						  
+						 if(our_height>max_height) our_height=max_height;
+						 if(our_height<min_height) our_height=min_height;
+						 
+						 
+						 
+						 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+						
+						
+						
+			
+					}
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$(".blue").removeClass("blue");
+		$("#dialog_%{$word}%").dialog("open");
+	});
+	
+});
+</script>
+
+<div id="dialog_nest_%{$word}%" title="%{$named}%" style="display:none;">
+	
+    
+    <div style="float:left; margin-right:10px; width:250px;">
+    <em>Вид:</em><br />
+    
+	%{section name=kindsec loop=$kinds}%
+	<input name="%{$word}%_kind" id="%{$word}%_kind_%{$kinds[kindsec].id}%" type="radio" value="%{$kinds[kindsec].id}%" %{if $kinds[kindsec].is_current}%checked="checked"%{/if}% />
+    <label for="%{$word}%_kind_%{$kinds[kindsec].id}%">
+	<img src="%{$kinds[kindsec].icon}%" alt="" border="0" align="left" hspace="0" />%{$kinds[kindsec].name}%
+    </label>
+	<br clear="all" />
+
+	%{/section}%
+    
+    
+
+	
+    
+	</div>
+    <div style="float:left; width:280px; ">
+     <small><em>Примечания.<br><br>
+1. Телефоны вводятся по автоматической маске. <br>
+<strong>Для перехода между ее полями используйте кнопки стрелок, либо клик мыши, либо пробел.</strong> Например, если Вы закончили вводить код города, и необходимо ввести номер телефона, нажмите пробел после ввода кода города. Переход к вводу номера телефона произойдет автоматически.
+<br>
+        <br>
+
+        2. <strong>Коды страны</strong> при вводе телефонов доступны <strong>согласно городам, указанным в карте контрагента/организации</strong>.<br><br>
+
+        <span style="color:red;">Сейчас доступны коды стран: <strong><span id="codes_nest_%{$word}%"></span></strong>.</span>
+        
+        
+        
+        </em></small>
+     
+    </div>
+    
+    <br clear="all" />
+	
+	<p />
+	 
+
+    <div style="float:left; margin-right:10px;">
+    <em>Значение:</em><br>
+<input type="text" size="30" maxlength="255" id="%{$word}%_value" />
+	</div>
+	<div id="block_%{$word}%_value1" style="float:left; margin-right:10px; display:none;">
+    <em>Добавочный номер:</em><br>
+<input type="text" size="15" maxlength="255" id="%{$word}%_value1" />
+	</div>
+    
+    
+</div>
+

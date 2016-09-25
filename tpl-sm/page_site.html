@@ -1,0 +1,79 @@
+    
+	   
+    <div class="left-bar left">
+  
+        
+        
+        %{$main_menu}%
+        
+    </div>
+  
+    <div class="content">
+        <div class="content1">
+            <ul class="top-menu">
+                <li %{if  $smarty.server.SCRIPT_NAME =="/index.php" or $smarty.server.SCRIPT_NAME =="/" }% class="active"%{/if}%><a href="index.php">Быстрые действия</a></li>
+                <li %{if  $smarty.server.SCRIPT_NAME =="/shedule.php" or $smarty.server.SCRIPT_NAME =="/ed_sched.php" or $smarty.server.SCRIPT_NAME =="/ed_sched_task.php"}% class="active"%{/if}%><a href="shedule.php">Планировщик</a></li>
+                <!--<li id="fast_reports_toggle">Отчеты</li>-->
+                <li %{if  $smarty.server.SCRIPT_NAME =="/reports.php"}% class="active" %{/if}%><a href="reports.php">Отчеты</a></li>
+                <li %{if  $smarty.server.SCRIPT_NAME  =="/card.php" or $smarty.server.SCRIPT_NAME  =="/chp.php"}% class="active"%{/if}%><a href="info.html" >Личный кабинет</a></li>
+                <li %{if  $smarty.server.SCRIPT_NAME =="/help.php"}% class="active"%{/if}%><a href="help.php" target="_blank">Помощь</a></li>
+            </ul>
+             
+            <div id="fast_reports">
+            		
+               
+            </div>
+            
+            
+            <div class="content_inner">
+    			
+                %{$vmenu}%
+          
+          %{foreach name=cont from=$context item=item}%%{/foreach}%
+          %{if $smarty.foreach.cont.total>0}%
+          <div id="gydex_context_wrapper">
+          	
+          	  
+              <div id="gydex_context" style="margin-left:0px !important;">
+          	  <!-- context here -->	  
+                  %{foreach name=cont from=$context item=item}%
+                  <div class="gydex_context">	
+                  	<a %{if !$item.item.is_help}%href="%{$item.item.url}%"%{else}%href="#" onClick=" OpenHelp('%{$item.item.url}%'); return false;"%{/if}%>%{$item.item.name}%</a>
+                  </div>
+                  %{/foreach}%
+                   
+          		</div>
+         	 <!-- context -->
+          	</div>
+            %{/if}%
+             
+            
+            
+        	%{foreach name=bc from=$bc item=item}%%{/foreach}%
+            %{if $smarty.foreach.bc.total>0}%
+          	<div id="gydex_breadcrumbs">
+            	%{foreach name=bc from=$bc item=item}%
+                %{if !$smarty.foreach.bc.last}%
+                <a href="%{$item.item.url}%">%{$item.item.name}%</a> > 
+                %{else}%
+                %{$item.item.name}%
+                %{/if}%
+                
+                %{/foreach}%
+                 
+          	</div>
+             %{/if}%
+                
+                
+                
+                	
+                %{$content}%
+            </div>
+        </div>
+     </div>
+     
+
+	<div class="clear"></div>
+
+
+</div>

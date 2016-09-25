@@ -1,0 +1,84 @@
+<div id="task_move_dialog" title="Перенос срока задачи" style="display:none;">
+	 
+	<div  style="font-weight:bold; margin:10px 0px 10px 0px;" >
+   Укажите новый крайний срок задачи:
+    
+    
+    </div>
+    
+     <div style="float:left; margin-right:20px;">   
+   
+        <label for="new_pdate_beg_">Дата: 
+        </label> <br>
+    
+        
+        <input  type="text" value="%{$bill.new_pdate_beg}%" id="new_pdate_beg_"  size="10"   maxlength="10" />
+    </div>
+    <div style="float:left; margin-right:20px;">   
+        <label for="new_ptime_beg_">Время:</label> <br>
+    
+        
+         <select  id="new_ptime_beg_h_"  style="width:60px">
+            %{html_options values=$ptime_beg_h  selected=$new_ptime_beg_hr  output=$ptime_beg_h}%
+        </select>: 
+        <select   id="new_ptime_beg_m_"   style="width:60px">
+            %{html_options values=$ptime_beg_m selected=$new_ptime_beg_mr  output=$ptime_beg_m}%
+        </select>
+   
+   </div>
+    
+    <br clear="all" />
+    
+    <div  style="font-weight:bold; margin:10px 0px 10px 0px;" >
+  Текущий срок задачи:
+    	 
+    </div>
+    
+    <div style="float:left; margin-right:20px;">   
+   
+        <label for="exp_pdate_old">Дата: 
+        </label> <br>
+    
+        
+        <input  type="text" value="%{$bill.pdate_beg}%" id="exp_pdate_old" disabled size="10"   maxlength="10" />
+    </div>
+    <div style="float:left; margin-right:20px;">   
+        <label for="exp_ptime_old">Время :</label> <br>
+    
+        
+         <select  id="exp_ptime_h_old" disabled style="width:60px">
+            %{html_options values=$ptime_beg_h  selected=$ptime_beg_hr  output=$ptime_beg_h}%
+        </select>: 
+        <select   id="exp_ptime_m_old"  disabled style="width:60px">
+            %{html_options values=$ptime_beg_m selected=$ptime_beg_mr   output=$ptime_beg_m}%
+        </select>
+   
+   </div>
+
+     
+    
+</div>
+
+<script>
+$(function(){
+	$("#task_move_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 300,
+	  height: 250,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+		
+	
+	
+});
+</script>

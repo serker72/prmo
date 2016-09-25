@@ -1,0 +1,6 @@
+<b>Позиции в других утвержденных доверенностях:</b><br />
+   %{section name=intrustsec loop=$intrust}%
+  	Позиция %{$intrust[intrustsec].position_id|string_format:"%05d"}%  %{$intrust[intrustsec].name}%, счет %{$intrust[intrustsec].bill_code}%, в доверенности № %{$intrust[intrustsec].trust_id}%  в количестве %{$intrust[intrustsec].quantity}% %{$intrust[intrustsec].dimension}%<br />  
+   %{sectionelse}%
+   - 
+   %{/section}%

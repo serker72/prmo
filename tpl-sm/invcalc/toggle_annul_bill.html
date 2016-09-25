@@ -1,0 +1,63 @@
+%{if $items[rowsec].can_annul}%
+    <a href="#" id="delete_%{$items[rowsec].id}%"><img src="/img/icons/delete.png" width="24" height="24" alt="Аннулировать..." title="Аннулировать..." border="0" /></a>
+    
+     <script type="text/javascript">
+	$(function(){
+		$("#delete_%{$items[rowsec].id}%").bind("click",function(){
+			%{if $items[rowsec].binded_to_annul!=""}%
+			if(!window.confirm("Внимание! С данным документом связаны следующие документы: %{$items[rowsec].binded_to_annul}%. При аннулировании документа  они также будут аннулированы. Продолжить?")) return false;
+			%{/if}%
+			
+			usl=true;
+			do_it=false;
+			note='';
+			while(usl){
+					res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
+					if(res==undefined) {
+						break;
+					}
+					if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
+						note=res;
+						usl=false;
+						do_it=true;						
+					}
+			}
+			
+			if(do_it&&window.confirm("Внимание! Вы действительно хотите аннулировать счет № %{$items[rowsec].code}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/invcalc_bill.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$items[rowsec].id}%",
+					   "invcalc_id":"%{$id}%",
+					  "shorter":0,
+					  "note":note
+				  },
+				  beforeSend: function(){
+						$("#item_row_%{$items[rowsec].id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#item_row_%{$items[rowsec].id}%").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+    
+    
+    %{else}%
+    <a href="#" onclick="
+     $('#annul_dialog_text%{$prefix}%').html('Невозможно аннулировать счет № %{$items[rowsec].code}%. <br /> Причина: %{$items[rowsec].can_annul_reason}%.');
+    
+    $('#annul_dialog%{$prefix}%').dialog('open');
+    
+    return false;"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="Аннулировать..." title="Аннулировать..." border="0" /></a>
+    %{/if}%

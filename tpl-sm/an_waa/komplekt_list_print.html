@@ -1,0 +1,173 @@
+ <h1>Заявки без автоаннулирования</h1>
+<table width="800" border="1" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    <th scope="col" width="60">
+    № п/п
+   
+    </th>
+    
+    
+      <th scope="col" width="60">
+    Дата создания
+    </th>
+    
+    
+  <th scope="col" width="60">
+    Заданный номер
+    
+    </th>
+   
+  
+   
+   
+    <th scope="col" width="80">
+   Контрагент
+     
+   
+    </th>
+    
+   
+    
+    <th scope="col" width="100">Даты исполнения 
+   
+    </th>
+    
+      <th scope="col" width="100">Статус
+    
+    </th>
+    
+    
+   
+  
+    
+   <th scope="col" width="100">
+    Создал документ
+   
+   
+    </th>
+    
+    <th scope="col" width="100">
+    Утвердил без а/а
+   
+   
+    </th>
+   
+ 
+   
+   
+ 
+</tr>
+<tr align="center" valign="top">
+	<td width="60">
+	 <input type="text" size="4" maxlength="255" value="%{$id3}%" name="id3" id="id3" disabled="disabled" />
+    
+    </td>
+    
+     
+    <td width="60">&nbsp;
+    
+    </td>
+    
+    
+    <td width="60">
+	 <input type="text" size="4" maxlength="255" value="%{$code3}%" name="code3" id="code3" disabled="disabled" />
+    
+    </td>
+    
+    
+     
+    
+	
+       <td width="80">
+  
+    
+    </td>
+    
+ 
+    
+      <td width="100">
+	
+    </td>
+  
+    <td width="100">
+     <select id="inner_status_id3" disabled="disabled" style="width:100px;">
+  	<option value="0"  %{if $status_id3==0}% selected="selected"%{/if}%>все заявки</option>
+    <option value="2"  %{if $status_id3==2}% selected="selected"%{/if}%>утверждена</option>
+    <option value="1"  %{if $status_id3==1}% selected="selected"%{/if}%>не утверждена</option>
+    <option value="11"  %{if $status_id3==11}% selected="selected"%{/if}%>новая</option>
+    <option value="12"  %{if $status_id3==12}% selected="selected"%{/if}%>не выполнена</option>
+    <option value="13"  %{if $status_id3==13}% selected="selected"%{/if}%>выполнена</option>
+    <option value="3"  %{if $status_id3==3}% selected="selected"%{/if}%>аннулирована</option>
+   </select>  
+  
+   
+    </td>
+   
+ 	
+    
+      <td width="100">
+   
+    <input type="text" disabled="disabled" size="15" maxlength="255" value="%{$manager_name3}%" name="manager_name3" id="manager_name3" style="width:60px;" />
+   
+   </td>
+   
+   
+    <td width="100">
+   
+    <input type="text" size="15" maxlength="255" value="%{$utv_name3}%" name="utv_name3" id="utv_name3" style="width:60px;" disabled="disabled" />
+   
+   </td>
+   
+    
+   
+</tr>
+</thead>
+<tbody>
+
+%{section name=rowsec loop=$items}%
+
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+
+	<td width="60" %{if $items[rowsec].status_id==3}% style="color:red;"%{else}%style="color:%{$items[rowsec].color}%;"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>%{$items[rowsec].id}% </td>
+    
+     <td width="60" style="color:%{$items[rowsec].color}%;">%{$items[rowsec].pdate}%&nbsp;</td>
+    
+    
+    <td width="60"  style="color:%{$items[rowsec].color}%;" >%{$items[rowsec].code}%&nbsp;</td>
+    
+    
+    
+    <td width="80" style="color:%{$items[rowsec].color}%;"> %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;</td>
+    
+    
+    <td width="100" style="color:%{$items[rowsec].color}%;">
+    с %{$items[rowsec].begin_pdate}%
+    по %{$items[rowsec].end_pdate}%
+    
+    </td>
+    
+    
+    <td width="100" %{if $items[rowsec].status_id==3}% style="color:red;"%{else}%style="color:%{$items[rowsec].color}%;"%{/if}%>
+    
+    %{include file="komplekt/toggle_confirm.html" filename="komplekt.php" item=$items[rowsec] shorter=0}%
+    
+    &nbsp;</td>
+   
+  
+   
+     <td width="100" style="color:%{$items[rowsec].color}%;">
+    %{$items[rowsec].manager_name}%  
+    </td>
+    
+    <td width="100" style="color:%{$items[rowsec].color}%;">
+   %{$items[rowsec].utv_name}%  %{$items[rowsec].utv_pdate}%
+    </td>
+ 
+</tr>
+
+%{/section}%
+
+</tbody>
+</table>

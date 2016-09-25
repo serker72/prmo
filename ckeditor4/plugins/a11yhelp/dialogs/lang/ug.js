@@ -1,0 +1,9 @@
+/*
+ Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+ For licensing, see LICENSE.md or http://ckeditor.com/license
+*/
+CKEDITOR.plugins.setLang("a11yhelp","ug",{title:" ",contents:" .     ESC  .",legend:[{name:"",items:[{name:"  ",legend:"${toolbarFocus}     TAB  SHIFT+TAB              Enter    ."},{name:" ",legend:" TAB      SHIFT + TAB       ENTER    ESC    .     ALT + F10    .  TAB          SHIFT + TAB         .    ENTER   ."},
+{name:"   ",legend:"Press ${contextMenu} or APPLICATION KEY to open context-menu. Then move to next menu option with TAB or DOWN ARROW. Move to previous option with SHIFT+TAB or UP ARROW. Press SPACE or ENTER to select the menu option. Open sub-menu of current option with SPACE or ENTER or RIGHT ARROW. Go back to parent menu item with ESC or LEFT ARROW. Close context menu with ESC."},{name:" ",legend:"Inside a list-box, move to next list item with TAB OR DOWN ARROW. Move to previous list item with SHIFT + TAB or UP ARROW. Press SPACE or ENTER to select the list option. Press ESC to close the list-box."},
+{name:"   ",legend:"${elementsPathFocus}      TAB         SHIFT+TAB           Enter    ."}]},{name:"",items:[{name:" ",legend:"${undo}  "},{name:" ",legend:"${redo}  "},{name:" ",legend:"${bold}  "},{name:" ",legend:"${italic}  "},
+{name:"  ",legend:"${underline}  "},{name:" ",legend:"${link}  "},{name:"   ",legend:"${toolbarCollapse}  "},{name:" Access previous focus space command",legend:"Press ${accessPreviousSpace} to access the closest unreachable focus space before the caret, for example: two adjacent HR elements. Repeat the key combination to reach distant focus spaces."},{name:" Access next focus space command",legend:"Press ${accessNextSpace} to access the closest unreachable focus space after the caret, for example: two adjacent HR elements. Repeat the key combination to reach distant focus spaces."},
+{name:"  ",legend:"${a11yHelp}  "}]}]});

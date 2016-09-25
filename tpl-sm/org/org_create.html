@@ -1,0 +1,273 @@
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#contract_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+
+});
+</script>
+<form action="ed_organization.php" method="post">
+
+%{include file="every_help_dialog.html" filename="org_create.htm" prefix="" description="создание организации"  style="float:right;  margin-right:10px;" is_right=true}%
+
+
+<input type="hidden" name="action" value="0" />
+
+<input type="hidden" name="code" value="%{$code}%" />
+<div style="float:left; margin-right:10px;">
+
+<label for="full_name">Полное наименование (без кавычек):</label><br />
+
+<input type="text" size="30" maxlength="255" name="full_name" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="ur_or_fiz">&nbsp;</label><br />
+<select style="width:80px;" name="ur_or_fiz">
+<option value="0" selected="selected">Юр. лицо</option>
+<option value="1">Физ. лицо</option>
+</select>
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="opf_id">ОПФ:</label><br />
+<select name="opf_id" id="opf_id" style="width:60px;">
+%{html_options values=$opf_ids selected=$opf output=$opfs}%
+</select>
+
+ 
+  <input type="button" value="Редактировать..." id="expand_opf" %{if !$can_expand_opf}% disabled="disabled"%{/if}% />
+  <div id="opf_dialog" title="Виды ОПФ">
+  <div id="opf_dic">
+  %{include file="org/d_opfs.html"}%
+  </div>
+  
+  Новый вид ОПФ:<br>
+  <input type="text" id="new_opf" size="30" maxlength="255" />
+  <input type="button" value="Добавить ОПФ" id="add_new_opf" %{if !$can_expand_opf}% disabled="disabled"%{/if}%  />
+  </div>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+    $("#opf_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 350,
+    height: 490,
+    buttons: {
+        "Готово": function() { 
+        	$.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+          
+          $.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_page"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                  $("#opf_id").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+        
+        $(this).dialog("close"); }
+      }
+    
+    });
+    $("#expand_opf").bind("click",function(){
+        $("#opf_dialog").dialog("open");
+    });
+    
+    function RedrawDic(){
+          $.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+      }
+      
+      $("#add_new_opf").bind("click", function(){
+          if($("#new_opf").attr("value").length<3){
+              $("#new_opf").focus();
+              return false;
+          }
+          
+          $.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"add_opf",
+                  "opf":$("#new_opf").attr("value")
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                 alert("Вид ОПФ добавлен!"); 
+                 $("#new_opf").attr("value","");
+                 RedrawDic();
+                // location.reload();
+              },
+              error: function(xhr, status){
+                  alert("Ошибка добавления ОПФ.");	
+              }	 
+          });
+          
+      });
+    
+  });
+  </script>
+  
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+<label for="legal_address">Юридический адрес:</label><br>
+<textarea cols="100" rows="3" name="legal_address"></textarea>
+<p />
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="inn">ИНН:</label>
+<input type="text" size="15" maxlength="255" name="inn" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="kpp">КПП:</label>
+<input type="text" size="15" maxlength="255" name="kpp" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="okpo">ОКПО:</label>
+<input type="text" size="15" maxlength="255" name="okpo" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+<strong>Расписание работы (МСК):</strong>
+<div style="float:left; margin-right:20px; white-space:nowrap;">
+<label for="time_from_h">с:</label>
+<select name="time_from_h" style="width:60px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m" style="width:60px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:20px; white-space:nowrap;">
+<label for="time_to_h">по:</label>
+<select name="time_to_h" style="width:60px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m" style="width:60px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+<br clear="all" />
+<p />
+
+
+    
+
+
+
+<br clear="all" />
+<p />
+
+<h4>Для заполнения полей:<br />
+-Контактная информация<br />
+-Реквизиты<br />
+-Фактические адреса<br />
+-Учредительные документы<br />
+
+необходимо нажать кнопку "Продолжить создание организации"
+
+</h4>
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Продолжить создание организации" />
+%{/if}%
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Сохранить и выйти" />
+%{/if}%
+
+
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='organizations.php';
+}else location.href='organizations.php';" />
+
+
+</form>

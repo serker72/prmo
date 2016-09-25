@@ -1,0 +1,273 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+     %{if $can_edit}%
+      <div style="float:right; margin-right:0px;">
+      
+       <a href="#" id="edit_%{$word}%_%{$items[rowsec].id}%" class="reestr_edit16 reestr_button16" data-comment="редактировать %{$named}%"  > </a>
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" class="reestr_delete16 reestr_button16" data-comment="удалить %{$named}%" > </a>    
+
+    
+   
+    </div>
+    %{/if}%
+   	
+    <input type="hidden" id="data_%{$word}%_form_id_%{$items[rowsec].id}%" value="%{$items[rowsec].form_id|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_post_index_%{$items[rowsec].id}%" value="%{$items[rowsec].post_index|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_city_id_%{$items[rowsec].id}%" value="%{$items[rowsec].city_id|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_city_string_%{$items[rowsec].id}%" value="%{$items[rowsec].fullname|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_street_%{$items[rowsec].id}%" value="%{$items[rowsec].street|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_house_%{$items[rowsec].id}%" value="%{$items[rowsec].house|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_korp_%{$items[rowsec].id}%" value="%{$items[rowsec].korp|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_str_%{$items[rowsec].id}%" value="%{$items[rowsec].str|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_office_%{$items[rowsec].id}%" value="%{$items[rowsec].office|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_flat_%{$items[rowsec].id}%" value="%{$items[rowsec].flat|escape:"html"}%" />
+    <input type="hidden" id="data_%{$word}%_address_%{$items[rowsec].id}%" value="%{$items[rowsec].address|escape:"html"}%" />
+    
+         <div style="float:left; margin-right:10px; width:90%;">
+            <div style="float:left; margin-right:10px;"><em>Вид: </em><strong>%{$items[rowsec].form_name}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Почтовый индекс: </em><strong>%{$items[rowsec].post_index}%</strong></div>
+         
+            <div style="float:left; margin-right:10px;"><em>Город: </em><strong>%{$items[rowsec].fullname}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Улица: </em><strong>%{$items[rowsec].street}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Дом: </em><strong>%{$items[rowsec].house}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Корпус: </em><strong>%{$items[rowsec].korp}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Строение: </em><strong>%{$items[rowsec].str}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Офис: </em><strong>%{$items[rowsec].office}%</strong></div>
+            <div style="float:left; margin-right:10px;"><em>Квартира: </em><strong>%{$items[rowsec].flat}%</strong></div>
+            <br clear="all" />
+            
+            <em>Прочее:</em><strong>%{$items[rowsec].address}%</strong>
+        </div>
+   		<br clear="all" />
+    </div>
+    %{if $can_edit}%
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":"%{$user_id}%"
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":"%{$user_id}%"
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 //$("#%{$word}%_address").val("%{$items[rowsec].address|regex_replace:"/[\n]/":"\\n"|regex_replace:"/[\r]/":"\\r"|regex_replace:"/&quot;/":"\\\""}%");
+			 
+			$("#%{$word}%_address").val($("#data_%{$word}%_address_%{$items[rowsec].id}%").val());	
+			$("#%{$word}%_form_id").val($("#data_%{$word}%_form_id_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_post_index").val($("#data_%{$word}%_post_index_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_city_id").val($("#data_%{$word}%_city_id_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_city_string").val($("#data_%{$word}%_city_string_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_street").val($("#data_%{$word}%_street_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_house").val($("#data_%{$word}%_house_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_korp").val($("#data_%{$word}%_korp_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_str").val($("#data_%{$word}%_str_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_office").val($("#data_%{$word}%_office_%{$items[rowsec].id}%").val());
+			$("#%{$word}%_flat").val($("#data_%{$word}%_flat_%{$items[rowsec].id}%").val());	 		 	
+			
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						
+						res=true;
+						var error_fields=new Array();
+						
+						
+						
+						//валидация формы
+						if(($("#%{$word}%_form_id").val()=="")||($("#%{$word}%_form_id").val()==0)){
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_form_id",
+								"name":"Вид",
+								"error":"Укажите вид!"
+							});						 
+						}
+						
+						if(($("#%{$word}%_city_id").val()=="")||($("#%{$word}%_city_id").val()==0)){
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_city_string",
+								"name":"Город",
+								"error":"Укажите город!"
+							});						 
+						}
+						
+						if($("#%{$word}%_post_index").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3){
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_post_index",
+								"name":"Почтовый индекс",
+								"error":"Укажите почтовый индекс!"
+							});						 
+						}
+						
+						if($("#%{$word}%_street").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<3){
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_street",
+								"name":"Улица",
+								"error":"Заполните поле Улица!"
+							});						 
+						}
+						
+						
+						
+						if($("#%{$word}%_house").val().replace(/[\.,!\?\-_\#\*\+]+/g, '').length<1){
+							res=res&&false;
+							
+							error_fields.push({
+								"id":"%{$word}%_house",
+								"name":"Дом",
+								"error":"Заполните поле Дом!"
+							});						 
+						}
+						
+						
+						$(".blue").removeClass("blue");
+						
+						if(res){
+							$.ajax({
+								async: true,
+								url: "/js/supplier.php",
+								type: "POST",
+								data:{
+									"action":"edit_%{$word}%",
+									"address": $("#%{$word}%_address").val(),
+									"form_id": $("#%{$word}%_form_id").val(),
+									"post_index": $("#%{$word}%_post_index").val(),
+									"city_id": $("#%{$word}%_city_id").val(),
+									"street": $("#%{$word}%_street").val(),
+									"house": $("#%{$word}%_house").val(),
+									"korp": $("#%{$word}%_korp").val(),
+									"str": $("#%{$word}%_str").val(),
+									"office": $("#%{$word}%_office").val(),
+									"flat": $("#%{$word}%_flat").val(),
+									
+									"id":"%{$items[rowsec].id}%",
+									"user_id":"%{$user_id}%"
+								},
+								beforeSend: function(){
+									  
+								},
+								success: function(data){
+								  $.ajax({
+									  async: true,
+									  url: "/js/supplier.php",
+									  type: "POST",
+									  data:{
+										  "action":"redraw_%{$word}%",
+										  "user_id":"%{$user_id}%"
+									  },
+									  beforeSend: function(){
+											
+									  },
+									  success: function(data){
+										$("#%{$word}%").html(data);
+										
+									  },
+									  error: function(xhr, status){
+										  
+									  }	 
+								  });
+								},
+								error: function(xhr, status){
+									alert("%{$named}%: Ошибка редактирования.");	
+								}	 
+							});
+							
+							$(this).dialog("close");
+						}else{
+							var tt='<ul>';
+							$.each(error_fields,function(k,v){
+								tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+								
+								$("#"+v.id).addClass("blue");
+							});
+							
+							tt+='</ul>';
+							
+							$("#error_window_text").empty();
+							$("#error_window_text").html(tt);
+							
+							$("#error_window_dialog").dialog("open");
+							
+							 max_height=700; min_height=140;
+								 
+							 our_height=parseInt($("#error_window_text").height());
+							 
+							 //alert( our_height);
+							  
+							 if(our_height>max_height) our_height=max_height;
+							 if(our_height<min_height) our_height=min_height;
+							 
+							 
+							 
+							 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+							
+							
+							
+						}
+						
+						
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$(".blue").removeClass("blue");
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

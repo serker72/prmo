@@ -1,0 +1,41 @@
+ 
+<form action="ed_organization.php" method="post">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$user.id}%" />
+
+
+
+
+
+<strong>Пользователи, имеющие доступ к организации:</strong><br />
+%{section name=rowsec loop=$storages}%
+%{if $smarty.section.rowsec.index==0 or $smarty.section.rowsec.index==$div}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+<input type="checkbox" value="1" name="user_id_%{$storages[rowsec].id}%" %{if $storages[rowsec].is_in==1}% checked="checked"%{/if}% %{if !$can_modify_users}% disabled="disabled"%{/if}% /><label for="user_id_%{$storages[rowsec].id}%" %{if $storages[rowsec].is_active==0}% class="item_inactive"%{/if}%>%{$storages[rowsec].name}%, %{$storages[rowsec].login}%,  %{$storages[rowsec].position_s}%</label><br />
+%{if $smarty.section.rowsec.last or $smarty.section.rowsec.index_next==$div}%
+</div>
+%{/if}%
+%{/section}%
+<br clear="all" />
+<p />
+
+
+
+<input type="hidden" name="is_confirmed" value="%{$user.is_confirmed}%" />
+
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEditUsers" value="Сохранить и перейти к списку организаций" />
+<input type="submit" name="doEditUsersStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='organizations.php';" />
+
+
+
+
+</form>

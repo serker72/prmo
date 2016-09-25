@@ -1,0 +1,46 @@
+
+ 
+    	<td colspan="7">
+         
+         
+         
+         
+         <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+         
+         %{section name=rowsec loop=$items}%
+    <tr align="left" valign="top">
+    	
+    
+    <td width="*">
+    
+    <input type="checkbox" id="supplier_contact_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" /><label for="supplier_contact_%{$items[rowsec].id}%">
+    
+    <strong>%{$items[rowsec].name}%</strong>, 	<strong>%{$items[rowsec].position}%</strong>
+    </label>
+ 
+    <input type="hidden" id="supplier_selected_code_%{$items[rowsec].id}%" value="%{$supplier_id}%" />
+    
+    <input type="hidden" id="contact_name_%{$items[rowsec].id}%" value="%{$items[rowsec].name|escape:"html"}%" />
+	</td>
+	
+ 
+    
+     
+  
+	  
+	</tr>
+%{/section}%
+         
+</table>         
+         
+         
+         
+         
+         
+         
+         
+         
+        </td>
+ 
+  
+ 	

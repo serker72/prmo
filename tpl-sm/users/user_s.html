@@ -1,0 +1,56 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({cookie: { expires: 14, name: 'userTab' }});
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Сотрудник</a></li>
+    %{if $has_rights}%
+     <li><a href="#tabs-4">Доступные контрагенты, сотрудники</a></li>
+    
+    <li><a href="#tabs-2">Права пользователя</a></li>
+    %{/if}%
+    
+    %{if $has_admin}%
+   
+    
+    <li><a href="#tabs-3">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+  %{if $has_rights}%
+  <div id="tabs-4">
+    <p>
+    %{$sup_users}%
+    
+    </p>
+  </div>
+  
+  <div id="tabs-2">
+    <p>
+    %{$rights}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+  %{if $has_admin}%
+  <div id="tabs-3">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

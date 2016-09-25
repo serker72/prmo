@@ -1,0 +1,37 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Файлы заявки № %{$ship.id}%</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+   
+    <input type="button" value="Перейти к заявке..." onclick="location.href='ed_komplekt.php?action=1&id=%{$ship.id}%&from_begin=1';" />
+   
+    
+    <br />
+
+    
+    %{$log}%
+    
+    </p>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

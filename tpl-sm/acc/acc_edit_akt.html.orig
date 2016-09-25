@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>Акт</title>
+
+
+<style>
+body, p{font-size:10pt;}
+table{
+	border-collapse:collapse;
+}
+td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10pt;
+}
+th{
+	font-weight:normal;
+}
+td.ten, th.ten, .ten{
+	font-size:8pt;
+}
+table.blacktable{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable, th.blacktable{
+	border: 1px solid black;
+}
+table.blacktable tr td, table.blacktable tr th{
+	border: 1px solid black;
+	
+}
+table.blacktable2{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable2, th.blacktable2, tr.blacktable2{
+	border: 2px solid black;
+}
+td p{
+	margin-bottom:0px;
+}
+ .colon{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:8pt;
+ }
+ 
+ .title{
+	font-family:Arial, Helvetica, sans-serif;
+	 font-size:14pt;
+ }
+ .header{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:14px;
+ }
+</style>
+
+</head>
+<body>
+
+<p style="font-size:20px; font-weight:bold;  border-bottom:2px solid black;">
+Акт № %{$acc.given_no}% от %{$given_pdate_date}% %{$given_pdate_month}% %{$given_pdate_year}%																														
+
+
+
+</p>
+
+<p >
+Исполнитель:			
+
+<strong>%{$print_org_opf.full_name}% 
+
+ %{if $print_org_fact.print_name!=""}%
+    %{$print_org_fact.print_name}%  
+    %{else}%
+    "%{$print_org_fact.full_name}%" 
+    %{/if}% 
+
+</strong>
+
+<br />
+
+Заказчик:			
+			
+
+<strong>%{$print_supplier_opf.full_name}%
+
+ %{if $print_supplier.print_name!=""}%
+    %{$print_supplier.print_name}%
+    %{else}%
+    "%{$print_supplier.full_name}%" 
+    %{/if}%
+ 
+ 
+ </strong>
+ 
+<br /> 
+
+
+%{if $suppliers_are_equal==false}%
+Грузополучатель:			
+			
+
+<strong>%{$print_ship_supplier_opf.full_name}%
+
+ %{if $print_ship_supplier.print_name!=""}%
+    %{$print_ship_supplier.print_name}%
+    %{else}%
+    "%{$print_ship_supplier.full_name}%" 
+    %{/if}%
+ 
+ 
+ </strong><br />
+%{/if}%
+
+
+Основание:
+<strong>Договор № %{$contract_no|default:"-"}% от %{$contract_pdate|default:"-"}%
+ 
+ </strong>
+ 
+<br /> 
+
+</p>
+<br />
+ 
+
+
+
+%{include file="acc/positions_on_page_set_akt.html" pospos=$positions change_low_mode=$acc.change_low_mode change_high_mode=$acc.change_high_mode}%
+
+
+<br />
+
+
+
+
+<p>
+Всего оказано услуг %{$smarty.section.pospossec.total}%, на сумму
+
+%{if $do_print_summ==1}%
+ %{$totals_by_all}% руб.
+ 
+%{else}%
+-
+%{/if}% 
+ <br />
+
+%{if $do_print_summ==1}%																															
+<strong>%{$total_cost_rub_propis}% %{$total_cost_kop_propis|string_format:"%02d"}% копеек</strong>	
+%{else}%
+-
+%{/if}% 
+																														
+</p>	
+<br />
+
+  <p style="padding-bottom:5px; border-bottom:2px solid black; text-align:justify;">  																														
+Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания 
+ услуг не имеет.																															
+</p>																															
+<br />
+<br />
+																															
+
+<div style="page-break-inside:avoid;/* border:1px solid blue; */ height:150px;">
+			<table width="100%" border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td width="50%">Исполнитель:	<br />
+			Генеральный директор<br />
+			 %{$print_org.chief|default:"________________"}%__________________________ 
+											</td>
+    <td width="50%"> Заказчик: <br />
+			Генеральный директор<br />
+			 %{$print_supplier_chief|default:"________________"}%__________________________															
+</td>
+  </tr>
+</table>
+
+            
+            																												
+			
+            
+           
+
+    %{if $do_print_sign==1}%
+     
+    <div style="height:260px; /*border: 1px solid black;*/ position:relative; left: 0px; top:-100px;">
+    <div style="position:relative; z-index:-2; width:150px; height:150px;  left: 150px; top:10px; "><img src="%{$print_org.print_sign_dir}%" border=0 alt="" />
+    </div>
+  
+    
+    <div style="position:relative; z-index:-1;   width:160px; height:160px; left:0px; top:-150px;  "><img src="/img/print/%{$print_org.print_print}%" width="160" height="158" border=0 alt="" /></div>
+    
+    </div>
+    %{/if}%
+
+
+</div>
+
+
+
+
+</body>
+</html>

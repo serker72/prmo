@@ -1,0 +1,189 @@
+<h4>Доступ к планировщику других сотрудников</h4>
+
+<div  style="border:1px solid silver; min-width:720px; width:auto; height:150px; overflow:auto;">
+
+
+<table width="100%" class="blacktable" border="1">
+<thead>
+<tr>
+	<th>Ф.И.О.</th>
+    <th>Логин</th>
+    <th>Должность</th>
+    
+    <th width="50">Встречи</th>
+    <th width="50">Задачи</th>
+    <th width="50">Заметки</th>
+    <th width="50">Звонки</th>
+    <th width="50">Команд- ки</th>
+</tr>    
+</thead>
+<tbody>
+%{foreach from=$items item=user}% 
+<tr>
+	<td>
+     %{if $user.is_active==0}%<span style="color:red !important;">%{/if}%
+      %{$user.name_s}%
+      %{if $user.is_active==0}%</span>%{/if}%
+    </td>
+    <td>
+     %{if $user.is_active==0}%<span style="color:red !important;">%{/if}%
+     %{$user.login}%
+      %{if $user.is_active==0}%</span>%{/if}%
+    </td>
+    <td>
+     %{if $user.is_active==0}%<span style="color:red !important;">%{/if}%
+     %{$user.position_s}%
+      %{if $user.is_active==0}%</span>%{/if}%
+    </td>
+	
+    
+    <td width="50" align="center">%{if $user.rights[3]!=false}%<b>+</b>%{else}%-%{/if}%</td>
+    <td width="50" align="center">%{if $user.rights[1]!=false}%<b>+</b>%{else}%-%{/if}%</td>
+   	<td width="50" align="center">%{if $user.rights[5]!=false}%<b>+</b>%{else}%-%{/if}%</td>
+    <td width="50" align="center">%{if $user.rights[4]!=false}%<b>+</b>%{else}%-%{/if}%</td>
+    <td width="50" align="center">%{if $user.rights[2]!=false}%<b>+</b>%{else}%-%{/if}%</td>
+    
+</tr>
+%{foreachelse}% 
+<tr>
+	<td colspan="8" align="center">-нет доступа-</td>
+</tr>
+%{/foreach}%
+</tbody>
+</table>
+
+
+ 
+</div>
+    
+
+<br>
+
+
+%{if $can_edit}%
+<input type="button" id="sched_edit" value="Редактировать..." />
+
+<script type="text/javascript">
+$(function(){
+	 $("#sched_edit_dialog").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 650,
+		  height: 500,
+		  dialogClass: 'semi_auth',
+		  buttons: {
+			  "Готово": function() { 
+			  		//применить данные
+					 
+					data=new Array();
+					$.each($("input[id^=share_is_in_]"), function(k,v){
+						//users.push($(v).val());
+						if($(v).hasClass("changed")){
+						
+							if($(v).prop("checked")==true) state=1; else state=0;
+							user_id=$(v).attr("id").replace(/^share_is_in_/,'').replace(/_[0-9]$/,'');
+							kind_id=$(v).attr("id").replace(/^share_is_in_([0-9])+_/,'');
+							
+							hashed='';
+							
+							hashed+=user_id+";"+kind_id+";"+state;
+							
+							data.push(hashed);
+						}
+					});
+					
+					//alert(data);
+					
+					$.ajax({
+						async: true,
+						url: "/js/user_s.php",
+						type: "POST",
+						data:{
+							"action":"transfer_users",
+							"user_id":"%{$user_id}%",
+							 
+							"data[]":data
+							
+						},
+						beforeSend: function(){
+							//$("#sched_edit_dialog_inner").html('<img src="/img/wait.gif" width="32" height="32" alt=""/>');  
+						},
+						success: function(data){
+							//alert(data);
+						  //$("#sched_edit_dialog_inner").html(data);
+						  //sched
+						  	$.ajax({
+								async: true,
+								url: "/js/user_s.php",
+								type: "POST",
+								data:{
+									"action":"reload_users",
+									"user_id":"%{$user_id}%"
+									
+								},
+								beforeSend: function(){
+									$("#sched").html('<img src="/img/wait.gif" width="32" height="32" alt=""/>');  
+								},
+								success: function(data){
+									//alert(data);
+								  
+								  $("#sched").html(data);
+								},
+								error: function(xhr, status){
+									//alert("Ошибка добавления вопроса.");	
+								}	 
+							});
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления вопроса.");	
+						}	 
+					});
+					 
+			  		$("#sched_edit_dialog").dialog("close"); 
+			  },
+			  "Отмена": function() {
+				  $("#sched_edit_dialog").dialog("close");
+			  }
+		  }
+	 });
+	 
+	 $("#sched_edit").bind("click", function(){
+		 $("#sched_edit_dialog").dialog("open"); 
+		
+		 //подгрузить суммарные данные
+		 $.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"load_users",
+				"user_id":"%{$user_id}%"
+			},
+			beforeSend: function(){
+				$("#sched_edit_dialog_inner").html('<img src="/img/wait.gif" width="32" height="32" alt=""/>');  
+			},
+			success: function(data){
+			  $("#sched_edit_dialog_inner").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+	 });
+	 
+});
+</script>
+ 
+
+<div id="sched_edit_dialog" title="Укажите сотрудников" style="display:none;">
+  <div id="sched_edit_dialog_inner"></div>
+
+</div>
+
+
+
+%{/if}%
+<p />

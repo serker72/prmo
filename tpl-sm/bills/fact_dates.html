@@ -1,0 +1,5 @@
+
+%{section name=rowsec loop=$items}%
+%{$items[rowsec].given_pdate}% реализация <a href="ed_acc.php?action=1&id=%{$items[rowsec].id}%" target="_blank">№ %{$items[rowsec].id}%</a><br />
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%-%{/if}%

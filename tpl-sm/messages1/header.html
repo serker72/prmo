@@ -1,0 +1,489 @@
+<script type="text/javascript">
+
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+$("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+});
+</script>
+
+%{if $prefix==""}%
+
+<div style="float:left; margin-right:10px;">
+<a href="message_compose.php" class="reestr_button24 reestr_edit" data-comment="Новое сообщение"></a>
+
+</div>
+
+
+<div style="float:left; margin-right:10px; ">
+	%{include file="suppliers/mode_reestr.html" prefix="" pagename="messages.php"}%
+	
+</div>
+
+
+%{include file="every_help_dialog.html" filename="messages.htm" prefix="" description="список сообщений" style="float:left;  margin-right:10px;"}%
+
+<br clear="all" />
+
+<p />
+%{else}%
+%{include file="every_help_dialog.html" filename="messages.htm" prefix="_ish" description="список сообщений" style="float:left; margin-top:5px; margin-right:10px;"}%
+
+<br clear="all" />
+
+<p />
+%{/if}%
+
+
+<div id="message_deleted_%{$prefix}%" style="position:fixed; left:250px; top:250px; width:250px; height:30px; border:1px solid #cdcdcd; background-color:#fafafa; color:#464646; padding: 5px 5px; text-align:center; display:none; font-size:13px;">Выделенные сообщения удалены.</div>
+%{if $show_message_deleted}%
+<script type="text/javascript">
+$(function(){
+	
+	h=parseFloat(window.screen.innerHeight)/2;
+	h=h-12;
+	w=parseFloat(window.innerWidth)/2;
+	w=w-125;
+	
+	$("#message_deleted_%{$prefix}%").css("left",w);
+	$("#message_deleted_%{$prefix}%").css("top",h);
+	$("#message_deleted_%{$prefix}%").css("display","block");
+	window.setTimeout(function(){$("#message_deleted_%{$prefix}%").css("display","none");},3000);
+});
+</script>
+%{/if}%
+%{if $show_message_deleted_2}%
+<script type="text/javascript">
+$(function(){
+	
+	h=parseFloat(window.screen.innerHeight)/2;
+	h=h-12;
+	w=parseFloat(window.innerWidth)/2;
+	w=w-125;
+	
+	$("#message_deleted_%{$prefix}%").css("left",w);
+	$("#message_deleted_%{$prefix}%").css("top",h);
+	$("#message_deleted_%{$prefix}%").css("display","block");
+	window.setTimeout(function(){$("#message_deleted_%{$prefix}%").css("display","none");},3000);
+});
+</script>
+%{/if}%
+
+
+%{if $prefix==""}%
+<div id="message%{$prefix}%" style="position:fixed; left:250px; top:250px; width:250px; height:30px; border:1px solid #cdcdcd; background-color:#fafafa; color:#464646; padding: 5px 5px; text-align:center; display:none; font-size:13px;">Ваше сообщение отправлено.</div>
+%{/if}%
+%{if $prefix==""}%
+%{if $show_message}%
+<script type="text/javascript">
+$(function(){
+	
+	h=parseFloat(window.screen.innerHeight)/2;
+	h=h-12;
+	w=parseFloat(window.innerWidth)/2;
+	w=w-125;
+	
+	$("#message").css("left",w);
+	$("#message").css("top",h);
+	$("#message").toggle("display");
+	window.setTimeout(function(){$("#message").toggle("display");},3000);
+});
+</script>
+%{/if}%
+%{/if}%
+
+%{$pages}%
+
+<br clear="all" />
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+<form action="messages.php" method="get" id="filter_form%{$prefix}%">
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+<script type="text/javascript">
+total_mess_arr%{$prefix}%=new Array();	
+$(function(){
+	$("#select_all%{$prefix}%").bind("click",function(){
+		if($("#select_all%{$prefix}%").attr("checked")) mode="checked"; else mode=false;
+		mod=$("#select_all%{$prefix}%").attr("checked");
+		for(i=0; i<total_mess_arr%{$prefix}%.length; i++){
+			$("#"+total_mess_arr%{$prefix}%[i]).attr("checked",mode);
+		}
+	});
+	
+	$("#doDelete%{$prefix}%").bind("click", function(){
+		res=false;
+		
+		for(i=0; i<total_mess_arr%{$prefix}%.length; i++){
+			if($("#"+total_mess_arr%{$prefix}%[i]).attr("checked")) res=res||true;
+		}
+		
+		if(res){
+			res=window.confirm("Вы действительно хотите удалить отмеченные сообщения?");	
+		}
+			
+		return res;
+	});
+	
+});
+</script>
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="messagetable">
+<thead>
+<tr align="center" valign="top">
+
+%{foreach from=$view item=col}%	
+
+%{if $col.colname=="sender"}%  
+	<th scope="col" width="140">Отправитель
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}%
+%{if $col.colname=="receiver"}%    
+    <th scope="col" width="140">Получатель
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>    
+  %{/if}%
+%{if $col.colname=="topic"}%     
+	<th scope="col" width="*">Тема
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>    
+  %{/if}%
+%{if $col.colname=="files"}%     
+     <th scope="col" width="130">Прикрепленные файлы
+   
+    </th>   
+ %{/if}%
+%{if $col.colname=="pdate"}%      
+    
+    <th scope="col" width="150">Дата 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+ %{/if}% 	
+    %{/foreach}%  
+    
+   
+    <th scope="col" width="80">
+    Свернуть/ развернуть
+    </th>
+    
+   <th scope="col" width="80">
+    <input type="checkbox" id="select_all%{$prefix}%" />
+    Выделить все
+    </th> 
+</tr>
+<tr align="center" valign="top" class="filter">
+
+%{foreach from=$view item=col}%	
+
+%{if $col.colname=="sender"}%  
+    <td width="140">
+    <input type="text" size="5" maxlength="255" value="%{$sender_login}%" name="sender_login%{$prefix}%" id="sender_login%{$prefix}%" />
+    
+    </td>
+ %{/if}%
+%{if $col.colname=="receiver"}%      
+    
+     <td width="140">
+     <input type="text" size="5" maxlength="255" value="%{$receiver_login}%" name="receiver_login%{$prefix}%" id="receiver_login%{$prefix}%" />
+    
+    </td>   
+   %{/if}%
+%{if $col.colname=="topic"}%    
+    <td width="*">
+    <input type="text" size="40" maxlength="128" value="%{$topic}%" name="topic%{$prefix}%" id="topic%{$prefix}%" style="width:300px;" />
+    
+    </td>    
+   %{/if}%
+%{if $col.colname=="files"}%    
+    <td width="130">&nbsp;
+    
+    
+    </td>   
+  %{/if}%
+%{if $col.colname=="pdate"}%     
+    <td width="150">
+    &nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" /><br>
+	по:&nbsp;<input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" />
+    
+    </td>
+  %{/if}%    
+    %{/foreach}%  
+   
+    <td width="80">
+    <input name="doFilter%{$prefix}%" type="submit" value="Найти" />
+    </td>
+    
+    <td width="80">
+     <div class="reestr_delb reestr_right_button24" data-comment="Удалить..."><input name="doDelete%{$prefix}%" type="image" id="doDelete%{$prefix}%"   src="/img/24.png" alt="" /></div>
+     
+      
+    </td> 
+</tr>
+
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top" id="main_%{$prefix}%_%{$items[rowsec].id}%">
+
+%{foreach from=$view item=col}%	
+ 
+%{if $col.colname=="sender"}%  
+<td width="140" id="first_%{$prefix}%_%{$items[rowsec].id}%" align="left" %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}% align="left">
+
+
+<table width="140" cellpadding="0" cellspacing="0">
+<tr valign="top" align="left">
+<td width="14">
+%{if $items[rowsec].is_new==0}%<img src="/img/m.gif" width="14" height="11" border="0" alt=""   id="message_pic_%{$items[rowsec].id}%" />%{else}%<img src="/img/new_m.gif" width="14" height="11" border="0" alt=""   id="message_pic_%{$items[rowsec].id}%" />%{/if}%
+</td>
+<td width="*">
+
+
+%{if $items[rowsec].s_group_id==3}%
+%{$items[rowsec].s_name_d}%
+%{else}%
+%{$items[rowsec].s_name_s}%
+%{/if}%
+
+<!--%{$items[rowsec].s_login}%-->
+</td>
+</tr>
+</table>
+
+</td>
+ %{/if}%
+%{if $col.colname=="receiver"}%  
+
+<td width="140" %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}% align="left">
+%{if $items[rowsec].r_group_id==3}%
+%{$items[rowsec].r_name_d}%
+%{else}%
+%{$items[rowsec].r_name_s}%
+%{/if}%
+
+<!--%{$items[rowsec].r_login}%-->
+</td>
+
+ %{/if}%
+%{if $col.colname=="topic"}%  
+<td %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}% align="left">
+%{$items[rowsec].topic}% 
+
+<span class="mess_preview">%{$items[rowsec].txt|strip_tags|truncate:50:"...":true}%</span>
+</td>
+ %{/if}%
+%{if $col.colname=="files"}%  
+<td width="130" %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}% align="left">
+
+
+%{section name=filesec loop=$items[rowsec].files}%
+	 
+	<a href="attachment.html?id=%{$items[rowsec].files[filesec].id}%" id="quick_at_download_%{$prefix}%_%{$items[rowsec].files[filesec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$items[rowsec].files[filesec].orig_filename}%  %{$items[rowsec].files[filesec].size|string_format:"%.3f&nbsp;МБ"}%</a>
+    <script type="text/javascript">
+	$(function(){
+		$("#quick_at_download_%{$prefix}%_%{$items[rowsec].files[filesec].id}%").bind("click",function(e){
+			e.stopPropagation();
+			return true;
+		});
+	});
+	</script>
+   
+    <br />
+
+%{sectionelse}%
+<div align="center">-</div>
+%{/section}% </td>
+ %{/if}%
+%{if $col.colname=="pdate"}%  
+<td width="150" style="white-space:nowrap;" %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}%>
+%{$items[rowsec].pdate}%
+
+</td>
+ %{/if}% 
+    %{/foreach}%  
+
+<td %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}%>
+<a href="#" onclick="return false;"><img id="ind_%{$prefix}%_%{$items[rowsec].id}%" src="/img/ddown.gif" border="0" alt="" width="16" height="16" /></a>
+<script type="text/javascript">
+$(function(){
+	
+%{if $prefix=="" }%
+	
+	var zc%{$items[rowsec].id}%=null; 
+	
+	
+	function ToggleRead(){
+		
+		//alert('rd');
+		$.ajax({
+				async: true,
+				url: "/js/messages.php",
+				type: "POST",
+				data:{
+					"action":"mark_as_read",
+					"id":"%{$items[rowsec].id}%"				
+					
+				},
+				beforeSend: function(){
+				   $("#main_%{$prefix}%_%{$items[rowsec].id}% td").removeClass("newmess");
+				   $("#main_%{$prefix}%_%{$items[rowsec].id}% td").addClass("oldmess");
+				   $("#main_%{$prefix}%_%{$items[rowsec].id}% td:first img").attr("src","/img/m.gif");	  
+				},
+				success: function(data){
+				   //$("#chain_%{$prefix}%_%{$items[rowsec].id}% td").html(data);
+				  
+				},
+				error: function(xhr, status){
+					//$("#chain_%{$prefix}%_%{$items[rowsec].id}% td").html('Ошибка загрузки сообщений.');
+						 				},
+				complete: function(){
+					
+				} 
+			});
+	}
+	%{/if}%
+	
+	
+	$("#main_%{$prefix}%_%{$items[rowsec].id}%").bind("mousemove",function(){
+		$("#main_%{$prefix}%_%{$items[rowsec].id}%").css("cursor","pointer");
+	});
+	$("#main_%{$prefix}%_%{$items[rowsec].id}%").bind("mouseout",function(){
+		$("#main_%{$prefix}%_%{$items[rowsec].id}%").css("cursor","arrow");
+	});
+	
+	
+	//развернуть цепочку писем
+	$("#main_%{$prefix}%_%{$items[rowsec].id}%").bind("click",function(){
+		if($("#chain_%{$prefix}%_%{$items[rowsec].id}%").css("display")=="none"){
+			$("#chain_%{$prefix}%_%{$items[rowsec].id}%").css("display","table-row");
+			$("#ind_%{$prefix}%_%{$items[rowsec].id}%").attr("src","/img/uup.gif");
+			
+			
+			$.ajax({
+				async: true,
+				url: "/js/messages.php",
+				type: "POST",
+				data:{
+					"action":"show_chain",
+					"parent_id":"%{$items[rowsec].id}%",
+					%{if $prefix==""}%
+					"folder_id":"1"
+					%{else}%
+					"folder_id":"2"
+					%{/if}%
+				},
+				beforeSend: function(){
+					$("#chain_%{$prefix}%_%{$items[rowsec].id}% td").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="" />');	  
+				},
+				success: function(data){
+				   $("#chain_%{$prefix}%_%{$items[rowsec].id}% td").html(data);
+				//   $("#main_%{$prefix}%_%{$items[rowsec].id}% td").removeClass("newmess");
+				 //  $("#main_%{$prefix}%_%{$items[rowsec].id}% td").addClass("oldmess");
+				//   $("#main_%{$prefix}%_%{$items[rowsec].id}% td:first img").attr("src","/img/message.gif");
+					%{if !$can_del_auto_now and $prefix=="" and $items[rowsec].from_id==-1 }%
+					zc%{$items[rowsec].id}%=window.setTimeout(ToggleRead,10000);
+					%{elseif $can_del_auto_now and $prefix==""}%
+					ToggleRead();
+					%{elseif !$can_del_auto_now and $prefix=="" and $items[rowsec].from_id!=-1}%
+					ToggleRead();
+					%{/if}%
+				},
+				error: function(xhr, status){
+					$("#chain_%{$prefix}%_%{$items[rowsec].id}% td").html('Ошибка загрузки сообщений.');	 				},
+				complete: function(){
+					
+				} 
+			});
+			
+		}else{
+			$("#ind_%{$prefix}%_%{$items[rowsec].id}%").attr("src","/img/ddown.gif");
+			$("#chain_%{$prefix}%_%{$items[rowsec].id}%").css("display","none");
+			%{if !$can_del_auto_now and $prefix=="" }%
+			window.clearTimeout(zc%{$items[rowsec].id}%);
+			
+			%{/if}%
+			
+		}
+	});
+});
+
+</script>
+</td>
+ <td %{if $items[rowsec].is_new==0}%class="oldmess"%{else}%class="newmess"%{/if}%>
+	<input type="checkbox" id="select_%{$prefix}%_%{$items[rowsec].id}%" name="select_%{$prefix}%_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+    <script type="text/javascript">
+	total_mess_arr%{$prefix}%.push("select_%{$prefix}%_%{$items[rowsec].id}%");
+	$("#select_%{$prefix}%_%{$items[rowsec].id}%").bind("click",function(e){
+		
+		%{if !$can_del_auto_now and $prefix==""}%
+			if($("#select_%{$prefix}%_%{$items[rowsec].id}%").prop("checked")){
+		  //не давать выделить, если сообщение не прочитано, оно автоматическое, и не админ 
+		   
+			  //first_%{$prefix}%_%{$items[rowsec].id}%
+			  if(($("#first_%{$prefix}%_%{$items[rowsec].id}%").prop("class")=="newmess")&&(parseInt("%{$items[rowsec].from_id}%")==-1)){
+				  alert("Для удаления автоматического сообщения Вам необходимо сначала прочесть его.\nПожалуйста, прочтите данное сообщение перед удалением.");
+				  $("#select_%{$prefix}%_%{$items[rowsec].id}%").prop("checked",false);
+				  
+			  }
+			  
+			  
+			
+			}
+			
+		%{/if}%
+		
+		
+		e.stopPropagation();
+	});
+	//event.stopPropagation();
+	</script>
+</td> 
+</tr>
+<tr id="chain_%{$prefix}%_%{$items[rowsec].id}%" align="left" valign="top" style="display:none;">
+<td colspan="7" class="mess_chain">
+
+
+</td>
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям сообщений не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+
+
+<div id="new_message_block%{$prefix}%" style="display:none;">
+<p />
+<a name="compose"></a>
+
+
+
+
+</div>

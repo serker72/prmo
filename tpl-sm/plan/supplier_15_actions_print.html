@@ -1,0 +1,48 @@
+%{section name=supsec loop=$suppliers}%%{/section}%
+%{if $smarty.section.supsec.total>0}%
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="*">
+    Контрагент
+    </th>
+   
+    
+    <th scope="col" width="*">
+    Примечания
+    </th>
+     
+    </tr>
+    </thead>
+ <tbody id="suppliers_tbody">
+ 
+%{section name=supsec loop=$suppliers}%
+  <tr align="left" valign="top" id="supplier_row_%{$suppliers[supsec].id}%">
+    	
+    
+    <td width="*">
+    
+      %{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}% 
+    </td>
+    
+     
+    
+    
+    <td width="*">
+    	%{$suppliers[supsec].note}%
+    
+    
+    </td>
+     
+    
+   </tr> 
+%{/section}%
+ 
+</tbody>
+</table>
+
+<br clear="all" />
+<p />
+%{/if}% 
+

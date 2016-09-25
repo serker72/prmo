@@ -1,0 +1,849 @@
+
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	var dialog_width=1200;
+	var dialog_position='center';
+	
+	function isTouchDevice1(){
+				try{
+					document.createEvent("TouchEvent");
+					return true;
+				}catch(e){
+					return false;
+				}
+	}
+	
+	$("#edit_pms").bind("click",function(){
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			
+			
+			
+			var complex_positions=new Array();
+			
+			$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_quantity_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_has_pm_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_price_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_rub_or_percent_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_plus_or_minus_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_storage_id_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_sector_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_komplekt_ved_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val();
+				hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_discount_rub_or_percent_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_discount_value_"+hash).val();
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);			  
+			  
+			});
+			
+			
+			w=parseInt($(window).width());
+			if(w<1200){
+				 dialog_width=w-10;
+				 dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 
+			}else{
+				dialog_width=1200;
+				dialog_position='center';
+			}
+			
+			$("#positions_dialog").dialog( "option", "position", dialog_position );
+			$("#positions_dialog").dialog( "option", "width", dialog_width );
+			
+			
+			//alert(quantities.length);
+			$.ajax({
+			  async: true,
+			  url: "/js/bill.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "bill_id":"%{$bill.id}%",
+				  
+				  "komplekt_id":$("#komplekt_ved_id").val(),
+				 
+				  "complex_positions[]":complex_positions
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#positions_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="" />'); 
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data); 
+				
+				  if(isTouchDevice1()){
+			  
+					$("#positions_scroll_block").css("width", 900);
+					$("#positions_scroll_block").css("height", 580);
+					
+					$("#positions_scroll_block").css("overflow", "scroll");
+					touchScrollXY('positions_scroll_block'); 
+				  }
+			  
+				
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			
+			
+			$("#positions_dialog").dialog({
+				autoOpen: false,
+				dialogClass: 'semi_auth',
+				modal: true,
+				width: dialog_width,
+				position: dialog_position,
+				height: 620,
+				buttons:{
+					"Готово": function(){
+						//общая проверка всех полей
+						
+						var can_put=true;
+						var complex_positions=new Array();
+						
+						
+						var was_changed=false;
+						
+						//массив хешей измененных полей
+						var changed_rows=new Array();
+						
+						
+						//построить старое и новое значение +/
+						function DrawPm(hash1, prefix){
+							s='';
+							
+							usl=true;
+							if(prefix.length>0){
+								usl=$("#"+prefix+"do_pm_"+hash1).val()==1;
+							}else{
+								usl=$("#"+prefix+"do_pm_"+hash1).prop("checked");	
+							}
+							
+							
+							if(usl){
+								if($("#"+prefix+"plus_or_minus_"+hash1).val()==1){
+									s=s+'-';	
+								}else{
+									s=s+'+';
+								}
+								
+								s=s+$("#"+prefix+"value_"+hash1).val();
+								
+								if($("#"+prefix+"rub_or_percent_"+hash1).val()==1){
+									s=s+'%';	
+								}else{
+									s=s+'руб.';
+								}
+								
+							}else{
+								s=' не задано ';	
+							}
+							
+							return s;
+						}
+						
+						//найти старую сумму счета
+						function FindOldSumm(){
+							summ=0;	
+							$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+								
+								var hash1=$(value).val();
+								if(parseFloat($("#quantity_"+hash1).val())>0){
+									
+									summ=summ+parseFloat($("#total_check_"+hash1).val());
+								}
+								
+							});
+							return summ;
+						}
+						
+						//найти новую сумму счета (старт. цена + новый +/- * кол-во = стоимость)
+						function FindNewSumm(){
+							var summ=0;
+							$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+								
+								hash=$(value).val();		
+								p=0;
+								
+								p=parseFloat($("#price_"+hash).val());
+								
+								
+								//сменить начальную цену
+								if($("#do_pm_"+hash).prop("checked")){
+									//есть +-/
+									
+									//slag=1;
+									pi=p;
+									
+									if($("#rub_or_percent_"+hash).val()==0){
+										if($("#plus_or_minus_"+hash).val()==0){
+											pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+										}else{
+											//slag=-1.0*slag;
+											pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+										}
+										
+									}else{
+										pi=p;
+									
+										
+										if(parseFloat($("#value_"+hash).val())!=0){
+										
+										  if($("#plus_or_minus_"+hash).val()==0){
+											  //pi=p*100/(100+parseFloat($("#value_"+hash).val().replace("\,","\.")));
+											  pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."))*p/100;
+											  
+										  }else{
+											  //pi=p*100/(100-parseFloat($("#value_"+hash).val().replace("\,","\.")));
+											  pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."))*p/100;
+										  }
+										}
+									}
+									
+									
+									p=pi;
+									
+									p=parseFloat($("#quantity_"+hash).val())*p;
+									
+								}else{
+									p=parseFloat($("#price_pm_check_"+hash).val());
+									
+								}
+								
+								
+								summ=summ+p;
+							});
+							
+							summ=roundPlus(summ,2);
+							return summ;	
+						}
+						
+						
+						
+						
+						
+						//проверка корректности данных
+						$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+							var hash1=$(value).val();
+							
+							function roundPlus(x, n) { //x - число, n - количество знаков
+							  if(isNaN(x) || isNaN(n)) return false;
+							  var m = Math.pow(10,n);
+							  return Math.round(x*m)/m;
+							}
+							
+							
+							
+							
+							
+							
+							
+							
+							 //добавка цены
+							local_put=true;
+							 rev_value=$("#value_"+hash1).val();
+								rev_value=rev_value.replace("\,","\.");
+							if(rev_value.length==0){
+								can_put=can_put&&false;
+								local_put=local_put&&false;	
+							}
+							if(isNaN(rev_value)||(parseFloat(rev_value)<0)){
+								can_put=can_put&&false;
+								local_put=local_put&&false;
+							}
+							
+							if(local_put){
+								$("#value_"+hash1).removeClass("wrong");	
+							}else $("#value_"+hash1).addClass("wrong");
+							
+							
+							%{if !$can_lower_discount}%
+						   if($("#do_pm_"+hash1).prop("checked")&&($("#plus_or_minus_"+hash1).val()==0)){
+							   can_dis=true;
+							 //найти величину дисконта
+							 //если он в % - сравнить с 10
+							 //если он в рублях - найти величину +- в руб., найти 10% от +- в руб. и сравнить.
+							 
+							 disk=$("#discount_value_"+hash1).val().replace(/\,/,'.');
+							
+							 if(isNaN(disk)){
+								  alert("Введите дисконт! Сохранить изменения без дисконта имеют право следующие сотрудники: %{foreach from=$can_lower_users name=cu item=u}%%{$u.name_s}% (%{$u.login}%)%{if !$smarty.foreach.cu.last}%, %{/if}% %{/foreach}%");
+								  can_put=can_put&&false;
+								 
+								  can_dis=can_dis&&false;
+							 }else{
+								disk1=parseFloat(disk);
+								
+								if($("#discount_rub_or_percent_"+hash1).val()==1){
+									//дисконт в %
+									if(disk1<10){
+										 can_put=can_put&&false;
+										  
+										  can_dis=can_dis&&false;
+										  alert("Введите дисконт не менее 10%! Сохранить изменения с дисконтом менее 10% имеют право следующие сотрудники: %{foreach from=$can_lower_users name=cu item=u}%%{$u.name_s}% (%{$u.login}%)%{if !$smarty.foreach.cu.last}%, %{/if}% %{/foreach}%");
+									}
+								}else{
+									//дисконт в рублях
+									//найти +/- в рублях
+									pmv=parseFloat($("#value_"+hash1).val().replace(/\,/, '.'));
+									if($("#rub_or_percent_"+hash1).val()==1){
+										//+- в процентах
+										//найдем +/- в рублях и 10% от него
+										pmv1=parseFloat($("#price_"+hash1).val())*pmv*0.1/100;
+										
+										
+										
+										
+									}else{
+										//+- в рублях
+										//найти 10% от него и сравним с дисконтом
+										pmv1=0.1*pmv;
+											
+									}
+									
+									if(disk1<pmv1){
+										can_put=can_put&&false;
+									   
+									  can_dis=can_dis&&false;
+									  alert("Введите дисконт не менее 10%! Сохранить изменения с дисконтом менее 10% имеют право следующие сотрудники: %{foreach from=$can_lower_users name=cu item=u}%%{$u.name_s}% (%{$u.login}%)%{if !$smarty.foreach.cu.last}%, %{/if}% %{/foreach}%");
+									} 
+								}
+									 
+							 }
+							 
+							 if(can_dis) $("#discount_value_"+hash1).removeClass("wrong");
+							 else $("#discount_value_"+hash1).addClass("wrong");
+							 
+						  }
+						  %{/if}%
+							
+							
+						});
+						
+						
+						
+					  
+						
+						
+						if(can_put) {
+							
+							//сообщение 1 об измененных +/
+							var changed_message1="";
+						   
+							//найдем измененные позиции
+							$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+								
+								var hash1=$(value).val();
+								var local_changed=false;
+						   
+								//alert(hash1);
+								
+								if($("#do_pm_"+hash1).prop("checked")&&($("#old_do_pm_"+hash1).val()==0)){
+									local_changed=local_changed||true;
+								}else if(!$("#do_pm_"+hash1).prop("checked")&&($("#old_do_pm_"+hash1).val()==1)){
+									local_changed=local_changed||true;
+								}
+								
+								if($("#plus_or_minus_"+hash1).val()!=$("#old_plus_or_minus_"+hash1).val()){
+									local_changed=local_changed||true;
+								}
+								
+								if($("#value_"+hash1).val()!=$("#old_value_"+hash1).val()){
+									local_changed=local_changed||true;
+								}
+							
+								if($("#rub_or_percent_"+hash1).val()!=$("#old_rub_or_percent_"+hash1).val()){
+									local_changed=local_changed||true;
+								}
+								
+								if(local_changed){
+									 changed_rows.push(hash1);
+								
+									//формируем сообщение 1
+									changed_message1=changed_message1+"\n"+""+$("#span_position_name_"+hash1).html()+": старое значение +/-: "+DrawPm(hash1,'old_');
+									changed_message1=changed_message1+",  новое значение +/-: "+DrawPm(hash1,'');
+									changed_message1=changed_message1+"\n"
+								}
+								
+								
+								//alert(local_changed);
+								was_changed=was_changed||local_changed;
+								
+							});
+							
+							//was_changed=was_changed||local_changed;
+							//alert(was_changed);
+							if(was_changed){
+								if(window.confirm("Внимание! Вы изменили следующие позиции:\n"+changed_message1+"\nИзменится ли итоговая сумма счета "+FindOldSumm()+" руб. по измененным позициям?\n\nОК - сумма счета изменится\nОтмена - сумма счета не изменится")){
+									//да изменится	
+									//прибавим новый +/ к стартовой цене, найдем цену итоговую, найдем сумму
+									//формируем сообщение 2, содержащее информацию о новых итог. ценах позиций и новую стоимость
+									var changed_message2="";
+									var changed_price_pm=new Array(); //измененные цены для передачи в сообщение об изм. поступлениях
+									//найдем измененные позиции
+									$.each(changed_rows, function(key, hash){
+										
+										p=0;
+										
+										p=parseFloat($("#price_"+hash).val());
+										
+										
+										//сменить начальную цену
+										if($("#do_pm_"+hash).prop("checked")){
+											//есть +-/
+											
+											//slag=1;
+											pi=p;
+											
+											if($("#rub_or_percent_"+hash).val()==0){
+												if($("#plus_or_minus_"+hash).val()==0){
+													pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+												}else{
+													//slag=-1.0*slag;
+													pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+												}
+												
+											}else{
+												pi=p;
+											
+												
+												if(parseFloat($("#value_"+hash).val())!=0){
+												
+												  if($("#plus_or_minus_"+hash).val()==0){
+													  //pi=p*100/(100+parseFloat($("#value_"+hash).val().replace("\,","\.")));
+													  pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."))*p/100;
+													  
+												  }else{
+													  //pi=p*100/(100-parseFloat($("#value_"+hash).val().replace("\,","\.")));
+													  pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."))*p/100;
+												  }
+												}
+											}
+											
+											
+											changed_price_pm.push(pi);
+											
+											pi=roundPlus(pi,2);
+											//$("#price_"+hash).val(pi);	
+											//$("#span_price_"+hash).html(pi);
+											p=pi;	
+											
+										}else{
+											changed_price_pm.push(p);
+											
+											p=roundPlus(p,2);
+											
+											
+											//$("#price_"+hash).val(p);	
+											//$("#span_price_"+hash).html(p);	
+										}
+										
+										changed_message2=changed_message2+$("#span_position_name_"+hash).html()+": старая итоговая цена: "+$("#price_pm_check_"+hash).val()+" руб., "+" новая итоговая цена: "+p+" руб.\n";
+										
+									});
+									
+									//найти новую сумму
+									
+									//подгрузить список изменяемых поступлений с изменяемыми суммами
+									var changed_accs='';
+									
+									var changed_positions=new Array();
+									$.each(changed_rows, function(key, hash){
+										//искать измененные цены
+										
+										
+										
+										changed_positions.push($("#position_id_"+hash).val()+";"+$("#storage_id_"+hash).val()+";"+$("#komplekt_ved_id_"+hash).val()+";"+changed_price_pm[key]);
+									});
+									
+									
+									$.ajax({
+									  async: false,
+									  url: "/js/bill.php",
+									  type: "POST",
+									  data:{
+										  "action":"find_changed_accs",
+										  "bill_id":"%{$bill.id}%",
+										  "sector_id":"%{$bill.sector_id}%",
+										  "changed_positions[]":changed_positions
+									  },
+									  beforeSend: function(){
+										
+									  },
+									  success: function(data){
+											changed_accs=data;									
+									  },
+									  error: function(xhr, status){
+										
+									  }	 
+									});
+									
+									if(window.confirm("Внимание!\nСогласно выбранным Вами действиям, итоговая сумма счета будет изменена с "+FindOldSumm()+" руб. на "+FindNewSumm()+" руб.\nПри этом изменятся итоговые цены по позициям:\n"+changed_message2+"\n"+changed_accs+"Вы уверены?")){
+										//вносим изменения на страницу диалога
+										
+										$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+												
+
+											  hash=$(value).val();
+											  if($.inArray(hash,changed_rows)>-1){
+												  
+												 // alert('zz');
+												  p=0;
+												  
+												  p=parseFloat($("#price_"+hash).val());
+												//  $("#price_pm_check_"+hash).val(p);
+												  
+												  //сменить начальную цену
+												  if($("#do_pm_"+hash).prop("checked")){
+													  //есть +-/
+													  
+													  //slag=1;
+													  pi=p;
+													  
+													  if($("#rub_or_percent_"+hash).val()==0){
+														  if($("#plus_or_minus_"+hash).val()==0){
+															  pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+														  }else{
+															  //slag=-1.0*slag;
+															  pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+														  }
+														  
+													  }else{
+														  pi=p;
+													  
+														  
+														  if(parseFloat($("#value_"+hash).val())!=0){
+														  
+															if($("#plus_or_minus_"+hash).val()==0){
+																pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."))*p/100;
+																
+															}else{
+																pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."))*p/100;
+															}
+														  }
+													  }
+													  
+													  //pi=roundPlus(pi,2);
+													 
+													 // $("#span_price_"+hash).html(pi);
+													  p=pi;	
+													  
+												  }else{
+													 // p=roundPlus(p,2);
+													 
+													//  $("#span_price_"+hash).html(p);	
+												  }
+												  
+												 
+												  $("#nds_summ_"+hash).html(roundPlus(p*parseFloat($("#quantity_"+hash).val().replace("\,","\."))-p*parseFloat($("#quantity_"+hash).val().replace("\,","\."))/1.18,2));
+												  
+												  $("#total_check_"+hash).val(roundPlus(p*parseFloat($("#quantity_"+hash).val().replace("\,","\.")),2));
+												   p=roundPlus(p,2);		 
+												 
+												  $("#price_pm_check_"+hash).val(p);
+											  }
+											  
+										  });
+										  
+										  //return; тестовый выход
+										  
+									}else{
+										//выход, изменения не вносим
+										
+										alert("Изменения не были сохранены.");	
+										//$(this).dialog("close"); 
+										return;
+									}
+									
+								}else{
+									//нет не изменится итоговая сумма счета\\
+									
+									//пересчитаем стартовые цены, сформируем сообщение
+									
+									var changed_message3="";
+									//найдем измененные позиции
+									$.each(changed_rows, function(key, hash){
+										p=0;
+										
+										p=parseFloat($("#price_pm_check_"+hash).val().replace("\,","\."));	
+										
+										//сменить начальную цену
+										if($("#do_pm_"+hash).prop("checked")){
+											//есть +-/
+											
+											//slag=1;
+											pi=p;
+											
+											if($("#rub_or_percent_"+hash).val()==0){
+												if($("#plus_or_minus_"+hash).val()==0){
+													pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+												}else{
+													//slag=-1.0*slag;
+													pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+												}
+												
+											}else{
+												pi=p;
+											
+												
+												if(parseFloat($("#value_"+hash).val())!=0){
+												
+												  if($("#plus_or_minus_"+hash).val()==0){
+													  pi=p*100/(100+parseFloat($("#value_"+hash).val().replace("\,","\.")));
+													  
+												  }else{
+													  pi=p*100/(100-parseFloat($("#value_"+hash).val().replace("\,","\.")));
+												  }
+												}
+											}
+											
+											//pi=roundPlus(pi,2);
+											p=roundPlus(pi,2);
+											//$("#price_"+hash).val(pi);	
+											//$("#span_price_"+hash).html(pi);	
+											
+										}else{
+											p=roundPlus(p,2);
+											//$("#price_"+hash).val(p);	
+											//$("#span_price_"+hash).html(p);	
+										}
+										
+										changed_message3=changed_message3+$("#span_position_name_"+hash).html()+": старая цена с НДС: "+$("#price_"+hash).val()+" руб. "+", новая цена с НДС: "+p+" руб.\n";
+																				
+									});
+									
+									
+									if(window.confirm("Внимание!\nСогласно выбранным Вами действиям, итоговая сумма счета  "+FindOldSumm()+" руб. не изменится.\nИзменятся цены с НДС по позициям:\n"+changed_message3+"\nВы уверены?")){
+										//вносим изменения
+										//пересчет стартовых цен
+										$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+											  hash=$(value).val();
+											  if($.inArray(hash,changed_rows)>-1){
+												 p=0;
+												 
+												 p=parseFloat($("#price_pm_check_"+hash).val().replace("\,","\."));	
+										
+												
+												//сменить начальную цену
+												if($("#do_pm_"+hash).prop("checked")){
+													//есть +-/
+													
+													//slag=1;
+													pi=p;
+													
+													if($("#rub_or_percent_"+hash).val()==0){
+														if($("#plus_or_minus_"+hash).val()==0){
+															pi=p-parseFloat($("#value_"+hash).val().replace("\,","\."));
+														}else{
+															//slag=-1.0*slag;
+															pi=p+parseFloat($("#value_"+hash).val().replace("\,","\."));
+														}
+														
+													}else{
+														pi=p;
+													
+														
+														if(parseFloat($("#value_"+hash).val())!=0){
+														
+														  if($("#plus_or_minus_"+hash).val()==0){
+															  pi=p*100/(100+parseFloat($("#value_"+hash).val().replace("\,","\.")));
+															  
+														  }else{
+															  pi=p*100/(100-parseFloat($("#value_"+hash).val().replace("\,","\.")));
+														  }
+														}
+													}
+													
+													//pi=roundPlus(pi,2);
+													p=pi;
+													//$("#price_"+hash).val(pi);	
+													//$("#span_price_"+hash).html(pi);	
+													
+												}else{
+													
+													//$("#price_"+hash).val(p);	
+													//$("#span_price_"+hash).html(p);	
+												}
+												
+												
+												p=roundPlus(p,2);
+												$("#price_"+hash).val(p);	
+												$("#span_price_"+hash).html(p);	 
+												
+												
+											  }
+											  
+											  
+										});
+										
+										 //return; //тестовый выход
+										
+									}else{
+										//выход, изменения не вносим
+										
+										alert("Изменения не были сохранены.");	
+										//$(this).dialog("close"); 
+										return;
+									}
+								}
+								
+							}
+						
+							
+							
+							//перенос данных в таблицу на странице
+							
+							
+							$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+								
+								
+								hash1=$(value).val();
+								
+								hashed_string='';
+								hashed_string=$("#position_id_"+hash1).val();
+								hashed_string=hashed_string+';'+$("#quantity_"+hash1).val().replace("\,","\.");
+								if($("#do_pm_"+hash1).prop("checked")) hashed_string=hashed_string+';'+'1';
+								else hashed_string=hashed_string+';'+'0';
+								hashed_string=hashed_string+';'+$("#price_"+hash1).val().replace("\,","\.");
+								hashed_string=hashed_string+';'+$("#rub_or_percent_"+hash1).val();
+								
+								hashed_string=hashed_string+';'+$("#plus_or_minus_"+hash1).val();
+								hashed_string=hashed_string+';'+$("#value_"+hash1).val().replace("\,","\.");
+								
+								hashed_string=hashed_string+';'+$("#storage_id_"+hash1).val();
+								
+								hashed_string=hashed_string+';'+$("#sector_id_"+hash1).val();
+								hashed_string=hashed_string+';'+$("#komplekt_ved_id_"+hash1).val();
+								hashed_string=hashed_string+';'+$("#price_pm_check_"+hash1).val().replace("\,","\.");
+								hashed_string=hashed_string+';'+$("#total_check_"+hash1).val().replace("\,","\.");
+								hashed_string=hashed_string+';'+$("#discount_rub_or_percent_"+hash1).val();
+								
+								
+								hashed_string=hashed_string+';'+$("#discount_value_"+hash1).val().replace("\,","\.");
+								
+								complex_positions.push(hashed_string);			  
+							});
+							
+							
+							
+							
+							$.ajax({
+							  async: true,
+							  url: "/js/bill.php",
+							  type: "POST",
+							  data:{
+								  "action":"transfer_positions",
+								  "id":$("#id").val(),
+								  "komplekt_id":$("#komplekt_ved_id").val(),
+								
+								  "complex_positions[]":complex_positions
+							  },
+							  beforeSend: function(){
+								//alert("Загрузка реквизитов.");
+								//$("#positions").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />'); 
+							  },
+							  success: function(data){
+								//alert(data);
+								$("#positions").html(data); 
+								
+								
+								//подсчет нового Итого
+								$.ajax({
+								  async: true,
+								  url: "/js/bill.php",
+								  type: "POST",
+								  data:{
+									  "action":"calc_new_total",
+									  
+									 "complex_positions[]":complex_positions
+								  },
+								  beforeSend: function(){
+									$("#positions_cost").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />'); 
+								  },
+								  success: function(data){
+									$("#positions_cost").html(data); 
+								  },
+								  error: function(xhr, status){
+									// alert("Ошибка загрузки реквизитов.");	
+								  }	 
+								});
+								
+								//подсчет нового НДС
+								$.ajax({
+								  async: true,
+								  url: "/js/bill.php",
+								  type: "POST",
+								  data:{
+									  "action":"calc_new_nds",
+									  
+									  "complex_positions[]":complex_positions
+								  },
+								  beforeSend: function(){
+									$("#positions_nds").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />'); 
+								  },
+								  success: function(data){
+									$("#positions_nds").html(data); 
+								  },
+								  error: function(xhr, status){
+									// alert("Ошибка загрузки реквизитов.");	
+								  }	 
+								});
+								
+								 
+							  },
+							  error: function(xhr, status){
+								// alert("Ошибка загрузки реквизитов.");	
+							  }	 
+							});
+							
+							
+							//alert('zs');
+							$(this).dialog("close"); 
+							alert("Изменения были внесены в счет.\nПожалуйста, проверьте правильность данных и сохраните счет.");
+						}else{
+							
+							alert("Неверно заполнены поля таблицы!");	
+						}
+					},
+					"Отмена": function(){
+						 $(this).dialog("close"); 
+					}
+				}
+			});
+			
+			
+			
+			
+			$("#positions_dialog_komplekt_name").html($("#komplekt_ved_id_string").val());
+			$("#positions_dialog").dialog("open");
+			
+			return false;		
+	});
+	
+	
+	
+	
+	
+});
+</script>

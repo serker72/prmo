@@ -1,0 +1,296 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+<h1 style="">Редактирование реализации товара</h1>
+
+
+
+<form action="ed_acc.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id"  id="id" value="%{$acc.id}%" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$acc.bill_id}%" />
+<input type="hidden" name="sh_i_id" id="sh_i_id" value="%{$acc.sh_i_id}%" />
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Номер:</strong><br />
+
+%{$acc.id}%
+</div>
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+
+%{$acc.pdate}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер с/ф:</label><br />
+
+<input type="text" size="10" maxlength="255" name="given_no" id="given_no" value="%{$acc.given_no}%"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_pdate">Заданная дата с/ф:</label><br />
+
+<input type="text" size="10" maxlength="10" name="given_pdate" id="given_pdate" value="%{$acc.given_pdate}%"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="storage_id_string">Объект:</label><br />
+
+<input type="text" size="20" maxlength="255" id="storage_id_string" value="%{$storage_id_string}%" disabled="disabled" />
+<input type="hidden"  id="storage_id" value="%{$storage_id}%" disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id_string">Участок:</label><br />
+
+<input type="text" size="20" maxlength="255" id="sector_id_string" value="%{$sector_id_string}%" disabled="disabled" />
+</div>
+
+
+<div style="float:left; margin-right:20px; min-width:120px;" id="toggle_annul">
+%{include file="acc/toggle_annul_card.html"}%
+</div>
+
+
+<div style="float:right;">
+<input type="button" value="Файлы реализации..." onclick="location.href='acc_files.php?acc_id=%{$acc.id}%';" />
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+
+<!-- блок выбора поставщика -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Поставщик:</label><br />
+
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label><br />
+
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" />
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора поставщика -->
+
+
+
+
+
+<strong>Позиции счета:</strong> 
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_modify}% disabled="disabled"%{/if}% />
+
+<input type="hidden" id="choice_was_made" value="0" />
+
+%{include file="acc/position_actions.html" change_low_mode=$acc.change_low_mode change_high_mode=$acc.change_high_mode}%
+ 
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:scroll;">
+        %{include file="acc/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$acc.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="acc/d_notes_dialog.html" word="notes" named="Примечания" user_id=$acc.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1" onchange="" %{if $acc.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю</label>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/acc.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+
+
+</div>
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к исходящему счету" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='ed_bill.php?action=1&id=%{$acc.bill_id}%';
+}else location.href='ed_bill.php?action=1&id=%{$acc.bill_id}%';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+				  if(isNaN(x) || isNaN(n)) return false;
+				  var m = Math.pow(10,n);
+				  return Math.round(x*m)/m;
+				}
+	
+	function RotPos(){
+		
+		var can_put=true;
+		if(($("#choice_was_made").val()==0)&&($("#is_confirmed").prop("checked"))&&("%{$acc.is_confirmed}%"=="0")){
+			
+			//проверка позиций, которые меньше:
+				
+				//alert('zz');
+				
+				
+				pos_str='';
+				$.each($("#positions_on_page_table tbody tr td input[id^=new_position_id]"), function(key, value){
+					//alert(value.value);
+					
+					position_id=value.value;
+					maximum=roundPlus(parseFloat($("#new_in_shs_"+position_id).val())-parseFloat($("#new_in_acc_"+position_id).val()),3);
+					
+					
+					if(roundPlus(parseFloat($("#new_quantity_"+position_id).attr("value")),3)<maximum){
+						if(pos_str.length>0) pos_str=pos_str+",\n";
+						pos_str=pos_str+''+$("#new_position_code_"+position_id).val()+' ' +$("#new_position_name_"+position_id).val()+' доступно: '+maximum+' выбрано: '+$("#new_quantity_"+position_id).attr("value");
+					};
+					
+				});
+				
+				if(pos_str.length>0){
+					if(window.confirm("Внимание! Вы выбрали меньше позиций, чем доступно по распоряжению.\nБудет ли производиться подвоз по позициям:\n"+pos_str+" ?\nОК - будет производиться подвоз, Отмена - не будет производиться подвоз.\nЕсли подвоз производиться не будет, то количество этих позиций в распоряжении и в счете будет уменьшено!")){
+						$("#change_low_mode").attr("value",0);
+					}else{
+						$("#change_low_mode").attr("value",1);
+					}
+				}
+			
+				//проверка позиций, которых больше
+				
+				pos_str='';
+				$.each($("#positions_on_page_table tbody tr td input[id^=new_position_id_]"), function(key, value){
+					//alert(value.value);
+					position_id=value.value;
+					
+					maximum=roundPlus(parseFloat($("#new_in_shs_"+position_id).val())-parseFloat($("#new_in_acc_"+position_id).val()),3);
+					
+					
+					if((roundPlus(parseFloat($("#new_quantity_"+position_id).attr("value")),3)>maximum)&&
+					(roundPlus(parseFloat($("#new_quantity_"+position_id).attr("value")),3)<=roundPlus(maximum*parseFloat("%{$PPUP}%"),3))
+					){
+						
+						if(pos_str.length>0) pos_str=pos_str+",\n";
+						pos_str=pos_str+''+$("#new_position_code_"+position_id).val()+' ' +$("#new_position_name_"+position_id).val()+' доступно: '+maximum+' выбрано: '+$("#new_quantity_"+position_id).attr("value");
+					}else if(roundPlus(parseFloat($("#new_quantity_"+position_id).attr("value")),3)>roundPlus(maximum*parseFloat("%{$PPUP}%"),3)){
+						alert("Внимание! Превышено допустимое количество позиции "+$("#new_position_code_"+position_id).val()+' ' +$("#new_position_name_"+position_id).val()+' доступно: '+maximum+' выбрано: '+$("#new_quantity_"+position_id).attr("value")+"!\nКоличество позиций не может превышать доступного количества более чем на "+Math.ceil((parseFloat("%{$PPUP}%")-1)*100)+"%.");
+						can_put=can_put&&false;
+					}
+					
+				});
+				if(pos_str.length>0){
+					if(window.confirm("Внимание! Вы превышаете максимальное количество по позициям:\n"+pos_str+" ?\nКоличество этих позиций при утверждении реализации будет увеличено в распоряжении и в счете.\nОК - продолжить, увеличить количество позиций в распоряжении и счете, Отмена - вернуться к редактированию реализации.")){
+						$("#change_high_mode").attr("value",1);
+					}else{
+						$("change_high_mode").attr("value",0);
+						//return false;
+						can_put=can_put&&false;
+					}
+				}
+		}
+		return can_put;
+	}
+	
+	$("#doEdit").bind("click",function(){
+		return RotPos();
+	});
+	
+	$("#doEditStay").bind("click",function(){
+		return RotPos();
+	});
+	
+});
+</script>
+

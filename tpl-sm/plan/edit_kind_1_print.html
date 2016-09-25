@@ -1,0 +1,212 @@
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;"> 
+
+<h1>Задача</h1>
+
+ 
+
+  
+
+ 
+ 
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+   <strong> Название задачи: </strong><br>
+    %{$bill.topic}%
+
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+   <strong>  Дата создания: </strong>
+     <br />
+    
+    %{$bill.pdate}%
+    
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+<strong>Крайний срок:</strong><br>
+
+%{if $bill.has_exp_pdate}% 
+%{$bill.pdate_beg}% %{$ptime_beg_hr}%:%{$ptime_beg_mr}%
+%{else}%
+-
+%{/if}%
+ 
+
+</div>
+
+ 
+  
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+     <strong>Приоритет:</strong> <br>
+     %{if $bill.priority==0}% низкий%{/if}%
+     %{if $bill.priority==1}% средний%{/if}%
+     %{if $bill.priority==2}% высокий%{/if}%
+     
+    
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:0px;  margin-bottom:1.5em;  " id="toggle_annul">
+<strong>Статус:</strong><br>
+
+ %{$bill.status_name}% 
+
+</div>
+ 
+
+<br clear="all" />
+ 
+
+ 
+
+
+
+
+<div style="float:left; min-width:300px; width:46%; margin-right:20px;">
+	<strong> Постановщик задачи:</strong> <br>
+   
+   
+   
+ 
+    
+    
+    %{foreach from=$users item=item}%
+     %{if $bill.user_1==$item.id}%
+  
+     
+       %{$item.name_s}% 
+      
+ 	%{/if}%
+    %{/foreach}%
+   
+     
+	 
+
+</div>
+
+  
+
+
+<div style="float:left; min-width:300px; width:46%; margin-right:20px;">
+ 
+ 
+
+	<strong> Ответственный:</strong> <br>
+    
+     
+    
+    %{foreach from=$users item=item}%
+     %{if $bill.user_2==$item.id}%
+        %{$item.name_s}% 
+        
+ 	%{/if}%
+    %{/foreach}%
+   
+ 
+      
+   
+     
+    
+    
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; min-width:300px; width:46%; margin-right:20px;">
+	<b>Соисполнители:</b><br>
+
+	
+	%{include file="plan/user_3_actions_print.html" can_modify=$field_rights.can_modify_3}%
+</div>
+
+
+<div style="float:left; min-width:300px; width:46%; margin-right:20px;">
+	<b>Наблюдатели:</b><br>
+
+	
+	%{include file="plan/user_4_actions_print.html" can_modify=$field_rights.can_modify_4}%
+</div>
+
+
+<br clear="all" />
+<p />
+  
+
+
+
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагент(ы):</h3>
+</div>
+ <div style="float:left; margin-right:00px;"> 
+ %{if $bill.wo_supplier==1}% <strong>Без контрагента</strong>%{/if}%  
+ 
+</div>
+<br clear="all" />
+<p />
+
+
+%{include file="plan/supplier_15_actions_print.html" many=true can_modify=$can_modify}%
+
+
+   
+
+<strong> Описание задачи:</strong> 
+<div style=" padding:5px 5px 0px 5px;">
+%{$bill.description}% 
+</div>
+
+   %{$files}%  
+ 
+ 
+ 
+
+<br clear="all" />
+ 
+
+
+
+ 
+%{$lenta}%
+
+
+
+
+ 
+ 
+
+ 
+ 
+</body>
+</html>

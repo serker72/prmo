@@ -1,0 +1,88 @@
+<script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+<style>
+table.headers{
+	width:auto;	
+}
+table.headers, table.headers td{
+	border:1px solid gray; border-collapse:collapse;
+}
+</style>
+<script>
+$(function(){
+	$("#close").click(function(){
+		window.close();
+	});
+	
+	$("#rotate").click(function(){
+		if($("#mobile").width()==330){
+			$("#mobile").width(480).height(330);
+		}else $("#mobile").width(330).height(480);
+	});
+});
+</script>
+<input type="button" value="Закрыть" id="close" />
+<br>
+
+
+<div style="background-color:#f2f2f2; overflow:hidden;">
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+
+ 
+	<strong>Ваше сообщение в браузере:</strong><br>
+	
+    <strong>Заголовки:</strong><br>
+
+    <table class="headers" width="*" cellspacing="0" cellpadding="2" border="1" style="" >
+    <tr align="left" valign="middle">
+    	<th scope="row">To:</th>
+        <td>
+        %{if $data.to_is_personal}%
+        	%{$data.to_field}% <%{$data.user_email}%>
+        %{else}%    
+        	<%{$data.user_email}%>
+        %{/if}%
+        </td>
+    </tr>
+    <tr align="left" valign="middle">
+    	<th scope="row">From:</th>
+        <td>%{$data.from_name}%</td>
+    </tr>
+    <tr align="left" valign="middle">
+    	<th scope="row">Reply-to:</th>
+        <td>%{$data.from_email}%</td>
+    </tr>
+   <tr align="left" valign="middle">
+    	<th scope="row">Тема:</th>
+        <td>%{$data.topic}%</td>
+    </tr>
+    </table>
+    
+    <div style="  width:850px; height:768px; overflow:auto;  border:1px solid gray;">
+	%{$data.html_content}%
+    </div>
+
+</td>
+<td width="50%" align="center"><br>
+<br>
+<br>
+<br><br>
+<br>
+
+	<strong>Ваше сообщение в мобильном браузере*:</strong><br>
+	
+    <div id="mobile" style="text-align:left;  width:330px; height:480px; overflow:auto; border:1px solid gray; margin:0 auto;">
+    %{$data.html_content}%
+    </div>
+    <br>
+    <em>*приблизительно</em><br>
+	<a href="#" id="rotate">поворот</a>
+
+</td>
+</tr>
+</table>
+</div>
+
+<br clear="all" />

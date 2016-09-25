@@ -1,0 +1,105 @@
+<!-- таблица на странице -->
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable1" id="ship_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">Код</th>
+        <th scope="col" width="*">Наименование</th>
+        <th scope="col" width="24">Ед. изм.</th>
+        <th scope="col" width="24">Кол-во</th>
+       
+       <!-- <th scope="col" width="80">&nbsp;</th> -->
+       <th scope="col" width="150">Счет</th>
+        
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="20">
+        %{$pospos[pospossec].id|string_format:"%05d"}%
+        %{*$pospos[pospossec].hash*}%
+        </td>
+        <td width="*">
+        %{$pospos[pospossec].position_name}%
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].hash}%" name="new_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].id}%" />
+      
+      
+        
+        <input type="hidden" id="new_hash_%{$pospos[pospossec].hash}%" name="new_hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        </td>
+        <td width="24">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].hash}%" name="new_dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="24">
+        %{$pospos[pospossec].quantity}%
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].hash}%" name="new_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%"  />
+    	</td>
+        
+       <td width="150">
+       <a href="ed_bill_in.php?action=1&id=%{$pospos[pospossec].bill_id}%&from_begin=1" target="_blank">№ %{$pospos[pospossec].bill_code}%</a>
+       от %{$pospos[pospossec].bill_pdate}%
+       
+       <input type="hidden" id="new_bill_id_%{$pospos[pospossec].hash}%" name="new_bill_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].bill_id}%"  />
+       </td>
+       
+         
+        
+        <td width="24">
+       
+      
+        %{if $can_modify}%
+        %{if $can_del_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_right_button24" data-comment="удалить позицию..." ></a>
+        %{else}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..."></a>
+        %{/if}%
+        
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_inactive reestr_right_button24" data-comment="удалить позицию..."></a>
+        %{/if}%
+			
+		
+    	</td>
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+    
+   	%{include file="trust/other_pos.html"}%
+    
+    
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			var position_ids=new Array(); var quantities=new Array();
+			
+			
+			function BuildRows(){
+			 
+			}
+    		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].hash}%").bind("click",function(){
+				
+				%{if $can_modify}%
+				%{if $can_del_positions}%
+				if(window.confirm('Вы действительно хотите удалить позицию доверенности?')){ 
+					$('#new_row_%{$pospos[pospossec].hash}%').remove();
+					BuildRows();
+					
+				}
+				%{else}%
+				alert("У Вас недостаточно прав, чтобы удалить позицию доверенности.");
+				%{/if}%
+				%{else}%
+				alert("Невозможно удалить позицию утвержденной доверенности.");
+				%{/if}%
+				return false;
+			});
+    	%{/section}%
+	
+	});
+      </script>

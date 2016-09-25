@@ -1,0 +1,239 @@
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">код</th>
+        <th scope="col">расшифровка</th>
+        
+        %{if $can_edit}%
+      <!--  <th scope="col" width="24"></th>
+        <th scope="col" width="24"></th>-->
+        %{/if}%
+    </tr>
+    %{include file="cash/code_row.html"}%
+    </table>
+    
+    <script type="text/javascript">
+    
+	
+	
+	
+	$(function(){
+		
+		$("#add_code_dialog").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 400,
+		  height: 250,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 
+		 $("#add_code").bind("click", function(){
+			$('#add_code_dialog_in_report').prop("checked", true);
+			$("#add_code_dialog_name").val("");
+			$("#add_code_dialog_descr").val("");
+			
+			
+			 $("#add_code_dialog").dialog({
+				buttons:{
+					"Добавить": function(){
+						//код добавки
+						
+						if($('#add_code_dialog_in_report').prop("checked")) in_report=1;
+						else in_report=0;
+						
+						$.ajax({
+							async: true,
+							url: "/js/cash.php",
+							type: "POST",
+							data:{
+								"action":"add_code",
+								"name": $("#add_code_dialog_name").val(),
+								"descr": $("#add_code_dialog_descr").val(),
+								"in_report":in_report
+								
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  
+							  
+							   $.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_codes",
+									  "current_id":$("input[type=radio][id^=name_code_]:checked").val()
+								  },
+								  beforeSend: function(){
+									$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#code_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("Ошибка добавления кода оплаты.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			
+			 $("#add_code_dialog").dialog("open");
+			 return false;
+		 });
+	
+	});
+	
+	%{section name=possec loop=$pos}%
+   		 $("#code_row_%{$pos[possec].id}%").bind("dblclick",function(){
+			//alert($("#supplier_%{$pos[possec].id}%").attr("value"));
+			$("#name_code_%{$pos[possec].id}%").prop("checked",true);
+			codebuild();
+			
+		});
+	
+	%{if $can_edit}%
+		/*правка контакта*/
+	$("#edit_code_%{$pos[possec].id}%").unbind("click");	
+	$("#edit_code_%{$pos[possec].id}%").bind("click",function(){
+			$("#add_code_dialog_name").val($("#name_name_code_%{$pos[possec].id}%").val());
+			
+			$("#add_code_dialog_descr").val($("#name_descr_%{$pos[possec].id}%").val());
+			
+			$("#add_code_dialog_in_report").prop("checked",  "%{$pos[possec].in_report}%"=="1");
+			 
+			  $("#add_code_dialog").dialog({
+				buttons:{
+					"Редактировать": function(){
+						
+						if($('#add_code_dialog_in_report').prop("checked")) in_report=1;
+						else in_report=0;
+						
+						$.ajax({
+							async: true,
+							url: "/js/cash.php",
+							type: "POST",
+							data:{
+								"action":"edit_code",
+								"name": $("#add_code_dialog_name").val(),
+								"descr": $("#add_code_dialog_descr").val(),
+								"in_report":in_report,
+								
+								"id":"%{$pos[possec].id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							// alert(data); 
+							 $.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_codes",
+									  "current_id":$("input[type=radio][id^=name_code_]:checked").val()
+								  },
+								  beforeSend: function(){
+									$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#code_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#add_code_dialog").dialog("open");
+			
+			
+			return false;
+		});
+	
+	
+	
+	
+	/*удаление контакта*/
+	$("#delete_code_%{$pos[possec].id}%").unbind("click");
+	$("#delete_code_%{$pos[possec].id}%").bind("click",function(){
+		if(window.confirm("Коды оплат: Вы действительно хотите удалить данную запись?")){
+			$.ajax({
+				async: true,
+				url: "/js/cash.php",
+				type: "POST",
+				data:{
+					"action":"delete_code",
+					"id":"%{$pos[possec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+								  async: true,
+								  url: "/js/cash.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_codes",
+									  "current_id":$("input[type=radio][id^=name_code_]:checked").val()
+								  },
+								  beforeSend: function(){
+									$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#code_list").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Коды: Ошибка удаления.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+	
+	%{/if}%
+	
+		
+    %{/section}%
+	</script>

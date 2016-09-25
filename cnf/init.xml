@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<settings>
+
+<sitetitle_caption><![CDATA[Название сайта]]></sitetitle_caption><sitetitle type="string"><![CDATA[Строительная Ярмарка: Электронный менеджер]]></sitetitle>
+
+<feedback_email_caption><![CDATA[e-mail для обратной связи]]></feedback_email_caption><feedback_email type="string"><![CDATA[feedback@program.syarmarka.ru]]></feedback_email>
+
+<debug_info_caption><![CDATA[выводить отладочную информацию]]></debug_info_caption><debug_info type="bool"><![CDATA[0]]></debug_info>
+
+<items_per_page_caption><![CDATA[Элементов на страницу]]></items_per_page_caption><items_per_page type="string"><![CDATA[30]]></items_per_page>
+
+<comments_per_page_caption><![CDATA[Комментариев на страницу]]></comments_per_page_caption><comments_per_page type="string"><![CDATA[20]]></comments_per_page>
+
+<has_urls_caption><![CDATA[Использовать ЧПУ]]></has_urls_caption><has_urls type="bool"><![CDATA[1]]></has_urls>
+
+<do_recode_caption><![CDATA[Перекодировать результаты асинхронных запросов]]></do_recode_caption><do_recode type="bool"><![CDATA[1]]></do_recode>
+
+
+<organization_title_caption><![CDATA[Название организации]]></organization_title_caption><organization_title type="string"><![CDATA[Компания ЮТА]]></organization_title>
+
+<sh_mult_caption><![CDATA[Множитель для поправки по распоряжениям]]></sh_mult_caption><sh_mult type="string"><![CDATA[0.1]]></sh_mult>
+
+<nds_caption><![CDATA[Размер НДС в процентах]]></nds_caption><nds type="string"><![CDATA[18]]></nds>
+
+<ppup_caption><![CDATA[Максимальное превышение позиций поступления позиций в распоряжении, в долях]]></ppup_caption><ppup type="string"><![CDATA[1.1]]></ppup>
+
+<trustup_caption><![CDATA[Максимальное превышение позиций доверенности позиций в счете, в долях]]></trustup_caption><trustup type="string"><![CDATA[1.1]]></trustup>
+
+<billup_caption><![CDATA[Максимальное превышение позиций счета позиций в заявке, в долях]]></billup_caption><billup type="string"><![CDATA[1.1]]></billup>
+
+
+<service_code_caption><![CDATA[ID рубрики каталога с услугами]]></service_code_caption><service_code type="string"><![CDATA[84]]></service_code>
+
+<semi_service_code_caption><![CDATA[ID рубрики каталога с услугами строго по заявкам]]></semi_service_code_caption><semi_service_code type="string"><![CDATA[278]]></semi_service_code>
+
+
+<jpeg_quality_caption><![CDATA[качество jpeg при сжатии]]></jpeg_quality_caption><jpeg_quality type="string"><![CDATA[72]]></jpeg_quality>
+
+<image_max_size_caption><![CDATA[максимальное измерение изображения при сжатии, пикс]]></image_max_size_caption><image_max_size type="string"><![CDATA[2000]]></image_max_size>
+
+
+<dec_sep_caption><![CDATA[разделитель десятичных разрядов]]></dec_sep_caption><dec_sep type="string"><![CDATA[ ]]></dec_sep>
+
+<debug_redirect_caption><![CDATA[включить отладку межпрограммной авторизации]]></debug_redirect_caption>
+<debug_redirect type="string"><![CDATA[1]]></debug_redirect>
+
+</settings>

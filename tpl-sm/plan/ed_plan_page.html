@@ -1,0 +1,39 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+	  %{if $from_begin==1}%
+	selected:0
+%{else}%
+  	cookie: { expires: 14, name: 'planTab' }
+%{/if}%		
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">GYDEX.Планировщик</a></li>
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

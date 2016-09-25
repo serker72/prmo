@@ -1,0 +1,76 @@
+<h1>План оплаты %{if $is_incoming==1}% входящие%{else}%исходящие%{/if}%</h1>
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+
+<strong>Контрагент:</strong><br />
+%{if $supplier_name==""}%
+все контрагенты
+%{else}%
+%{foreach from=$our_suppliers item=item}%
+				 %{$item.full_name}%;
+				%{/foreach}%
+%{/if}%
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период:</strong>
+</div>
+<div style="float:left; margin-right:20px;">
+
+%{if $pdate2_1=="-" and $pdate2_2=="-"}%
+все периоды
+%{else}%
+
+<strong>с:</strong><br />
+%{$pdate2_1}%
+
+<p />
+	<strong>по:</strong><br />
+    %{$pdate2_2}%
+    
+%{/if}%    
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+%{if $only_vyp==1 or  $only_not_vyp==1 or $only_not_payed==1 or $only_semi_payed==1}%
+Вы выбрали:
+%{/if}%
+
+%{if $only_vyp==1}%
+<strong>Только выполненные счета</strong>
+
+<br />
+%{/if}%
+
+%{if $only_not_vyp==1}%
+<strong>Только невыполненные счета</strong>
+
+<br />
+%{/if}%
+
+%{if $only_not_payed==1}%
+<strong>Только неоплаченные счета</strong>
+%{/if}%
+
+%{if $only_semi_payed==1}%
+<strong>Только частично оплаченные счета</strong>
+%{/if}%
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+%{include file="an_payp/an_payp_table.html"}%

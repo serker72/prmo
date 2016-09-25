@@ -1,0 +1,185 @@
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*" class="main">Организация
+    %{if $extended_an==0}%
+    <strong> %{$opf.name}% %{$org.full_name}%</strong>
+    %{/if}%
+    </th>
+  %{if $extended_an==1}%  <th scope="col" class="main"> <strong> %{$opf.name}% %{$org.full_name}%</strong></th>%{/if}%
+    <th scope="col" width="200" colspan="4" class="main">Сумма взаиморасчетов</th>
+</tr>
+<tr align="center" valign="top">
+	<th scope="col" class="main">Контрагент</th>
+	%{if $extended_an==1}%<th scope="col" class="main">&nbsp;</th>%{/if}%
+    <th scope="col" rowspan="2" width="80" class="main">Нач. остаток</th>
+    <th scope="col" rowspan="2" width="80" class="main">Уменьшение долга</th>
+    <th scope="col" rowspan="2" width="80" class="main">Увеличение долга</th>
+    <th scope="col" rowspan="2" width="80" class="main">Кон. остаток</th>
+</tr>    
+
+
+<tr align="center" valign="top">
+	<th scope="col" class="main">Период
+</th>
+	%{if $extended_an==1}%
+    <th scope="col" class="main">Документ движения (регистратор)
+</th>
+%{/if}%
+</tr>
+    
+  
+</tr>
+
+</thead>
+<tbody>
+
+
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<th align="left" scope="col" width="*">
+   <!-- контрагент -->
+     %{if $items[rowsec].supplier_or_user==0}%
+     <strong> <a href="supplier.php?action=1&id=%{$items[rowsec].id}%" target="_blank">%{$items[rowsec].full_name}%, %{$items[rowsec].opf_name}%</a></strong>
+    %{else}%
+     <strong> <a href="info.html?%{$items[rowsec].login}%" target="_blank">%{$items[rowsec].name_s}%, %{$items[rowsec].login}%</a></strong>
+    %{/if}%
+    </th>
+   %{if $extended_an==1}%
+     <th scope="col" width="*">
+ 
+    </th>
+    %{/if}%
+    <th scope="col"  width="80" style="white-space:nowrap;"> <strong> %{$items[rowsec].before_ost}%</strong>
+    </th>
+   
+    <th scope="col"  width="80" style="white-space:nowrap;"><strong>%{$items[rowsec].dolg}%</strong>
+    
+    </th>
+    <th scope="col"  width="80" style="white-space:nowrap;" >
+    <strong>%{$items[rowsec].plus}%</strong>
+   
+    </th>
+    <th scope="col"  width="80" style="white-space:nowrap;" >
+     <strong> %{$items[rowsec].after_ost}%</strong>
+   
+    </th>
+    
+   
+  
+</tr>
+%{if $items[rowsec].no_turn}%
+<tr align="center" valign="top">
+	<td>
+    
+    </td>
+	<td  %{if $extended_an==1}% colspan="5" %{else}% colspan="4"%{/if}%>
+    <em>По выбранному контрагенту %{$items[rowsec].full_name}%, %{$items[rowsec].opf_name}% за период с %{$pdate1}% по %{$pdate2}% не было оборотов.</em>
+    </td>
+</tr>    
+%{/if}%
+
+
+
+<!-- детализация контрагента -->
+    %{if $by_contract==0}%
+     
+   %{if $extended_an==1}%    
+        %{foreach from=$items[rowsec].subs item=document}%
+        %{include file="an_supplier/an_supplier_table_row.html"}%
+        %{/foreach}%
+   %{/if}%     
+    %{elseif $by_contract==1}%
+       
+        %{section name=subsec loop=$items[rowsec].subs}%
+        <tr align="center" valign="top">
+            <th align="left" scope="col" width="*" class="contract">
+           <!-- договор -->
+             %{if $items[rowsec].subs[subsec].id==0}%
+             Общие документы
+            %{else}%
+               %{if $items[rowsec].subs[subsec].is_incoming==1}%Вх.%{else}%Исх.%{/if}%
+               
+                %{if $items[rowsec].subs[subsec].is_basic==1}%осн.%{/if}%
+               
+               договор № %{$items[rowsec].subs[subsec].contract_no}% от %{$items[rowsec].subs[subsec].contract_pdate}%
+			%{/if}%            
+            </th>
+           %{if $extended_an==1}%
+             <th scope="col" width="*" class="contract">
+         
+            </th>
+            %{/if}%
+            <th scope="col"  width="80" style="white-space:nowrap;" class="contract">  %{$items[rowsec].subs[subsec].before_ost}%
+            </th>
+           
+            <th scope="col"  width="80" style="white-space:nowrap;" class="contract">%{$items[rowsec].subs[subsec].dolg}%
+            
+            </th>
+            <th scope="col"  width="80" style="white-space:nowrap;" class="contract">
+           %{$items[rowsec].subs[subsec].plus}%
+           
+            </th>
+            <th scope="col"  width="80" style="white-space:nowrap;" class="contract" >
+             %{$items[rowsec].subs[subsec].after_ost}%
+           
+            </th>
+            
+        
+        </tr>
+          %{if $extended_an==1}%  
+            %{foreach from=$items[rowsec].subs[subsec].docs item=document}%
+            %{include file="an_supplier/an_supplier_table_row.html"}%
+            %{/foreach}%
+            %{if $items[rowsec].subs[subsec].no_turn}%
+            <tr align="center" valign="top">
+                <td>
+                
+                </td>
+                <td  %{if $extended_an==1}% colspan="5" %{else}% colspan="4"%{/if}%>
+                <em>По %{if $items[rowsec].subs[subsec].is_incoming==1}%входящему%{else}%исходящему%{/if}%  %{if $items[rowsec].subs[subsec].is_basic==1}%осн.%{/if}% договору № %{$items[rowsec].subs[subsec].contract_no}% от %{$items[rowsec].subs[subsec].contract_pdate}% за период с %{$pdate1}% по %{$pdate2}% не было оборотов.</em>
+                </td>
+            </tr>    
+            %{/if}%
+
+        %{/if}%
+        %{/section}%  
+    %{/if}%    
+
+%{/section}%
+<tr align="center" valign="top">
+<th scope="col" class="main">
+    <strong>Итог</strong>
+    </th>
+   %{if $extended_an==1}% <th scope="col" class="main">&nbsp;</th>%{/if}%
+    <th scope="col" class="main" style="white-space:nowrap;"><strong>%{$before_ost}%</strong></th>
+    
+    <th scope="col" width="80" class="main" style="white-space:nowrap;"><strong>%{$total_dolg}%</strong></th>
+    <th scope="col" width="80"  class="main" style="white-space:nowrap;"><strong>%{$total_plus}%</strong></th>
+    <th scope="col" width="80"  class="main" style="white-space:nowrap;"><strong>%{$after_ost}%</strong></th>
+</tr>
+</tbody>
+</table>
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+<!--<table border="1" cellspacing="0" cellpadding="0">
+%{section name=acsec loop=$_acc_ids}%
+<tr>
+<td>%{$_acc_ids[acsec]}%</td>
+</tr>
+%{/section}%
+</table>
+<br />
+<br />
+<table border="1" cellspacing="0" cellpadding="0">
+%{section name=paysec loop=$_pay_ids}%
+<tr>
+<td>%{$_pay_ids[paysec]}%</td>
+</tr>
+%{/section}%
+</table>-->

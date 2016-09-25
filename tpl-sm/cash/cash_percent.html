@@ -1,0 +1,21 @@
+%{if $ship.status_id==19 and $can_percent}%
+
+<div style="float:left; margin-right:20px;">
+% вывода наличных:<br/ >
+
+<strong>%{$ship.percent_percent}%% (%{$ship.percent_value}%&nbsp;руб.  по коду 2.1.08.)</strong>
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+Итоговая сумма, руб.:<br/ >
+
+<strong>%{$ship.value_total}%</strong>
+
+</div>
+
+<br clear="all" />
+
+<p />
+
+%{/if}%

@@ -1,0 +1,82 @@
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+<p /><strong>Всего в %{$smarty.section.rowsec.total}% распоряжениях на межсклад%{if $smarty.section.rowsec.total>0}%:<p />%{else}%.%{/if}%</strong>
+
+
+%{if $smarty.section.rowsec.total>0}%
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+<thead>
+	<tr align="left" valign="top">
+    <th scope="col">
+    № распоряжения
+    </th>
+    <th scope="col">
+    Дата
+    </th>
+    
+    <th scope="col">
+    Вывезен/ не вывезен
+    </th>
+    
+    
+    <th scope="col">
+    Кол-во
+    </th>
+    
+     <th scope="col" width="150">
+    Поставщик
+    </th>
+    
+    </tr>
+</thead>
+<tbody>
+%{/if}%
+
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+	<td>
+    Межсклад <a href="ed_is.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">№ %{$items[rowsec].id}%</a>
+    </td>
+    
+    
+    
+    <td>
+    %{$items[rowsec].pdate}%
+    </td>
+    
+    <td>
+    %{if $items[rowsec].is_confirmed_wf==0}%
+    не вывезен
+    
+    %{else}%
+    вывезен
+    %{/if}%
+    </td>
+    
+    <td>
+     <strong>%{$items[rowsec].quantity}%</strong>
+	</td>
+    
+   
+    <td width="150">
+     %{if $can_view_supplier}%
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">%{$items[rowsec].supplier_name}%, %{$items[rowsec].opf_name}%</a>
+    %{else}%
+    
+    <a href="#" onclick="alert('Невозможно открыть карту поставщика, так как у Вас недостаточно прав. Пожалуйста, обратитесь к администратору для получения прав доступа.'); return false;">%{$items[rowsec].supplier_name}%, %{$items[rowsec].opf_name}%</a>
+    
+    
+    %{/if}%
+    </td>
+
+
+</tr>
+%{/section}%
+
+%{if $smarty.section.rowsec.total>0}%
+</tbody>
+</table>
+%{/if}%
+
+

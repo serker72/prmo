@@ -1,0 +1,63 @@
+<script type="text/javascript" src="/js/gen_validatorv31.js"></script>
+<script>
+$(function(){
+	$("#users").bind("keypress", function(){
+		min_rows=10;
+		lines=$(this).val().split("\n");
+		if(lines.length>min_rows){
+			$(this).prop("rows", lines.length);		
+		}else{
+			$(this).prop("rows", min_rows);	
+		}
+	});
+});
+</script>  
+
+
+<h1>Добавить подписчиков списком</h1>
+
+<form action="delivery_mass_user.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+ 
+<input type="hidden" name="list_id" id="list_id" value="%{$list_id}%">
+<input type="hidden" name="from" value="%{$from}%">
+<input type="hidden" name="to_page" value="%{$to_page}%">
+
+<em>Скопируйте и вставьте список подписчиков из Excel в поле "Подписчики".<br>
+Дубликаты по адресам электронной почты автоматически удаляются.</em> 
+ 
+
+<label for="users">Подписчики:</label><br>
+<textarea id="users" name="users" cols="100" rows="10" placeholder="Электронная почта...	Фамилия...		Имя...	Отчество..."></textarea>
+<br>
+<br>
+
+  
+
+
+<input type="checkbox" id="do_update" name="do_update" value="1" /><label for="do_update">Если подписчик уже в текущем списке, обновить его профиль</label>
+<br>
+<br>
+
+
+
+ 
+<input type="submit" value="Добавить подписчиков" name="doInp" />
+
+
+
+<input type="button" value="Отмена" name="cancelOrder" onclick="location.href='%{$list_pagename}%';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+ 
+
+ 
+frmvalidator.addValidation("users","req","Укажите подписчиков!"); 
+ 
+</script>

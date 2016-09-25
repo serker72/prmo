@@ -1,0 +1,66 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  	cookie: { expires: 14, name: 'dsOrig' }
+  });
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+</style>
+
+<div id="tabs">
+  <ul>
+   %{if $has_1}%
+    <li><a href="#tabs-1">Оригиналы отгрузочных документов - входящие</a></li>
+   
+   %{/if}%
+   
+    %{if $has_3}%
+    <li><a href="#tabs-2">Оригиналы отгрузочных документов - исходящие</a></li>
+   
+   %{/if}%
+   
+    %{if $has_2}%
+   <li><a href="#tabs-3">Оригиналы договоров и учредительных документов</a></li>
+   
+   %{/if}%
+   
+  </ul>
+  
+   %{if $has_1}%
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+  
+   %{if $has_3}%
+    <div id="tabs-2">
+    <p>
+    %{$log2}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+   %{if $has_2}%
+    <div id="tabs-3">
+    <p>
+    %{$log3}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+ 
+ 
+
+</div>

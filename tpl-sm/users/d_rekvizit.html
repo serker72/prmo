@@ -1,0 +1,143 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+     %{if $can_edit}%
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" title="удалить %{$named}%"><img src="/img/del.gif" width="15" height="15" border="0" alt="" align="right" /></a>        
+    <a href="#" id="edit_%{$word}%_%{$items[rowsec].id}%" title="редактировать %{$named}%"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_%{$word}%_%{$items[rowsec].id}%" border="0" alt="" align="right" /></a>
+    %{/if}%
+    
+    <em>Банк:</em><strong>%{$items[rowsec].bank}%</strong><br>
+
+    
+    <em>Город банка:</em><strong>%{$items[rowsec].city}%</strong>
+<br>
+    
+    <em>р/с:</em><strong>%{$items[rowsec].rs}%</strong>
+<br>
+    
+    <em>к/с:</em><strong>%{$items[rowsec].ks}%</strong>
+<br>
+    
+    <em>БИК:</em><strong>%{$items[rowsec].bik}%</strong>
+    
+    
+   
+    </div>
+    %{if $can_edit}%
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$.ajax({
+					async: true,
+					url: "/js/user_d.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":%{$user_id}%
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/user_d.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":%{$user_id}%
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 $("#%{$word}%_bank").attr("value","%{$items[rowsec].bank|escape:"html"}%");
+			 $("#%{$word}%_bik").attr("value","%{$items[rowsec].bik|escape:"html"}%");
+			 $("#%{$word}%_city").attr("value","%{$items[rowsec].city|escape:"html"}%");
+			 $("#%{$word}%_rs").attr("value","%{$items[rowsec].rs|escape:"html"}%");
+			 $("#%{$word}%_ks").attr("value","%{$items[rowsec].ks|escape:"html"}%");
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						$.ajax({
+							async: true,
+							url: "/js/user_d.php",
+							type: "POST",
+							data:{
+								"action":"edit_%{$word}%",
+								"bank": $("#%{$word}%_bank").attr("value"),
+								"bik": $("#%{$word}%_bik").attr("value"),
+								"city": $("#%{$word}%_city").attr("value"),
+								"rs": $("#%{$word}%_rs").attr("value"),
+								"ks": $("#%{$word}%_ks").attr("value"),
+								"id":"%{$items[rowsec].id}%",
+								"user_id":%{$user_id}%
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  $.ajax({
+								  async: true,
+								  url: "/js/user_d.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":%{$user_id}%
+								  },
+								  beforeSend: function(){
+										
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

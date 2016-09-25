@@ -1,0 +1,552 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+ <link href="/js/select2/select2.css" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	
+	$("#pdate2_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 function SelectGo2(name){
+	 $("#"+name).select2(
+	 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_supplier_select2.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				 var data = new Array();
+				
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.full_name|escape:"html"}%'});
+				%{/foreach}%
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	SelectGo2("supplier_name_2");
+	 
+	
+	
+});
+</script>
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form3">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="tab_page" value="3" id="tab_page" />
+
+
+<div class="report_filter_right" style=" width:140px; margin-left:-150px;">
+
+	%{include file="every_help_dialog.html" filename="an_kompnot.htm" prefix="_ful" description="отчет выполненные заявки"  style="float:right;  margin-right:00px;" is_right=true}%
+    
+    <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+    <input type="image" name="doSub2" id="doSub2" src="/img/24.png" border="0" alt="Найти" />
+    </div>
+  
+
+<a href="an_kompnot.php?doSub2=1&tab_page=3" class="reestr_right_button24 reestr_zoom_deselect" data-comment="Сбросить все фильтры" ></a>
+
+
+  
+  
+    %{if $can_print}%
+   
+  <a href="#" id="print_table2_"  class="reestr_right_button24 reestr_print" data-comment="Печать..." ></a>
+ 
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;" style="float:right;  margin-right:5px;" class="reestr_right_button24 reestr_print reestr_inactive" data-comment="Печать..." ></a>
+  
+  
+  
+ %{/if}%
+ 
+   
+
+
+<script type="text/javascript">
+		$(function(){
+			$("#donot_ext_search2").unbind("click");
+			$("#donot_ext_search2").bind("click",function(){
+				
+				$("#name2_2_1").attr("value",$("#name2_2").val());
+				$("#name2_2").attr("value","");
+				$("#name2_2").attr("name","nn");
+				$("#name2_2_1").attr("name","name2_2");
+				
+			//	$("#donot_ext_search2").css("display","none");
+				$("#search_full2").css("display","none");
+				$("#dimension_id2_2").val("");
+				$("#length2_2").val("");
+				$("#width2_2").val("");
+				$("#height2_2").val("");
+				$("#weight2_2").val("");
+				$("#volume2_2").val("");
+				$("#diametr2_2").val("");
+				
+				$("#group_id2_").val("");
+				$("#group_id2_2").val("");
+				$("#group_id2_3").val("");
+				
+				$("#search_shorter2").css("display","block");
+				return false;
+			});
+		});
+		</script>
+         <script type="text/javascript">
+		$(function(){
+			$("#do_ext_search2").unbind("click");
+			$("#do_ext_search2").bind("click",function(){
+				
+				$("#name2_2").attr("value",$("#name2_2_1").val());
+				
+				
+				$("#search_shorter2").css("display","none");
+//				$("#donot_ext_search2").css("display","inline");
+				$("#search_full2").css("display","block");
+				$("#name2_2_1").attr("value","");
+				
+				$("#name2_2_1").attr("name","nn");
+				$("#name2_2").attr("name","name2_2");
+				
+				return false;
+			});
+		});
+		</script>
+
+
+ 
+ 
+  %{if $can_excel}%
+   
+  <a href="#" id="excel_table2_"  class="reestr_right_button24 reestr_xls" data-comment="Excel-версия..." style="margin-right:10px;" ></a>
+ 
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для формирования Excel-версии отчета.'); return false;"   class="reestr_right_button24 reestr_inactive reestr_xls" data-comment="Excel-версия..." style="margin-right:10px;"></a>
+  %{/if}%
+  
+  
+ 
+  
+ 
+ %{if $can_print or $can_excel}%
+   <div id="or_print_dialog2_" title="Выберите режим сортировки при печати">
+    <strong>Выберите, в каком режиме Вы желаете распечатать отчет:</strong><br />
+
+    	
+        <input type="radio" name="print_ord_mode2_" id="print_ord_mode2_0" value="%{$sortmode2}%" checked="checked" />
+	    <strong>общим списком заявок</strong>        
+        <br />
+        
+      
+        
+        
+         <input type="radio" name="print_ord_mode2_" id="print_ord_mode2_7" value="7" />
+	    <strong>сортировка по статусу</strong>        
+        <br />
+
+        
+       
+    </div>
+  
+  
+   
+  <script type="text/javascript">
+  $(function(){
+	   var filename='an_kompnot.php';
+	  
+	  $("#or_print_dialog2_").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 350,
+			height: 250,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					//проверить режим, распечатать в режиме
+					sortmode=$("input[id^=print_ord_mode2_]:checked").val();
+					//alert(sortmode);
+					
+					window.open(filename+'?doSub2=1&tab_page=3&print='+'1'+'&storage_id2='+$("#storage_id2").val()+'&sector_id2='+$("#sector_id2").val()+'&sortmode2='+sortmode+'&id2_2='+$("#id2_2").val()+'&name2_2='+$("input[name=name2_2]").val()+'&group_id2_='+$("#group_id2_").val()+'&two_group_id2_='+$("#group_id2_2").val()+'&three_group_id2_='+$("#group_id2_3").val()+'&gost_tu2_2='+$("#gost_tu2_2").val()+'&dimension_id2_2='+$("#dimension_id2_2").val()+'&length2_2='+$("#length2_2").val()+'&width2_2='+$("#width2_2").val()+'&height2_2='+$("#height2_2").val()+'&diametr2_2='+$("#diametr2_2").val()+'&pdate2_1='+$("#pdate2_1").val()+'&pdate2_2='+$("#pdate2_2").val()+'&supplier_name_2='+$("#supplier_name_2").val(), 'ankompnot','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+					
+					$("#or_print_dialog2_").dialog("close");
+				},
+				"Отмена":function(){
+					$("#or_print_dialog2_").dialog("close");
+				}
+				
+			}
+		});
+	  
+	  function DoPrint(filename){
+		  // $("#print").val(1);
+		
+		//alert($("#storage_id").val());
+		//если явно выбрана сортировка либо если выбраны фильтры - то не спрашивать.
+		if((parseInt('%{$sortmode2}%')>1)||($("#storage_id2").val()!=0)||($("#sector_id2").val()!=0)){
+			
+		 	 window.open(filename+'?doSub2=1&tab_page=3&print='+'1'+'&storage_id2='+$("#storage_id2").val()+'&sector_id2='+$("#sector_id2").val()+'&sortmode2='+'%{$sortmode2}%'+'&id2_2='+$("#id2_2").val()+'&name2_2='+$("input[name=name2_2]").val()+'&group_id2_='+$("#group_id2_").val()+'&two_group_id2_='+$("#group_id2_2").val()+'&three_group_id2_='+$("#group_id2_3").val()+'&gost_tu2_2='+$("#gost_tu2_2").val()+'&dimension_id2_2='+$("#dimension_id2_2").val()+'&length2_2='+$("#length2_2").val()+'&width2_2='+$("#width2_2").val()+'&height2_2='+$("#height2_2").val()+'&diametr2_2='+$("#diametr2_2").val()+'&pdate2_1='+$("#pdate2_1").val()+'&pdate2_2='+$("#pdate2_2").val()+'&supplier_name_2='+$("#supplier_name_2").val(), 'ankompnot','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 
+		}else{
+			
+			//диалог с выбр режимом печати
+			$("#or_print_dialog2_").dialog("open");	
+			
+		}
+	  }
+	  
+	  $("#print_table2_").bind("click",function(){
+		 DoPrint('an_kompnot.php');
+		 return false; 
+	  });
+	  
+	  $("#excel_table2_").bind("click",function(){
+		 DoPrint('an_kompnot_xls.php');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+ %{/if}%
+    
+</div>
+
+
+<div class="report_filter_left" style="margin-right:150px;">    
+
+    <div class="report_filter">
+    <div style="float:left; margin-right:10px;">
+    <strong>Период</strong>
+    </div>
+    <div style="float:left; margin-right:00px;">
+    
+    <label for="pdate2_1">с:</label><br />
+    <input type="text" name="pdate2_1" id="pdate2_1" size="10" maxlength="10" value="%{$pdate2_1}%"   />
+    
+    <br />
+        <label for="pdate2_2">по:</label><br />
+        <input type="text" name="pdate2_2" id="pdate2_2"  size="10" maxlength="10" value="%{$pdate2_2}%"   />
+    </div>
+    </div>
+    
+     
+    
+    
+    <div  class="report_filter" id="search_shorter2">
+    <strong>Поиск по наименованию позиции:</strong><br />
+    
+    <div style="float:left; margin-right:10px;">
+    <input type="text" style="width:300px;" size="80" maxlength="255" value="%{$name2_2}%" name="name2_2" id="name2_2_1" />
+    </div>
+    
+     <a href="#" id="do_ext_search2" class="reestr_right_button24 reestr_plus" data-comment="скрыть расширенный поиск" ></a>
+    
+    
+    
+    
+    </div>
+    
+    
+    <div class="report_filter" style="display:none; max-width:800px !important; height:130px;" id="search_full2">
+    
+    <table width="*" border="1" cellspacing="0" cellpadding="3" style="float:left; margin-right:10px;" class="blacktable">
+     <thead>
+      <tr align="left" valign="bottom">
+        <th scope="col" width="40"> Код позиции</th>
+        <th scope="col" width="*">Наименование</th> 
+        <th width="40" scope="col" >
+        ед.изм.
+       
+        </th>
+        
+         <th scope="col" width="100" >
+        Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+       
+        </th>
+        <th scope="col" width="40" >
+        ГОСТ/ТУ
+       
+        </th>
+        
+        
+        
+         <th width="40" scope="col">
+        Длина, мм
+       
+        </th>
+        <th width="40" scope="col" >
+        Ширина, мм
+       
+        </th>
+        <th width="40" scope="col" >
+        Высота/ толщина, мм
+       
+        </th>
+        <th width="40" scope="col">
+        Диаметр, мм:
+        </th>   
+        
+      
+      </tr>
+      <tr align="left" valign="top">
+        
+        
+        <td  width="40"> 
+         <input type="text" size="8" maxlength="255" value="%{$id2_2}%" name="id2_2" id="id2_2" style="width:40px;" />
+        </td>
+        <td  width="*">
+        <input type="text" size="20" maxlength="255" value="%{$name2_2}%" name="nn" id="name2_2" />
+        </td> 
+        
+         
+        <td width="40" >
+         <select name="dimension_id2_2" id="dimension_id2_2" style="width:40px;">
+        %{section name=dimsec loop=$dim}%
+            <option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+       
+        </td>
+        
+         <td width="100" >
+       
+       
+        <select name="group_id2_" id="group_id2_" style="width:100px;">
+        %{section name=groupsec loop=$group}%
+            <option value="%{$group[groupsec].id}%" %{if $group[groupsec].is_current}%selected="selected"%{/if}%>%{$group[groupsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+        
+        <select name="two_group_id2_" id="group_id2_2" style="width:100px;">
+        %{section name=two_groupsec loop=$two_group}%
+            <option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+        
+        <select name="three_group_id2_" id="group_id2_3" style="width:100px;">
+        %{section name=three_groupsec loop=$three_group}%
+            <option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+        
+        <script type="text/javascript">
+        $(function(){
+            $("#group_id2_").bind("change", function(){
+                //alert('zz');
+                $.ajax({
+                    async: true,
+                    url: "/js/catalog.php",
+                    type: "POST",
+                    data:{
+                        "action":"redraw_two_groups",
+                        "group_id":$("#group_id2_").val()
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      $("#group_id2_3").empty();
+                      $("#group_id2_2").html('<option value=""></option>'+data);
+                      
+                    },
+                    error: function(xhr, status){
+                        //alert("Ошибка выбора подгрупп.");	
+                    }	 
+                });
+            });
+            
+            $("#group_id2_2").bind("change", function(){
+                //alert('zz');
+                $.ajax({
+                    async: true,
+                    url: "/js/catalog.php",
+                    type: "POST",
+                    data:{
+                        "action":"redraw_two_groups",
+                        "group_id":$("#group_id2_2").val()
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      $("#group_id2_3").html('<option value=""></option>'+data);
+                      
+                    },
+                    error: function(xhr, status){
+                        //alert("Ошибка выбора подгрупп.");	
+                    }	 
+                });
+            });
+        });
+        </script>
+        
+        </td>
+        
+        
+     
+        <td  width="40" >
+       <input type="text" size="8" maxlength="255" value="%{$gost_tu2_2}%" name="gost_tu2_2" id="gost_tu2_2" style="width:40px;" />
+       
+        </td>
+        
+        
+       
+        
+         <td width="40"  >
+         <input type="text" size="4" maxlength="255" value="%{$length2_2}%" name="length2_2" id="length2_2" style="width:40px;" />
+       
+        </td>
+        <td width="40" >
+        <input type="text" size="4" maxlength="255" value="%{$width2_2}%" name="width2_2" id="width2_2" style="width:40px;" />
+       
+       
+        </td>
+        <td width="40" >
+        <input type="text" size="4" maxlength="255" value="%{$height2_2}%" name="height2_2" id="height2_2"style="width:40px;" />
+       
+        </td>
+        <td width="40"  >
+       <input type="text" size="4" maxlength="255" value="%{$diametr2_2}%" name="diametr2_2" id="diametr2_2" style="width:40px;" />
+        </td> 
+        
+      
+        
+      </tr>
+    </thead>
+    </table>
+    
+    
+	<a href="#" id="donot_ext_search2" class="reestr_right_button24 reestr_minus" data-comment="скрыть расширенный поиск" ></a>
+    </div>
+   
+   
+   
+   
+ 
+ 
+  <div class="report_filter"> 
+    
+     
+    
+    <label for="supplier_name_2">Покупатель:</label><br />
+    <input type="text" value="%{$supplier_name_2}%" id="supplier_name_2" name="supplier_name_2" size="40" maxlength="512" style="width:305px;" />
+    
+    </div>
+
+
+
+
+</div>
+
+
+
+
+<br clear="all" />
+
+
+
+
+
+
+ 
+
+ 
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+</style>
+
+
+
+
+<div id="info_positions_dialog2_" title="О позиции">
+<div id="position_info2_"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog2_").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 650,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+
+<br />
+
+<small>
+
+<span style="color:red;">1. В отчет "Выполненные заявки" попадают заявки и их позиции, которые полностью завезены.
+
+</span>
+<br />
+
+2. <strong>Фильтр "Период":</strong> заявки отбираются по заданным датам связанных поступлений, попадающим в выбранный период.
+<br />
+ 
+3. Фильтр "Покупатель". Вы можете осуществлять отбор по нескольким покупателям-контрагентам.<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента. Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию. При необходимости отобрать в отчет данные по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов. 
+<br />
+<br />
+
+
+
+4. Вы можете осуществлять отбор заявок по нескольким позициям. Для этого в форму поиска нужно вписать через точку с запятой фрагменты искомых названий  и нажать кнопку <img src="/img/icons/old-zoom-original.png" alt="Найти" title="Найти" border="0" />.<br />
+
+5. Для того, чтобы осуществить расширенный поиск по позициям заявки (по коду позиции, ГОСТ/ТУ, длине, ширине, высоте, диаметру), необходимо нажать кнопку <img src="/img/icons/plus.png" width="24" height="24" alt="расширенный поиск" title="расширенный поиск" border="0" />, заполнить соответствующие поля и нажать кнопку <img src="/img/icons/old-zoom-original.png" alt="Найти" title="Найти" border="0" />.</small>
+<p />
+
+
+
+
+
+
+
+</form>
+
+%{include file="an_kompnot/an_table.html"}%  

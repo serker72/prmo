@@ -1,0 +1,603 @@
+<style>
+table{
+	border-collapse:collapse;
+}
+td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+th{
+	font-weight:normal;
+}
+td.ten, th.ten, .ten{
+	font-size:11px;
+}
+table.blacktable{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable, th.blacktable{
+	border: 1px solid black;
+}
+table.blacktable tr td, table.blacktable tr th{
+	border: 1px solid black;
+	
+}
+table.blacktable2{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable2, th.blacktable2, tr.blacktable2{
+	border: 2px solid black;
+}
+td p{
+	margin-bottom:0px;
+}
+ .colon{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:10pt;
+ }
+ 
+ .title{
+	font-family:Arial, Helvetica, sans-serif;
+	 font-size:13pt;
+ }
+ .header{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:13px;
+ }
+</style>
+
+<p style="font-size:9px;" align="right">
+"Унифицированная форма № ТОРГ-12<br />
+
+Утверждена постановлением Госкомстата России от 25.12.98 № 132"																																							
+
+</p>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="1">
+  <tr align="left" valign="top">
+    <td width="*" colspan="2">&nbsp;</td>
+    
+     <td width="70" align="right">&nbsp;</td>
+    <td width="70" align="right">&nbsp;</td>
+    <td align="center" width="70" class="blacktable ten">Коды</td>
+  </tr>
+  
+   <tr align="left" valign="top">
+    <td width="*"  colspan="2" class="ten" valign="bottom" rowspan="2">
+   
+   
+    %{$supplier_id_string}%, ИНН %{$print_supplier.inn}%, %{$print_supplier.legal_address}%, р/с %{$print_bdetail.rs}%, в банке %{$print_bdetail.bank}%, БИК %{$print_bdetail.bik}%, к/с %{$print_bdetail.ks}%
+    
+    
+    </td>
+    
+    <td width="150" colspan="2" align="right">Форма по ОКУД</td>
+    <td align="center" width="70" class="blacktable2">0330212
+</td>
+  </tr>
+   <tr align="left" valign="top">
+    
+    <td width="70" align="right">&nbsp;</td>
+    <td width="70" align="right">по ОКПО</td>
+    <td align="center" width="70" class="blacktable2">
+%{$print_supplier.okpo}%
+</td>
+  </tr>
+  <tr align="left" valign="top">
+     <td width="*" colspan="3" class="ten" align="center" style="border-top:1px solid black; font-size:9px;">
+     
+     организация-грузоотправитель, адрес, телефон, банковские реквизиты
+     
+     </td>
+    <td width="70" align="right">&nbsp;</td>
+    <td align="center" width="70" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+  
+  <tr align="left" valign="top">
+     <td width="*" colspan="3" class="ten" align="center" style="border-top:1px solid black; font-size:9px; border-bottom:1px solid black;">&nbsp;
+     
+    
+     
+     </td>
+    
+    <td width="70" align="right">&nbsp;</td>
+    <td align="center" width="70" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+ 
+  <tr align="left" valign="top">
+     <td width="*"  colspan="2" class="ten" align="center" style=" font-size:9px;">
+     
+     структурное подразделение
+     
+     </td>
+   
+    <td width="150" colspan="2" align="right" style="white-space:nowrap;">Вид деятельности по ОКДП</td>
+    <td align="center" width="70" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+  
+  
+  <tr align="left" valign="top">
+     <td width="150" align="right">
+     Грузополучатель
+     </td>
+     
+     <td width="*" colspan="2" class="ten">
+     
+      %{$org}%, ИНН %{$print_org.inn}%, %{$print_org.legal_address}%, р/с %{$print_org_bdetail.rs}%, в банке %{$print_org_bdetail.bank}%, БИК %{$print_org_bdetail.bik}%, к/с %{$print_org_bdetail.ks}%
+     
+     </td>
+   
+    <td width="70"  align="right" style="white-space:nowrap;" valign="bottom">по ОКПО</td>
+    <td align="center" width="70" valign="bottom" class="blacktable2">
+%{$print_org.okpo}%
+</td>
+  </tr>
+  
+  <tr align="left" valign="top">
+     <td width="150">&nbsp;
+    
+     </td>
+     
+     <td width="*" align="center" colspan="2" class="ten" style="border-top:1px solid black; font-size:9px;">
+     организация, адрес, телефон, факс, банковские реквизиты
+      
+     
+     </td>
+   
+  <td width="70" rowspan="4"  align="right" style="white-space:nowrap;" valign="bottom">по ОКПО</td>
+    <td align="center" rowspan="4" width="70" valign="bottom" class="blacktable2">
+%{$print_supplier.okpo}%
+</td>
+  </tr>
+  
+  
+  
+   <tr align="left" valign="top">
+     <td width="150"  align="right">
+     Адрес доставки
+     </td>
+     
+     <td width="*" colspan="2" class="ten">
+     
+      %{$print_org.legal_address}%
+     
+     </td>
+   
+    
+  </tr>
+  
+   <tr align="left" valign="top">
+     <td width="150">&nbsp;
+    
+     </td>
+     
+     <td width="*" align="center" colspan="2" class="ten" style="border-top:1px solid black; font-size:9px;">
+     адрес доставки
+      
+     
+     </td>
+   
+  
+  </tr>
+  
+   <tr align="left" valign="top">
+     <td width="150"  align="right">
+     Поставщик
+     </td>
+     
+     <td width="*" colspan="2" class="ten">
+     
+      %{$supplier_id_string}%, ИНН %{$print_supplier.inn}%, %{$print_supplier.legal_address}%, р/с %{$print_bdetail.rs}%, в банке %{$print_bdetail.bank}%, БИК %{$print_bdetail.bik}%, к/с %{$print_bdetail.ks}%
+     
+     </td>
+   
+   
+  </tr>
+  <tr align="left" valign="top">
+     <td width="150">&nbsp;
+    
+     </td>
+     
+     <td width="*" align="center" colspan="2" class="ten" style="">
+     <div style="border-top:1px solid black; font-size:9px;">
+     организация, адрес, телефон, факс, банковские реквизиты
+      </div>
+     
+     </td>
+   
+  <td width="70" rowspan="2"  align="right" style="white-space:nowrap; " valign="bottom">по ОКПО</td>
+    <td align="center" rowspan="2" width="70" valign="bottom" class="blacktable2">
+%{$print_org.okpo}%
+</td>
+  </tr>
+  
+  
+   <tr align="left" valign="top">
+     <td width="150" align="right">
+     Плательщик
+     </td>
+     
+     <td width="*" colspan="2" class="ten">
+     
+      %{$org}%, ИНН %{$print_org.inn}%, %{$print_org.legal_address}%, р/с %{$print_org_bdetail.rs}%, в банке %{$print_org_bdetail.bank}%, БИК %{$print_org_bdetail.bik}%, к/с %{$print_org_bdetail.ks}%
+     
+     </td>
+   
+   
+  </tr>
+  
+  <tr align="left" valign="top">
+     <td width="150">&nbsp;
+    
+     </td>
+     
+     <td width="*" align="center" colspan="2" class="ten" >
+     <div style="border-top:1px solid black; font-size:9px;">
+     организация, адрес, телефон, факс, банковские реквизиты
+      </div>
+     
+     </td>
+   
+  
+  </tr>
+  
+  <tr align="left" valign="top">
+     <td width="150" align="right">
+     Основание
+     </td>
+     
+     <td width="*" colspan="2" class="ten">
+     
+      Договор поставки № %{$contract_no}% от %{$contract_pdate}%
+     
+     </td>
+   
+    <td width="70"  align="right" style="white-space:nowrap; " valign="bottom" class="blacktable">номер</td>
+    <td align="center" width="70" valign="bottom" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+  
+   <tr align="left" valign="top">
+     <td width="150">&nbsp;
+    
+     </td>
+     
+     <td width="*" align="center" colspan="2" class="ten" >
+     <div style="border-top:1px solid black; font-size:9px;">
+     договор, заказ-наряд
+      </div>
+     
+     </td>
+     <td width="70"  align="right" style="white-space:nowrap; " valign="bottom" class="blacktable">дата</td>
+    <td align="center" width="70" valign="bottom" class="blacktable2">&nbsp;
+
+</td>
+  
+  </tr>
+  
+  
+  <tr align="left" valign="top">
+    
+     
+     <td width="*" align="center" colspan="3" rowspan="2" class="ten">
+     
+      <table width="100%" border="0" cellspacing="0" cellpadding="2">
+        <tr>
+          <td width="*" align="right" valign="middle" class="title"><strong>ТОВАРНАЯ НАКЛАДНАЯ</strong></td>
+          <td width="200">
+          <table width="100%" border="0" cellspacing="0" cellpadding="1" class="blacktable">
+          <tr align="center" valign="top">
+            <td width="50%" class="ten">Номер документа</td>
+            <td width="50%" class="ten">Дата составления</td>
+          </tr>
+          <tr align="center" valign="top">
+            <td width="50%" class="blacktable2 ten" style="border:2px solid black;">%{$acc.given_no}%</td>
+            <td width="50%" class="blacktable2 ten"  style="border:2px solid black;">%{$acc.given_pdate}%</td>
+          </tr>
+        </table>
+
+          
+          
+          </td>
+          <td width="*" align="right" valign="top">Транспортная накладная</td>
+        </tr>
+      </table>
+
+      
+      
+      
+     </td>
+   
+    <td width="70"  align="right" style="white-space:nowrap; " valign="bottom" class="blacktable">номер</td>
+    <td align="center" width="70" valign="bottom" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+  
+  <tr align="left" valign="top">
+    
+     
+   
+   
+    <td width="70"  align="right" style="white-space:nowrap; " valign="bottom" class="blacktable">дата</td>
+    <td align="center" width="70" valign="bottom" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+  
+  <tr align="left" valign="top">
+    
+     
+     <td width="*" colspan="3"  class="ten">&nbsp;
+     
+      
+     </td>
+   
+    <td width="70"  align="right" style="white-space:nowrap; " valign="bottom" >Вид операции</td>
+    <td align="center" width="70" valign="bottom" class="blacktable2">&nbsp;
+
+</td>
+  </tr>
+  
+  <tr align="left" valign="top">
+    
+     
+     <td width="*" colspan="3"  class="ten">&nbsp;
+     
+      
+     </td>
+   
+    <td width="70"  align="right" style="white-space:nowrap; " valign="bottom" >&nbsp;</td>
+    <td align="center" width="70" valign="bottom" class="ten">
+<em>Страница 1</em>
+</td>
+  </tr>
+  
+ 
+</table>
+
+<p style="break-after: page  always !important;" />
+
+
+
+%{include file="acc_in/positions_on_page_set_nakl.html" pospos=$positions change_low_mode=$acc.change_low_mode change_high_mode=$acc.change_high_mode}%
+
+
+<br />
+<br />
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="1">
+  <tr align="left" valign="top">
+    <td width="150">&nbsp;</td>
+    <td width="*" class="ten">
+    Товарная накладная имеет приложение на &nbsp;&nbsp;&nbsp;&nbsp;
+    _______________________________________________________<br />
+и содержит &nbsp;&nbsp;&nbsp;&nbsp;
+<span style="border-bottom:1px solid black;">%{$count_propis}%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> порядковых номеров записей<br />
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+прописью</div>
+    <br />
+	
+    
+    
+    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+      <tr align="left" valign="top">
+        <td width="300" valign="bottom" rowspan="2">
+        Всего мест
+        <span style="border-bottom:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <br />
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+прописью</div>
+        
+        </td>
+        <td width="70" class="ten" style="white-space:nowrap;">Масса груза (нетто)</td>
+        <td width="*">
+         <span style="border-bottom:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <br />
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;
+прописью</div>
+        
+        </td>
+      </tr>
+      <tr align="left" valign="top">
+        
+        <td width="70" class="ten" style="white-space:nowrap;">Масса груза (брутто)</td>
+        <td >
+        
+         <span style="border-bottom:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <br />
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;
+прописью</div>
+        </td>
+      </tr>
+    </table>
+
+    
+    
+    </td>
+    <td width="10">&nbsp;</td>
+    <td width="220" valign="bottom">
+    
+    <table width="100%" border="0" cellspacing="0" cellpadding="1" class="blacktable2" style="margin-bottom:10px;">
+  <tr>
+    <td width="50%" class="blacktable2">&nbsp;</td>
+    <td width="50%" class="blacktable2">&nbsp;</td>
+  </tr>
+  <tr>
+     <td width="50%" class="blacktable2">&nbsp;</td>
+    <td width="50%" class="blacktable2">&nbsp;</td>
+  </tr>
+</table>
+
+    
+    
+    </td>
+  </tr>
+</table>
+
+<br />
+
+<table width="100%" border="0" cellspacing="0" cellpadding="1">
+  <tr align="left" valign="top">
+    <td width="50%">
+    Приложения (паспорта, сертификаты и т.п.) на 
+    <span style="border-bottom:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>листах<br />
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+прописью</div>
+<br />
+
+<strong>Всего отпущено на сумму<br />
+
+<div style="border-bottom:1px solid black;">%{$total_cost_rub_propis}%&nbsp;%{$total_cost_kop_propis|string_format:"%02d"}%&nbsp;копеек</div>
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+прописью</div>
+</strong>    
+<br />
+
+
+Отпуск разрешил&nbsp;&nbsp;&nbsp;
+
+<span style="border-bottom:1px solid black;">
+Генеральный директор
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="border-bottom:1px solid black; ">
+%{$print_supplier.chief|default:"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}%
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+
+
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+должность
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+подпись
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+расшифровка подписи
+</div>
+<br />
+
+<strong>Главный (старший) бухгалтер&nbsp;&nbsp;&nbsp;</strong>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="border-bottom:1px solid black;">
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="border-bottom:1px solid black;">
+%{$print_supplier.main_accountant|default:"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}%
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+подпись
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+расшифровка подписи
+</div>
+<br />
+
+
+Отпуск груза произвел&nbsp;&nbsp;&nbsp;
+
+<span style="border-bottom:1px solid black;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="border-bottom:1px solid black;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+
+<div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+должность
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+подпись
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+расшифровка подписи
+</div>
+<br />
+<br />
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;М.П.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+"%{$given_pdate_date}%"
+<span style="border-bottom:1px solid black;">
+%{$given_pdate_month}%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+%{$given_pdate_year}% года
+
+
+    
+    </td>
+    <td width="1" style="border-left:1px solid black;">&nbsp;</td>
+    <td width="50%">
+    По доверенности № ___________________
+    от _________________________________________<br />
+    <br />
+
+    
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;выданной _____________________________________________________________________
+
+    <div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+кем, кому (организация, должность, фамилия и. о.)
+</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_____________________________________________________________________<br /><br />
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_____________________________________________________________________<br /><br />
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_____________________________________________________________________<br /><br />
+
+	Груз принял
+&nbsp;&nbsp;&nbsp;
+	____________________
+
+   &nbsp;&nbsp;&nbsp;
+	____________________
+    
+    &nbsp;&nbsp;&nbsp;
+	________________________<br />
+
+ <div style="font-size:9px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+должность
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+подпись
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+расшифровка подписи
+</div>
+    
+    
+    
+    <br />
+<br />
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;М.П.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+"___"
+<span style="border-bottom:1px solid black;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; года
+    
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+<br />
+<br />
+<br />
+<br />
+
+
+

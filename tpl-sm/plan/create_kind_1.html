@@ -1,0 +1,537 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	$("#exp_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	
+	$("#remind_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#remind_ptime").mask('00:00');
+	
+	$("#has_exp_pdate").bind("change", function(){
+		$("#exp_pdate_fields").prop("disabled", !$("#has_exp_pdate").prop("checked"));
+		if($("#has_exp_pdate").prop("checked")) {
+			$("#exp_pdate").focus();
+			$("#exp_pdate").trigger("click");
+			$("#exp_ptime_h").val("00");
+			$("#exp_ptime_m").val("00");
+			
+		}
+	});
+	
+	
+	$("#wo_supplier").bind("change", function(){
+		if($("#wo_supplier").prop("checked")){
+			$("#suppliers_tbody").empty();
+			$("#suppliers_add").prop("disabled",true);	
+		}else{
+			$("#suppliers_add").prop("disabled",false);	
+		}
+	});
+	
+ 
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="sched_1.html" prefix="" description="Информация о создании задачи" style="float:right" is_right=true}%
+
+
+
+<h1>Создать задачу</h1>
+
+<form action="ed_sched_task.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+<input type="hidden" name="kind_id" value="1">
+<input type="hidden" name="task_id" value="%{$task_id}%">
+
+
+<div style="float:left; margin-right:20px;">
+
+    <label for="topic">Название задачи:</label><br>
+    <input type="text" value="%{$old_doc.topic|escape:"html"}%" name="topic" id="topic" size="40" maxlength="255" />
+
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+    <label for="pdate">
+    Дата создания: 
+    </label><br />
+    
+   %{$now_time}%
+    <input type="hidden" value="%{$now_date}%" name="pdate" />
+
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;"><br>
+  
+   
+   <input type="checkbox" name="has_exp_pdate" id="has_exp_pdate" value="1" %{if $old_doc.has_exp_pdate==1}% checked%{/if}% />
+   <label for="has_exp_pdate">Крайний срок</label> 
+   
+</div>
+
+<fieldset %{if !$old_doc.has_exp_pdate}% disabled %{/if}% id="exp_pdate_fields" style="float:left;">
+<div style="float:left; margin-right:20px;">   
+   
+	<label for="exp_pdate">Дата: 
+    </label> <br>
+
+    
+    <input  type="text" value="%{$old_doc.pdate_beg}%" id="exp_pdate" name="exp_pdate"  size="10"   maxlength="10" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="exp_ptime">Время:</label> <br>
+
+    
+     <select name="exp_ptime_h" id="exp_ptime_h" style="width:60px">
+        %{html_options values=$exp_ptime_h  selected=$ptime_beg_hr  output=$exp_ptime_h}%
+    </select>: 
+    <select name="exp_ptime_m" id="exp_ptime_m" style="width:60px">
+        %{html_options values=$exp_ptime_m  selected=$ptime_beg_hr  output=$exp_ptime_m}%
+    </select>
+     
+
+</div>
+</fieldset>	
+  
+<div style="float:left; margin-right:10px;">
+
+    <label for="priority">Приоритет:</label><br>
+    <select name="priority" id="priority" style="width:150px;">
+    	
+        <option value="2" %{if $priority==2}% selected%{/if}%>высокий</option>
+        
+        <option value="1"  %{if  $priority==1}% selected%{/if}%>средний</option>
+        <option value="0"  %{if  $priority==0}% selected%{/if}%>низкий</option>
+    </select>
+
+</div>
+
+
+
+
+
+
+
+<div style="float:right;  margin-right:00px; ">
+
+  <a href="#" onclick="alert('В данном режиме копирование задачи недоступно. Пожалуйста, нажмите кнопку Создать задачу и остаться в карте для получения возможности копирования задачи.'); return false;" class="reestr_copy reestr_right_button24 reestr_inactive" data-comment="Копировать..."></a>
+
+  <a href="#"   onclick="alert('В данном режиме печать задачи недоступна. Пожалуйста, нажмите кнопку Создать задачу и остаться в карте для получения возможности печати задачи.'); return false;" class="reestr_print reestr_right_button24 reestr_inactive" data-comment="Печать"></a>
+</div>  
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+	<label for="user_1">Постановщик задачи:</label><br>
+    <select %{if  !$can_change_user1}% disabled%{/if}%  %{if $can_change_user1}% name="user_1"%{/if}%  id="user_1" style="width:300px;">
+    <option value="0">-выберите-</option>
+    %{foreach from=$users item=item}%
+    	<option value="%{$item.id}%" %{if $item.id==$user_1_id}% selected%{/if}%  %{if $item.is_active==0}% class="item_inactive"%{/if}%>%{$item.name_s}%, %{$item.position_s}%</option>
+    %{/foreach}%
+
+        
+    </select>
+    
+    %{if !$can_change_user1}%
+    <input type="hidden" name="user_1" value="%{$user_1_id}%" />
+    %{/if}%
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<br>
+ <input type="checkbox" name="do_check" id="do_check" value="1" %{if $old_doc.do_check==1}% checked%{/if}% />
+   <label for="do_check">Принять задачу после утверждения выполнения</label> 
+</div>
+
+<div style="float:left; margin-right:20px;">
+ 
+ 
+
+	<label for="user_2">Ответственный:</label><br>
+    <select name="user_2" id="user_2" style="width:300px;">
+    <option value="0" selected>-выберите-</option>
+    %{foreach from=$users item=item}%
+    	<option value="%{$item.id}%"  %{if $item.is_active==0}% class="item_inactive"%{/if}%>%{$item.name_s}%, %{$item.position_s}%</option>
+    %{/foreach}%
+        
+
+        
+    </select>
+</div>
+
+<br clear="all" />
+<p />
+  
+
+
+<div style="float:left; margin-right:20px;">
+	<h4>Соисполнители:</h4>
+	
+	%{include file="plan/user_3_actions.html" can_modify=true}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+	<h4>Наблюдатели:</h4>
+	
+	%{include file="plan/user_4_actions.html" can_modify=true}%
+</div>
+
+
+
+<br clear="all" />
+<p />
+  
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагенты:</h3>
+</div>
+<div style="float:right; margin-right:00px;"> 
+	 
+<input type="checkbox" id="wo_supplier" name="wo_supplier" value="1" %{if $old_doc.wo_supplier==1}% checked%{/if}%  />    
+<label for="wo_supplier">Без контрагента</label>  
+ 
+</div>
+<br clear="all" />
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+  %{include file="plan/supplier_15_actions.html" many=true can_modify=true}%    
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+ 
+
+<label for="description">Описание задачи:</label><br>
+<textarea id="description" name="description" style="width:100%; height:75px;">%{$old_doc.description|escape:"html"}%</textarea>
+
+
+ 
+<script type="text/javascript">
+
+ 
+ 
+	try{
+		$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%'
+            });		
+		
+	}catch(e){}
+	
+</script>
+
+
+
+
+
+ <div>
+    
+    
+
+   <strong>Приложите файлы:</strong><br />
+
+
+    <input type="file" id="file" /> 
+     
+    <em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  
+    
+    <div id="uploaded_files">
+        
+    </div>
+     <br>
+
+     
+    
+    <script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+    
+    <div id="queue"></div>
+    
+    <script type="text/javascript">
+    $(function(){
+                function AddCode(inname, realname){
+                $.ajax({
+                    async: true,
+                    url: "/js/sched_task_upload_draw.php",
+                    type: "POST",
+                    data:{
+                        "action":"add_file_entry",
+                        "factname":inname,
+                        "realname":realname
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      
+                       $("#uploaded_files").append(data);
+                       
+                        
+                       //перерисовать блок сообщений
+                                    },
+                    error: function(xhr, status){
+                            
+                    }	 
+                });	
+                
+            }
+            
+            $('#file').uploadifive({
+                    'auto'             : true,
+                    'buttonText' : 'Выберите файл...',
+                'fileTypeDesc' : 'Все файлы',
+                'fileTypeExts' : '*.*', 
+                    'fileSizeLimit' : '192 MB', 
+                    'width'           : 120,
+                    'formData'         : {
+                                           "PHPSESSID" : "%{$session_id}%"
+                                         },
+                    'queueID'          : 'queue',
+                    'uploadScript'     : '/swfupl-js/sched_upload_task_file.php',
+                    'onUploadComplete' : function(file, data) { 
+                            eval(data)
+							//alert(data)
+                    
+                    }
+                });
+            
+         
+    });
+     </script>
+
+    
+   
+</div>
+
+
+
+
+
+
+<h3>Напомнить мне:</h3>
+
+<input type="checkbox" id="remind_do" name="remind_do" value="1"  /><label for="remind_do">напомнить мне</label><br>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="remind_pdate">
+Дата напоминания: 
+</label><br />
+
+<input type="text" value="%{$now}%" id="remind_pdate" name="remind_pdate"  size="10"   maxlength="10" />
+</div>
+
+
+
+ 
+
+<div style="float:left; margin-right:10px;">
+
+
+<label for="remind_ptime">Время напоминания:</label><br />
+ 
+
+<select  name="remind_ptime_h" id="remind_ptime_h" style="width:60px">
+        %{html_options values=$ptime_beg_h selected=$remind_beg_hr output=$ptime_beg_h}%
+    </select>: 
+    <select   name="remind_ptime_m" id="remind_ptime_m" style="width:60px">
+        %{html_options values=$ptime_beg_m selected=$remind_beg_mr output=$ptime_beg_m}%
+    </select>
+     
+
+
+</div>
+
+ <br clear="all" />
+
+<p />
+
+
+
+
+ 
+
+
+
+
+
+<input type="submit" value="Создать задачу" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать задачу и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" onclick="location.href='shedule.php';" />
+
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	if($("#remind_do").prop("checked")){
+		if($("#remind_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату напоминания!');
+			return false;
+		}	
+		
+	 	
+	}
+	
+	
+	if($("#has_exp_pdate").prop("checked")){
+		if($("#exp_pdate").val().length<10){
+			sfm_show_error_msg('Укажите дату крайнего срока!');
+			return false;	
+		}
+		
+		if(($("#exp_ptime_h").val()==null)||($("#exp_ptime_h").val()==undefined)||($("#exp_ptime_h").val()=='')){
+			sfm_show_error_msg('Укажите время крайнего срока!');
+			return false;	
+		}
+		
+		if(($("#exp_ptime_m").val()==null)||($("#exp_ptime_m").val()==undefined)||($("#exp_ptime_m").val()=='')){
+			sfm_show_error_msg('Укажите время крайнего срока!');
+			return false;	
+		}
+	}
+	 
+	//постановщик может быть задействован в других ролях 1 раз
+	count_of_roles=0; id=$("#user_1").val();
+	if(id==$("#user_2").val()) count_of_roles++;
+	$.each($("input[id^=new_user4_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	$.each($("input[id^=new_user3_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	if(count_of_roles>1){
+		sfm_show_error_msg('Постановщик может быть включен в задачу только в еще одну из ролей: Ответственный, Соисполнитель, Наблюдатель!');
+			return false;
+	}
+	
+	count_of_roles=0; id=$("#user_2").val();
+	//if($("#user_1").val()==id) count_of_roles++;
+	$.each($("input[id^=new_user4_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	$.each($("input[id^=new_user3_id_]"), function(k,v){
+		if($(v).val()==id) count_of_roles++;
+	});
+	if(count_of_roles>0){
+		sfm_show_error_msg('Ответственный не может быть включен в другие роли: Соисполнитель, Наблюдатель!');
+			return false;
+	}
+	
+	//для каждого соисп-ля...
+	flag=true;
+	$.each($("input[id^=new_user3_id_]"), function(k,v){
+		//if($(v).val()==id) count_of_roles++;
+		id=$(v).val();
+		
+		count_of_roles=0;
+		if($("#user_2").val()==id) count_of_roles++;
+		$.each($("input[id^=new_user4_id_]"), function(kk,vv){
+			if($(vv).val()==id) count_of_roles++;
+		});
+		
+		if(count_of_roles>0) flag=flag&&false;
+	});
+	
+	if(!flag){
+		sfm_show_error_msg('Соисполнитель не может быть включен в другие роли: Ответственный, Наблюдатель!');
+			return false;
+	}
+	
+	//для каждого набл-ля
+	flag=true;
+	$.each($("input[id^=new_user4_id_]"), function(k,v){
+		//if($(v).val()==id) count_of_roles++;
+		id=$(v).val();
+		
+		count_of_roles=0;
+		if($("#user_2").val()==id) count_of_roles++;
+		$.each($("input[id^=new_user3_id_]"), function(kk,vv){
+			if($(vv).val()==id) count_of_roles++;
+		});
+		
+		if(count_of_roles>0) flag=flag&&false;
+	});
+	
+	if(!flag){
+		sfm_show_error_msg('Наблюдатель не может быть включен в другие роли: Ответственный, Соисполнитель!');
+			return false;
+	}
+	
+	
+	try{
+		data=CKEDITOR.instances.description.getData();
+	}catch(e){
+		data=$("#description").val();
+	}
+	if(strip_tags($.trim(data)).length<10){
+		 sfm_show_error_msg('Введите описание задачи (мин. длина 10 симоволов)!');
+		 
+		return false;	
+	}
+	
+	
+		//хотя бы 1 контрагент
+	if((!$("#wo_supplier").prop("checked"))&&($("tr[id^=our_supplier_row_]").length==0)){
+		sfm_show_error_msg('Укажите хотя бы одного контрагента, либо отметьте галочку Без контрагента!');
+		  	return false;	
+		
+	}
+	
+	
+	return true; 
+}
+
+frmvalidator.addValidation("topic","req","Укажите название задачи!");
+
+frmvalidator.addValidation("user_1","gt=0","Укажите постановщика задачи!");
+
+frmvalidator.addValidation("user_2","gt=0","Укажите ответственного задачи!");
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

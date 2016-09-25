@@ -1,0 +1,19 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+    
+    
+    <em>Дата:</em><strong>%{$items[rowsec].pdate}%</strong>
+    %{$items[rowsec].user_name_s}% (%{$items[rowsec].user_login}%)
+    <br />
+
+    
+    <em>Примечания:</em><strong>%{$items[rowsec].note}%</strong>
+
+   
+    </div>
+   
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

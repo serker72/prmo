@@ -1,0 +1,55 @@
+  <tr align="center" valign="top">
+            <td>
+            %{$document.given_pdate}%
+            </td>
+            <td>
+            %{if $document.kind==1}%
+            Исходящая оплата № %{$document.code}% (заданный № %{$document.given_no}%) от %{$document.given_pdate}%
+            
+            %{elseif $document.kind==2}%    
+            
+            Поступление № %{$document.id}% (заданный № с/ф %{$document.given_no}%) от %{$document.given_pdate}%
+            %{elseif $document.kind==6}%    
+           Акт корректировки задолженности № %{$document.code}% от %{$document.given_pdate}% на основании:
+                %{if $document.reason_id==1}%
+                акта сверки взаиморасчетов №%{$document.akt_given_no}% от %{$document.akt_given_pdate}% 
+                %{elseif $document.reason_id==2}%
+                %{$document.reason_txt}%
+                %{/if}%
+            
+            %{elseif $document.kind==4}%
+            Входящая оплата № %{$document.code}% (заданный № %{$document.given_no}%) от %{$document.given_pdate}%
+            
+            %{elseif $document.kind==5}%    
+            
+            Реализация № %{$document.id}% (заданный № с/ф %{$document.given_no}%) от %{$document.given_pdate}%
+            
+            %{/if}%
+            </td>
+            <td width="80" >
+             %{$document.between_before_ost}%
+            
+            </td>
+            <td width="80" >%{if $document.kind==1}%
+            
+            %{elseif $document.kind==2}%    
+          
+            %{/if}%
+            
+              %{$document.dolg}%
+            </td>
+            <td width="80" >%{if $document.kind==1}%
+            
+            %{elseif $document.kind==2}%    
+           
+            %{/if}%
+            
+            
+             %{$document.plus}%
+            </td width="80" >
+            <td width="80" >
+             %{$document.between_after_ost}%
+            
+            </td>
+            
+        </tr>

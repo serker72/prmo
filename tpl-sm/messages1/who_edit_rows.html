@@ -1,0 +1,101 @@
+%{section name=pospossec loop=$pospos}%
+ 
+
+ 
+    
+    
+    <tr align="left" valign="top">
+    	<td width="24" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        <input type="checkbox" value="1" id="who_user_is_in_%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].is_in==1}% checked%{/if}% />
+        </td>
+    	<td width="*" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+        <input type="hidden" id="who_hash_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].hash}%" />
+        
+        <input type="hidden" id="who_user_id_%{$pospos[pospossec].hash}%"   value="%{$pospos[pospossec].id}%" />
+        
+         <input type="hidden" id="who_user_login_%{$pospos[pospossec].hash}%"   value="%{$pospos[pospossec].login}%" />
+        
+        <label for="who_user_is_in_%{$pospos[pospossec].hash}%"><span id="who_user_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].name_s}%%{$pospos[pospossec].name_d}%</span></label>
+        
+        
+        </td>
+        
+        <td width="*" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+        %{$pospos[pospossec].position_s}%
+        </td>
+       
+        
+    </tr>    
+    
+ 
+%{/section}%
+
+<script type="text/javascript">
+$(function(){
+	//who_user_is_in_
+	$("input[id^=who_user_is_in_]").bind("change",function(){
+		state=$(this).prop("checked");
+		 
+		our_hash=$(this).attr("id").replace(/^who_user_is_in_/,'');
+		if($("#who_user_id_"+our_hash).val()>0){
+		
+			
+			//найти число выделенных не служебных галочек. если оно равно общему числу неслужебных - то отметить выделить все, иначе - снять выделить все
+			total=0; checked=0;
+			$.each($("#who_users input[id^=who_user_is_in_]"), function(k,v){
+				hash=$(v).attr("id").replace(/^who_user_is_in_/,'');
+				if($("#who_user_id_"+hash).val()>0){
+					total++;
+					if($(v).prop("checked")) checked++;	
+				}
+			});
+			
+			if(total==checked) $("#who_select_all").prop("checked", true); else  $("#who_select_all").prop("checked", false); 
+			
+			//проработать служебное поле
+			//все сотрудники
+			if($("#who_user_login_"+our_hash).val().match(/^S/)){
+				//alert('ff');	
+				//сопоставить число выделенных сотрудников с общим числом сотрудников
+				total=0; checked=0;
+				$.each($("#who_users input[id^=who_user_is_in_]"), function(k,v){
+					hash=$(v).attr("id").replace(/^who_user_is_in_/,'');
+					if($("#who_user_login_"+hash).val().match(/^S/)){
+						total++;
+						if($(v).prop("checked")) checked++;	
+					}
+				});
+			}
+			$.each($("#who_users input[id^=who_user_is_in_]"), function(k,v){
+				hash=$(v).attr("id").replace(/^who_user_is_in_/,'');
+				if($("#who_user_id_"+hash).val()==-2){
+					if(total==checked) $(v).prop("checked", true); else  $(v).prop("checked", false); 
+				}
+			});
+			//сюда же добавить дилера!
+			
+		 
+			
+		}else{
+			//это служебное поле "все сотрудники"!
+			//alert('ff');
+			if($("#who_user_id_"+our_hash).val()==-2){
+					
+				
+				$.each($("#who_users input[id^=who_user_is_in_]"), function(k,v){
+					hash=$(v).attr("id").replace(/^who_user_is_in_/,'');
+					if($("#who_user_login_"+hash).val().match(/^S/)){
+						
+						$(v).prop("checked",state);
+					}
+				});
+			}
+			
+			//сюда добавить дилера
+		
+		}
+	});
+});
+</script>        

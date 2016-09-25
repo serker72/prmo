@@ -1,0 +1,51 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==2}%	
+	selected: 1
+%{elseif $tab_page==3}%	
+	selected: 2
+%{/if}%	
+  
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+  %{if $can_fill}% 
+   
+    <li><a href="#tabs-1">Заполняемость данными контрагентов</a></li>
+  %{/if}%
+  %{if $can_files}% 
+   
+    <li><a href="#tabs-2">Файлы без описания</a></li>
+  %{/if}%
+   
+  </ul>
+  
+  %{if $can_fill}% 
+  <div id="tabs-1">
+    <p>
+    <h2>Заполняемость данными контрагентов</h2>
+    %{$log}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+    %{if $can_files}% 
+  <div id="tabs-2">
+    <p>
+    <h2>Файлы без описания</h2>
+    %{$log2}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+
+</div>

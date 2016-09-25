@@ -1,0 +1,202 @@
+<!-- таблица на странице -->
+
+<div style="float:right; margin-right:30px;">
+
+
+%{if $can_edit_quantities}%
+    
+      
+       
+        <a href="#" id="edit_quantities" class="reestr_edit reestr_right_button24" data-comment="редактировать фактическое количество..." ></a>
+         <script type="text/javascript">
+        $(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+				  if(isNaN(x) || isNaN(n)) return false;
+				  var m = Math.pow(10,n);
+				  return Math.round(x*m)/m;
+				}
+			
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#inv_positions_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования фактического количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#inv_positions_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).val(); //attr('id').replace(/^to_bill_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое фактическое количество позиции '+$('#name_'+id).text()+', '+$('#dim_name_'+id).text()+', кол-во по программе '+$("#new_quantity_as_is_"+id).val(), $('#kol_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<0)||isNaN(res)) {
+						alert('Неправильно введено фактическое количество позиции '+$('#name_'+id).text()+', '+$('#dim_name_'+id).text()+', кол-во по программе '+$("#new_quantity_as_is_"+id).val()+'. Пожалуйста, введите правильное значение.');
+					}else if((res==0)&&(parseFloat($("#new_quantity_as_is_"+id).val())==0)){
+						alert("Вы вводите нулевое фактическое количество для позиции "+$('#name_'+id).text()+".\nВ программе количество этой позиции также нулевое.\nПожалуйста, введите ненулевое количество, или удалите позицию из акта с помощью кнопки удаления позиции.");
+					}else usl=false;
+					  
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#kol_'+id).html(res);
+					 $('#new_quantity_fact_'+id).val(res);
+					 
+					 //пересчитаем избыток - недостаток
+					 nedost=roundPlus(parseFloat($("#new_quantity_as_is_"+id).val())-res,3);
+					 izb=roundPlus(res-parseFloat($("#new_quantity_as_is_"+id).val()),3);
+					 
+					 if(nedost>0) ndh='<span style="color:red;">'+nedost+'</span>';
+					 else ndh='0';
+					 
+					 if(izb>0) izbh='<span style="color:red;">'+izb+'</span>';
+					 else izbh='0';
+					 $("#nedost_"+id).html(ndh);
+					 $("#izb_"+id).html(izbh);
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+       
+    %{else}%
+    
+   
+        <a href="#" onclick="alert('Невозможно редактировать фактические количества позиций.');/* Причина: %{$cannot_edit_quantities_reason}%.*/'); return false;"  class="reestr_edit reestr_inactive reestr_right_button24" data-comment="редактировать фактическое количество..." ></a>
+       
+    
+    %{/if}%
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+</div>
+<br clear="all" />
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="inv_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	 <th scope="col" width="20">№ п/п</th>
+        <th scope="col" width="24">Код</th>
+        <th scope="col" width="*">Номенклатура</th>
+        <th scope="col" width="60">Ед. изм.</th>
+        <th scope="col" width="60">Исходное кол-во по программе</th>
+        
+        <th scope="col" width="60">Факт. кол-во</th>
+        
+        <th scope="col" width="60">Исходная недостача</th>
+        <th scope="col" width="60">Исходные излишки</th>
+        <th scope="col" width="60">Текущее кол-во по программе</th>
+        <th scope="col" width="60">В связ. поступлениях</th>
+        <th scope="col" width="60">В связ. реализациях</th>
+        <th scope="col" width="24">
+        	<input type="checkbox" title="выделить все позиции" 
+    id="table_select_all" 
+    %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    />
+   
+        
+        </th>
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody id="inv_positions">
+    
+    %{include file="inv/positions_on_page_rows.html"}%
+    
+    </tbody>
+    </table>
+   
+ <script type="text/javascript">
+	$(function(){
+		$("#table_select_all").bind("click",function(){
+			
+				$.each( $("#inv_positions_table input[id^=to_bill_]"),function(k,v){
+					$(v).prop("checked",$("#table_select_all").prop("checked"));
+					
+				});
+				
+		});
+		
+	});
+	
+	function link_in_acc(id){
+		$.ajax({
+				  async: true,
+				  url: "/js/invent.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_acc_pos",
+					  "position_id":id,
+					 
+					  "inventory_id":$("#id").val()
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+	}
+	
+	function link_in_wf(id){
+		 $.ajax({
+				  async: true,
+				  url: "/js/invent.php",
+				  type: "POST",
+				  data:{
+					  "action":"find_wf_pos",
+					   "position_id":id,
+					   
+					  "inventory_id":$("#id").val()
+				  },
+				  beforeSend: function(){
+					$("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+				  },
+				  success: function(data){
+					$("#position_info").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				  }	 
+				});
+			  
+			  $("#info_positions_dialog").dialog("open");
+			  return false;
+	}
+	</script>

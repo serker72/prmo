@@ -1,0 +1,34 @@
+ 
+ 
+	
+    <strong>Заголовки:</strong><br>
+
+    <table class="headers" width="*" cellspacing="0" cellpadding="2" border="1" style="" >
+    <tr align="left" valign="middle">
+    	<th scope="row">To:</th>
+        <td>
+        %{if $data.to_is_personal}%
+        	%{$data.to_field}% <%{$data.user_email}%>
+        %{else}%    
+        	<%{$data.user_email}%>
+        %{/if}%
+        </td>
+    </tr>
+    <tr align="left" valign="middle">
+    	<th scope="row">From:</th>
+        <td>%{$data.from_name}%</td>
+    </tr>
+    <tr align="left" valign="middle">
+    	<th scope="row">Reply-to:</th>
+        <td>%{$data.from_email}%</td>
+    </tr>
+   <tr align="left" valign="middle">
+    	<th scope="row">Тема:</th>
+        <td>%{$data.topic}%</td>
+    </tr>
+    </table>
+    
+  
+	%{$data.html_content}%
+    
+ 

@@ -1,0 +1,353 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate_1%{$prefix}%").datepicker({
+changeMonth: true,
+ changeYear: true,
+ yearRange: "1900:n+00"
+});
+	$("#pdate_2%{$prefix}%").datepicker({
+changeMonth: true,
+ changeYear: true,
+ yearRange: "1900:n+00"
+});
+	
+	
+	$("#check_year%{$prefix}%").bind("change", function(){
+		if(!$(this).prop("checked")){
+			//установить текущий год
+			d=new Date();
+			
+			$("#pdate_1%{$prefix}%").val( $("#pdate_1%{$prefix}%").val().substr(0,6)+d.getFullYear());	
+			$("#pdate_2%{$prefix}%").val( $("#pdate_2%{$prefix}%").val().substr(0,6)+d.getFullYear());	
+		}
+	});
+	
+	 	
+	function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_birth.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	function SelectSupplierGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_birth_supplier.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.code|escape:"html"}% %{$item.full_name|escape:"html"}%, %{$item.opf_name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	 
+	
+	
+	SelectGo2("user%{$prefix}%");
+ 	SelectSupplierGo2("supplier%{$prefix}%");
+	
+	
+	
+	$("#to_delivery_1").bind("change", function(){
+		$.each($("input[id^=to_delivery_1_]"), function(k,v){
+			if(!$(v).prop("disabled")) $(v).prop("checked", $("#to_delivery_1").prop("checked"));
+		});
+	});
+	
+	$("#to_delivery_2").bind("change", function(){
+		$.each($("input[id^=to_delivery_2_]"), function(k,v){
+			if(!$(v).prop("disabled")) $(v).prop("checked", $("#to_delivery_2").prop("checked"));
+		});
+	});
+	
+	$("input[id^=to_delivery_1_]").bind("change", function(){
+		 
+		total=0; checked=0;
+		$("input[id^=to_delivery_1_]").each(function(index, element) {
+            if(!$(element).prop("disabled")){
+				total++;
+				if($(element).prop("checked")) checked++;	
+			}
+        });
+		
+		if(total==checked) $("#to_delivery_1").prop("checked", true);
+		else $("#to_delivery_1").prop("checked", false);
+	});
+	
+	$("input[id^=to_delivery_2_]").bind("change", function(){
+		 
+		total=0; checked=0;
+		$("input[id^=to_delivery_2_]").each(function(index, element) {
+            if(!$(element).prop("disabled")){
+				total++;
+				if($(element).prop("checked")) checked++;	
+			}
+        });
+		
+		if(total==checked) $("#to_delivery_2").prop("checked", true);
+		else $("#to_delivery_2").prop("checked", false);
+	});
+	
+	
+	$("#email_users%{$prefix}%").click(function(){
+		can_ret=true;
+		
+		if(can_ret&& ($("input[id^=to_delivery_1_]:checked").length==0) &&  ($("input[id^=to_delivery_2_]:checked").length==0)){
+			can_ret=can_ret&&false;
+			alert("Выберите хотя бы одного получателя рассылки!");
+		}
+		
+		if(can_ret){
+			url='delivery_generator.php?';
+			//to_delivery_1_%{$items1[rowsec].supplier_id}%_ %{$items1[rowsec].contact_id}%
+			$("input[id^=to_delivery_1_]:checked").each(function(index, element) {
+                s=$(element).attr("id").replace(/^to_delivery_/,'');
+				
+				if(url=='delivery_generator.php?') url+=s;
+				else url+='&'+s;
+				
+            });
+			
+			//to_delivery_2_%{$items2[rowsec2].id}%
+			$("input[id^=to_delivery_2_]:checked").each(function(index, element) {
+                s=$(element).attr("id").replace(/^to_delivery_/,'');
+				
+				if(url=='delivery_generator.php?') url+=s;
+				else url+='&'+s;
+            });
+			
+			
+			if(window.confirm("Вы уверены, что хотите создать поздравительную рассылку для выбранных контактов?")) location.href=url;
+		}
+		
+		return false;
+	});
+	
+});
+</script>
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" /> 
+ 
+
+
+
+
+<div class="report_filter_right" style="margin-left:-160px; width:150px;">
+ 
+   
+   
+    <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+    <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти" />
+     </div>
+    
+    <a href="an_birth.php?doSub%{$prefix}%=1" class="reestr_right_button24 reestr_zoom_deselect" data-comment="Сбросить все фильтры" ></a>
+
+  
+  %{if $can_print}%
+  
+   
+  
+  <a href="#" id="print_table%{$prefix}%"  class="reestr_print reestr_right_button24" data-comment="печать" ></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	  
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+			// $("#print").val(1);
+	 		  
+			 
+		 	 window.open('an_birth.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize(), 'an_birth','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		   
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать"  ></a>
+ %{/if}%
+ 
+  %{if $can_email}%
+  <a href="#" class="reestr_email reestr_right_button24" id="email_users%{$prefix}%" data-comment="создать рассылку отмеченным контактам"></a>
+  %{else}%
+  <a href="#" class="reestr_email reestr_inactive reestr_right_button24" onClick="alert('У Вас недостаточно прав для создания рассылки!'); return false;"  data-comment="создать рассылку отмеченным контактам"></a>
+  %{/if}%
+  
+   %{include file="every_help_dialog.html" filename="an_birth.html" prefix=$prefix description="отчет Дни рождения"  style="display: inline-block;  margin-right:0px;" is_right=true}% 
+        
+ 
+</div> 
+ 
+
+
+<div class="report_filter_left" style="margin-right:140px">
+
+
+
+   <div class="report_filter">
+    <strong>Период:</strong>
+    <br>
+    
+    
+    <label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10" class="sched_report_field" />
+     &nbsp;&nbsp;
+    <label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10" class="sched_report_field" />
+    
+     <div style="margin-top:5px;"> 
+    
+     &nbsp;&nbsp;&nbsp;<input type="checkbox" name="check_year%{$prefix}%" id="check_year%{$prefix}%" value="1" %{if $check_year}% checked %{/if}% /><label for="check_year%{$prefix}%">учитывать год рождения</label>
+     </div>
+    
+    </div>
+    
+    
+    
+     
+    
+   <div class="report_filter">
+    <label for="supplier%{$prefix}%">Контрагент:</label><br />
+    <input type="text" value="%{$supplier}%" id="supplier%{$prefix}%" name="supplier%{$prefix}%" size="30" maxlength="512" style="width:250px;"  />
+    
+     
+    <br>
+  
+  <input type="checkbox" id="has_holdings%{$prefix}%" name="has_holdings%{$prefix}%" value="1" %{if $has_holdings}% checked%{/if}%>
+  <label for="has_holdings%{$prefix}%">Включая субхолдинги <br>
+и подчиненные предприятия</label>
+    </div>
+    
+    <div class="report_filter">
+    <label for="user%{$prefix}%">Сотрудник:</label><br />
+    <input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:250px;"  />
+    </div>
+     
+     
+</div>
+
+ <br clear="all" />
+
+  
+ 
+</form>
+ 
+
+
+<small>
+1. <strong>Фильтр Период</strong> работает в связке с галочкой <strong>"учитывать год рождения"</strong>:
+
+ 
+<ul style="display:inline-block;">
+
+
+<li style="display:inline-block;"><strong>Выбрано "учитывать год рождения"</strong>: поиск осуществляется по попаданию даты рождения в выбранный период. Сортировка проводится хронологически по дате рождения. </li>
+<li style="display:inline-block;"><strong>Не выбрано "учитывать год рождения"</strong>: поиск проводится по попаданию числа, месяца рождения в выбранный интервал чисел, месяцев. Год не учитывается. Сортировка проводится без учета года, от 1 января к 31 декабря.</li> 
+ </ul>
+ 
+ <br>
+2. В графе "Юбилей" указан <strong>+</strong>, если в текущем году контакту/сотруднику исполняется 40, либо 45, либо 50, либо 55 и т.д. лет.
+ 
+ 
+ </small>
+ <br />
+<br>
+
+
+
+
+
+%{if $do_it}%
+ 
+%{include file="an_birth/table.html"}% 
+ 
+
+%{/if}%

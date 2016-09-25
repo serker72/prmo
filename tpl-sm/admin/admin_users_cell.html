@@ -1,0 +1,23 @@
+%{section name=rrsec loop=$rights}%
+        	%{if $rights[rrsec].has_access}%
+            
+         <input type="hidden" value="1" name="state_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" id="state_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" />
+           <div id="right_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" class="active" onmouseover="OnMove('%{$rights[rrsec].letter}%','%{$rights[rrsec].object_id}%', '%{$user_id}%');" onmouseout="OnOut('%{$rights[rrsec].letter}%','%{$rights[rrsec].object_id}%', '%{$user_id}%');" onclick="OnClick('%{$rights[rrsec].letter}%','%{$rights[rrsec].object_id}%', '%{$user_id}%');">
+          
+            %{else}%
+             <input type="hidden" value="0" name="state_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" id="state_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" />
+            
+            <div id="right_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" class="inactive" onmouseover="OnMove('%{$rights[rrsec].letter}%','%{$rights[rrsec].object_id}%', '%{$user_id}%');" onmouseout="OnOut('%{$rights[rrsec].letter}%','%{$rights[rrsec].object_id}%', '%{$user_id}%');" onclick="OnClick('%{$rights[rrsec].letter}%','%{$rights[rrsec].object_id}%', '%{$user_id}%');">
+            %{/if}%
+            %{$rights[rrsec].letter}%
+           
+            %{if $rights[rrsec].has_access}%
+            </div>
+            %{else}%
+            </div>
+            %{/if}%
+            <input type="hidden" value="0" name="do_edit_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" id="do_edit_%{$rights[rrsec].letter}%_%{$rights[rrsec].object_id}%_%{$user_id}%" />
+            
+           
+            
+        %{/section}%

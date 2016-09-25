@@ -1,0 +1,28 @@
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="*">
+    Город
+    </th>
+    
+    </tr>
+    </thead>
+ <tbody id="supplier_cities_tbody">
+ 
+%{section name=citisec loop=$cities}%
+  <tr align="left" valign="top" id="city_row_%{$cities[citisec].id}%">
+    	
+    
+    <td width="*">
+     
+    
+      <span id="city_name_%{$cities[citisec].id}%">%{$cities[citisec].name}%, %{$cities[citisec].okrug_name}%, %{$cities[citisec].region_name}%,  %{$cities[citisec].country_name}%</span>
+    </td>
+     
+    
+   </tr> 
+%{/section}%
+ 
+</tbody>
+</table>

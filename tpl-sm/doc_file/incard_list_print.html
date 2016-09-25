@@ -1,0 +1,73 @@
+ 
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+ 
+
+%{include file="doc_file/folder_header_print.html" prefix=$id_prefix}%
+
+
+
+ 
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*">Файл
+    </th>
+    <th scope="col" width="60">Размер
+    </th>
+	 
+    <th scope="col" width="*">Кем загружен
+    </th>
+    <th scope="col" width="150">Описание
+    </th>    
+    <th scope="col" width="100">Дата
+    </th>
+    
+    
+    
+</tr>
+
+</thead>
+<tbody>
+
+%{include file="doc_file/folders_table_print.html" prefix=$id_prefix}%
+
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="*" align="left"> %{$items[rowsec].orig_name}% </td>
+     <td width="60">
+    %{$items[rowsec].size|string_format:"%.3f&nbsp;МБ"}%
+    </td>
+    
+   
+   
+    <td width="*"> 
+    %{if $items[rowsec].u_group_id==3}%%{$items[rowsec].u_name_s}%%{else}%%{$items[rowsec].u_name_s}%%{/if}% </td>
+    <td width="150" align="left" id="more_info%{$id_prefix}%_%{$items[rowsec].id}%" title="%{$items[rowsec].orig_name|escape}%|%{$items[rowsec].txt|escape}%">
+    
+    %{$items[rowsec].txt|truncate:80:"..."}%
+    
+    
+    </td>
+    <td width="100">
+    %{$items[rowsec].pdate}%
+    </td>
+    
+    
+   
+    
+    
+   
+   
+  
+</tr>
+%{/section}%
+</tbody>
+</table>
+ 
+%{$pages}%

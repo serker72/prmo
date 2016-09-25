@@ -1,0 +1,36 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs();
+});
+</script>
+<style type="text/css">
+.ui-tabs{
+	width:800px !important;
+}
+</style>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Отчетные периоды</a></li>
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <div id="periods">
+    
+    %{$users}%
+    
+    </div>
+  </div>
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

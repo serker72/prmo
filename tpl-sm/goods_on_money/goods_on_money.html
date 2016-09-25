@@ -1,0 +1,424 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	$("#pdate4_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate4_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#sector_id4").bind("change",function(){
+		if(($("#sector_id4").val()==null)||($("#sector_id4").val()==0)){
+			
+			//return false;	
+		}
+		
+		only_active_storages=0;
+		if($("#only_active_storages_4").prop("checked")) only_active_storages=1;
+		
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/goods_on_stor.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_storages",
+			  "sector_id":$("#sector_id4").val(),
+			  "current_id":$("#storage_id4").val(),
+			  "only_active_storages":only_active_storages
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			//  alert(data);
+			$("#storage_id4").html(data);  
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+	});
+	
+	$("#storage_id4").bind("change",function(){
+		if(($("#storage_id4").val()==null)||($("#storage_id4").val()==0)){
+			
+			//return false;	
+		}
+		
+		only_active_sectors=0;
+		if($("#only_active_sectors_4").prop("checked")) only_active_sectors=1;
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/goods_on_stor.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_sectors",
+			  "storage_id":$("#storage_id4").val(),
+			  "current_id":$("#sector_id4").val(),
+			  "only_active_sectors":only_active_sectors
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			//alert(data);
+			$("#sector_id4").html(data);  
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+	});
+	
+	
+	
+	
+	$("#only_active_sectors_4").bind("change",function(){
+		$("#storage_id4").trigger("change");	
+	});
+	
+	
+	$("#only_active_storages_4").bind("change",function(){
+		$("#sector_id4").trigger("change");
+	});
+	
+	
+	
+//	touchScroll('as_position_info');
+//	touchScroll('as_position_detail_info');
+});
+</script>
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form4">
+<input type="hidden" name="print" value="%{$print4}%" id="print4" />
+<input type="hidden" name="tab_page" value="4" id="tab_page" />
+
+%{include file="every_help_dialog.html" filename="posonmoney.htm" prefix="_money" description="отчет товары на объектах (деньги)"  style="float:right;  margin-right:10px;"}%
+
+<div style="float:left; margin-right:10px;">
+<strong>Период:</strong><br />
+
+
+<label for="pdate4_1">с:</label><br />
+<input type="text" value="%{$pdate4_1}%" id="pdate4_1" name="pdate4_1" size="10" maxlength="10" style="width:80px;" />
+
+<p />
+
+<label for="pdate4_2">по:</label><br />
+<input type="text" value="%{$pdate4_2}%" id="pdate4_2" name="pdate4_2" size="10" maxlength="10" style="width:80px;" />
+
+<p />
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+<label for="sector_id4">Участок:</label><br />
+
+
+<select id="sector_id4" name="sector_id4" style="width:150px;">
+<option value="0">-все участки-</option>
+%{html_options values=$sector_ids selected=$sector_id4 output=$sector_names}%
+</select>
+<p />
+
+<label for="storage_id4">Объект:</label><br />
+
+
+<select id="storage_id4" name="storage_id4" style="width:150px;">
+<option value="0">-все объекты-</option>
+%{*html_options values=$storage_ids selected=$storage_id4 output=$storage_names*}%
+%{$storage_html}%
+</select>
+<br />
+
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+<br />
+
+<input type="checkbox" name="only_active_sectors_4" id="only_active_sectors_4" %{if $only_active_sectors_4==1}% checked="checked" %{/if}% value="1" />
+<label for="only_active_sectors_4">только активные участки</label><p /><br />
+
+
+
+<input type="checkbox" name="only_active_storages_4" id="only_active_storages_4" %{if $only_active_storages_4==1}% checked="checked" %{/if}% value="1" />
+<label for="only_active_storages_4">только активные объекты</label><br />
+
+
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:5px;"><br /><br />
+
+
+<input type="image" name="doSub4" id="doSub4" src="/img/icons/old-zoom-original.png" border="0" alt="Найти" title="Найти" />
+
+
+<a href="goods_on_stor.php?tab_page=4"><img src="/img/icons/old-zoom-deselect.png" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" border="0"  /></a>
+  
+  %{if $can_print}%
+  
+  <a href="#" id="print_table4"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  $("#rep_form4").bind("submit", function(){
+		  if((($("#sector_id4").val()==null)||($("#sector_id4").val()==0))&&
+		  
+		  (($("#storage_id4").val()==null)||($("#storage_id4").val()==0))){
+			 alert("Выберите участок или объект!");
+			 
+			 return false;  
+		  }
+	  });
+	  
+	  
+	  $("#doSub4").bind("click",function(){
+		 $("#print4").val(0); 
+		 return true;
+	  });
+	  
+	  $("#print_table4").bind("click",function(){
+		 if((($("#sector_id4").val()==null)||($("#sector_id4").val()==0))&&
+		  
+		  (($("#storage_id4").val()==null)||($("#storage_id4").val()==0))){
+			 alert("Выберите участок или объект!");
+			 
+			 return false;  
+		  }
+		 
+		 
+		 $("#print4").val(1);
+		 
+		 if($("#only_active_sectors_4").prop("checked")){
+			 only_active_sectors_4=1;
+		 }else{
+			 only_active_sectors_4=0;
+		 }
+		 
+		 
+		 if($("#only_active_storages_4").prop("checked")){
+			 only_active_storages_4=1;
+		 }else{
+			 only_active_storages_4=0;
+		 }
+		 
+		 
+		 
+		 window.open('goods_on_stor.php?tab_page=4&print='+$("#print4").val()+'&storage_id4='+$("#storage_id4").val()+'&sector_id4='+$("#sector_id4").val()+'&pdate4_1='+$("#pdate4_1").val()+'&pdate4_2='+$("#pdate4_2").val()+'&only_active_sectors_4='+only_active_sectors_4+'&only_active_storages_4='+only_active_storages_4+"&sortmode4=%{$sortmode4}%", 'goods_on_stor','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1'); 
+		 
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати ведомости.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+  
+</div>
+<br clear="all" />
+
+
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		color:#666;	
+	}
+</style>
+
+<span style="color:red;"><em>Примечания: <br />
+
+1) по умолчанию результаты отчета сортируются по наименованию материала. Также доступна сортировка по коду позиции, по поставщику, по заданной дате с/ф.
+<br />
+
+2) под периодом отчета подразумеваются заданные даты с/ф поступлений.
+
+
+</em></span>
+<p />
+
+
+
+</form>
+
+
+%{if $do_it}%
+<script type="text/javascript">
+
+</script>
+
+
+
+%{section name=somesec loop=$some}%
+
+%{section name=rowsec loop=$some[somesec].items}%%{/section}%
+
+%{if $smarty.section.rowsec.total>0}%
+<h2>%{$some[somesec].full_name}%</h2>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="left" valign="top">
+    <th scope="col" width="40"> Код позиции
+    
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode4=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode4=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+	<th scope="col" width="*">Наименование
+    
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode4=2"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode4=3"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th> 
+    
+    <th width="40" scope="col" >
+    ед.изм.
+   
+    </th>
+    
+    <th width="60" scope="col" >
+    Кол-во
+   
+    </th>
+    
+    
+   
+    <th scope="col" width="60" >
+    Итоговая цена
+   
+    </th>
+    
+    <th scope="col" width="60" >
+    Сумма
+   
+    </th>
+    
+     <th width="200" scope="col" >
+    Поставщик
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode4=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode4=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+   
+    </th>
+    <th width="40" scope="col" >
+    Заданный номер с/ф
+   
+    </th>
+    <th width="40" scope="col" >
+    Заданная дата c/ф
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode4=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode4=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+   
+    </th>
+    <th width="80" scope="col" >
+    Заявка
+    </th>
+  
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$some[somesec].items}%
+   <tr align="left" valign="top">
+    <td width="40">%{$some[somesec].items[rowsec].id|string_format:"%05d"}%</td>
+    <td width="*">
+   
+    %{$some[somesec].items[rowsec].name}%
+   
+    </td>
+     <td width="40" >%{$some[somesec].items[rowsec].dim_name}%</td>
+   
+    
+   
+    
+    <td width="60" >%{$some[somesec].items[rowsec].quantity}%</td>
+   
+    <td width="60" >
+   
+    %{$some[somesec].items[rowsec].price_pm}%
+    </td>
+    
+     <td width="60" >
+   
+    %{$some[somesec].items[rowsec].total}%
+    </td>
+    <td width="200" >
+	 <a href="supplier.php?action=1&id=%{$some[somesec].items[rowsec].supplier_id}%" target="_blank">%{$some[somesec].items[rowsec].supplier_name}%, %{$some[somesec].items[rowsec].opf_name}%</a>
+    </td>
+    <td width="40" >
+	 <a href="ed_acc.php?action=1&id=%{$some[somesec].items[rowsec].acceptance_id}%" target="_blank">%{$some[somesec].items[rowsec].given_no}%</a>
+    </td>
+	
+ 	<td width="40" >
+    %{$some[somesec].items[rowsec].given_pdate}%
+    </td>
+   <td width="80" >
+   %{if $some[somesec].items[rowsec].komplekt_ved_id>0}%
+   <a href="ed_komplekt.php?action=1&id=%{$some[somesec].items[rowsec].komplekt_ved_id}%" target="_blank">Заявка №  %{$some[somesec].items[rowsec].komplekt_ved_id}%</a>
+   %{else}%
+   -
+   %{/if}%
+   </td> 
+   
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+
+<br />
+<strong>Итого за период с %{$pdate4_1}% по %{$pdate4_2}% на %{$titlename2}%  %{if $some[somesec].full_name!=""}%, %{$some[somesec].full_name}%%{/if}% поставлено материалов на сумму <nobr>%{$some[somesec].itogo_price}%&nbsp;руб.</nobr></strong>
+
+
+<p />  
+
+%{/if}%
+  
+%{/section}%
+<h3>Всего за период с %{$pdate4_1}% по %{$pdate4_2}% поставлено на %{$titlename}% материалов на сумму <nobr>%{$itogo_price}%&nbsp;руб.</nobr> </h3>
+
+%{/if}%

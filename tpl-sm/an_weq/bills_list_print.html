@@ -1,0 +1,191 @@
+
+
+
+ <h1>%{if $is_incoming==1}%
+Входящие 
+%{else}%
+Исходящие
+%{/if}% счета без автовыравнивания</h1>
+
+
+
+<table width="800" border="1" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    
+    
+    	
+    <th scope="col" width="40">
+    Номер 
+   
+    </th>
+    
+     <th scope="col" width="60">
+    Дата 
+   
+    </th>
+    
+    <th scope="col" width="40">
+    № 
+сч. пост.
+
+    
+    </th>
+    
+    <th scope="col" width="40">
+    Сумма
+   
+    </th>
+   
+   
+    <th scope="col" width="70">
+    Контрагент
+  
+    </th>
+    
+    
+   
+    
+    
+      <th scope="col" width="100">
+    Статус
+        </th>
+    
+  
+   
+    
+    <th scope="col" width="100">
+    Создал документ
+   
+   
+    </th>
+    
+    
+   <th scope="col" width="100">
+    Утвердил без а/в
+   
+   
+    </th>
+    
+    
+   
+    
+    
+    </td>
+</tr>
+<tr align="center" valign="top">
+	
+    <td width="40">
+    
+    <input type="text" size="8" maxlength="255"  disabled="disabled" value="%{$code2}%" name="code2" id="code2" style="width:40px;"  />
+	 
+    </td>
+    
+    <td width="60">
+    
+    
+    
+    </td>
+    
+    
+    <td width="40" >
+    
+    <input type="text" size="8" maxlength="255"  disabled="disabled" value="%{$supplier_bill_no2}%" name="supplier_bill_no2" id="supplier_bill_no2" style="width:60px;" />
+  
+    </td>
+	<td width="40" >&nbsp;
+  
+    </td>
+    <td width="70">
+   <input type="text" size="8" maxlength="255"  disabled="disabled" value="%{$supplier_name2}%" name="supplier_name2" id="supplier_name2" style="width:60px;" />
+   
+   
+      
+    </td>
+    
+   
+  
+   <td width="100" >
+  
+   </td>
+   
+   
+    <td width="100" >
+   <input type="text" size="8" disabled="disabled" maxlength="255" value="%{$manager_name2}%" name="manager_name2" id="manager_name2" style="width:60px;" />
+   
+   </td>
+   
+     <td width="100" >
+   <input type="text" size="8" disabled="disabled" maxlength="255" value="%{$utv_name2}%" name="utv_name2" id="utv_name2" style="width:60px;" />
+   
+   </td>
+</tr>
+</thead>
+<tbody>
+
+%{section name=rowsec loop=$items}%
+
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+
+	
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0}%class="item_inactive"%{/if}%>%{$items[rowsec].code}%&nbsp;</td>
+    
+    <td width="60" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    
+     <td width="40" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].supplier_bill_no}%&nbsp;</td>
+    
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].total_cost}%&nbsp;руб.
+    </td>
+    <td width="70" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </td>
+    
+   
+    
+   
+    
+     <td width="100" %{if $items[rowsec].is_confirmed_price==0}%class="item_inactive"%{/if}% >
+    %{if $items[rowsec].status_id==1}%
+    не утвержден
+    %{elseif $items[rowsec].status_id==2}%
+    утвержден
+    %{elseif $items[rowsec].status_id==3}%
+    аннулирован
+    %{elseif $items[rowsec].status_id==9}%
+    не выполнен
+    %{elseif $items[rowsec].status_id==10}%
+    выполнен
+     %{elseif $items[rowsec].status_id==20}%
+    частично оплачен
+    %{elseif $items[rowsec].status_id==21}%
+    оплачен
+
+    %{/if}%
+    </td>
+  
+    
+   
+    
+    
+     <td width="100" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}%  
+    </td>
+    
+    <td width="100" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].utv_name}%  %{$items[rowsec].utv_pdate}%
+    </td>
+    
+    
+    
+  
+</tr>
+
+%{/section}%
+
+</tbody>
+</table>

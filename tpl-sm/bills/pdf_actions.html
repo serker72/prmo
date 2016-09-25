@@ -1,0 +1,355 @@
+<div id="email_documents_dialog" title="Отправка pdf-документов на email" style="display:none;">
+<input id="email_documents_id" value="" type="hidden" />
+
+<h4 style="margin-top:0px;">Выберите документы для отправки:</h4>
+
+
+%{if $mode==0}%
+
+	<div style="float:left; margin-right:20px;">
+    	<strong>Счет:</strong><br><br>
+
+
+        
+        <input id="email_documents_bill_print_1" value="1" type="checkbox" /><label for="email_documents_bill_print_1">Форма счета без подписи, печати</label><br />
+
+        <input id="email_documents_bill_print_2" value="2" type="checkbox" /><label for="email_documents_bill_print_2">Форма счета с подписью, печатью</label>
+
+        
+        
+    </div>
+    
+    <div style="float:left; margin-right:20px;">
+    	<strong>Отгрузочные документы:</strong><br>
+<br>
+
+		
+        <input id="email_documents_otgr_1" value="1" type="checkbox" /><label for="email_documents_otgr_1">Отгрузочные документы без подписи, печати</label><br />
+
+        <input id="email_documents_otgr_2" value="2" type="checkbox" /><label for="email_documents_otgr_2">Отгрузочные документы с подписью, печатью</label>
+		
+        
+    </div>
+    <br clear="all" />
+    <p />
+    
+
+
+
+%{elseif $mode==2}%
+	<div style="float:left; margin-right:20px;">
+    	<input type="checkbox" id="email_documents_nakl" value="1" %{if $has_tov==false}% disabled="disabled"%{/if}% /><label for="email_documents_nakl">Товарная накладная</label><br />
+		<input type="checkbox" id="email_documents_fakt" value="1" /><label for="email_documents_fakt">Счет-фактура</label>
+        
+        
+<br />
+        
+        
+       
+        <input type="checkbox" id="email_documents_akt" %{if $has_usl==false}% disabled="disabled"%{/if}% value="1" /><label for="email_documents_akt">Акт</label><br />
+        
+        <br />
+		<input type="checkbox" id="email_documents_sign" value="1" /><label for="email_documents_sign">Наличие подписи, печати</label><br />
+        
+    
+    </div>
+    <br clear="all" />
+    <p />
+    
+
+%{/if}%
+
+
+<h4 style="margin-top:0px;">Выберите адресата:</h4>
+
+<div id="email_documents_addresses" style="border:1px solid silver; width:470px; height:250px; overflow:auto;">
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+ 
+	
+	try{
+		touchScroll('email_documents_addresses');
+	}catch(e){}
+	
+	//блок/разблок отгр. док.
+	function email_documents_ToggleOtgr(){
+		$.ajax({
+			async: true,
+			url: "/js/bill.php",
+			type: "POST",
+			data:{
+				"action":"check_acceptances",
+				"id":$("#email_documents_id").val()
+			},
+			beforeSend: function(){
+				 
+			},
+			success: function(data){
+			   if(data==1){
+				   $("#email_documents_otgr_1").prop("disabled",false);
+				   $("#email_documents_otgr_2").prop("disabled",false);
+			   }else if(data==0){
+				    $("#email_documents_otgr_1").prop("disabled",true);
+				   $("#email_documents_otgr_2").prop("disabled",true);
+				   $("#email_documents_otgr_1").prop("checked",false); 
+				 $("#email_documents_otgr_2").prop("checked",false); 
+			   }
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+	
+	//подгрузка адресатов
+	function email_documents_GetAddresses(supplier_id){
+		$.ajax({
+			async: true,
+			url: "/js/bill.php",
+			type: "POST",
+			data:{
+				"action":"load_pdf_addresses",
+				"supplier_id":supplier_id //$("#supplier_id").val()
+			},
+			beforeSend: function(){
+				$("#email_documents_addresses").html('<img src="/img/images/wait.gif" alt="подождите, пожалуйста..." border="0" width="32" height="32" />');
+			},
+			success: function(data){
+			  $("#email_documents_addresses").html(data);
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+	
+	//вызов отправки 
+	function email_documents_SendData(){
+		res=true;
+		
+		%{if $mode==0}%
+		if(res&&!($("#email_documents_bill_print_1").prop("checked")||$("#email_documents_bill_print_2").prop("checked")||$("#email_documents_otgr_1").prop("checked")||$("#email_documents_otgr_2").prop("checked"))){
+			res=res&&false;
+			alert("Выберите документы для отправки!");
+		}
+		
+		%{elseif $mode==2}%
+		if(res&&!($("#email_documents_akt").prop("checked")||$("#email_documents_fakt").prop("checked")||$("#email_documents_nakl").prop("checked"))){
+			res=res&&false;
+			alert("Выберите документы для отправки!");
+		}
+		%{/if}%
+		
+		if(res&&($("input[id^=email_documents_address_]:checked").length==0)){
+			res=res&&false;
+			alert("Выберите хотя бы одного адресата!");
+		}
+		
+		
+		if(res){
+			//вызов отправщика	
+			
+			printmodes=new Array(); var addresses=new Array();
+			%{if $mode==0}%
+			mode=0;
+			if($("#email_documents_bill_print_1").prop("checked")) printmodes.push(0);
+			
+			if($("#email_documents_bill_print_2").prop("checked")) printmodes.push(1);
+			if($("#email_documents_otgr_1").prop("checked")) printmodes.push(2);
+			if($("#email_documents_otgr_2").prop("checked")) printmodes.push(3);
+			
+			%{elseif $mode==2}%
+			mode=2;
+			
+			if($("#email_documents_akt").prop("checked")){
+				 printmodes.push(0);
+				 if($("#email_documents_sign").prop("checked")) printmodes.push(1); 
+			}
+			
+			if($("#email_documents_fakt").prop("checked")){
+				  printmodes.push(2);
+				  if($("#email_documents_sign").prop("checked")) printmodes.push(3); 
+			}
+			
+			if($("#email_documents_nakl").prop("checked")){
+				  printmodes.push(4);
+					if($("#email_documents_sign").prop("checked")) printmodes.push(5); 	  
+			}
+			
+			%{/if}%
+			
+			$("input[id^=email_documents_address_]:checked").each(function(index, element) {
+                addresses.push($(element).val());
+            });
+			
+			zc=window.open('email_bill_sender.php?document_id='+$("#email_documents_id").val()+'&mode='+mode+'&printmodes='+printmodes+'&addresses='+addresses,'emb','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+			if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.');
+			
+			
+			$("#email_documents_dialog").dialog("close"); 
+			
+			 
+			location.reload();
+		}
+	}
+	
+	
+	//запуск из карты
+	$("#email_documents").bind("click", function(){
+		$("#email_documents_id").val($("#id").val());
+		
+		%{if $mode==0}%
+			 
+			 $("#email_documents_bill_print_1").prop("checked",false); 
+			
+			 $("#email_documents_bill_print_2").prop("checked",false); 
+			 $("#email_documents_otgr_1").prop("checked",false); 
+			 $("#email_documents_otgr_2").prop("checked",false); 
+			
+			%{elseif $mode==2}%
+			 
+			
+			 $("#email_documents_akt").prop("checked",false); 
+				 
+				 $("#email_documents_sign").prop("checked",false);  
+			 $("#email_documents_fakt").prop("checked",false); 
+			 $("#email_documents_nakl").prop("checked",false); 
+		%{/if}%
+		
+		email_documents_GetAddresses($("#supplier_id").val());
+		
+		//блокировка/разблокировка отгр. докум-тов
+				%{if $mode==0}%
+				email_documents_ToggleOtgr();
+				%{/if}%
+		
+		$("#email_documents_dialog").dialog("open");
+		return false;
+	});
+	
+	//запуск из реестра
+	function  email_documents_launch(id, supplier_id){
+		$("#email_documents_id").val(id);
+		
+		%{if $mode==0}%
+			 
+			 $("#email_documents_bill_print_1").prop("checked",false); 
+			
+			 $("#email_documents_bill_print_2").prop("checked",false); 
+			 $("#email_documents_otgr_1").prop("checked",false); 
+			 $("#email_documents_otgr_2").prop("checked",false); 
+			
+			%{elseif $mode==2}%
+			 
+			
+			 $("#email_documents_akt").prop("checked",false); 
+				 
+				 $("#email_documents_sign").prop("checked",false);  
+			 $("#email_documents_fakt").prop("checked",false); 
+			 $("#email_documents_nakl").prop("checked",false); 
+			 
+			 //проверить, доступен ли акт
+	$.ajax({
+				async: true,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_akt",
+					"id": id
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 //alert('akt'+data);
+				  if(data==0){
+						//акта нет
+						$("#email_documents_akt").prop("disabled", true);
+						 
+					
+				  }else{
+					  $("#email_documents_akt").prop("disabled", false);
+						
+				  }
+				},
+				error: function(xhr, status){
+					
+					 
+				}	 
+			});
+			
+	//проверить, доступен ли накладная
+	$.ajax({
+				async: true,
+				url: "/js/acc.php",
+				type: "POST",
+				data:{
+					"action":"check_tov",
+					"id": id
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 // alert(data);
+				  if(data==0){
+						//акта нет
+						$("#email_documents_nakl").prop("disabled", true);
+						 
+					
+				  }else{
+					  $("#email_documents_nakl").prop("disabled", false);
+						
+				  }
+				},
+				error: function(xhr, status){
+					
+					 
+				}	 
+			});
+		%{/if}%
+		
+		email_documents_GetAddresses(supplier_id);
+		
+		//блокировка/разблокировка отгр. докум-тов
+				%{if $mode==0}%
+				email_documents_ToggleOtgr();
+				%{/if}%
+		
+		$("#email_documents_dialog").dialog("open");
+		return false;
+	}
+	
+	
+	
+	$("#email_documents_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 600,
+		height: 500,
+		buttons: {
+			"Готово": function(){
+				email_documents_SendData();
+				
+				
+				
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+ 
+</script>

@@ -1,0 +1,109 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table width="100%" cellpadding="1" cellspacing="0" %{if $print==1}% border="1"%{else}% border="0"%{/if}% class="blacktable1">
+<thead>
+<tr align="left" valign="top">
+	
+    
+    <th width="80" style="width:80px; max-width:200px; min-width:80px;">
+    Файл
+    </th>
+    
+      <th width="*" style="min-width:100px;">
+    Описание
+    </th>
+    
+    
+    <th width="150" style="min-width:150px;">
+    Файловый реестр
+    </th>
+    
+  
+    
+    <th width="*">
+    Папка
+    </th>
+    
+    <th width="100"  style="width:100px; max-width:120px; min-width:80px;">
+    Дата загрузки
+    </th>
+    
+    <th width="200" style="min-width:200px;">
+    Загрузил
+    </th>
+    
+    
+    <th width="*">
+    Родительский документ
+    </th>
+   <th width="*">
+   Организация
+    </th>
+   
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+	
+    
+    <td  width="80" style="width:80px; max-width:200px; min-width:80px;">
+    <a href="%{$items[rowsec].download_filename}%?id=%{$items[rowsec].id}%" target="_blank">%{$items[rowsec].orig_name}%</a>
+    </td>
+    
+    
+    <td width="*">
+     %{$items[rowsec].txt|default:"&nbsp;"}% 
+    </td>
+    
+    
+    
+    <td width="150">
+    <a href="%{$items[rowsec].pagename}%?%{$items[rowsec].filter_id_fieldname}%=%{$items[rowsec].document_id}%&folder_id=%{$items[rowsec].folder_id}%%{if $items[rowsec].tab_page!=""}%&tab_page=%{$items[rowsec].tab_page}%%{/if}%" target="_blank">%{$items[rowsec].description}%</a>
+    </td>
+    
+    
+    
+    
+    <td width="*">
+     %{if  $items[rowsec].folder_name!=""}%
+     <a href="%{$items[rowsec].pagename}%?%{$items[rowsec].filter_id_fieldname}%=%{$items[rowsec].document_id}%&folder_id=%{$items[rowsec].folder_id}%%{if $items[rowsec].tab_page!=""}%&tab_page=%{$items[rowsec].tab_page}%%{/if}%" target="_blank"> %{$items[rowsec].folder_name}% </a>
+     %{else}%
+     -
+     %{/if}%
+    </td>
+    
+    
+     <td width="100">
+     %{$items[rowsec].pdate}% 
+    </td>
+    <td width="200">
+    <a href="info.html?name=%{$items[rowsec].user_login}%" target="_blank">%{$items[rowsec].user_name_s}%</a>
+    </td>
+    
+     <td width="*">
+     <a href="%{$items[rowsec].document_filename}%?action=1&id=%{$items[rowsec].document_id}%" target="_blank">%{$items[rowsec].doc_name}%</a>
+    </td>
+    
+    
+     <td width="*">
+    <small> %{$items[rowsec].opf_name}%  %{$items[rowsec].org_name}% </small>
+    </td>
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+ 

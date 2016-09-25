@@ -1,0 +1,577 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	$("#pdate2_1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2_2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});	
+	
+	
+	
+	touchScroll('as_position_info');
+	touchScroll('as_position_detail_info');
+});
+</script>
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form2">
+<input type="hidden" name="print" value="%{$print2}%" id="print2" />
+<input type="hidden" name="tab_page" value="2" id="tab_page" />
+
+<div class="report_filter_right">
+
+
+	%{include file="every_help_dialog.html" filename="posonas.htm" prefix="_as" description="отчет Товары на объектах (выбор по ассортименту)"  style="float:right;  margin-right:0px;" is_right=true}%
+    
+    
+ <div class="reestr_zoom reestr_right_button24" data-comment="Найти">   
+<input type="image" name="doSub2" id="doSub2" src="/img/24.png" border="0" alt="Найти"  />
+</div>
+    
+   <a href="goods_on_stor.php?tab_page=2&doSub2=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"  ></a>
+
+  
+  %{if $can_print}%
+  
+  <a href="#" id="print_table2" class="reestr_print reestr_right_button24" data-comment="Печать..." ></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  $("#doSub2").bind("click",function(){
+		 $("#print2").val(0); 
+		 return true;
+	  });
+	  
+	  $("#print_table2").bind("click",function(){
+		 $("#print2").val(1);
+		 
+		 if($("#only_period_2").prop("checked")){
+			 only_period_2=1;
+		 }else{
+			 only_period_2=0;
+		 }
+		 
+		 
+		 
+ 		if($("#only_active_sectors_2").prop("checked")){
+			 only_active_sectors_2=1;
+		 }else{
+			 only_active_sectors_2=0;
+		 }
+		 
+		 
+		 if($("#only_active_storages_2").prop("checked")){
+			 only_active_storages_2=1;
+		 }else{
+			 only_active_storages_2=0;
+		 }
+		 
+		 window.open('goods_on_stor.php?tab_page=2&print='+$("#print2").val()+'&storage_id2='+$("#storage_id2").val()+'&sector_id2='+$("#sector_id2").val()+'&pdate2_1='+$("#pdate2_1").val()+'&pdate2_2='+$("#pdate2_2").val()+'&id2='+$("#id2").val()+'&name2='+$("#name2").val()+'&group_id='+$("#group_id").val()+'&two_group_id='+$("#group_id2").val()+'&three_group_id='+$("#group_id3").val()+'&gost_tu2='+$("#gost_tu2").val()+'&dimension_id2='+$("#dimension_id2").val()+'&length2='+$("#length2").val()+'&width2='+$("#width2").val()+'&height2='+$("#height2").val()+'&diametr2='+$("#diametr2").val()+'&only_period_2='+only_period_2+'&only_active_sectors_2='+only_active_sectors_2+'&only_active_storages_2='+only_active_storages_2, 'goods_on_stor','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1'); 
+		 
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати ведомости.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..." ></a>
+ %{/if}%
+  
+ 
+
+
+
+</div>
+
+
+<div class="report_filter_left">
+
+    <div class="report_filter" style="height:150px;">
+    <strong>Период:</strong><br />
+    
+    
+    <label for="pdate2_1">с:</label><br />
+    <input type="text" value="%{$pdate2_1}%" id="pdate2_1" name="pdate2_1" size="10" maxlength="10" style="width:80px;" />
+    
+    <br />
+    
+    <label for="pdate2_2">по:</label><br />
+    <input type="text" value="%{$pdate2_2}%" id="pdate2_2" name="pdate2_2" size="10" maxlength="10" style="width:80px;" />
+    
+    <br />
+    <input type="checkbox" name="only_period_2" id="only_period_2" %{if $only_period_2==1}% checked="checked" %{/if}% value="1" />
+    <label for="only_period_2">только товары, <br />
+    завезенные за период</label><br />
+    
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+     <div class="report_filter" style="height:150px; max-width:800px;">
+    <table width="*" border="1" cellspacing="0" cellpadding="3" style="float:left; margin-right:10px;" class="blacktable">
+     <thead>
+      <tr align="left" valign="bottom">
+        <th scope="col" width="40"> Код позиции</th>
+        <th scope="col" width="*">Наименование</th> 
+        <th width="40" scope="col" >
+        ед.изм.
+       
+        </th>
+        
+         <th scope="col" width="100" >
+        Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+       
+        </th>
+        <th scope="col" width="40" >
+        ГОСТ/ТУ
+       
+        </th>
+        
+        
+        
+         <th width="40" scope="col">
+        Длина, мм
+       
+        </th>
+        <th width="40" scope="col" >
+        Ширина, мм
+       
+        </th>
+        <th width="40" scope="col" >
+        Высота/ толщина, мм
+       
+        </th>
+        <th width="40" scope="col">
+        Диаметр, мм:
+        </th>   
+        
+      
+      </tr>
+      <tr align="left" valign="top">
+        
+        
+        <td  width="40"> 
+         <input type="text" size="8" maxlength="255" value="%{$id2}%" name="id2" id="id2" style="width:40px;" />
+        </td>
+        <td  width="*">
+        <input type="text" size="20" maxlength="255" value="%{$name2}%" name="name2" id="name2" />
+        </td> 
+        
+         
+        <td width="40" >
+         <select name="dimension_id2" id="dimension_id2" style="width:40px;">
+        %{section name=dimsec loop=$dim}%
+            <option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+       
+        </td>
+        
+         <td width="100" >
+       
+       
+        <select name="group_id" id="group_id" style="width:100px;">
+        %{section name=groupsec loop=$group}%
+            <option value="%{$group[groupsec].id}%" %{if $group[groupsec].is_current}%selected="selected"%{/if}%>%{$group[groupsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+        
+        <select name="two_group_id" id="group_id2" style="width:100px;">
+        %{section name=two_groupsec loop=$two_group}%
+            <option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+        
+        <select name="three_group_id" id="group_id3" style="width:100px;">
+        %{section name=three_groupsec loop=$three_group}%
+            <option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+        %{/section}%
+        </select>
+        
+        <script type="text/javascript">
+        $(function(){
+            $("#group_id").bind("change", function(){
+                //alert('zz');
+                $.ajax({
+                    async: true,
+                    url: "/js/catalog.php",
+                    type: "POST",
+                    data:{
+                        "action":"redraw_two_groups",
+                        "group_id":$("#group_id").val()
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      $("#group_id3").empty();
+                      $("#group_id2").html('<option value=""></option>'+data);
+                      
+                    },
+                    error: function(xhr, status){
+                        //alert("Ошибка выбора подгрупп.");	
+                    }	 
+                });
+            });
+            
+            $("#group_id2").bind("change", function(){
+                //alert('zz');
+                $.ajax({
+                    async: true,
+                    url: "/js/catalog.php",
+                    type: "POST",
+                    data:{
+                        "action":"redraw_two_groups",
+                        "group_id":$("#group_id2").val()
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      $("#group_id3").html('<option value=""></option>'+data);
+                      
+                    },
+                    error: function(xhr, status){
+                        //alert("Ошибка выбора подгрупп.");	
+                    }	 
+                });
+            });
+        });
+        </script>
+        
+        </td>
+        
+        
+     
+        <td  width="40" >
+       <input type="text" size="8" maxlength="255" value="%{$gost_tu2}%" name="gost_tu2" id="gost_tu2" style="width:40px;" />
+       
+        </td>
+        
+        
+       
+        
+         <td width="40"  >
+         <input type="text" size="4" maxlength="255" value="%{$length2}%" name="length2" id="length2" style="width:40px;" />
+       
+        </td>
+        <td width="40" >
+        <input type="text" size="4" maxlength="255" value="%{$width2}%" name="width2" id="width2" style="width:40px;" />
+       
+       
+        </td>
+        <td width="40" >
+        <input type="text" size="4" maxlength="255" value="%{$height2}%" name="height2" id="height2"style="width:40px;" />
+       
+        </td>
+        <td width="40"  >
+       <input type="text" size="4" maxlength="255" value="%{$diametr2}%" name="diametr2" id="diametr2" style="width:40px;" />
+        </td> 
+        
+      
+        
+      </tr>
+    </thead>
+    </table>
+    
+    </div>
+    
+    
+    
+    
+    
+    <div class="report_filter" style="height:150px;">
+    <label for="sector_id2">Склад:</label><br />
+    
+    
+    <select id="sector_id2" name="sector_id2" style="width:130px;">
+    <option value="0">-все склады-</option>
+    %{html_options values=$sector_ids selected=$sector_id2 output=$sector_names}%
+    </select>
+    
+    </div>
+
+
+</div>
+
+
+
+ 
+<br clear="all" />
+
+<div id="as_select_detail_mode" title="Выберите режим детализации">
+	Внимание!<br />
+	Для получения детализации по позиции необходимо выбрать режим детализации.<br />
+	
+</div>
+
+
+<div id="info_as_positions_dialog" title="О позиции">
+<div id="as_position_info"></div>
+
+</div>
+
+
+<div id="info_as_positions_detail_dialog" title="О позиции">
+<div id="as_position_detail_info"></div>
+</div>
+
+ <script type="text/javascript">
+  $(function(){
+     $("#info_as_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 1100,
+	  height: 600,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	$("#info_as_positions_detail_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 950,
+	  height: 450,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	 $("#as_select_detail_mode").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 320,
+	  height: 240
+	 
+	 });
+	
+  });
+  </script>
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		color:#666;	
+	}
+</style>
+
+<span style="color:red;"><em>Примечания: <br />
+1) Фильтр <strong>"Период"</strong> позволяет отобрать в отчет товары, по которым были поступления или реализации с заданной датой в выбранный период.
+<br />
+<br />
+
+2) Вы можете найти несколько позиций в данном отчете. Для этого в форму поиска нужно вписать через точку с запятой фрагменты искомых названий (кодов позиции, ГОСТ/ТУ, длин, ширин, высот, диаметров) и нажать кнопку <img src="/img/icons/old-zoom-original.png" alt="найти" title="найти" border="0" />. <br />
+Например: введенное значение <strong>арматура;песок</strong> в поле Наименование приведет к выборке всей номенклатуры, удовлетворяющей критериям отчета и содержащей в названии слова арматура и песок.<br />
+
+3) для детализации прихода и расхода необходимо кликнуть по интересующему значению прихода или расхода.<br />
+4) фильтр <strong>" только товары,
+завезенные за период"</strong> позволяет показывать в отчете только те товары, по которым были поступления в период, указанный в фильтре <strong>"Период"</strong>. </em></span>
+<p />
+
+</form>
+
+
+%{if $do_it}%
+<script type="text/javascript">
+
+
+
+function prihod(id){
+	
+	 $("#info_as_positions_detail_dialog").dialog("open");
+	//детализация по товару
+			$.ajax({
+			  async: false,
+			  url: "/js/goods_on_stor.php",
+			  type: "POST",
+			  data:{
+				  "action":"as_by_pos_prihod",
+				  "position_id":id,
+				   "storage_id":$("#storage_id2").val(),
+				  "pdate1":$("#pdate2_1").val(),
+				  "pdate2":$("#pdate2_2").val()
+				  
+			  },
+			  beforeSend: function(){
+				$("#as_position_detail_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+			  },
+			  success: function(data){
+				//alert(data);
+				$("#as_position_detail_info").html(data);
+				
+				
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			  }	 
+			});
+			return false;	
+}
+
+function rashod(id){
+	
+	 $("#info_as_positions_detail_dialog").dialog("open");
+				
+	$.ajax({
+			  async: false,
+			  url: "/js/goods_on_stor.php",
+			  type: "POST",
+			  data:{
+				  "action":"as_by_pos_rashod",
+				  "position_id":id,
+				    "storage_id":$("#storage_id2").val(),
+				  "pdate1":$("#pdate2_1").val(),
+				  "pdate2":$("#pdate2_2").val()
+				
+			  },
+			  beforeSend: function(){
+				$("#as_position_detail_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');
+			  },
+			  success: function(data){
+				//alert(data);
+				$("#as_position_detail_info").html(data);
+				
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			  }	 
+			});
+			return false;	
+}
+</script>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="left" valign="top">
+    <th scope="col" width="40"> Код позиции</th>
+	<th scope="col" width="*">Наименование</th> 
+    
+    <th width="40" scope="col" class="small">
+    ед.изм.
+   
+    </th>
+    
+     <th scope="col" width="150" class="small">
+    Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+   
+    </th>
+    <th scope="col" width="40" class="small">
+    ГОСТ/ТУ
+   
+    </th>
+    
+    
+    
+     <th width="40" scope="col" class="small">
+    Длина, мм
+   
+    </th>
+    <th width="40" scope="col" class="small">
+    Ширина, мм
+   
+    </th>
+    <th width="40" scope="col" class="small">
+    Высота/ толщина, мм
+   
+    </th>
+    <th width="40" scope="col" class="small">
+    Диаметр, мм:
+    </th>   
+    
+    <th scope="col" width="50">Входящий остаток на начало периода</th>    
+    <th scope="col" width="50">Приход</th>
+    <th scope="col" width="50">Расход</th>
+    <th scope="col" width="50">Остаток на конец периода</th>    
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+   <tr align="left" valign="top">
+    <td width="40">%{$items[rowsec].position_id|string_format:"%05d"}%</td>
+    <td width="*">
+   
+    %{$items[rowsec].name}%
+   
+    </td>
+     <td width="40" class="small">%{$items[rowsec].dim_name}%</td>
+   
+    
+     <td width="150" class="small">%{$items[rowsec].group_name}%</td>
+    
+    <td width="40" class="small">%{$items[rowsec].gost_tu}%</td>
+   
+    <td width="40" class="small">
+   
+    %{$items[rowsec].length|default:"-"}%
+    </td>
+    <td width="40" class="small">
+	 %{$items[rowsec].width|default:"-"}%
+    </td>
+    <td width="40" class="small">
+	 %{$items[rowsec].height|default:"-"}%
+    </td>
+	
+ 	<td width="40" class="small">
+    %{$items[rowsec].diametr|default:"-"}%
+    </td>
+    
+    <td width="50" >%{$items[rowsec].begin_ost}%</td>
+    <td width="50"><a href="#" id="prihod_%{$items[rowsec].id}%">%{$items[rowsec].prihod}%</a></td>
+    <td width="50"><a href="#" id="rashod_%{$items[rowsec].id}%">%{$items[rowsec].rashod}%</a></td>
+    <td width="50">
+    %{$items[rowsec].final_ost}%
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		
+		$("#prihod_%{$items[rowsec].id}%").bind("click",function(){
+			//детализация по товару
+			return prihod("%{$items[rowsec].position_id}%");
+		
+		});
+		
+		$("#rashod_%{$items[rowsec].id}%").bind("click",function(){
+			//детализация по товару
+			
+			return rashod("%{$items[rowsec].position_id}%");
+		});
+		
+		
+		
+		
+	});
+    </script>
+    </td>
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+    
+
+%{/if}%
+
+
+

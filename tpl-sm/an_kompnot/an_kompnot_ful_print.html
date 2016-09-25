@@ -1,0 +1,164 @@
+<h1>Выполненные заявки</h1>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период</strong><br />
+с:<br />
+<strong>%{$pdate2_1}%</strong></div>
+
+<div style="float:left; margin-right:20px;">
+<br />
+	по:<br />
+    <strong>%{$pdate2_2}%</strong>
+</div>
+
+
+
+%{if $supplier_name_2!=""}%
+<div style="float:left; margin-right:20px;">
+
+<strong>Покупатель:</strong><br />
+%{section name=obsec loop=$supplier_names_selected}%
+%{$supplier_names_selected[obsec]}%%{if $smarty.section.obsec.last==false}%, %{/if}%
+%{/section}%
+
+</div>
+%{/if}%
+
+
+
+
+
+
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+</style>
+<br clear="all" />
+<p />
+
+
+<div id="info_positions_dialog" title="О позиции">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 450,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+    
+
+
+%{if $id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Код позиции:</strong><br />
+%{$id2}%
+</div>
+%{/if}%
+
+
+%{if $name2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Наименование:</strong><br />
+%{$name2}%
+</div>
+%{/if}%
+
+%{if $group_id2!="" or $group_id!="" or $group_id3!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Товарная группа/ подгруппа 1 ур./ подгруппа 2 ур. :</strong><br />
+
+ %{section name=groupsec loop=$group}%
+    	 %{if $group[groupsec].is_current}%%{$group[groupsec].name}%%{/if}%
+    %{/section}%
+ %{section name=two_groupsec loop=$two_group}%
+    	%{if $two_group[two_groupsec].is_current}% - %{$two_group[two_groupsec].name}%%{/if}%
+    %{/section}%
+    
+   %{section name=three_groupsec loop=$three_group}%
+    	%{if $three_group[three_groupsec].is_current}% - %{$three_group[three_groupsec].name}%%{/if}%
+    %{/section}%
+
+</div>
+%{/if}%
+
+%{if $gost_tu2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ГОСТ/ТУ:</strong><br />
+%{$gost_tu2}%
+</div>
+%{/if}%
+
+%{if $dimension_id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ед.изм.:</strong><br />
+%{section name=dimsec loop=$dim}%
+    %{if $dim[dimsec].is_current}%%{$dim[dimsec].name}%%{/if}%
+%{/section}%
+</div>
+%{/if}%
+
+%{if $length2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Длина, мм :</strong><br />
+%{$length2}%
+</div>
+%{/if}%
+
+%{if $width2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Ширина, мм :</strong><br />
+%{$width2}%
+</div>
+%{/if}%
+
+%{if $height2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Высота/ толщина, мм :</strong><br />
+%{$height2}%
+</div>
+%{/if}%
+
+%{if $diametr2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Диаметр, мм:</strong><br />
+%{$diametr2}%
+</div>
+%{/if}%
+
+
+<br clear="all" />
+<p />    
+    
+%{if $sortmode==0 or $sortmode==1}%
+<em>сортировка по дате</em>
+%{elseif $sortmode==2 or $sortmode==3}%
+
+<em>сортировка по участку</em>
+%{elseif $sortmode==4 or $sortmode==5}%
+<em>сотрировка по объекту</em>
+%{elseif $sortmode==6 or $sortmode==7}%
+<em>сортировка по менеджеру</em>
+%{/if}%    
+
+<p />
+%{include file="an_kompnot/an_table_print.html"}%

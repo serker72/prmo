@@ -1,0 +1,120 @@
+<style>
+table{
+	border-collapse:collapse;
+}
+td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:13px;
+}
+th{
+	font-weight:normal;
+}
+td.ten, th.ten, .ten{
+	font-size:12px;
+}
+table.blacktable{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable, th.blacktable{
+	border: 1px solid black;
+}
+table.blacktable tr td, table.blacktable tr th{
+	border: 1px solid black;
+	
+}
+table.blacktable2{
+	border-collapse:collapse;
+	border: 1px solid black;
+}
+td.blacktable2, th.blacktable2, tr.blacktable2{
+	border: 2px solid black;
+}
+td p{
+	margin-bottom:0px;
+}
+ .colon{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:11pt;
+ }
+ 
+ .title{
+	font-family:Arial, Helvetica, sans-serif;
+	 font-size:14pt;
+ }
+ .header{
+	 font-family:Arial, Helvetica, sans-serif;
+	 font-size:14px;
+ }
+</style>
+
+
+
+<p style="font-size:20px; font-weight:bold; padding-bottom:5px; border-bottom:2px solid black;">
+Акт № %{$acc.given_no}% от %{$given_pdate_date}% %{$given_pdate_month}% %{$given_pdate_year}%																														
+
+
+
+</p>
+
+<p >
+Исполнитель:			
+
+<strong>%{$supplier_id_string}%</strong>
+
+<br />
+
+Заказчик:			
+			
+
+<strong>%{$org}%</strong>
+
+</p>
+<br />
+<br />
+
+
+
+
+
+%{include file="acc_in/positions_on_page_set_akt.html" pospos=$positions change_low_mode=$acc.change_low_mode change_high_mode=$acc.change_high_mode}%
+
+
+<br />
+
+
+
+
+<p>
+Всего оказано услуг %{$smarty.section.pospossec.total}%, на сумму %{$totals_by_all}% руб.<br />
+																															
+<strong>%{$total_cost_rub_propis}% %{$total_cost_kop_propis|string_format:"%02d"}% копеек</strong>																															
+</p>	
+<br />
+
+  <p style="padding-bottom:5px; border-bottom:2px solid black; text-align:justify;">  																														
+Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания
+ услуг не имеет.																															
+</p>																															
+<br />
+<br />
+																															
+																															
+			Исполнитель	____________________________________________ &nbsp;&nbsp;&nbsp;											Заказчик ____________________________________________															
+
+
+
+
+
+
+
+
+
+
+<br />
+<br />
+<br />
+<br />
+
+
+

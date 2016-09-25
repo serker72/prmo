@@ -1,0 +1,208 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+ 
+ 
+%{section name=rowsec loop=$items}%
+
+ 
+%{if $smarty.section.rowsec.first  or (!$smarty.section.rowsec.first and $items[rowsec.index_prev].break)}%
+%{if $print==1 and !$smarty.section.rowsec.first}%
+<br>
+%{/if}%
+ 
+
+<table  cellpadding="1" cellspacing="0" class="blacktable"  %{if $print==1}% style="width:780px !important;" border="1"%{else}%  width="100%"%{/if}%>
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40">
+    Номер
+    
+     
+     
+    </th>
+    
+    
+    <th scope="col" width="110">
+    Дата 
+    
+    
+    </th>
+    
+      <th scope="col" width="80">
+    Контрагент(ы)
+    
+    
+    </th>
+    
+    <th scope="col" width="*">
+   Тема
+   
+    
+   
+    </th>
+     %{if $has_content}%
+      <th scope="col" width="50%">
+    Содержание
+    
+       
+    </th>
+%{/if}%
+     
+   
+     <th scope="col" width="60">
+    Создал
+    
+    
+   
+   
+    </th>
+    
+     <th scope="col" width="60">
+    Поделился с
+    
+    
+   
+   
+    </th>
+    
+    
+ 
+    %{if $print==0}%
+    <th scope="col" width="24">&nbsp;</th>
+     %{/if}%
+    
+     
+   
+</tr>
+  %{/if}% 
+  
+   
+</thead>
+<tbody>
+ 
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%" style="page-break-inside:avoid;">
+ 
+	
+    <td width="40" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%>
+       %{if $can_edit and $print==0}%
+    <a href="ed_sched.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" title="Подробно...">
+    %{/if}%
+    %{$items[rowsec].code}%
+    %{if $can_edit  and $print==0}%
+    </a>
+    %{/if}%
+    
+    </td>
+    
+    <td width="110" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+    %{$items[rowsec].pdate}% 
+    
+    </td>
+    
+     
+     <td width="80" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%>
+     <small>
+     %{foreach from=$items[rowsec].suppliers item=item}%
+      %{if $print==0}%
+     <a href="supplier.php?action=1&id=%{$item.id}%" target="_blank">
+     %{/if}%
+     %{$item.opf_name}% %{$item.full_name}%
+      %{if $print==0}%
+     </a>
+     
+    <!--  <a href="supplier.php?action=1&id=%{$item.id}%" target="_blank" title="карта контрагента..." class="reestr_edit"></a>-->
+     %{/if}%
+      <br>
+
+     %{/foreach}%
+      </small>
+      </td>
+    
+    
+    
+    
+    <td width="*" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%>
+    
+    
+    %{$items[rowsec].topic}% 
+    
+   
+    </td>
+    
+   
+   %{if $has_content}%
+     <td width="50%" align="left" %{if $items[rowsec].status_id==1 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    
+    %{$items[rowsec].description}% 
+    <br>
+	%{$items[rowsec].files}%
+    
+    </td>
+%{/if}%
+   
+    
+     <td width="60" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%>
+     <small>
+    %{$items[rowsec].cr_name}% 
+    
+     %{$items[rowsec].pdate}%
+     </small>
+    </td>
+    
+       <td width="60" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%>
+        <small>
+    %{foreach from=$items[rowsec].share_users item=sitem}% 
+	%{$sitem.name_s}%: %{if $sitem.right_id==2}%  чтение, запись%{else}%чтение %{/if}%   	<br>
+
+     %{/foreach}%
+     </small>
+    </td>
+    
+     %{if $print==0}%
+    <td width="24" %{if $items[rowsec].manager_is_active==0}%class="item_inactive"%{/if}%>
+    
+     %{if $can_edit}%
+    <a href="ed_sched.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+ 
+    
+    
+    %{else}% 
+    <a href="#" onClick="return false;" data-comment="Подробно..." class="reestr_edit reestr_inactive reestr_right_button24"></a>
+   
+    %{/if}%
+   
+  
+   
+    </td>
+    
+     %{/if}%
+    
+   
+    
+  
+</tr>
+  
+
+%{if $smarty.section.rowsec.last or (!$smarty.section.rowsec.last and $items[rowsec].break)}% 
+</tbody>
+</table>
+   %{if $print==1 and !$smarty.section.rowsec.last}%
+<div style="page-break-after:always !important;"></div>
+%{/if}%
+
+%{/if}%
+ 
+%{/section}%
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям заметок не найдено.</em><br />
+%{else}%
+ 
+<br>
+<strong>Итого: %{$no}% заметок  от %{$sotr_no}% сотрудников по %{$supplier_no}% контрагентам%{if $supplier_list!=""}%: %{$supplier_list}%%{/if}%.</strong>
+
+%{/if}%
+
+ 

@@ -1,0 +1,48 @@
+<script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+<script>
+$(function(){
+	$("#close").click(function(){
+		window.close();
+	});
+	
+	$("#rotate").click(function(){
+		if($("#mobile").width()==330){
+			$("#mobile").width(480).height(330);
+		}else $("#mobile").width(330).height(480);
+	});
+});
+</script>
+<input type="button" value="Закрыть" id="close" />
+<br>
+
+
+<div style="background-color:#f2f2f2; overflow:hidden;">
+ 
+	<strong>Ваше сообщение в браузере:</strong><br>
+  
+        <table width="100%" cellpadding="0" cellspacing="10" border="0"  >
+        <tr align="left" valign="top">
+        <td width="*">	
+    <div style="background-color:white;">
+	%{$data.html_content}%
+    </div>
+ 
+        </td>
+        
+  <!--      
+     <td width="30%">
+ 	<strong>Ваше сообщение в мобильном браузере*:</strong><br>
+	
+    <div id="mobile" style="text-align:left; background-color:white; width:330px; height:480px; overflow:auto; border:1px solid gray; margin:0 auto;">
+     
+    </div>
+    <br>
+    <em>*приблизительно</em><br>
+	<a href="#" id="rotate">поворот</a>
+</td>
+        
+        -->
+        </tr>
+        </table>
+		
+ </div>

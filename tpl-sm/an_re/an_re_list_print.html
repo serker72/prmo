@@ -1,0 +1,53 @@
+<h1>Отчет Рентабельность сделок</h1>
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong><br />
+<strong>с:</strong><br />
+%{$pdate1}%
+</div>
+
+<div style="float:left; margin-right:10px;">
+<br />
+	<strong>по:</strong><br />
+    %{$pdate2}%
+</div>
+
+
+ %{if $supplier_name!=""}%
+
+<div style="float:left; margin-right:10px;">
+<strong>Контрагент:</strong><br />
+
+
+%{foreach from=$our_suppliers item=item}%
+				 %{$item.full_name}%;
+				%{/foreach}%
+</div>
+%{/if}%
+
+
+<br clear="all" />
+
+
+
+<p />
+
+
+
+%{if $do_it}%
+%{include file="an_re/an_re_table.html"}%
+%{/if}%
+
+
+
+
+

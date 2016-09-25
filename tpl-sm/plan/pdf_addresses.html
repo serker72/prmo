@@ -1,0 +1,18 @@
+%{foreach from=$items item=adr}%
+
+%{if $adr.has_hr}%<h4 style="margin-top:0px;">Сотрудники:</h4> %{/if}%
+
+<p>
+<strong>%{$adr.name_s}% %{$adr.position_s}%:</strong><br />
+
+
+
+%{foreach from=$adr.data item=email}%
+<input type="checkbox" value="%{$email.value|escape}%" id="email_documents_address_%{$email.id}%_%{$adr.id}%">
+<label for="email_documents_address_%{$email.id}%_%{$adr.id}%">%{$email.value}%</label>
+<br />
+
+%{/foreach}%
+</p>
+
+%{/foreach}%

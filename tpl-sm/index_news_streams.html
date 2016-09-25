@@ -1,0 +1,186 @@
+	
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th width="100">Название</th>
+    
+    <th>Параметры</th>
+	
+    <th width="100">Добавил</th>
+    <th width="24">
+    
+    </th>
+</tr>
+</thead>
+<tbody>
+
+    %{foreach from=$ps item=item}%
+    <tr align="left" valign="top" id="index_news_block_%{$item.id}%">
+	   <td  class="  %{if $item.is_active==0  }%item_inactive%{/if}%" >
+        <strong>%{$item.name}%</strong>
+       </td>
+    
+        <td class="  %{if $item.is_active==0  }%item_inactive%{/if}%" >
+        
+        
+        
+         Адрес сайта: %{$item.site_url}%<br>
+
+        
+         Адрес ленты: %{$item.url}%
+         <br>
+    
+         Кодировка: %{$item.charset}%
+         
+       <!--  Выводить новостей на главной странице: <span id="index_news_num_news_%{$item.id}%">%{$item.num_news}%</span>-->
+    
+    	</td>
+   		<td width="100"  class="  %{if $item.is_active==0  }%item_inactive%{/if}%" >
+        <small>
+        %{$item.cr_name}% %{$item.pdate}%
+        %{if $item.is_active==0  }%
+        <br>
+		Удалено: %{$item.dl_name}% %{$item.del_pdate}%
+        %{/if}%
+        
+        </small>
+        </td>
+    	<td width="24">
+         %{if $item.is_active==1 }%
+         <a href="#" id="index_news_del_%{$item.id}%" class="reestr_delete16 reestr_button16" data-comment="Удалить"  ></a>
+   
+   <!-- <a href="#" id="index_news_edit_%{$item.id}%" class="reestr_edit16 reestr_button16" data-comment="Удалить" style="float:right; margin-right:5px;"></a>-->
+    %{/if}%
+        </td>
+    </tr>
+    %{/foreach}%
+    
+</tbody>
+</table>    
+    
+    <script>
+	$(function(){
+		$("a[id^=index_news_del_]").bind("click",function(){
+			id=$(this).attr("id").replace(/^index_news_del_/,'');
+			if(window.confirm("Вы уверены?")) $.when($.ajax({
+			  async: true,
+			  url: "/js/index_news.php",
+			  type: "POST",
+			  data:{
+				  "action":"delete_stream",
+				  "id":id
+			  },
+			  beforeSend: function(){
+				  
+			  },
+			  success: function(data){
+				 
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  })).then(//streams list
+		$.ajax({
+		  async: true,
+		  url: "/js/index_news.php",
+		  type: "POST",
+		  data:{
+			  "action":"redraw_streams"
+		  },
+		  beforeSend: function(){
+			  $("#index_news_streams").html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	 $("#index_news_streams").html(data);
+			 
+		  },
+		  error: function(xhr, status,error){
+			  
+			 
+			 $("#index_news_streams").html(""); 
+		  },
+		  complete: function(){
+			  
+		  } 
+	  }));
+		  
+		  return false;
+		});
+		
+		$("a[id^=index_news_edit_]").bind("click",function(){
+			id=$(this).attr("id").replace(/^index_news_edit_/,'');
+			 
+		  zc=true;
+			while(zc){
+				ln=window.prompt("Введите число новостей:", $("#index_news_num_news_"+id).html());
+				if(ln==undefined) {
+							return false;
+				}
+				
+				if(isNaN(ln)||(parseInt(ln)<=0)){
+					continue;
+				}	
+				
+				else{ 
+					zc=false;	
+					//return false;
+				}
+			}
+			
+			
+			$.when($.ajax({
+			  async: true,
+			  url: "/js/index_news.php",
+			  type: "POST",
+			  data:{
+				  "action":"edit_stream",
+				  "id":id,
+				  "num_news":ln
+			  },
+			  beforeSend: function(){
+				  
+			  },
+			  success: function(data){
+				  
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  })).then(//streams list
+		$.ajax({
+		  async: true,
+		  url: "/js/index_news.php",
+		  type: "POST",
+		  data:{
+			  "action":"redraw_streams"
+		  },
+		  beforeSend: function(){
+			  $("#index_news_streams").html('<img src="/img/wait.gif" width="32" height="32" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	 $("#index_news_streams").html(data);
+			 
+		  },
+		  error: function(xhr, status,error){
+			  
+			 
+			 $("#index_news_streams").html(""); 
+		  },
+		  complete: function(){
+			  
+		  } 
+	  }));
+			
+		  return false;
+		});
+		
+	});
+	</script>

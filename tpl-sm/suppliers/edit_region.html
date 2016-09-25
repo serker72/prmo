@@ -1,0 +1,221 @@
+%{if $can_modify}% 
+<input type="button" id="add_sce" value="Добавить списком..." />
+
+<div id="add_sce_cont" style="display:none;">
+
+<small>введите названия, каждое с новой строки:</small><br />
+<textarea id="add_sce_list" cols="40" rows="10" style="width:350px;"></textarea>
+<br />
+<input id="add_sce_ok" type="button" value="Добавить" />
+
+<input id="add_sce_cancel" type="button" value="Отмена" />
+<p />
+
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#add_sce").bind("click", function(){
+		$("#add_sce").hide();
+
+		$("#add_sce_list").empty();
+		$("#add_sce_cont").show();
+	});
+	
+	$("#add_sce_cancel").bind("click", function(){
+		$("#add_sce").show();
+
+		$("#add_sce_list").empty();
+		$("#add_sce_cont").hide();
+	});
+	
+	$("#add_sce_ok").bind("click", function(){
+		$.ajax({
+			async: true,
+			url: "/js/supplier.php",
+			type: "POST",
+			data:{
+				"action":"add_region",
+				"name":$("#add_sce_list").val(),
+				"district_id":$("#supplier_cities_district_id").val()
+			},
+			beforeSend: function(){
+				//$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+			},
+			success: function(data){
+			 //  alert(data);
+			   //подгрузим редактируемый список округов
+				$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"load_region",
+						"district_id":$("#supplier_cities_district_id").val()
+					},
+					beforeSend: function(){
+						$("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+					},
+					success: function(data){
+					   $("#sce_items").html(data);
+					   
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+			   
+			   
+			   $("#add_sce").show();
+
+				$("#add_sce_list").empty();
+				$("#add_sce_cont").hide();
+			},
+			error: function(xhr, status){
+				
+			}	 
+		});
+	});
+});
+</script> 
+ 
+%{/if}%
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="*">
+    Регион
+    </th>
+    <th scope="col" width="20">&nbsp;
+    
+    </th>
+     <th scope="col" width="20">&nbsp;
+    
+    </th>
+    </tr>
+    </thead>
+ <tbody>
+%{section name=dissec loop=$dis}%
+  <tr align="left" valign="top">
+    	
+    
+    <td width="*">
+      <span id="text_sce_%{$dis[dissec].id}%">%{$dis[dissec].name}%</span>
+    </td>
+    <td width="20">
+    %{if $can_modify}% 
+    <a href="#" id="edit_sce_%{$dis[dissec].id}%" title="редактировать"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_sce_%{$dis[dissec].id}%" border="0" alt=""  /></a>
+    %{/if}%
+    </td>
+     <td width="20">
+    %{if $can_modify}% 
+    <a href="#" id="delete_sce_%{$dis[dissec].id}%" title="удалить"><img src="/img/del.gif" width="15" height="15" border="0" alt=""  /></a>
+    %{/if}%
+    </td>
+    
+   </tr> 
+%{/section}%
+</tbody>
+</table>
+%{if $can_modify}% 
+<script type="text/javascript">
+$(function(){
+%{section name=dissec loop=$dis}%
+	$("#edit_sce_%{$dis[dissec].id}%").bind("click", function(){
+		
+		if(p=window.prompt("Введите название региона", $("#text_sce_%{$dis[dissec].id}%").text())){
+			$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"edit_region",
+						"id":"%{$dis[dissec].id}%",
+						"name":p
+					},
+					beforeSend: function(){
+						
+					},
+					success: function(data){
+					   //подгрузим редактируемый список округов
+					   $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"load_region",
+							  "district_id":$("#supplier_cities_district_id").val()
+						  },
+						  beforeSend: function(){
+							  $("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+						  },
+						  success: function(data){
+							 $("#sce_items").html(data);
+							 
+						  },
+						  error: function(xhr, status){
+							  //alert("Ошибка добавления %{$named}%.");	
+						  }	 
+					  });
+					   
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		}
+		
+		
+		return false;
+	});
+	
+	$("#delete_sce_%{$dis[dissec].id}%").bind("click", function(){
+		if(window.confirm("Вы действительно хотите удалить %{$dis[dissec].name|escape}%?")){
+			$.ajax({
+					async: true,
+					url: "/js/supplier.php",
+					type: "POST",
+					data:{
+						"action":"del_region",
+						"id":"%{$dis[dissec].id}%"
+					},
+					beforeSend: function(){
+						
+					},
+					success: function(data){
+					   //подгрузим редактируемый список округов
+					   $.ajax({
+						  async: true,
+						  url: "/js/supplier.php",
+						  type: "POST",
+						  data:{
+							  "action":"load_region",
+							  "district_id":$("#supplier_cities_district_id").val()
+						  },
+						  beforeSend: function(){
+							  $("#sce_items").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." border="0" />');  
+						  },
+						  success: function(data){
+							 $("#sce_items").html(data);
+							 
+						  },
+						  error: function(xhr, status){
+							  //alert("Ошибка добавления %{$named}%.");	
+						  }	 
+					  });
+					   
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});	
+		}
+		
+		return false;
+	});
+%{/section}%
+});
+</script>
+%{/if}%

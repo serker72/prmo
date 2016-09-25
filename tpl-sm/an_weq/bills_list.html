@@ -1,0 +1,388 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $has_header}%
+
+
+
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	
+});
+</script>
+
+
+
+%{$pages}%
+
+
+
+
+
+<form action="%{$pagename}%" method="get">
+
+<h2 style="float:left;">
+%{if $is_incoming==1}%
+Входящие 
+%{else}%
+Исходящие
+%{/if}%
+
+счета без автовыравнивания</h2>
+
+
+
+
+
+
+
+
+<div style="float:right; margin-top:10px;">
+	
+      %{include file="every_help_dialog.html" filename="an_weq.htm" prefix="_bill$prefix" description="счета без автовыравнивания"  style="float:right;  margin-top:0px; margin-left:00px;" is_right=true}%
+    
+    <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+    <input type="image" name="doFilter%{$prefix}%" src="/img/24.png" alt="Найти" />
+    </div>
+    
+    <a href="an_waaq.php?tab_page=1&doFilter%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" ></a>
+    
+    <a href="#" id="print_table%{$prefix}%" class="reestr_print reestr_right_button24" data-comment="Печать отчета"></a> 
+    
+  
+    
+     <script type="text/javascript">
+  $(function(){
+	  $("#print_table%{$prefix}%").bind("click",function(){
+			
+		 	 window.open('an_waaq.php?tab_page=1&print='+'%{$prefix}%'+'&sortmode%{$prefix}%='+'%{$sortmode}%'+'&doFilter%{$prefix}%=1&code%{$prefix}%='+$("#code%{$prefix}%").val()+'&supplier_bill_no%{$prefix}%='+$("#supplier_bill_no%{$prefix}%").val()+'&supplier_name%{$prefix}%='+$("#supplier_name%{$prefix}%").val()+'&manager_name%{$prefix}%='+$("#manager_name%{$prefix}%").val()+'', 'weqb','width=1200,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		
+		 return false; 
+	  });
+	  
+  });
+  </script>
+</div>
+<br clear="all" />
+<p />
+
+
+
+<input type="hidden" name="tab_page" value="1" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    
+    
+    	
+    <th scope="col" width="40">
+    Номер 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3&doFilter%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2&doFilter%{$prefix}%=1"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+     <th scope="col" width="60">
+    Дата 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1&doFilter%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0&doFilter%{$prefix}%=1"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    <th scope="col" width="40">
+    № 
+сч. пост.
+
+    
+    </th>
+    
+    <th scope="col" width="40">
+    Сумма
+   
+    </th>
+   
+   
+    <th scope="col" width="70">
+    Контрагент
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5&doFilter%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4&doFilter%{$prefix}%=1"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+    
+   
+    
+    
+      <th scope="col" width="100">
+    Статус
+        </th>
+    
+  <th scope="col" width="24">
+   
+   %{if $can_eq}%
+  
+      <a href="#" id="make_eq_bill%{$prefix}%" class="reestr_eq reestr_right_button24" data-comment="выровнять позиции с фактически полученными..."></a>
+     <div id="eq_indicator%{$prefix}%" style="display:inline;">
+     
+     </div>
+       <script type="text/javascript">
+	$(function(){
+		$("#make_eq_bill%{$prefix}%").bind("click",function(){
+			//var state=$(this).prop("checked");
+			var cter=0; var args=new Array();
+			$.each($("input[id^=bill_%{$prefix}%_]"), function(k,v){
+				if($(v).prop("checked")){ 
+					cter++;
+					args.push($(v).val());
+				}
+			});
+			if(cter==0){
+				alert("Вы не выбрали ни одного счета для выравнивания. Необходимо выбрать хотя бы один счет.");		
+			}else{
+				$.each(	args, function(k,v){
+					//alert(v);
+					$.ajax({
+							async: false,
+							url: "/js/an_weq.php",
+							type: "POST",
+							data:{
+								"action":"toggle_scan_bill_eq",
+								"id":v
+							},
+							beforeSend: function(){
+								$("#eq_indicator%{$prefix}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+							   //data - это сообщение
+							   //ОК - запуск выравнивания
+							   //Отмена - выход...
+							   
+							  
+							   if(window.confirm("Внимание! По счету № "+$("#bill_code%{$prefix}%_"+v).html()+": "+data+"")){
+								   $.ajax({
+									  async: false,
+									  url: "/js/an_weq.php",
+									  type: "POST",
+									  data:{
+										  "action":"toggle_bill_eq",
+										  "id":v
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator%{$prefix}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										//alert(data);
+										 //$("#eq_indicator").html(data); 
+									  },
+									  error: function(xhr, status){
+										  //alert("Ошибка добавления вопроса.");	
+									  }	 
+								  });
+							   }
+							   
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+				});
+				
+				
+				alert("Выравнивание %{if $is_incoming==1}% входящих %{else}% исходящих %{/if}% счетов завершено.");
+				location.reload();
+			}
+			
+			
+			return false;
+		});
+	});
+	</script>
+     
+     
+     
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для выравнивания позиций!'); return false;"><img src="/img/icons/eq-gr.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a>
+ %{/if}%
+   
+   </th>
+   
+ 
+    
+     <th scope="col" width="100">
+    Создал документ
+   
+   
+    </th>
+    
+    
+   <th scope="col" width="100">
+    Утвердил без а/в
+   
+   
+    </th>
+    <td width="*" >&nbsp;
+    
+   
+    
+    
+    </td>
+</tr>
+<tr align="center" valign="top">
+	
+    <td width="40">
+    
+    <input type="text" size="8" maxlength="255" value="%{$code}%" name="code%{$prefix}%" id="code%{$prefix}%" style="width:40px;" />
+	 
+    </td>
+    
+    <td width="60">
+    
+    
+    
+    </td>
+    
+    
+    <td width="40" >
+    
+    <input type="text" size="8" maxlength="255" value="%{$supplier_bill_no}%" name="supplier_bill_no%{$prefix}%" id="supplier_bill_no%{$prefix}%" style="width:60px;" />
+  
+    </td>
+	<td width="40" >&nbsp;
+  
+    </td>
+    <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name%{$prefix}%" id="supplier_name%{$prefix}%" style="width:60px;" />
+   
+   
+      
+    </td>
+    
+  
+   <td width="100" >
+  
+   </td>
+   <th scope="col" width="24">
+    <input type="checkbox" id="select_all_bills%{$prefix}%" value="1" />
+    <script type="text/javascript">
+	$(function(){
+		$("#select_all_bills%{$prefix}%").bind("change",function(){
+			var state=$(this).prop("checked");
+			$.each($("input[id^=bill_%{$prefix}%_]"), function(k,v){
+				$(v).prop("checked",state);
+			});
+			
+		});
+	});
+	</script>
+    </th>
+    
+   
+   
+    <td width="100" >
+   <input type="text" size="8" maxlength="255" value="%{$manager_name}%" name="manager_name%{$prefix}%" id="manager_name%{$prefix}%" style="width:60px;" />
+   
+   </td>
+   
+    <td width="100" >
+   <input type="text" size="8" maxlength="255" value="%{$utv_name}%" name="utv_name%{$prefix}%" id="utv_name%{$prefix}%" style="width:60px;" />
+   
+   </td>
+   
+    <th scope="col" width="24">&nbsp;</th>
+    
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+%{/if}%
+	
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0}%class="item_inactive"%{/if}%><span id="bill_code%{$prefix}%_%{$items[rowsec].id}%">%{$items[rowsec].code}%</span>&nbsp;</td>
+    
+    <td width="60" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    
+     <td width="40" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].supplier_bill_no}%&nbsp;</td>
+    
+    <td width="40" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].total_cost}%&nbsp;руб.
+    </td>
+    <td width="70" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </td>
+    
+   
+    
+   
+    
+     <td width="100" %{if $items[rowsec].is_confirmed_price==0}%class="item_inactive"%{/if}% >
+    %{if $items[rowsec].status_id==1}%
+    не утвержден
+    %{elseif $items[rowsec].status_id==2}%
+    утвержден
+    %{elseif $items[rowsec].status_id==3}%
+    аннулирован
+    %{elseif $items[rowsec].status_id==9}%
+    не выполнен
+    %{elseif $items[rowsec].status_id==10}%
+    выполнен
+     %{elseif $items[rowsec].status_id==20}%
+    частично оплачен
+    %{elseif $items[rowsec].status_id==21}%
+    оплачен
+
+    %{/if}%
+    </td>
+   
+     <th scope="col" width="24">
+    <input type="checkbox" id="bill_%{$prefix}%_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" />
+    
+    </th>
+    
+    
+    
+     <td width="100" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}%  
+    </td>
+    
+    <td width="100" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].utv_name}%   %{$items[rowsec].utv_pdate}%
+    </td>
+    
+    <td width="24" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+   
+    <a href="ed_bill%{$url_prefix}%.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+    %{/if}%&nbsp;
+    </td>
+    
+    
+    
+%{if $has_header}%   
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+
+%{$pages}%
+%{/if}%

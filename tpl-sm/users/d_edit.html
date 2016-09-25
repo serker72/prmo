@@ -1,0 +1,518 @@
+
+<script type="text/javascript">
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#contract_pdate_d").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+
+});
+</script>
+
+<form action="user_d.php" method="post">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$user.id}%" />
+
+
+%{if $can_common}%
+<label for="login">Логин:</label><br>
+<strong>%{$user.login}%</strong>
+<p />
+
+
+<label for="password">Новый пароль:</label><br>
+<em>Если смена пароля не требуется, оставьте поле пустым</em><br />
+<input type="text" size="20" maxlength="255" name="password" />
+<p />
+%{/if}%
+
+%{if $can_contract_no or $can_contract_pdate or $can_contract_button}%
+<table border="0" width="*" cellpadding="0" cellspacing="0">
+<tr align="left" valign="bottom">
+
+%{/if}%
+
+%{if $can_contract_no}%
+<td width="*">
+<label for="contract_no_d">№ договора:</label><br>
+<input type="text" size="20" maxlength="255" name="contract_no_d" value="%{$user.contract_no_d}%" />
+</td>
+<td width="10">&nbsp;</td>
+%{/if}%
+
+%{if $can_contract_pdate}%
+<td width="*">
+<label for="contract_pdate_d">дата договора:</label><br>
+<input type="text" size="10" maxlength="15" name="contract_pdate_d" id="contract_pdate_d" value="%{$user.contract_pdate_d}%" />
+</td>
+<td width="10">&nbsp;</td>
+%{/if}%
+
+%{if $can_contract_button}%
+<td width="*">
+<input type="button" value="Посмотреть договор..." id="view_contract" onclick="location.href='contracts.php?user_id=%{$user.id}%';" />
+</td>
+<td width="10">&nbsp;</td>
+%{/if}%
+
+%{if $can_contract_no or $can_contract_pdate or $can_contract_button}%
+</tr>
+</table>
+<p />
+%{/if}%
+
+
+%{if $can_kurator}%
+<label for="kurator_id">Куратор:</label><br>
+<select name="kurator_id" id="kurator_id" style="width:250px;">
+%{html_options values=$kurator_ids selected=$user.kurator_id output=$kurators}%
+</select>
+<p />
+%{/if}%
+
+
+%{if $can_opf}%
+<label for="opf_id">ОПФ:</label><br>
+<select name="opf_id" id="opf_id" style="width:100px;">
+%{html_options values=$opf_ids selected=$user.opf_id output=$opfs}%
+</select>
+
+  %{if $can_expand_opf}%
+  <input type="button" value="Редактировать..." id="expand_opf" />
+  <div id="opf_dialog" title="Виды ОПФ">
+  <div id="opf_dic">
+  %{include file="users/d_opfs.html"}%
+  </div>
+  
+  Новый вид ОПФ:<br>
+  <input type="text" id="new_opf" size="30" maxlength="255" />
+  <input type="button" value="Добавить ОПФ" id="add_new_opf" />
+  </div>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+    $("#opf_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 350,
+    height: 490,
+    buttons: {
+        "Готово": function() { 
+        	$.ajax({
+              async: true,
+              url: "/js/user_d.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+          
+          $.ajax({
+              async: true,
+              url: "/js/user_d.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_page",
+				  "user_id":%{$user.opf_id}%
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                  $("#opf_id").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+        
+        $(this).dialog("close"); }
+      }
+    
+    });
+    $("#expand_opf").bind("click",function(){
+        $("#opf_dialog").dialog("open");
+    });
+    
+    function RedrawDic(){
+          $.ajax({
+              async: true,
+              url: "/js/user_d.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+      }
+      
+      $("#add_new_opf").bind("click", function(){
+          if($("#new_opf").attr("value").length<3){
+              $("#new_opf").focus();
+              return false;
+          }
+          
+          $.ajax({
+              async: true,
+              url: "/js/user_d.php",
+              type: "POST",
+              data:{
+                  "action":"add_opf",
+                  "opf":$("#new_opf").attr("value")
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                 alert("Вид ОПФ добавлен!"); 
+                 $("#new_opf").attr("value","");
+                 RedrawDic();
+                // location.reload();
+              },
+              error: function(xhr, status){
+                  alert("Ошибка добавления ОПФ.");	
+              }	 
+          });
+          
+      });
+    
+  });
+  </script>
+  %{/if}%
+<p />
+%{/if}%
+
+%{if $can_common}%
+<table border="0" width="*" cellpadding="0" cellspacing="0">
+<tr align="left" valign="bottom">
+<td width="*">
+<label for="name_d">Наименование (без кавычек):</label><br />
+<input type="text" size="40" maxlength="255" name="name_d" value="%{$user.name_d}%" />
+</td>
+<td width="10">&nbsp;</td>
+<td width="*">
+<label for="email_d">Электонная почта:</label><br />
+<input type="text" size="40" maxlength="255" name="email_d" value="%{$user.email_d|escape:"html"}%" />
+</td>
+</tr>
+</table>
+<p />
+
+
+	
+    
+<strong>Контактная информация:</strong>
+<div style="float:left; margin-right:30px;"><label for="phone_work_d">рабочий телефон:</label><br>
+<input type="text" size="20" maxlength="255" name="phone_work_d" value="%{$user.phone_work_d|escape:"html"}%" />
+</div>
+
+<div style="float:left; margin-right:30px;">
+<label for="phone_cell_d">мобильный телефон:</label><br>
+<input type="text" size="20" maxlength="255" name="phone_cell_d" value="%{$user.phone_cell_d|escape:"html"}%" />
+</div>
+
+
+<div style="float:left; margin-right:30px;">
+<label for="contact_person_d">Контактное лицо:</label><br>
+<input type="text" size="40" maxlength="255" name="contact_person_d" value="%{$user.contact_person_d|escape:"html"}%" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<table border="0" width="*" cellpadding="0" cellspacing="0">
+<tr align="left" valign="bottom">
+<td width="*">  
+
+<label for="inn_d">ИНН:</label><br>
+<input type="text" size="40" maxlength="255" name="inn_d" value="%{$user.inn_d}%" />
+</td>
+<td width="10">&nbsp;</td>
+<td width="*">
+
+<label for="kpp_d">КПП:</label><br>
+<input type="text" size="40" maxlength="255" name="kpp_d" value="%{$user.kpp_d}%" />
+</td>
+<td width="10">&nbsp;</td>
+<td width="*">
+
+<label for="okpo_d">ОКПО:</label><br>
+<input type="text" size="40" maxlength="255" name="okpo_d" value="%{$user.okpo_d}%" />
+</td>
+</tr>
+</table>
+
+
+<p />
+%{/if}%
+
+%{if $can_req}%
+<a name="req"></a>
+<h4>Реквизиты:</h4>
+    <div id="req" style="border:1px solid silver; width:700px; height:100px; overflow:scroll;">
+        %{include file="users/d_rekvizit.html" items=$rekviz word="req" named="Реквизиты" user_id=$user.id can_edit=$can_req_edit}%
+    </div>
+    %{if $can_req_edit}%
+    %{include file="users/d_bank_dialog.html" word="req" named="Реквизиты" user_id=$user.id can_edit=$can_req_edit}%
+    %{/if}%
+<p />
+%{/if}%
+
+
+<table border="0" width="*" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+ 
+
+%{if $can_common}%
+<td width="*">
+<h4>
+<label for="legal_address_d">Юридический адрес:</label></h4>
+<textarea cols="50" rows="12" name="legal_address_d">%{$user.legal_address_d|escape:"html"}%</textarea>
+</td>
+<td width="10">&nbsp;</td>
+%{/if}%
+
+%{if $can_fa}%
+<td width="*">
+
+<h4>Фактические адреса:</h4>
+<div id="fakt_addr" style="border:1px solid silver; width:300px; height:200px; overflow:scroll;">
+        %{include file="users/d_fakt_addr.html" items=$fa word="fakt_addr" named="Фактические адреса" user_id=$user.id can_edit=$can_fa_edit}%
+    </div>
+    %{if $can_fa_edit}%
+    %{include file="users/d_fakt_addr_dialog.html" word="fakt_addr" named="Фактические адреса" user_id=$user.id can_edit=$can_fa_edit}%
+    %{/if}%
+</td>    
+%{/if}%
+
+</tr>
+</table>
+
+
+
+%{if $can_turnover}%
+
+
+<div id="turnovers">
+%{include file="users/d_turnover.html" user_id=$user.id}%
+</div>
+
+%{/if}%
+
+%{if $can_skidka}%
+<div style="float:left;">
+<input type="checkbox" name="use_discount_algorithm" value="1" disabled="disabled" /><label for="use_discount_algorithm">Использовать алгоритм для вычисления скидки</label>
+<p />
+
+
+<label for="discount_d">Скидка на текущий месяц, %:</label><br>
+<input type="text" size="3" maxlength="5" name="discount_d" value="%{$user.discount_d}%" />
+</div>
+%{/if}%
+<br clear="all" />
+<p />
+
+%{if $can_dealer}%
+<label for="dealer_id">Тип дилера</label><br>
+<select name="dealer_id" id="dealer_id"  style="width:200px;">
+%{html_options values=$dealer_ids selected=$user.dealer_id output=$dealers}%
+</select>
+
+%{if $can_expand_dealer}%
+	<input type="button" value="Редактировать..." id="expand_dealers" />
+	<div id="dealer_dialog" title="Виды дилерства">
+    <div id="dealer_dic">
+    %{include file="users/d_dealers.html"}%
+    </div>
+    
+    Новый вид дилерства:<br>
+    <input type="text" id="new_dealer" size="30" maxlength="255" />
+    <input type="button" value="Добавить вид дилерства" id="add_new_dealer" />
+    </div>
+    
+    
+    <script type="text/javascript">
+    $(function(){
+      $("#dealer_dialog").dialog({
+      autoOpen: false,
+	  dialogClass: 'semi_auth',
+      modal: true,
+      width: 350,
+      height: 490,
+      buttons: {
+          "Готово": function() { 
+              $.ajax({
+                async: true,
+                url: "/js/user_d.php",
+                type: "POST",
+                data:{
+                    "action":"redraw_dealer_dics"
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                  $("#dealer_dic").html(data);
+                  
+                },
+                error: function(xhr, status){
+                    //alert("Ошибка добавления вопроса.");	
+                }	 
+            });
+            
+            $.ajax({
+                async: true,
+                url: "/js/user_d.php",
+                type: "POST",
+                data:{
+                    "action":"redraw_dealer_page",
+					"user_id":%{$user.dealer_id}%
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                    $("#dealer_id").html(data);
+                  
+                },
+                error: function(xhr, status){
+                    //alert("Ошибка добавления вопроса.");	
+                }	 
+            });
+          
+          $(this).dialog("close"); }
+        }
+      
+      });
+      $("#expand_dealers").bind("click",function(){
+          $("#dealer_dialog").dialog("open");
+      });
+      
+      function RedrawDealers(){
+            $.ajax({
+                async: true,
+                url: "/js/user_d.php",
+                type: "POST",
+                data:{
+                    "action":"redraw_dealer_dics"
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                  $("#dealer_dic").html(data);
+                  
+                },
+                error: function(xhr, status){
+                    //alert("Ошибка добавления вопроса.");	
+                }	 
+            });
+        }
+        
+        $("#add_new_dealer").bind("click", function(){
+            if($("#new_dealer").attr("value").length<3){
+                $("#new_dealer").focus();
+                return false;
+            }
+            
+            $.ajax({
+                async: true,
+                url: "/js/user_d.php",
+                type: "POST",
+                data:{
+                    "action":"add_dealer",
+                    "dealer":$("#new_dealer").attr("value")
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                   alert("Вид дилерства добавлен!"); 
+                   $("#new_dealer").attr("value","");
+                   RedrawDealers();
+                  // location.reload();
+                },
+                error: function(xhr, status){
+                    alert("Ошибка добавления вида дилерства.");	
+                }	 
+            });
+            
+        });
+      
+    });
+    </script>
+%{/if}%
+<p />
+%{/if}%
+
+
+%{if $can_block}%
+<input type="checkbox" name="is_active" value="1" %{if $user.is_active==1}%checked="checked"%{/if}% />
+<label for="is_active">Карта пользователя активна</label><br>
+<p />
+%{/if}%
+
+
+
+
+
+%{if $can_notes}%
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:700px; height:100px; overflow:auto;">
+        %{include file="users/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$user.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="users/d_notes_dialog.html" word="notes" named="Примечания" user_id=$user.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+%{/if}%
+
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку пользователей" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='users_d.php';" />
+
+
+%{if $can_delete}%
+<p />
+<input type="submit" name="doDelete" id="doDelete" value="Удалить пользователя" />
+<script type="text/javascript">
+$(function(){
+	$("#doDelete").bind("click", function(){
+		return window.confirm("Вы действительно хотите удалить пользователя %{$user.login|escape:"html"}%?");
+	});
+});
+</script>
+%{/if}%
+
+
+</form>

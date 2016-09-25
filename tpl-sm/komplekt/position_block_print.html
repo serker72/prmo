@@ -1,0 +1,100 @@
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2" class="blacktable">
+  <thead>
+  <tr align="left" valign="top">
+  <th scope="col" width="20" rowspan="2">
+    № п/п
+    </th>
+     <th scope="col" width="20" rowspan="2">
+    Код
+    </th>
+    <th scope="col" width="*" rowspan="2">Наименование</th>
+    <th scope="col" width="50" rowspan="2">
+     ед. изм.
+    </th>
+    <th scope="col" width="50" rowspan="2" >
+     Первоначально по заявке
+    </th>
+    <th scope="col" width="50" rowspan="2">
+     Всего по заявке
+    </th>
+   %{if $printmode==1}%
+     <th colspan="3" class="kompl1">
+    Закупка
+    </th>
+    
+    <th colspan="3" class="kompl2">
+    Продажа
+    </th>
+    
+     <th rowspan="2" class="kompl3">
+    Итоговый результат
+    </th>
+    %{/if}%
+    
+    
+   
+  </tr>
+  
+   %{if $printmode==1}%
+   <tr align="left" valign="top">
+  
+   
+    <th scope="col" width="50" class="kompl1">
+     Во вх. счетах
+    </th>
+    
+    <th scope="col" width="50" class="kompl1">
+    Получено
+    </th>
+    <th scope="col" width="50" class="kompl1">
+    Доступно к закупке 
+    </th>
+    
+  
+  
+    <th scope="col" width="50" class="kompl2">
+     В исх. счетах
+    </th>
+    
+    <th scope="col" width="50" class="kompl2">
+    Отгружено
+    </th>
+    <th scope="col" width="50" class="kompl2">
+    Доступно к продаже
+    </th>
+    
+   
+  </tr> 
+   %{/if}%
+  </thead>
+  <tbody id="positions">
+  
+  %{section name=possec loop=$pos}%
+%{include file="komplekt/put_to_form_print.html" 
+	no=$smarty.section.possec.index+1 
+    tempid=$pos[possec].id id=$pos[possec].position_id 
+    name=$pos[possec].position_name 
+    kol=$pos[possec].quantity_confirmed 
+    kol_init=$pos[possec].quantity_initial 
+    
+      
+    in_bills_in=$pos[possec].in_bills_in
+    in_free_in=$pos[possec].in_free_in 
+    in_pol_in=$pos[possec].in_pol_in 
+    
+    
+    in_bills=$pos[possec].in_bills 
+     
+    in_free=$pos[possec].in_free 
+    in_pol=$pos[possec].in_pol 
+    
+    
+    storage_name=$pos[possec].storage_name storage_id=$pos[possec].storage_id  dim_name=$pos[possec].dim_name}%
+%{/section}%
+  
+  </tbody>
+</table>
+
+
+ 

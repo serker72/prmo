@@ -1,0 +1,49 @@
+<!-- таблица на странице -->
+
+ 
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable1" id="submanagers_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="*">Ф.И.О.</th>
+         
+        
+   
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+    %{include file="users/submanagers_on_page_row.html"}%
+   
+    %{/section}%
+    </tbody>
+    </table>
+     <script type="text/javascript">
+		$(function(){
+			  
+		
+		function new_del(hash){
+		 
+				 
+				if(window.confirm('Вы действительно хотите удалить пользователя?')){ 
+					$('#new_row_'+hash).remove();
+					 
+							
+				}
+				 
+				 
+				return false;
+			
+		}
+		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].hash}%").bind("click",function(){
+				return new_del("%{$pospos[pospossec].hash}%");
+				
+			});
+			
+    	%{/section}%
+	
+	});
+      </script>

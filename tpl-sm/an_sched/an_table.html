@@ -1,0 +1,38 @@
+
+
+%{foreach from=$items item=kk}%
+<h2>%{$kk.name}%</h2>
+
+%{if $kk.id==3}%
+%{include file="an_sched/table_3.html" items=$kk.items}%  
+<br>
+
+%{elseif $kk.id==1}%
+%{include file="an_sched/table_1.html" items=$kk.items}% 
+<br>
+
+%{elseif $kk.id==5}%
+%{include file="an_sched/table_5.html" items=$kk.items}% 
+<br>
+
+%{elseif $kk.id==4}%
+%{include file="an_sched/table_4.html" items=$kk.items}% 
+<br>
+
+%{elseif $kk.id==2}%
+%{include file="an_sched/table_2.html" items=$kk.items}% 
+<br>
+
+%{/if}%
+
+
+%{/foreach}%
+
+
+
+
+
+
+
+
+ 

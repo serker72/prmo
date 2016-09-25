@@ -1,0 +1,56 @@
+<form action="user_s.php" method="post">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$user.id}%" />
+
+<h2>Видимость контрагентов</h2>
+
+<input type="checkbox" value="1" id="has_restricted_suppliers" name="has_restricted_suppliers" %{if $user.has_restricted_suppliers==1}% checked%{/if}% /><label for="has_restricted_suppliers">Разграничить видимость контрагентов</label>
+<br>
+<p />
+
+
+<strong>Доступные контрагенты:</strong><br />
+
+%{section name=rowsec loop=$sectors}%
+%{if $smarty.section.rowsec.index==0 or $smarty.section.rowsec.index==$div}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+<input type="checkbox" value="1" name="supplier_id_%{$sectors[rowsec].id}%" %{if $sectors[rowsec].is_in==1}% checked="checked"%{/if}% %{if !$can_modify_sectors}% disabled="disabled"%{/if}% /><label for="supplier_id_%{$sectors[rowsec].id}%" %{if $sectors[rowsec].is_active==0}% class="item_inactive"%{/if}%>%{$sectors[rowsec].opf_name}% %{$sectors[rowsec].name}%</label><br />
+%{if $smarty.section.rowsec.last or $smarty.section.rowsec.index_next==$div}%
+</div>
+%{/if}%
+%{/section}%
+
+<br clear="all"/>
+
+
+
+
+<h2>Видимость сотрудников</h2>
+
+<input type="checkbox" value="1" id="has_restricted_users" name="has_restricted_users" %{if $user.has_restricted_users==1}% checked%{/if}% /><label for="has_restricted_users">Разграничить видимость сотрудников</label>
+<br>
+<p />
+
+<strong>Доступные сотрудники:</strong><br />
+
+%{section name=rowsec1 loop=$users}%
+%{if $smarty.section.rowsec1.index==0 or $smarty.section.rowsec1.index==$div1}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+<input type="checkbox" value="1" name="user_id_%{$users[rowsec1].id}%" %{if $users[rowsec1].is_in==1}% checked="checked"%{/if}% %{if !$can_modify_users}% disabled="disabled"%{/if}% /><label for="user_id_%{$users[rowsec1].id}%" %{if $users[rowsec1].is_active==0}% class="item_inactive"%{/if}%>%{$users[rowsec1].name}% %{$users[rowsec1].login}% %{$users[rowsec1].position_s}%</label><br />
+%{if $smarty.section.rowsec1.last or $smarty.section.rowsec1.index_next==$div1}%
+</div>
+%{/if}%
+%{/section}%
+
+<br clear="all"/>
+<p />
+
+
+<input type="submit" name="doEditVis" value="Сохранить и перейти к списку пользователей" />
+<input type="submit" name="doEditStayVis" value="Сохранить и остаться" />
+
+</form>

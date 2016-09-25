@@ -1,0 +1,18 @@
+ 
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+ 
+ 
+%{section name=rowsec loop=$items}%
+ 
+      %{$items[rowsec].orig_name}%  
+
+  %{$items[rowsec].size|string_format:"%.3f&nbsp;ла"}% <br>
+
+    
+%{/section}%
+ 

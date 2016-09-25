@@ -1,0 +1,23 @@
+%{section name=rowsecb loop=$bills}%
+
+<input type="checkbox" id="another_bill_%{$bills[rowsecb].id}%" %{if $bills[rowsecb].is_checked}% checked="checked"%{/if}%  value="%{$bills[rowsecb].id}%" />
+—чет <a href="ed_bill_in.php?action=1&id=%{$bills[rowsecb].id}%&from_begin=1" target="_blank">є %{$bills[rowsecb].code}%</a> от %{$bills[rowsecb].pdate}%
+<br />
+<script type="text/javascript">
+$(function(){
+	%{if $bills[rowsecb].can_be_checked==false}%
+		$("#another_bill_%{$bills[rowsecb].id}%").bind("change",function(){
+			if($("#another_bill_%{$bills[rowsecb].id}%").prop("checked")){
+				alert("¬ы не можете задействовать позиции данного счета в доверенности, т.к. по всем позици€м счета были выписаны доверенности.");
+				$("#another_bill_%{$bills[rowsecb].id}%").prop("checked",false);
+				return false;	
+			}
+		});
+	%{/if}%
+});
+</script>
+%{/section}%
+
+%{if $smarty.section.rowsecb.total==0}%
+<em>ѕо данному контрагенту не найдено других счетов с позици€ми, доступными дл€ оформлени€ доверенности.</em>
+%{/if}%

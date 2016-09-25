@@ -1,0 +1,144 @@
+<div id="%{$word}%_dialog" title="%{$named}%" style="display:none;">
+  <div id="%{$word}%_dic">
+  %{include file="users_v/userpos.html"}%
+  </div>
+  
+  <br />
+	<strong>%{$named}%:</strong><br>
+  <input type="text" id="new_%{$word}%" size="30" maxlength="255" />
+  <br />
+
+  <input type="checkbox" id="can_sign_as_dir_pr_%{$word}%" value="1" /><label for="can_sign_as_dir_pr_%{$word}%">Подпись КП оборуд. в роли директора по продажам</label>
+<br />
+  
+  <input type="checkbox" id="can_sign_as_manager_%{$word}%" value="1" /><label for="can_sign_as_manager_%{$word}%">Подпись КП оборуд. в роли менеджера</label>
+<br />
+  
+  <input type="checkbox" id="is_ruk_otd_%{$word}%" value="1" /><label for="is_ruk_otd_%{$word}%">Руководитель отдела (просмотр план/факт всех сотрудников отдела)</label>
+<br />
+  
+  <input type="button" value="Добавить %{$named}%" id="add_new_%{$word}%"  />
+  </div>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+    $("#%{$word}%_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 450,
+    height: 490,
+    buttons: {
+        "Готово": function() { 
+        	$.ajax({
+              async: true,
+              url: "/js/user_v.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_%{$word}%_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#%{$word}%_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+          
+          $.ajax({
+              async: true,
+              url: "/js/user_v.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_%{$word}%_page",
+				  "user_id":"%{$user.position_id}%"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                  $("#position_id").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+        
+        $(this).dialog("close"); }
+      }
+    
+    });
+    $("#expand_%{$word}%").bind("click",function(){
+        $("#%{$word}%_dialog").dialog("open");
+    });
+    
+    function Redraw%{$word}%(){
+          $.ajax({
+              async: true,
+              url: "/js/user_v.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_%{$word}%_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#%{$word}%_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+      }
+      
+      $("#add_new_%{$word}%").bind("click", function(){
+          if($("#new_%{$word}%").val().length<3){
+              $("#new_%{$word}%").focus();
+              return false;
+          }
+          
+		  
+		  if($("#can_sign_as_dir_pr_%{$word}%").prop("checked")) can_sign_as_dir_pr=1; else can_sign_as_dir_pr=0;
+			
+		  if($("#can_sign_as_manager_%{$word}%").prop("checked")) can_sign_as_manager=1; else can_sign_as_manager=0;
+		  if($("#is_ruk_otd_%{$word}%").prop("checked")) is_ruk_otd=1; else is_ruk_otd=0;
+		  
+          $.ajax({
+              async: true,
+              url: "/js/user_v.php",
+              type: "POST",
+              data:{
+                  "action":"add_%{$word}%",
+                  "%{$word}%":$("#new_%{$word}%").val(),
+				  "can_sign_as_dir_pr":can_sign_as_dir_pr,
+				  "can_sign_as_manager":can_sign_as_manager,
+				  "is_ruk_otd":is_ruk_otd
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                 alert("%{$named}% добавлена!"); 
+                 $("#new_%{$word}%").val("");
+                 Redraw%{$word}%();
+                // location.reload();
+              },
+              error: function(xhr, status){
+                  alert("Ошибка добавления %{$named}%.");	
+              }	 
+          });
+          
+      });
+    
+  });
+  </script>
+  
+	

@@ -1,0 +1,626 @@
+<script type="text/javascript">
+	
+	
+	
+	function bdbuild(){
+		  var selected_bdetails=0;
+		  $.each($("#bdetails table tr td input[type=radio]"), function(key, value){
+			  if(value.checked){
+				  selected_bdetails=value.value;
+			  }
+		  });
+		  
+		  if($("#bdetails_id").attr("value")!=selected_bdetails){
+			  
+			  //подгружаем все данные по реквизитам
+			  if(selected_bdetails>0){
+				  $.ajax({
+					async: true,
+					url: "/js/kp.php",
+					type: "GET",
+					dataType: "json",
+					data:{
+						"action":"retrieve_bdetails",
+						"id":selected_bdetails
+					},
+					beforeSend: function(){
+					  
+					},
+					success: function(data){
+					  $("#bdetails_id_string").attr("value",'р/с '+data.rs+', '+data.bank+', '+data.city);
+					  $("#bdetails_id").attr("value",data.id);
+					  
+					},
+					error: function(xhr, status){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					}	 
+				  });
+			  }
+			  
+		  }
+		 
+		  $("#bdetails_dialog").dialog("close"); 
+	}
+	
+	
+	function cbuild(){
+		  var selected_bdetails=0;
+		  $.each($("#condetails table tr td input[type=radio]"), function(key, value){
+			  if(value.checked){
+				  selected_bdetails=value.value;
+			  }
+		  });
+		  
+		 
+		  if($("#condetails_id").val()!=selected_bdetails){
+			  
+			  //подгружаем все данные по реквизитам
+			  if(selected_bdetails>0){
+				  $.ajax({
+					async: true,
+					url: "/js/kp.php",
+					type: "GET",
+					dataType: "json",
+					data:{
+						"action":"retrieve_contracts",
+						"id":selected_bdetails
+					},
+					beforeSend: function(){
+					  
+					},
+					success: function(data){
+					  //$("#bdetails_id_string").attr("value",'р/с '+data.rs+', '+data.bank+', '+data.city);
+					  $("#contract_id").attr("value",data.id);
+					  
+					 // $("#contract_no").attr("value",data.contract_no);
+					  $("#contract_no_string").attr("value",data.contract_no);
+					  $("#contract_pdate").attr("value",data.contract_pdate);
+					  $("#contract_pdate_string").attr("value",data.contract_pdate);
+					  
+					},
+					error: function(xhr, status){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					}	 
+				  });
+			  }
+			  
+		  }
+		 
+		  $("#contract_dialog").dialog("close"); 
+	}
+	
+	
+	function rebuild(){
+	   
+	   var selected_supplier=0;
+	   $.each($("#suppliers table tr td input[type=radio]"), function(key, value){
+		  if(value.checked){
+			  selected_supplier=value.value;
+		  }
+	  });
+	  
+	  
+	  if($("#is_confirmed_"+selected_supplier).val()==0){
+		  alert("Для выбора контрагента "+$("#opf_name_"+selected_supplier).html()+" "+$("#full_name_"+selected_supplier).html()+" необходимо утвердить заполнение его карты.");
+		  return false;  
+	  }
+	  
+	  if($("#is_org_"+selected_supplier).val()==1){
+		  alert("Внимание! Вы выбрали контрагентом по счету Вашу организацию. Входящий счет можно утвердить с нулевыми ценами.");
+	  }
+	  
+	  if($("#supplier_id").attr("value")!=selected_supplier){
+		  $("#supplier_clear").trigger("click");
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			$.ajax({
+			  async: true,
+			  url: "/js/kp.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"retrieve_supplier",
+				  "id":selected_supplier
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#supplier_id_string").attr("value",data.opf_name+" "+data.full_name);
+				$("#supplier_id").attr("value",data.id);
+				
+				//
+				$("#contract_clear").trigger("click");
+				
+				
+				
+				$("#contract_no_string").val(data.contract_no);
+				//$("#contract_no").attr("value",data.contract_no);
+				$("#contract_id").val(data.contract_id);
+				$("#contract_pdate_string").val(data.contract_pdate);
+				$("#contract_pdate").val(data.contract_pdate);
+				
+				
+				$("#bdetails_clear").trigger("click");
+				
+				
+				
+				
+				//alert(data.bdetails_id_string);
+				//подгрузить реквизиты по умолчанию
+				$("#bdetails_id_string").attr("value",data.bdetails_id_string);
+				$("#bdetails_id").attr("value",data.bdetails_id);
+				
+				//сформировать список реквизитов! 
+				$.ajax({
+					async: true,
+					url: "/js/kp.php",
+					type: "POST",
+					data:{
+						"action":"load_bdetails",
+						"supplier_id":selected_supplier,
+						"current_id":0
+					},
+					beforeSend: function(){
+					  //alert("Загрузка реквизитов.");
+					},
+					success: function(data){
+					  $("#bdetails").html(data);  
+					},
+					error: function(xhr, status){
+					  // alert("Ошибка загрузки реквизитов.");	
+					}	 
+				  });
+				  
+				  //сф-ть список договоров
+				  $.ajax({
+					async: true,
+					url: "/js/kp.php",
+					type: "POST",
+					data:{
+						"action":"load_condetails",
+						"supplier_id":selected_supplier,
+						"current_id":data.contract_id
+					},
+					beforeSend: function(){
+					  //alert("Загрузка реквизитов.");
+					},
+					success: function(data){
+						//alert(data);
+					  $("#condetails").html(data);  
+					},
+					error: function(xhr, status){
+					  // alert("Ошибка загрузки реквизитов.");	
+					}	 
+				  });
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		  }
+	  }
+	   
+	  $("#supplier_dialog").dialog("close"); 
+	}
+$(function(){
+	
+	
+	
+	
+	$("#supplier_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 720,
+		height: 490,
+		buttons: {
+			"Готово": rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#supplier_select").bind("click",function(){
+		$("#supplier_dialog").dialog("open");
+	});
+	
+	$("#supplier_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		$("#bdetails_clear").trigger("click");
+		//очистить список реквизитов
+		$("#bdetails").empty();
+		
+		//очистить список реквизитов
+		$("#condetails").empty();
+		
+		
+		$("#supplier_id_string").attr("value","");
+		$("#supplier_id").attr("value","");
+		$("#contract_no_string").attr("value","");
+		$("#contract_no").attr("value","");
+		$("#contract_pdate_string").attr("value","");
+		$("#contract_pdate").attr("value","");
+		$("#contract_id").attr("value","");
+		
+		
+	});
+	
+	
+	
+	
+	
+	$("#bdetails_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 550,
+		height: 290,
+		buttons: {
+			"Готово": bdbuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	
+	$("#bdetails_select").bind("click",function(){
+		//раскрывать, только если выбран п-к
+		if(($("#supplier_id").attr("value")>0)&&($("#supplier_id").attr("value").length>0)){
+			$("#bdetails_dialog").dialog("open");	
+		}else {
+			alert("Выберите контрагента!");
+			$("#supplier_select").focus();
+		}
+	});
+	
+	$("#bdetails_clear").bind("click",function(){
+		//очистка банковского счета
+		$("#bdetails_id_string").attr("value","");
+		$("#bdetails_id").attr("value","");
+		
+	});
+	
+	$("#contract_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 550,
+		height: 290,
+		buttons: {
+			"Готово": cbuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	
+	$("#contract_select").bind("click",function(){
+		//раскрывать, только если выбран п-к
+		if(($("#supplier_id").attr("value")>0)&&($("#supplier_id").attr("value").length>0)){
+			$("#contract_dialog").dialog("open");	
+		}else {
+			alert("Выберите контрагента!");
+			$("#supplier_select").focus();
+		}
+	});
+	
+	$("#contract_clear").bind("click",function(){
+		//очистка dogovora
+		$("#contract_no_string").attr("value","");
+		$("#contract_pdate_string").attr("value","");
+		$("#contract_pdate").attr("value","");
+		$("#contract_id").attr("value","");
+		
+	});
+	
+	
+	 
+});
+</script>
+
+<div id="supplier_dialog" title="Выберите контрагента">
+
+
+
+
+<a href="#" id="more_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="absmiddle" vspace="3" hspace="5" /></a>
+    
+    <div id="address_dialog_help" title="Информация о выборе контрагента">
+    
+    В этом диалоге Вы можете выбрать контрагента по коммерческому предложению.
+    
+    <br />
+	<br />
+	
+    Чтобы выбрать контрагента для коммерческого предложения, выполните двойной клик по строчке с требуемым контрагентом.
+    <br />
+
+    При этом контрагент будет подставлен в предложение, автоматически подставятся № и дата договора с контрагентом, и будут выбраны основные реквизиты контрагента (если они были заданы в карте контрагента). <br />
+	Для задания других (не основных) рекизитов контрагента воспользуйтесь кнопкой "..." возле поля "Банковский счет".
+    <br />
+<br />
+	По умолчанию раскрыт полный список контрагентов. 
+    В этом списке можно найти необходимого 
+    Вам контрагента с помощью фильтров. Фильтры доступны по полям:<br />
+	-Код контрагента<br />
+	-Полное наименование<br />
+	-ИНН <br />
+	-КПП<br />
+ 	-Юридический адрес.
+    
+    <br />
+	<br />
+	Введите в одно или несколько из этих полей фрагмент данных нужного Вам контрагента и нажмите кнопку <strong>"Найти"</strong>.
+	
+    
+    
+    </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#address_dialog_help").dialog({
+		  autoOpen: false,
+		  modal: true,
+		  width: 600,
+		  height: 380,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#more_info").bind("click", function(){
+			$("#address_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+
+
+
+<div id="suppliers" style="overflow:auto; width: 700px; height:350px;"  > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Код</th>
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Юридический адрес</th>
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        <td>
+        <input id="find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+       
+        <td>
+        <input id="find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="find_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_legal_address" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input type="button" value="Найти" id="doFind" />
+        <script type="text/javascript">
+		$(function(){
+			$("#find_code").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_full_name").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_inn").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_kpp").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_legal_address").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			
+			$("#doFind").bind("click",function(){
+				ret=true;
+		
+				
+				
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/kp.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_suppliers",
+						  
+						  "code":$("#find_code").attr("value"),
+						
+						  "full_name":$("#find_full_name").attr("value"),
+						  "inn":$("#find_inn").attr("value"),
+						  "kpp":$("#find_kpp").attr("value"),
+						  "legal_address":$("#find_legal_address").attr("value")
+						  
+					  },
+					  beforeSend: function(){
+						$("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+					  },
+					  success: function(data){
+						$("#suppliers_found").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+					  }	 
+				  });
+				  
+				  
+				
+				return ret;
+			});
+		});
+		</script>
+        </td>
+    </tr>
+    <tbody id="suppliers_found">
+   	%{include file="bills/suppliers_list.html" pos=$suppliers}%
+    </tbody>
+    </table>
+	
+  
+    </div>
+  
+</div>
+
+<div id="bdetails_dialog" title="Выберите реквизиты">
+
+
+
+<a href="#" id="more_bd_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="absmiddle" vspace="3" hspace="5" /></a>
+    
+    <div id="bd_dialog_help" title="Информация о выборе реквизитов">
+    
+    В этом диалоге Вы можете выбрать реквизиты контрагента.
+    
+    <br />
+	<br />
+	
+    Чтобы выбрать реквизиты контрагента, выполните двойной клик по строчке с требуемыми реквизитами.
+    <br />
+
+    При этом реквизиты контрагента будут подставлены в коммерческое предложение. <br />
+	
+<br />
+	
+    
+    </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#bd_dialog_help").dialog({
+		  autoOpen: false,
+		  modal: true,
+		  width: 600,
+		  height: 180,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#more_bd_info").bind("click", function(){
+			$("#bd_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+	<div style="width:510px; height:160px; border:1px solid gray; overflow:auto;" id="bdetails">
+    %{include file="bills/bdetails_list.html"}%
+    </div>
+
+</div>
+
+
+<div id="contract_dialog" title="Выберите договор">
+
+
+
+<a href="#" id="more_con_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="absmiddle" vspace="3" hspace="5" /></a>
+    
+    <div id="con_dialog_help" title="Информация о выборе договора">
+    
+    В этом диалоге Вы можете выбрать договор контрагента.
+    
+    <br />
+	<br />
+	
+    Чтобы выбрать договор контрагента, выполните двойной клик по строчке с требуемым договором.
+    <br />
+
+    При этом договор контрагента будет подставлен в коммерческое предложение. <br />
+	
+<br />
+	
+    
+    </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#con_dialog_help").dialog({
+		  autoOpen: false,
+		  modal: true,
+		  width: 600,
+		  height: 180,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#more_con_info").bind("click", function(){
+			$("#con_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+	<div style="width:510px; height:160px; border:1px solid gray; overflow:auto;" id="condetails">
+    %{include file="bills/contracts_list.html"}%
+    </div>
+
+</div>

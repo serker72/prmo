@@ -1,0 +1,342 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	touchScroll('org_bdetails');
+	touchScroll('bdetails');
+	touchScroll('suppliers');
+	touchScroll('code_list');
+});
+</script>
+
+
+<form action="ed_cash.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+<input type="hidden" id="id"  name="id" value="" />
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<h1>Создание расхода наличных</h1>
+</div>
+
+
+
+
+
+%{include file="every_help_dialog.html" filename="cash_create.html" prefix="" description="создание расхода наличных"  style="float:right;  margin-right:00px;" is_right=true}%
+
+
+<div style="float:right; padding-top:0px; margin-right:10px; text-align:right;">
+<a href="#" target="_blank" onclick="alert('В данном режиме печать расхода наличных недоступна. Пожалуйста, нажмите кнопку Создать расход наличных и перейти к утверждению для получения возможности печати.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать расхода наличных..." ></a>
+</div>
+
+
+
+
+
+<br clear="all" />
+
+<div style="float:left; margin-right:20px;">
+<label for="code">Код:</label><br />
+<input type="text" size="7" maxlength="10" value="%{$code}%" id="code" disabled="disabled" />
+<input type="hidden" name="code" value="%{$code}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Дата создания:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$now}%" name="pdate" id="pdate" />
+
+</div>
+
+<!--<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер:</label><br />
+
+<input type="text" size="10" maxlength="255" value="" name="given_no" id="given_no" />
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_pdate">Заданная дата:</label><br />
+
+<input type="text" size="10" maxlength="10" name="given_pdate" id="given_pdate" value="-" />
+</div>
+-->
+
+<div style="float:left; margin-right:20px;">
+<label for="value">Сумма платежа, руб.:</label><br />
+
+<input type="text" size="20" maxlength="255" value="" name="value" id="value" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+
+
+<div style="float:right; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;">
+</a>
+
+<strong>Статус:</strong><br />
+
+не утвержден
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+ 
+ 
+<!-- блок выбора кода оплаты -->
+
+<div style="float:left; margin-right:0px;">
+<label for="code_id">
+
+Код оплаты:</label><br />
+
+
+<input type="text" size="40" maxlength="255" id="code_id_string" value="%{$code_id_string|escape}%" disabled="disabled" style="width:398px;"  />
+<input type="hidden" name="code_id" id="code_id" value="%{$code_id}%" />
+<input type="button" id="code_select" value="..." />
+<input type="button" id="code_clear" value="x" />
+
+</div>
+
+<br clear="all" />
+<p />
+
+%{include file="cash/code_actions.html"}%
+
+<!-- конец блока выбора кода оплаты -->
+
+
+
+<!-- Блок периода оплаты -->
+<div id="month_block" style="float:left; margin-right:10px; margin-bottom:20px; display:none;">
+<label for="month">Месяц:</label><br />
+<select id="month" name="month" style="width:150px">
+%{html_options values=$_month_ids selected=0 output=$_month_names}%
+</select>
+</div>
+
+<div id="quarter_block" style="float:left; margin-right:10px; margin-bottom:20px; display:none;">
+<label for="quarter">Квартал:</label><br />
+<select id="quarter" name="quarter" style="width:150px">
+%{html_options values=$_quart_ids selected=0 output=$_quart_names}%
+</select></div>
+
+<div id="year_block" style="float:left; margin-right:10px; margin-bottom:20px; display:none;">
+<label for="year">Год:</label><br />
+<select id="year" name="year" style="width:80px">
+%{html_options values=$_year_ids selected=$year output=$_year_names}%
+</select>
+</div>
+<br clear="all" />
+ 
+
+<!-- конец блока периода оплаты -->
+
+
+
+
+
+<div id="supplier_block" style="display:none;">
+
+<div style="float:left;">
+<label for="supplier_id">
+Контрагент:</label><br />
+
+
+<input type="text" size="40" maxlength="255" id="supplier_id_string" disabled="disabled" style="width:398px;" value="%{$supplier_id_string}%" />
+<input type="button" id="supplier_select" value="..." />
+<input type="button" id="supplier_clear" value="x" />
+
+<input type="hidden"  value="%{$supplier_id}%" name="supplier_id" id="supplier_id" />
+</div>
+
+
+<br clear="all" />
+<p />
+
+%{include file="cash/supplier_actions.html"}%
+</div>
+
+
+
+
+<label for="responsible_user_id">Сотрудник-получатель платежа:</label><br />
+
+<select id="responsible_user_id" name="responsible_user_id" style="width:400px;">
+ %{html_options values=$responsible_user_id_ids selected=0 output=$responsible_user_id_vals}%
+</select>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" id="doNew" value="Создать расход наличных" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" id="doNewEdit"  value="Создать расход наличных и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='all_pay.php';
+}else location.href='all_pay.php';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	
+	
+	
+	
+	//проверка увязки общей суммы с суммой по счетам
+	function CheckSumm(){
+		res=true;
+		
+		
+		if((parseFloat($("#value").val().replace("\,","\."))<=0)||($("#value").val().replace("\,","\.")=='')){
+			alert('Внимание! Вы задали нулевую сумму расхода. Просьба исправить сумму.');
+			res=res&&false;
+			$("#value").focus();
+			return false;	
+		}
+		
+		return res;
+	}
+	
+	$("#doNew").bind("click",function(){
+		return CheckSumm();
+	});
+	$("#doNewEdit").bind("click",function(){
+		return CheckSumm();
+	});
+	
+});
+</script>
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	if(!PeriodChecker('pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Дата создания должна быть не ранее %{$pch_date}%!');
+		return false;	
+	
+	}else{
+		
+		//return true;	
+		//каскад проверок по закрытым периодам
+		if(!PeriodCheckerByPeriod('pdate', closed_date )){
+			sfm_show_error_msg('Дата создания не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		
+		}
+	}
+	
+	if($("#code_id").val()==38){
+		if(($("#supplier_id").val()=="")||($("#supplier_id").val()==0)||($("#supplier_id").val()==null)||($("#supplier_id").val()==undefined)){
+			sfm_show_error_msg('Выберите контрагента!');
+			return false;		
+		}
+	}
+	
+	if(($("#code_id").val()==8)||($("#code_id").val()==9)||($("#code_id").val()==10)||($("#code_id").val()==11)||($("#code_id").val()==12)){
+		
+		if(($("#month").val()=="")||($("#month").val()==0)||($("#month").val()==null)||($("#month").val()==undefined)||
+		($("#year").val()=="")||($("#year").val()==0)||($("#year").val()==null)||($("#year").val()==undefined)
+		){
+			sfm_show_error_msg('Выберите месяц и год!');
+			return false;	
+		}
+	}
+	
+	if(($("#code_id").val()==17)||($("#code_id").val()==18)||($("#code_id").val()==62)){
+		
+		if(($("#quarter").val()=="")||($("#quarter").val()==0)||($("#quarter").val()==null)||($("#quarter").val()==undefined)||
+		($("#year").val()=="")||($("#year").val()==0)||($("#year").val()==null)||($("#year").val()==undefined)
+		){
+			sfm_show_error_msg('Выберите квартал и год!');
+			return false;	
+		}
+	}
+	
+	if($("#code_id").val()!=12){
+		if(($("#responsible_user_id").val()=="")||($("#responsible_user_id").val()==0)||($("#responsible_user_id").val()==null)||($("#responsible_user_id").val()==undefined)){
+			sfm_show_error_msg('Выберите сотрудника-получателя платежа!');
+			return false;	
+		}
+		
+	}
+	
+	return true;
+}
+
+
+
+frmvalidator.addValidation("code_id","req","Выберите код оплаты!");
+frmvalidator.addValidation("code_id","gt=0","Выберите код оплаты!");
+
+/*
+if($("#code_id").val()!=12){
+	frmvalidator.addValidation("responsible_user_id","req","Выберите сотрудника-получателя платежа!");
+	frmvalidator.addValidation("responsible_user_id","gt=0","Выберите сотрудника-получателя платежа!");
+}*/
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+
+
+</script>

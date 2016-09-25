@@ -1,0 +1,203 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  	cookie: { expires: 14, name: 'dsTab' }
+  });
+  
+   $("#tabs2").tabs({
+  	cookie: { expires: 14, name: 'dsTab2' }
+  });
+    $("#tabs3").tabs({
+  	cookie: { expires: 14, name: 'dsTab3' }
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    %{if $has_1}%
+    <li><a href="#tabs-1">Движение д/с</a></li>
+    
+     %{/if}%
+      
+      
+      
+      %{if $has_2 or $has_3}%
+      
+       <li><a href="#tabs-3">Вход.</a></li>
+       
+       <li><a href="#tabs-4">Исход.</a></li>
+      
+      %{/if}%
+     
+       %{if $has_5}%
+      <li><a href="#tabs-7">Вх. счета, переданные в бухгалтерию</a></li>
+      %{/if}%
+      
+        %{if $has_5}%
+      <li><a href="#tabs-8">Исх. счета, переданные в бухгалтерию</a></li>
+      %{/if}%
+      
+       %{if $has_9}%
+    <li><a href="#tabs-9">Расход наличных</a></li>
+    
+     %{/if}%
+     
+      %{if $has_10}%
+    <li><a href="#tabs-10">Приход наличных</a></li>
+    
+     %{/if}%
+   
+  </ul>
+  
+  
+   
+   %{if $has_1}%
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+   <!-- vhod -->
+   %{if $has_2 or $has_3}%
+    <div id="tabs-3">
+    <p>
+  
+  
+ 
+      <div id="tabs2">
+      	<ul>
+        	 %{if $has_2}%<li><a href="#tabs2-1">План оплаты</a></li> %{/if}%
+          %{if $has_3}%  <li><a href="#tabs2-2">Факт оплаты</a></li> %{/if}%
+        </ul>
+        
+        %{if $has_2}%
+           <div id="tabs2-1">
+            <p>
+          
+            %{$log3}%
+            
+            </p>
+          </div>
+        %{/if}%
+        
+        
+         %{if $has_3}%
+        <div id="tabs2-2">
+            <p>
+          
+            %{$log5}%
+            
+            </p>
+          </div>
+        %{/if}%
+        
+      </div>  
+  
+ 
+  
+     
+    </p>
+  </div>
+   
+   %{/if}%
+   
+   
+   <!-- ishod -->
+     %{if $has_2 or $has_3}%
+    <div id="tabs-4">
+    <p>
+  			
+        <div id="tabs3">
+            <ul>
+                 %{if $has_2}%<li><a href="#tabs3-1">План оплаты</a></li> %{/if}%
+              %{if $has_3}%  <li><a href="#tabs3-2">Факт оплаты</a></li> %{/if}%
+            </ul>
+            
+             %{if $has_2}%
+               <div id="tabs3-1">
+                <p>
+              
+                %{$log4}%
+                
+                </p>
+              </div>
+            %{/if}%
+            
+            
+             %{if $has_3}%
+            <div id="tabs3-2">
+                <p>
+              
+                %{$log6}%
+                
+                </p>
+              </div>
+            %{/if}%
+            
+		</div>
+        
+        
+             
+    </p>
+  </div>
+   
+   %{/if}%
+   
+  
+  
+   %{if $has_5}%
+   <div id="tabs-7">
+    <p>
+  
+    %{$log7}%
+    
+    </p>
+  </div>
+ %{/if}%
+  
+   %{if $has_5}%
+   <div id="tabs-8">
+    <p>
+  
+    %{$log8}%
+    
+    </p>
+  </div>
+ %{/if}%
+ 
+
+
+	%{if $has_9}%
+  <div id="tabs-9">
+    <p>
+    %{$log9}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+   
+   
+	%{if $has_10}%
+  <div id="tabs-10">
+    <p>
+    %{$log10}%
+    
+    </p>
+  </div>
+   %{/if}%
+
+
+	
+</div>
+
+
+
+  
+   

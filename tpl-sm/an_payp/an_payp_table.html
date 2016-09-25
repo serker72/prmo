@@ -1,0 +1,470 @@
+<table width="*" %{if $print==1}% border="1"%{else}%border="0"%{/if}% cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="60">Счет в программе
+    
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col" width="60">№  сч. пост.</th>
+    <th scope="col" width="60">Заданная дата счета</th>
+    <th scope="col" width="60">Сумма счета
+    
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    
+    </th>
+    <th scope="col" width="60">Сумма из %{if $is_incoming==1}%поступлений%{else}%реализаций%{/if}% по данному счету
+    
+    </th>
+    
+    <th scope="col" width="60">Текущий статус счета
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    
+    </th>
+    
+    <th scope="col" width="60">Контрагент
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    
+    
+    </th>
+   	 <th scope="col" width="60">Плановая дата поставки</th>
+    
+     <th scope="col" width="60">Факт. дата поставки</th>
+     <th scope="col" width="40">№ %{if $is_incoming==1}%пост%{else}%реал%{/if}%.</th>
+     <th scope="col" width="40">Зад. № %{if $is_incoming==1}%пост%{else}%реал%{/if}%.</th>
+      
+    <th scope="col" width="60">Дата оплаты
+по договору
+	<div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+
+	</th>
+	 %{if $show_payed_report}%
+     <th scope="col" width="60">Факт. дата оплаты
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     
+     </th>
+      %{/if}%
+        
+	<th scope="col" width="60">%{if !$show_payed_report}%Частично оплачено%{else}%Оплачено%{/if}% по счету</th>
+    %{if $show_payed_report}%
+    
+    <th scope="col" width="60">Общая сумма плат. пор.</th>
+    <th scope="col" width="60">Заданный № плат. пор.</th>
+    %{/if}%
+    
+    
+    %{if !$show_payed_report}%
+    <th scope="col" width="40">Счет в бухгал-<br />
+терии
+    
+     %{if $print==0}%
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}% 
+    
+    %{if $print!=1 and $print!=2}%
+    <br />
+	<input type="checkbox" id="in_buhp%{$prefix}%_select_all" value="1" title="выделить все" /><br />
+	<a href="#" id="do_in_buhp%{$prefix}%_selected"><img src="/img/icons/edit.png" width="24" height="24" border="0" alt="внести изменения" title="внести изменения" /></a>
+     <script type="text/javascript">
+	 $(function(){
+		 $("#in_buhp%{$prefix}%_select_all").bind("click", function(){
+			$.each($("input[type=checkbox][id^=is_in_buhp%{$prefix}%_]"), function(k,v){
+				if(!$(v).prop("disabled")){
+					$(v).prop("checked", $("#in_buhp%{$prefix}%_select_all").prop("checked"));	
+				}
+			});
+		 });
+		 
+		 $("#do_in_buhp%{$prefix}%_selected").bind("click", function(){
+			
+			var marked_as_not_in=new Array();
+			var marked_as_in=new Array();
+			/*найти отданные документы, которые помечаем как не отданные*/
+			/*найти не отданные документы, которые помечаем как отданные */
+			$.each($("input[type=checkbox][id^=is_in_buhp%{$prefix}%_]"), function(k,v){
+				if(!$(v).prop("disabled")){
+					id=$(v).val();
+					
+					//если было выставлено как ОТДАННЫЕ, а пометили как НЕОТДАННЫЕ - занести в коллекцию
+					if(!$(v).prop("checked")&&($("#was_in_buhp%{$prefix}%_"+id).val()==1)) marked_as_not_in.push(id);
+					
+					//если было выставлено как НЕОТДАННЫЕ, а пометили как ОТДАННЫЕ - занести в коллекцию
+					if($(v).prop("checked")&&($("#was_in_buhp%{$prefix}%_"+id).val()==0)) marked_as_in.push(id);
+					
+				}
+			});
+			
+			
+			/*если обе коллекции пусты - не делаем ничего, пишем, что изменений нет*/
+			var to_go=true;
+			
+			if((marked_as_in.length==0)&&(marked_as_not_in.length==0)){
+				to_go=to_go&&false;
+				alert("Вы не изменили данные ни по одному счету.");	
+			}else{
+				var message="";
+				if(marked_as_in.length>0){
+					$.each(marked_as_in, function(k,v){
+						if(message.length!=0) message+=", ";
+						message+=$("#codep%{$prefix}%_"+v).val();
+					});
+					
+					if(!window.confirm("Внимание! Вы отметили поле \"Счет в бухгалтерии\" у следующих %{if $is_incoming==1}%входящих%{else}%исходящих%{/if}% счетов:\n"+message+"\nВы уверены, что хотите сохранить эти данные?")){
+						to_go=to_go&&false;
+					}
+				}
+				
+				if(to_go&&(marked_as_not_in.length>0)){
+					message="";
+					$.each(marked_as_not_in, function(k,v){
+						if(message.length!=0) message+=", ";
+						message+=$("#codep%{$prefix}%_"+v).val();
+					});
+					
+					if(!window.confirm("Внимание! Вы сняли отметку в поле \"Счет в бухгалтерии\" у следующих %{if $is_incoming==1}%входящих%{else}%исходящих%{/if}% счетов:\n"+message+"\nВы уверены, что хотите сохранить эти данные?")){
+						to_go=to_go&&false;
+					}
+				}
+				
+			}
+			
+			if(to_go){
+				//vnosim izmeneniya	
+				//alert('go');
+				$.ajax({
+					async: false,
+					url: "/js/bill%{$url_prefix}%.php",
+					type: "POST",
+					data:{
+						"action":"mass_is_in_buh_update",
+						"marked_as_not_in[]": marked_as_not_in,
+						"marked_as_in[]":marked_as_in
+					},
+					beforeSend: function(){
+					
+					},
+					success: function(data){
+					// alert(data);
+					 	alert("Изменения внесены.");
+						location.reload();
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления вопроса.");	
+					}	 
+				});
+			}
+			return false;
+			 
+		 });
+	 });
+	 %{/if}%
+	 </script>
+    
+    
+    </th>
+    %{/if}%
+    
+    
+    
+    <th scope="col" width="60">Создал</th>
+
+</tr>
+
+</thead>
+<tbody>
+
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+	<td width="60">
+    %{if $items[rowsec].kind==0}%
+    <a href="ed_bill%{$url_prefix}%.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">%{$items[rowsec].code}%</a>
+    %{else}%
+    <a href="ed_invcalc.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">%{$items[rowsec].code}%</a>
+    %{/if}%
+    <input type="hidden" id="codep%{$prefix}%_%{$items[rowsec].id}%" value="%{$items[rowsec].code}%" />
+    </td>
+    <td width="60">
+    %{$items[rowsec].supplier_bill_no}%
+    </td>
+    
+     <td width="60">
+    %{$items[rowsec].supplier_bill_pdate}%
+    </td>
+    
+      <td width="60" style="white-space:nowrap;">
+    %{$items[rowsec].sum_by_bill}%
+   </td>
+   
+    <td width="60">
+    %{section name=rowsec2 loop=$items[rowsec].accs}%
+    %{$items[rowsec].accs[rowsec2].summ}%<br />
+   
+   %{sectionelse}%
+   -
+   %{/section}%
+   </td>
+    
+    
+  
+    <td width="60">
+     %{$items[rowsec].status_name}% 
+      
+   
+    </td>
+      <td width="60">
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">%{$items[rowsec].supplier_name}%, %{$items[rowsec].supplier_opf}%</a>
+    </td>
+   <td width="60">
+    %{$items[rowsec].pdate_shipping_plan}%
+   </td>
+    
+    <td width="60">
+    %{section name=rowsec2 loop=$items[rowsec].accs}%
+    %{$items[rowsec].accs[rowsec2].given_pdate}%<br />
+   
+   %{sectionelse}%
+   -
+   %{/section}%
+   </td>
+    <td width="40">
+     %{section name=rowsec2 loop=$items[rowsec].accs}%
+    <a href="ed_acc%{$url_prefix}%.php?action=1&id=%{$items[rowsec].accs[rowsec2].id}%" target="_blank">%{$items[rowsec].accs[rowsec2].id}%</a><br />
+   
+   %{sectionelse}%
+   -
+   %{/section}%
+   </td>
+    <td width="40">
+    %{section name=rowsec2 loop=$items[rowsec].accs}%
+    <a href="ed_acc%{$url_prefix}%.php?action=1&id=%{$items[rowsec].accs[rowsec2].id}%" target="_blank">%{$items[rowsec].accs[rowsec2].given_no}%</a><br />
+   
+   %{sectionelse}%
+   -
+   %{/section}%
+   </td>
+    
+   <td width="60">
+    %{$items[rowsec].pdate_payment_contract}%
+   </td>
+  
+   %{if $show_payed_report}%
+   <td width="60">
+   %{section name=rowsec1 loop=$items[rowsec].pays}%
+     %{if $items[rowsec].pays[rowsec1].kind==0}%
+    %{$items[rowsec].pays[rowsec1].given_pdate}%<br />
+     %{else}%
+     %{$items[rowsec].pays[rowsec1].invcalc_pdate}%<br />
+     %{/if}%
+   %{sectionelse}%
+   -
+   %{/section}%
+   
+   </td>
+  %{/if}%
+  <td width="60" style="white-space:nowrap;">
+    %{$items[rowsec].sum_by_payed}%
+    
+   </td>
+   
+   
+   %{if $show_payed_report}%
+  
+    <td width="60" style="white-space:nowrap;">
+   %{section name=rowsec1 loop=$items[rowsec].pays}%
+    %{if $items[rowsec].pays[rowsec1].kind==0}%
+    %{$items[rowsec].pays[rowsec1].value}%<br />
+     %{else}%
+   %{$items[rowsec].pays[rowsec1].debt}%
+   	 %{/if}%
+   %{sectionelse}%
+   -
+   %{/section}%
+   </td>
+   <td width="60">
+   %{section name=rowsec1 loop=$items[rowsec].pays}%
+    %{if $items[rowsec].pays[rowsec1].kind==0}%
+    <a href="ed_pay%{if $is_incoming==0}%_in%{/if}%.php?action=1&id=%{$items[rowsec].pays[rowsec1].payment_id}%" target="_blank">%{$items[rowsec].pays[rowsec1].given_no}%</a><br />
+    %{else}%
+   <a href="ed_invcalc.php?action=1&id=%{$items[rowsec].pays[rowsec1].invcalc_id}%" target="_blank">%{$items[rowsec].pays[rowsec1].code}%</a><br />
+   %{/if}%
+   %{sectionelse}%
+   -
+   %{/section}%
+   </td>
+   %{/if}%
+    
+    
+    %{if !$show_payed_report}%
+      <td width="40" align="center">
+   
+   <input type="checkbox" id="is_in_buhp%{$prefix}%_%{$items[rowsec].id}%" value="%{$items[rowsec].id}%" %{if $items[rowsec].is_in_buh==1}% checked="checked"%{/if}% %{if (!$items[rowsec].can_in_buh) or ( $print==1 or $print==2)}% disabled="disabled" %{if !( $print==1 or $print==2)}% title="Невозможно внести изменения, причина: %{$items[rowsec].can_in_buh_reason|escape}%"%{/if}% %{/if}%   />
+   <input type="hidden" id="was_in_buhp%{$prefix}%_%{$items[rowsec].id}%" value="%{$items[rowsec].is_in_buh}%" />
+   
+   </td>
+   %{/if}%
+     
+    
+    <td width="60" >
+   
+    %{$items[rowsec].manager_name}%
+  
+    </td> 
+</tr>
+%{/section}%
+
+
+</tbody>
+</table>
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+
+
+
+<p />
+<strong>Итого %{if $begin_bydates_pdate!="-" and $end_bydates_pdate!="-"}%за период 
+
+
+%{if $begin_bydates_pdate!="-"}% с %{$begin_bydates_pdate}% %{/if}% 
+
+%{if $end_bydates_pdate!="-"}% по %{$end_bydates_pdate}% %{/if}% 
+  %{/if}%
+  
+%{if !$show_payed_report}%  
+было  запланировано к оплате %{$to_pay_per}% руб.,
+частично оплачено по сделкам %{$payed_per}% руб., остаток долга по оплате %{$to_pay_summ_per}% руб.
+
+%{else}% было оплачено %{$payed_per}% руб., общая сумма платежных поручений %{$sum_plat_por_per}% руб.
+
+%{/if}%
+</strong>
+
+<p />
+
+
+<table width="*" border="1" cellspacing="0" cellpadding="2" class="blacktable">
+<tr align="left" valign="top">
+	<th scope="col" width="80">
+     %{if $show_payed_report}%
+     Фактическая дата оплаты
+     %{else}%
+    Дата оплаты
+    %{/if}%
+    </th>
+	
+        %{if !$show_payed_report}%
+    <th scope="col" width="80">Сумма планируемых оплат на дату</th>
+    %{/if}%
+    %{if !$show_payed_report}%
+    <th scope="col" width="80">Оплачено частично по сделкам на дату</th>
+     %{else}%
+    <th scope="col" width="80">Оплачено на дату</th>
+    %{/if}% 
+        %{if !$show_payed_report}%
+    <th scope="col" width="80">Сумма к оплате с учетом ранее оплаченных</th>
+    %{/if}%
+</tr>
+%{section name=rowsec3 loop=$by_date_table}%
+  <tr align="left" valign="top">
+    <td width="80">
+    %{$by_date_table[rowsec3].pdate}%
+    </td>
+        %{if !$show_payed_report}%
+    <td width="80">
+    %{$by_date_table[rowsec3].to_pay}%
+    </td>
+    %{/if}%
+    <td width="80">
+    %{$by_date_table[rowsec3].payed}%
+    </td>
+        %{if !$show_payed_report}%
+    <td width="80">
+    %{$by_date_table[rowsec3].to_pay_summ}%
+    </td>
+    %{/if}%
+  </tr>
+%{/section}% 
+<!-- itogo -->
+  <tr align="left" valign="top">
+    <th width="80">
+    <strong>Итого</strong>
+    </th>
+        %{if !$show_payed_report}%
+    <th width="80">
+    <strong>%{$to_pay}%</strong>
+    </th>
+    %{/if}%
+    <th width="80">
+   <strong>%{$payed}%</strong>
+    </th>
+        %{if !$show_payed_report}%
+    <th width="80">
+   <strong> %{$to_pay_summ}%</strong>
+    </th>
+    %{/if}%
+  </tr>
+</table>
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
+<div style="font-size:12px;">
+<p />
+<strong>
+%{if !$show_payed_report}%
+Итого 
+было  запланировано к оплате %{$to_pay}% руб.,
+частично оплачено по сделкам %{$payed}% руб.,
+ остаток долга по оплате %{$to_pay_summ}% руб.
+%{else}%
+Итого было оплачено %{$payed}% руб., общая сумма платежных поручений %{$sum_plat_por}% руб.
+
+%{/if}%
+</strong>
+</div>
+
+
+<!--счета вх ост.<br />
+
+<table border="1" cellspacing="0" cellpadding="0">
+%{section name=acsec loop=$to_arr1}%
+<tr>
+<td>%{$to_arr1[acsec]}%</td>
+</tr>
+%{/section}%
+</table>
+<br />
+<br />
+счета осн. блок
+<br />
+
+<table border="1" cellspacing="0" cellpadding="0">
+%{section name=paysec loop=$to_arr2}%
+<tr>
+<td>%{$to_arr2[paysec]}%</td>
+</tr>
+%{/section}%
+</table>-->

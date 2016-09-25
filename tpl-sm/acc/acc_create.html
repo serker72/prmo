@@ -1,0 +1,238 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	was_changed=true;
+	
+});
+</script>
+<h1 style="float:left;">Создание реализации товара</h1>
+
+
+%{include file="every_help_dialog.html" filename="acc_create.htm" prefix="" description="создание реализации"  style="float:right; margin-bottom:10px;  margin-right:5px;"}%
+
+<br clear="all" />
+
+<form action="ed_acc.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$bill_id}%" />
+<input type="hidden" name="sh_i_id" id="sh_i_id" value="%{$sh_i_id}%" />
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Дата создания:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$now}%" name="pdate" id="pdate" />
+
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер с/ф:</label><br />
+
+<input type="text" size="10" maxlength="255" name="given_no" id="given_no" value=""   />
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="given_pdate">Заданная дата с/ф:</label><br />
+
+<input type="text" size="10" maxlength="10" %{if $can_given_pdate}% name="given_pdate" %{else}% disabled="disabled"%{/if}% id="given_pdate" value="%{$given_pdate|default:"-"}%" />
+%{if !$can_given_pdate}% 
+<input type="hidden" size="10" maxlength="10" name="given_pdate" id="given_pdate_hidden" value="%{$given_pdate|default:"-"}%" />
+%{/if}% 
+<script type="text/javascript">
+/*$(function(){
+	$("#given_pdate").bind("change", function(){
+		if( ($("#given_pdate_hidden").val()!='-')&&($("#given_pdate_hidden").val()!=$("#given_pdate").val())&&(("%{$acc_ins}%").length>0) ){
+			if(window.confirm("Внимание!\nВы меняете заданную дату реализации.\nЕсть связанные поступления: %{$acc_ins}%.\nВы уверены?")){
+			}else $("#given_pdate").val($("#old_given_pdate").val());
+		}
+	});
+});*/
+</script>
+
+
+<input type="hidden" size="10" maxlength="10"  id="old_given_pdate" value="%{$given_pdate|default:"-"}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id_string">Склад:</label><br />
+
+<input type="text" size="20" maxlength="255" id="sector_id_string" value="%{$sector_id_string}%" disabled="disabled" />
+</div>
+
+
+
+
+<input type="hidden" id="sector_id" name="sector_id" value="%{$sector_id}%"  />
+
+<input type="hidden" id="komplekt_ved_id" name="komplekt_ved_id" value="%{$komplekt_ved_id}%"  />
+
+
+<div style="float:right; margin-top:0px; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="0" hspace="5" />
+</a>
+
+<strong>Статус:</strong><br />
+
+не утверждено
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org|escape}%" disabled="disabled" />
+
+</div>
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Контрагент:</label><br />
+
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label><br />
+
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="contract_no">Договор №:</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$contract_no}%" id="contract_no" disabled="disabled"  style="width:100px;" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="contract_pdate">от:</label><br />
+
+<input type="text" size="10" maxlength="255" value="%{$contract_pdate}%" id="contract_pdate" disabled="disabled" style="width:60px;" />
+</div>
+
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+
+
+
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="bottom">
+<td width="50%">
+<strong>Позиции реализации:</strong> <br />
+
+
+</td>
+<td width="50%" align="right" valign="middle">
+
+
+ %{include file="acc/positions_edit_button.html"}%
+
+
+ <a href="#"   onclick="alert('В данном режиме отправка pdf-документов на электронную почту невозможна. Пожалуйста, нажмите кнопку Создать реализацию и перейти к утверждению для получения возможности отправки pdf-документов на электронную почту.'); return false;"><img src="/img/icons/emailr_in.png" width="24" height="24" alt="отправить pdf-документы на электронную почту..." title="отправить pdf-документы на электронную почту..." border="0" align="absmiddle" /></a>
+
+
+ <a href="#" target="_blank" onclick="alert('В данном режиме печать реализации недоступна. Пожалуйста, нажмите кнопку Создать реализацию и перейти к утверждению для получения возможности печати реализации.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать реализации..." title="печать реализации..." border="0" align="absmiddle" /></a>
+ 
+     
+ </td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2"> 
+
+%{include file="acc/position_actions.html" change_low_mode=0 change_high_mode=0}%
+</td>
+</tr>
+</table> 
+  
+ 
+ 
+ 
+<p />
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать реализацию" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать реализацию и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='ed_bill.php?action=1&id=%{$bill_id}%';
+}else location.href='ed_bill.php?action=1&id=%{$bill_id}%';" />
+
+
+</form>
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	if($("#positions_on_page_table tbody tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить реализацию без позиций! Пожалуйста, укажите позиции реализации!');
+		return false;
+	}
+	
+	if(!PeriodChecker('pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Дата создания должна быть не ранее %{$pch_date}%!');
+		return false;	
+	}else if(!PeriodChecker('given_pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Заданная дата с/ф должна быть не ранее %{$pch_date}%!');
+		return false;	
+	
+	}else{
+		
+		//return true;	
+		//каскад проверок по закрытым периодам
+		if(!PeriodCheckerByPeriod('pdate', closed_date )){
+			sfm_show_error_msg('Дата создания не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		}else if(!PeriodCheckerByPeriod('given_pdate', closed_date )){
+			sfm_show_error_msg('Заданная дата с/ф не должна попадать в закрытый период '+interval_string+'!');
+			return false;
+		}else return true;
+	}
+}
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+
+
+</script>
+

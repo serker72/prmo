@@ -1,0 +1,43 @@
+%{section name=possec loop=$codespos}%%{sectionelse}%
+<tr align="left" valign="top"  >
+    	<td colspan="3">
+        Не найдены сотрудники для выбора в документ.<br />
+		Пожалуйста, обратитесь к администраторам программы.
+        </td>
+</tr>        
+%{/section}%
+
+
+%{foreach from=$codespos item=pos}%
+
+
+ 
+    <tr align="left" valign="top" id="driver_row_%{$pos.id}%" >
+    	<td width="60">
+        
+        
+        	<input type="radio" id="driver_code_%{$pos.id}%" name="name_code" value="%{$pos.id}%" %{if $pos.is_current==true}% checked="checked"%{/if}%  />
+       
+       
+         
+         <a href="info.html?name=%{$pos.login}%" target="_blank">%{$pos.login}%</a>
+        </td>
+        
+        <td>
+         %{$pos.name_s}%
+       
+         
+        </td>
+      	<td>
+         %{$pos.position_s}%
+       
+         
+        </td>
+      
+       
+    </tr>
+    
+   
+    
+    
+%{/foreach}%

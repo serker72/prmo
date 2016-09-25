@@ -1,0 +1,244 @@
+<table width="100%" cellspacing="0" cellpadding="0" border="0" class="reptable">
+	
+	  
+    %{section name=rowsec loop=$items}%
+    <tr align="left" valign="top">
+    <td>
+    
+    	<div class="common_block">
+        <img src="%{$items[rowsec].pc_icon}%" border="0" alt=" %{$items[rowsec].pc_name}%" title="%{$items[rowsec].pc_name}%" align="left" vspace="0" hspace="3" />%{$items[rowsec].value}%
+		</div>
+        </td>
+        %{if $can_edit}%
+       <td width="20">
+        <div class="common_block">
+		<a href="#" id="edit_nest_%{$word}%_%{$items[rowsec].id}%" 
+class="reestr_edit16 reestr_button16" data-comment="редактировать %{$items[rowsec].value|escape:"html"}%"><img src="/img/icon_edit_16x16.gif" width="16" height="16" border="0" alt=""  /></a>
+        </div>
+		</td>
+        
+        <td width="20">
+        <div class="common_block">
+        <a href="#" id="delete_nest_%{$word}%_%{$items[rowsec].id}%" 
+class="reestr_delete16 reestr_button16" data-comment="удалить %{$items[rowsec].value|escape:"html"}%"></a>
+        </div>
+		</td>
+		%{/if}%
+        
+        
+        </tr>
+    %{/section}%
+    
+	</table>
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%
+
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_nest_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 300,
+    height: 350,
+    buttons: {
+        "Готово": function() { 
+        	
+         $(this).dialog("close"); }
+      }
+    
+    });
+	
+	
+	$("#add_%{$word}%").bind("click",function(){
+		
+		$('input:radio[name="%{$word}%_kind"][value="1"]')
+  .attr('checked',true);
+		$("#%{$word}%_value").attr("value","");
+		
+		
+		 $("#dialog_nest_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					//alert( $('input:radio[name="%{$word}%_kind"]:checked').val());
+					
+					$.ajax({
+						async: true,
+						url: "/js/user_s.php",
+						type: "POST",
+						data:{
+							"action":"add_%{$word}%",
+							"kind_id": $('input:radio[name="%{$word}%_kind"]:checked').val(),
+							"value": $("#%{$word}%_value").attr("value"),
+							"user_id":"%{$user_id}%"
+						},
+						beforeSend: function(){
+							  
+						},
+						success: function(data){
+						  //alert("%{$named}% добавлены!"); 
+						   $.ajax({
+							  async: true,
+							  url: "/js/user_s.php",
+							  type: "POST",
+							  data:{
+								  "action":"redraw_%{$word}%",
+								  "user_id":"%{$user_id}%"
+							  },
+							  beforeSend: function(){
+								 $("#%{$word}%").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" border="0" />');	
+							  },
+							  success: function(data){
+								 //alert(data);
+								  $("#%{$word}%").html(data);
+								
+							  },
+							  error: function(xhr, status){
+									//alert('e');  
+							  }	 
+						  });
+						},
+						error: function(xhr, status){
+							alert("Ошибка добавления %{$named}%.");	
+						}	 
+					});
+					
+					$(this).dialog("close");
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		
+		 $("#dialog_nest_%{$word}%").dialog("open");
+		 return false;
+	});
+	
+	%{section name=rowsec loop=$items}%
+	
+	
+	
+	
+	/*правка контакта*/
+	$("#edit_nest_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 $('input:radio[name="%{$word}%_kind"][value="%{$items[rowsec].kind_id}%"]').attr('checked',true);
+			 
+			 
+			 $("#%{$word}%_value").val("%{$items[rowsec].value|regex_replace:"/[\n]/":"\\n"|regex_replace:"/[\r]/":"\\r"|regex_replace:"/&quot;/":"\\\""}%");
+			 
+			  $("#dialog_nest_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						$.ajax({
+							async: true,
+							url: "/js/user_s.php",
+							type: "POST",
+							data:{
+								"action":"edit_nest_%{$word}%",
+								"value": $("#%{$word}%_value").attr("value"),
+								"kind_id": $('input:radio[name="%{$word}%_kind"]:checked').val(),
+								"id":"%{$items[rowsec].id}%",
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  
+							  $.ajax({
+								  async: true,
+								  url: "/js/user_s.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":%{$user_id}%
+								  },
+								  beforeSend: function(){
+									 $("#%{$word}%").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" border="0" />');		
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_nest_%{$word}%").dialog("open");
+			
+			
+			return false;
+		});
+	
+	
+	
+	
+	/*удаление контакта*/
+	$("#delete_nest_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+		if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_s.php",
+				type: "POST",
+				data:{
+					"action":"delete_nest_%{$word}%",
+					"id":"%{$items[rowsec].id}%",
+					"user_id":%{$user_id}%
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_s.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%",
+						  "user_id":"%{$user_id}%"
+					  },
+					  beforeSend: function(){
+							 $("#%{$word}%").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" border="0" />');	
+					  },
+					  success: function(data){
+						$("#%{$word}%").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("%{$named}%: Ошибка удаления.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+	
+	
+	
+	
+	%{/section}%
+	
+	
+				
+		
+	});
+</script>

@@ -1,0 +1,38 @@
+ <!-- права пользователей по объектам -->
+   %{section name=rsec loop=$rights_arr}%
+	<td width="50" align="center" title="Пользователь %{$user.login}% %{$user.name_s}%| Права на объект %{$rights_arr[rsec].rl_object_id}%. %{$rights_arr[rsec].object_name}%" id="column_%{$rights_arr[rsec].rl_object_id}%_%{$user.id}%" style=" width:50px; min-width:50px; max-width:50px;">
+    	
+    	%{section name=rrsec loop=$rights_arr[rsec].rights}%
+         
+        
+        	%{if $rights_arr[rsec].rights[rrsec].has_access}%
+            
+            <input type="hidden" value="1" name="state_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" id="state_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" />
+           <div  title="Пользователь %{$user.login}% %{$user.name_s}%| Права на объект %{$rights_arr[rsec].rl_object_id}%. %{$rights_arr[rsec].object_name}%" id="right_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" class="active" onMouseOver="OnMove('%{$rights_arr[rsec].rights[rrsec].letter}%','%{$rights_arr[rsec].rights[rrsec].rl_object_id}%', '%{$user.id}%');" onMouseOut="OnOut('%{$rights_arr[rsec].rights[rrsec].letter}%','%{$rights_arr[rsec].rights[rrsec].rl_object_id}%', '%{$user.id}%');" onClick="OnClick('%{$rights_arr[rsec].rights[rrsec].letter}%','%{$rights_arr[rsec].rights[rrsec].rl_object_id}%', '%{$user.id}%', '%{$rights_arr[rsec].rights[rrsec].anti_id}%', true);">
+          
+            %{else}%
+             <input type="hidden" value="0" name="state_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" id="state_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" />
+            
+            <div  title="Пользователь %{$user.login}% %{$user.name_s}%| Права на объект %{$rights_arr[rsec].rl_object_id}%. %{$rights_arr[rsec].object_name}%" id="right_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" class="inactive" onMouseOver="OnMove('%{$rights_arr[rsec].rights[rrsec].letter}%','%{$rights_arr[rsec].rights[rrsec].rl_object_id}%', '%{$user.id}%');" onMouseOut="OnOut('%{$rights_arr[rsec].rights[rrsec].letter}%','%{$rights_arr[rsec].rights[rrsec].rl_object_id}%', '%{$user.id}%');" onClick="OnClick('%{$rights_arr[rsec].rights[rrsec].letter}%','%{$rights_arr[rsec].rights[rrsec].rl_object_id}%', '%{$user.id}%', '%{$rights_arr[rsec].rights[rrsec].anti_id}%', true);">
+            %{/if}%
+            %{$rights_arr[rsec].rights[rrsec].letter}%
+           
+            %{if $rights_arr[rsec].rights[rrsec].has_access}%
+            </div>
+            %{else}%
+            </div>
+            %{/if}%
+            <input type="hidden" value="0" name="do_edit_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" id="do_edit_%{$rights_arr[rsec].rights[rrsec].letter}%_%{$rights_arr[rsec].rights[rrsec].rl_object_id}%_%{$user.id}%" />
+            
+           
+            
+        %{/section}%
+    </td>
+    
+    %{/section}%
+     %{if $smarty.section.rsec.total==0}%
+    
+    %{section name=obgsec loop=$obg}%
+    <td width="80">-</td>
+    %{/section}%
+    %{/if}%

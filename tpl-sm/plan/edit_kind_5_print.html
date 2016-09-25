@@ -1,0 +1,125 @@
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;">
+
+<h1>Заметка</h1>
+ 
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+    <strong> Тема:</strong> <br>
+    %{$bill.topic}%
+
+
+</div>
+
+
+
+
+ 
+ 
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+     <strong>
+    Дата создания: 
+     </strong><br />
+    
+    %{$bill.pdate}% 
+    
+</div>
+
+
+  
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+     %{if $bill.note_is_actual==1}%
+  
+   <br>
+
+    
+   
+    <strong>Статус: Актуальна</strong>
+   
+    
+    %{else}%
+<br>
+    <strong>Статус: Неактуальна</strong>
+  
+    
+    %{/if}%
+    
+</div>
+
+
+<br clear="all" />
+ 
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагент(ы):</h3>
+</div>
+ <div style="float:left; margin-right:00px;"> 
+ %{if $bill.wo_supplier==1}% <strong>Без контрагента</strong>%{/if}%  
+ 
+</div>
+<br clear="all" />
+<p />
+
+
+%{include file="plan/supplier_15_actions_print.html" many=true can_modify=$can_modify}%
+
+
+
+	
+
+  
+
+
+ <strong>Заметка: </strong><br>
+
+%{$bill.description}%
+<br>
+ 
+
+
+
+
+ 
+
+
+%{if $can_share}%
+<h3>Поделиться заметкой:</h3>
+
+%{include file="plan/share_actions_print.html"}%
+
+
+
+
+
+ <br clear="all" />
+<p />
+%{/if}%
+
+
+
+
+<h3>Файлы:</h3>
+
+%{$files}%
+
+ <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 
+
+ </body>
+ </html>

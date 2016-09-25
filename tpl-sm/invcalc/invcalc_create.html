@@ -1,0 +1,406 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+var old_inventory_pdate='%{$now}%';
+var old_sector_id=0;
+var old_storage_id=0;
+
+
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#invcalc_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#akt_given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	
+});
+</script>
+%{include file="annul_dialog.html"}%
+<div style="float:left; margin-right:20px;"><h1>Создание инвентаризационного акта</h1></div>
+
+
+%{include file="every_help_dialog.html" filename="invcalc_edit.htm" prefix="_calc" description="создание акта корректировки взаиморасчетов"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+
+
+<br clear="all" />
+
+
+
+<div style="float:right; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;">
+</a>
+
+<strong>Статус:</strong><br />
+
+не утверждено 
+
+
+</div>
+<br clear="all" />
+<p />
+
+<form action="noscripts.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+
+<div style="float:left; margin-right:0px;">
+
+
+    <div style="float:left; margin-right:20px;  ">
+    <strong>Номер:</strong><br />
+    
+    
+    <input type="hidden" name="code" value="%{$code}%" />
+    <input type="text" size="11" maxlength="12"  value="%{$code}%" id="code" disabled="disabled" />
+    </div>
+	<br clear="all" />
+
+	<p />
+    
+    <div style="float:left; margin-right:20px; ">
+   
+    
+    <label for="invcalc_pdate">Дата пров.<br />
+    корр-ки вз.р.:</label><br />
+    
+    <input type="text" size="10" maxlength="12"  value="%{$now}%" name="invcalc_pdate" id="invcalc_pdate" />
+    
+    </div>	
+    
+    
+    <div style="float:left; margin-right:20px; ">
+    <br />
+   
+    
+    <label for="supplier_id">Контрагент</label>
+    <br />
+    <select id="supplier_id" name="supplier_id" style="width:250px;">
+    %{html_options values=$supplier_ids selected=$supplier_id output=$supplier_names}%
+    </select>
+    
+    </div>
+    <p />
+    <br clear="all" />
+    
+    
+    <div style="float:left; margin-right:20px;">
+    <label for="given_no">Заданный №:</label><br />
+
+    
+    <input type="text" size="10" maxlength="512" value="" name="given_no" id="given_no" />
+    </div>
+    
+    <div style="float:left; margin-right:20px;">
+    <label for="">Организация:</label><br />
+	
+    
+    <input type="text" size="30" maxlength="255" value="%{$org}%" id="org" disabled="disabled" style="width:250px;" />
+    </div>
+        
+</div>
+<div style="float:left; margin-right:10px;">
+
+    <div style="float:left; border:1px solid blue; padding:2px 2px;  width:550px; margin-bottom:5px;">
+    %{include file="invcalc/debt_actions.html"}%
+    </div>
+
+
+	<br clear="all" />
+    
+    <div style="float:left; border:1px solid blue; padding:2px 2px; width:550px;">
+    
+    <h4>Основания для корректировки:</h4>
+
+    %{section name=reassec loop=$reasons}%
+    
+    <div style="float:left;">
+    <input type="radio" name="reason_id" id="reason_id%{$reasons[reassec].id}%" value="%{$reasons[reassec].id}%" /> <strong>%{$reasons[reassec].name}%:</strong></div>
+    
+    
+    %{if $reasons[reassec].id==1}%
+    <br clear="all" />
+    <div id="reason_section_%{$reasons[reassec].id}%" style="padding-left:20px;">  
+      
+      <div style="float:left; margin-right:20px;">
+      <label for="akt_given_pdate">Дата акта сверки:</label>
+      <input type="text" size="10" maxlength="12"  value="" name="akt_given_pdate" id="akt_given_pdate" disabled="disabled" />
+      </div>
+      
+      <div style="float:left; margin-right:0px;">
+      <label for="akt_given_no">Заданный № акта сверки:</label>
+      <input type="text" size="10" maxlength="512" value="" name="akt_given_no" id="akt_given_no" disabled="disabled" />
+      </div>
+      <br clear="all" />
+      
+    </div>  
+    %{elseif $reasons[reassec].id==2}% 
+    
+     <div style="float:left; margin-right:5px; padding-top:5px;">
+    &nbsp;<small>(не менее 20 символов)</small>
+    </div>
+    <br clear="all" />
+    
+    <div id="reason_section_%{$reasons[reassec].id}%" style=" float:left;">   
+      <div style="float:left; margin-right:20px;">
+      <textarea name="reason_txt" id="reason_txt" cols="80" rows="2" disabled="disabled"></textarea>
+      
+      </div>
+      <br clear="all" />
+    </div>  
+    %{/if}%
+    
+    
+    
+    <p />
+    <script type="text/javascript">
+    $(function(){
+        $("input[id=reason_id%{$reasons[reassec].id}%]").bind("click", function(){
+            
+            
+            $("div[id^=reason_section_] input, div[id^=reason_section_] textarea").prop("disabled",true);	
+            
+            $("div[id=reason_section_%{$reasons[reassec].id}%] input").prop("disabled",false);
+            $("div[id=reason_section_%{$reasons[reassec].id}%] textarea").prop("disabled",false);
+            
+        });
+    });
+    </script>
+    %{/section}%
+    
+    
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать акт" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать акт и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='invent.php?tab_page=2';
+}else location.href='invent.php?tab_page=2';" />
+
+
+</form>
+ 
+<script type="text/javascript">
+ $(function(){
+	
+	$("#crea_form").attr("action",'ed_invcalc.php');
+	
+	$("#crea_form").bind("submit",function(){
+		var can_go=true;
+		
+		//проверка дат
+		if(!PeriodChecker('invcalc_pdate', '%{$pch_date}%')){
+			alert("Дата проведения корректировки взаиморасчетов должна быть не ранее %{$pch_date}%!");
+			can_go=can_go&&false;
+			return false;
+		}
+		
+		if(!PeriodCheckerByPeriod('invcalc_pdate', closed_date )){
+			alert('Дата проведения корректировки взаиморасчетов не должна попадать в закрытый период '+interval_string+'!');
+			can_go=can_go&&false;
+			return false;	
+		}
+		
+		
+		if(can_go&&($("#supplier_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Выберите контрагента!");
+			$("#supplier_id").focus();
+		}
+		
+	
+		
+		
+		
+		//проверка даты инвентаризации
+		if(can_go&&($("#invcalc_pdate").val()=='')){
+			can_go=can_go&&false;
+			alert("Укажите дату проведения корректировки взаиморасчетов!");
+			$("#invcalc_pdate").focus();
+		}
+		
+		
+		
+		if(can_go){
+			
+			if(($('#reason_id1').prop("checked")==false)&&($('#reason_id2').prop("checked")==false)){
+				can_go=can_go&&false;
+				alert("Укажите основания для корректировки!");
+			}
+			
+			
+		}
+		
+		
+		if(can_go&&(isNaN($("#debt").val().replace("\,","\.")))){
+			can_go=can_go&&false;
+			alert("Укажите задолженность в руб. на дату проведения корректировки  взаиморасчетов!");
+			$("#debt").focus();
+		}
+		
+		if(can_go&&(parseFloat($("#debt").val().replace("\,","\."))<0)){
+			can_go=can_go&&false;
+			alert("Укажите задолженность в руб. на дату проведения корректировки  взаиморасчетов!");
+			$("#debt").focus();
+		}
+		
+		if(can_go){
+			
+			if(($("input[name=debt_id]").filter(":checked").val()==1)&&(parseFloat($("#debt").val().replace("\,","\."))!=0)){
+				can_go=can_go&&false;
+				alert("Значение задолженности должно быть равно нулю, если выбрана нулевая задолженность.");
+				$("#debt").focus();	
+			}
+			if(($("input[name=debt_id]").filter(":checked").val()>1)&&(parseFloat($("#debt").val().replace("\,","\."))==0)){
+				can_go=can_go&&false;
+				alert("Значение задолженности должно быть не равно нулю, если не выбрана нулевая задолженность.");
+				$("#debt").focus();	
+			}
+		}
+		
+		
+		if(can_go&&($('#reason_id1').prop("checked"))){
+			if(can_go&&($("#akt_given_pdate").val()=='')){
+				can_go=can_go&&false;
+				alert("Укажите дату акта сверки!");
+				$("#akt_given_pdate").focus();
+			}
+			
+			if(can_go&&($("#akt_given_no").val()=='')){
+				can_go=can_go&&false;
+				alert("Укажите заданный номер акта сверки!");
+				$("#akt_given_no").focus();
+			}
+		}
+		
+		if(can_go&&($('#reason_id2').prop("checked"))){
+			if(
+			($("#reason_txt").val().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 20){
+				can_go=can_go&&false;
+				alert("Укажите причину!");
+				$("#reason_txt").focus();
+			}
+		}
+		
+		
+		
+		if(can_go){
+			dateObj = new Date();
+			 d=dateObj.getDate();
+		  
+			 m=dateObj.getMonth();
+				
+				   
+			dateObj_now=new Date(dateObj.getFullYear(),m,d,0,0,0,0); 
+			dateObj1= new Date( $("#invcalc_pdate").val().substring(6,10), parseFloat($("#invcalc_pdate").val().substring(3,5))-1, $("#invcalc_pdate").val().substring(0,2));
+			
+			//alert("i"+($("#inventory_pdate").val()).substring(6,10)+" j"+(parseFloat($("#inventory_pdate").val().substring(3,5)))+" k"+$("#inventory_pdate").val().substring(0,2)+" "+dateObj1+dateObj_now);
+			//can_go=can_go&&false;
+			if(dateObj1>dateObj_now){
+				can_go=can_go&&false;
+				alert("Невозможно сохранить акт с датой проведения корректировки взаиморасчетов позже сегодняшней!");
+			}
+			
+		}
+		
+		
+		
+		
+		//контроль даты создания...
+		if(can_go){
+			$.ajax({
+			  async: false,
+			  url: "/js/invcalc.php",
+			  type: "POST",
+			  data:{
+				  "action":"check_invcalc_pdate",
+				  "supplier_id":$("#supplier_id").val(),
+				  "pdate":$("#invcalc_pdate").val(),
+				  "id":0
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				if(data!=0){
+					
+					can_go=can_go&&false;
+					//alert("Внимание! Вы выбрали недопустимую дату, так как по состоянию на выбранную дату "+data+"\nПожалуйста, выберите более позднюю дату.");
+					$('#annul_dialog').dialog({ title: "Невозможно сохранить документ" });
+					 
+					$('#annul_dialog_text').html('Внимание! Вы выбрали недопустимую дату, так как по состоянию на выбранную дату '+data+'.<br /> Пожалуйста, выберите более позднюю дату.');
+   					$('#annul_dialog').dialog('open');
+				}
+			  },
+			  error: function(xhr, status){
+			//	 alert("Ошибка загрузки реквизитов.");	
+				can_go=can_go&&false;
+				alert("Ошибка. Невозможно проверить акты по дате проведения корректировки взаиморасчетов. Пожалуйста, повторите попытку позже.");
+			  }	 
+			});
+			
+		}
+		
+		
+		
+		return can_go;
+	});
+  });
+ 
+</script>

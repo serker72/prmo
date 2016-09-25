@@ -1,0 +1,204 @@
+<script type="text/javascript">
+	
+	function codebuild(){
+		var selected_bdetails=0;
+		
+		 $.each($("#code_list table tr td input[type=radio]"), function(key, value){
+			  if(value.checked){
+				  selected_bdetails=$(value).val();
+			  }
+		  });
+		  
+		  
+		   if($("#code_id").val()!=selected_bdetails){
+			  
+			  //подгружаем все данные по реквизитам
+			  if(selected_bdetails>0){
+				  $.ajax({
+					async: true,
+					url: "/js/cash.php",
+					type: "GET",
+					dataType: "json",
+					data:{
+						"action":"retrieve_code",
+						"id":selected_bdetails
+					},
+					beforeSend: function(){
+					  
+					},
+					success: function(data){
+					  
+					  $("#code_id_string").attr("value",''+data.code+' '+data.name+' '+data.descr);
+					  $("#code_id").attr("value",data.id);
+					  
+					  
+					  //блок выбора к-та 
+					  if(data.id==38){
+						$("#supplier_block").show();  
+						//сотрудник-получатель = тек. сотр-ку
+						//тек. сотр-ка вывести из cash.js
+						
+						$("#responsible_user_id").val(data.current_user_id);
+					  }else{
+						 $("#supplier_block").hide();   
+						 $("#supplier_id").val('');
+						 $("#supplier_id_string").val('');
+					  }
+					  
+					  //месяц, год - зарплата
+					  if((data.id==8)||(data.id==9)||(data.id==10)||(data.id==11)||(data.id==12)){
+						 $("#month_block").show();
+						// $("#year_block").show(); 
+					  }else{
+						  $("#month_block").hide();
+						// $("#year_block").hide(); 
+						  $("#month").val(0);
+						   $("#year").val(0);
+					  }
+					  
+					  //квартал, год - налоги
+					  if((data.id==17)||(data.id==18)||(data.id==62)){
+						 $("#quarter_block").show();
+						// $("#year_block").show(); 
+					  }else{
+						  $("#quarter_block").hide();
+						// $("#year_block").hide(); 
+						  $("#quarter").val(0);
+						 //  $("#year").val(0);
+					  }
+					  
+					   if((data.id==8)||(data.id==9)||(data.id==10)||(data.id==11)||(data.id==12)||(data.id==17)||(data.id==18)||(data.id==62)){
+						   $("#year_block").show(); 
+						   
+					   }else{
+						   $("#year_block").hide(); 
+						   $("#year").val(0);
+						   
+					   }
+					  
+					},
+					error: function(xhr, status,m){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					   //alert("Ошибка выбора кода оплаты."+status+m);
+					}	 
+				  });
+			  }
+			  
+		  }
+		 
+		  $("#code_dialog").dialog("close"); 
+	}
+	
+	
+	
+$(function(){
+	
+	
+	
+	
+	
+	
+	$("#code_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 550,
+		height: 550,
+		buttons: {
+			"Готово": codebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+	
+	
+	$("#code_select").bind("click",function(){
+		//раскрывать, только если выбран п-к
+		
+			$("#code_dialog").dialog("open");	
+		
+	});
+	
+	$("#code_clear").bind("click",function(){
+		//очистка банковского счета
+		$("#code_id_string").attr("value","");
+		$("#code_id").attr("value","");
+		
+		$("#supplier_block").hide();
+		$("#month_block").hide();
+		$("#year_block").hide(); 
+		
+		$("#quarter_block").hide();
+		
+	});
+	
+	 
+});
+</script>
+
+
+
+<div id="code_dialog" title="Выберите код оплаты" style="display:none;">
+
+
+
+  <a href="#" id="code_dialog_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" align="right" vspace="3" hspace="5" /></a>
+
+	
+    %{if $can_edit}%
+  <!--  <input type="button" id="add_code" value="Добавить код оплаты..." />-->
+  <div id="add_code_dialog" title="Код оплаты">
+    	
+        <label for="add_code_dialog_name">Код</label><br />
+    	<input type="text" value="" id="add_code_dialog_name" size="5" maxlength="20" />
+        <p />
+        
+        <label for="add_code_dialog_descr">Расшифровка</label><br />
+        <input type="text" value="" id="add_code_dialog_descr" size="60" maxlength="512" />
+        <p />
+        
+        <input id="add_code_dialog_in_report" type="checkbox" value="1" />
+        <label for="add_code_dialog_in_report">участвует в отчете "Рентабельность бизнеса"</label>
+    
+  </div>
+    %{/if}%
+	<br clear="all" />
+	
+    
+  <div id="code_dialog_help" title="Информация о выборе кода оплаты" style="display:none;">
+    
+    
+    
+  </div>
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#code_dialog_help").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 600,
+		  height: 180,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#code_dialog_info").bind("click", function(){
+			$("#code_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+	<div style="width:510px; height:400px; border:1px solid gray; overflow:auto;" id="code_list">
+    %{include file="cash/code_list.html" }%
+  </div>
+
+</div>

@@ -1,0 +1,66 @@
+
+%{if $item.blink}%
+<img src="/img/new_message.gif" width="13" height="10" alt="" border="0" />
+%{/if}%
+
+%{if $item.status_id==3}%
+    аннулирована
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="deaunnul_%{$item.id}%" />
+    %{/if}%
+%{elseif $item.status_id==1}%
+    не утверждена
+%{elseif $item.status_id==2}%  
+   
+    утверждена
+%{elseif $item.status_id==11}%
+
+новая
+%{elseif $item.status_id==12}%
+не выполнена
+%{elseif $item.status_id==13}%    
+выполнена     
+%{/if}%
+
+<br />
+
+    %{$item.confirmed_price_name}% %{$item.confirmed_price_login}% %{$item.confirm_pdate}%
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		 %{if $item.status_id==3 and $can_restore}%
+		  $("#deaunnul_%{$items[rowsec].id}%").bind("click",function(){
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$items[rowsec].id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#item_row_%{$items[rowsec].id}%").html('<td width="*" colspan="9"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   $("#item_row_%{$items[rowsec].id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+		
+	});
+	</script>
+    
+    
+   
+    
+    
+    

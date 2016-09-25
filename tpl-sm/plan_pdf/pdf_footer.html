@@ -1,0 +1,38 @@
+ <html><head><script>
+  function subst() {
+    var vars={};
+    var x=document.location.search.substring(1).split('&');
+    for (var i in x) {var z=x[i].split('=',2);vars[z[0]] = unescape(z[1]);}
+    var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
+    for (var i in x) {
+      var y = document.getElementsByClassName(x[i]);
+      for (var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
+    }
+  }
+  </script>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+</head><body style="border:0; margin: 0;" onLoad="subst()">
+
+   <br> 
+   
+   
+   
+<div align="left" style=" float:left;  font-size: 12px;"  >
+	Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+
+</div>
+<div align="right" style="  float:right; font-family:'Times New Roman', Times, serif; font-size: 14px;">
+  /<span class="page"></span>/
+  </div>
+
+<br>
+
+
+
+<div align="left">
+ <!-- <img  src="/img/topdf/print-foot.jpg" width="800" height="59" /> -->
+ 	<img src="/img/topdf/foot800.jpg" width="800" height="60" />
+ </div>
+
+   </body></html>
+  

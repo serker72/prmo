@@ -1,0 +1,527 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/inputmask/jquery.inputmask.js"></script> 
+
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#contract_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	
+	touchScroll('contact');
+	touchScroll('supplier_cities');
+
+});
+</script>
+<form action="ed_organization.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$user.id}%" />
+
+%{if $user.is_active==0}%
+<div style="width: 400px; border:1px solid silver; padding:5px 5px; overflow:auto;">
+  <img src="/img/voskl.png" width="64" height="64" alt="" border="0" align="left" hspace="5" />
+ 	<strong>Внимание! Карта организации не активна!</strong><br />
+   
+</div>
+<p />
+%{/if}%
+
+
+%{include file="every_help_dialog.html" filename="org_edit.htm" prefix="" description="редактирование организации"  style="float:right;  margin-right:10px;" is_right=true}%
+
+%{include file="error_window.html"   prefix="" }%
+
+<div style="float:left; margin-right:10px;">
+<label for="full_name">Полное наименование (без кавычек):</label><br />
+<input name="full_name" id="full_name"  size="30" maxlength="512" %{if !$can_modify}% disabled="disabled"%{/if}% value="%{$user.full_name|escape}%" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+<select style="width:80px;" name="ur_or_fiz" id="ur_or_fiz" %{if !$can_modify}% disabled="disabled"%{/if}%>
+<option value="0" %{if $user.ur_or_fiz==0}% selected="selected"%{/if}%>Юр. лицо</option>
+<option value="1" %{if $user.ur_or_fiz==1}% selected="selected"%{/if}%>Физ. лицо</option>
+</select>
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="opf_id">ОПФ:</label><br>
+<select name="opf_id" id="opf_id" style="width:60px;" %{if !$can_modify}% disabled="disabled"%{/if}%>
+%{html_options values=$opf_ids selected=$user.opf_id output=$opfs}%
+</select>
+
+ 
+  <input type="button" value="Редактировать..." id="expand_opf" %{if !$can_modify or !$can_expand_opf}% disabled="disabled"%{/if}% />
+  
+  
+  
+  
+  <div id="opf_dialog" title="Виды ОПФ" style="display:none;">
+  <div id="opf_dic">
+  %{include file="org/d_opfs.html"}%
+  </div>
+  
+  Новый вид ОПФ:<br>
+  <input type="text" id="new_opf" size="30" maxlength="255" />
+  <input type="button" value="Добавить ОПФ" id="add_new_opf"  />
+  </div>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+    $("#opf_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 350,
+    height: 490,
+    buttons: {
+        "Готово": function() { 
+        	$.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+          
+          $.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_page"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                  $("#opf_id").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+        
+        $(this).dialog("close"); }
+      }
+    
+    });
+    $("#expand_opf").bind("click",function(){
+        $("#opf_dialog").dialog("open");
+    });
+    
+    function RedrawDic(){
+          $.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_opf_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#opf_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+      }
+      
+      $("#add_new_opf").bind("click", function(){
+          if($("#new_opf").attr("value").length<3){
+              $("#new_opf").focus();
+              return false;
+          }
+          
+          $.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"add_opf",
+                  "opf":$("#new_opf").attr("value")
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                 alert("Вид ОПФ добавлен!"); 
+                 $("#new_opf").attr("value","");
+                 RedrawDic();
+                // location.reload();
+              },
+              error: function(xhr, status){
+                  alert("Ошибка добавления ОПФ.");	
+              }	 
+          });
+          
+      });
+    
+  });
+  </script>
+  
+</div>
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+<input type="button" value="Учредительные документы..." id="view_contract" onclick="location.href='contracts_org.php?sup_id=%{$user.id}%';" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="inn">ИНН:</label>
+<input type="text" size="15" maxlength="255" name="inn" id="inn" value="%{$user.inn}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="kpp">КПП:</label>
+<input type="text" size="15" maxlength="255" name="kpp" id="kpp" value="%{$user.kpp}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="okpo">ОКПО:</label>
+<input type="text" size="15" maxlength="255" name="okpo" id="okpo" value="%{$user.okpo}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+ 
+<strong>Расписание работы (МСК):</strong>
+<div style="float:left; margin-right:20px; white-space:nowrap;">
+<label for="time_from_h">с:</label>
+<select name="time_from_h" id="time_from_h" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m" id="time_from_m" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:20px; white-space:nowrap;">
+<label for="time_to_h">по:</label>
+<select name="time_to_h" id="time_to_h" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m" id="time_to_m" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="chief">Руководитель</label><br />
+<input type="name" value="%{$user.chief}%" name="chief" id="chief" size="30" maxlength="255"  disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="main_accountant">Главный бухгалтер</label><br />
+<input type="name" value="%{$user.main_accountant}%" name="main_accountant" id="main_accountant" size="30" maxlength="255"   disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:20px;"><br />
+
+<input type="button" value="..." %{if $can_modify==false}% disabled="disabled"%{/if}% onclick="location.href='supplier_ruks.php?supplier_id=%{$user.id}%';" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+ 
+
+
+%{include file="org/cities.html"}%
+
+    
+<strong>Контактная информация:</strong>
+
+
+<div id="contact" style="border:1px solid silver; min-width:720px; width:auto; height:150px; overflow:auto;">
+        %{include file="org/contacts.html" items=$contacts word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    </div>
+    %{if $can_cont_edit}%
+    %{include file="org/contact_dialog.html" word="contact" named="Контакты" user_id=$user.id can_edit=$can_cont_edit}%
+    %{/if}%
+
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; min-width:350px; width:49%; margin-right:10px;">
+<label for="legal_address">Юридический адрес:</label><br>
+<textarea cols="55" rows="5" style=" width:100%; height:95px;" name="legal_address" id="legal_address" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$user.legal_address}%</textarea>
+</div>
+
+<div style="float:left; margin-right:0px; min-width:355px; width:50%;">
+<b>Фактические адреса:</b>
+<div id="fakt_addr" style="border:1px solid silver;  width:100%; height:100px; overflow:scroll;">
+        %{include file="org/d_fakt_addr.html" items=$fact_addrs word="fakt_addr" named="Фактические адреса" user_id=$user.id can_edit=$can_fa_edit}%
+    </div>
+    %{if $can_fa_edit}%
+    %{include file="org/d_fakt_addr_dialog.html" word="fakt_addr" named="Фактические адреса" user_id=$user.id can_edit=$can_fa_edit}%
+    %{/if}%
+</div>
+<br clear="all" />    
+<p />  
+
+ 
+
+
+
+
+<a name="req"></a>
+<h4>Реквизиты:</h4>
+    <div id="req" style="border:1px solid silver; min-width:720px; width:auto; height:100px; overflow:scroll;">
+        %{include file="org/d_rekvizit.html" items=$rekviz word="req" named="Реквизиты" user_id=$user.id can_edit=$can_modify}%
+    </div>
+    %{if $can_req_edit}%
+    %{include file="org/d_bank_dialog.html" word="req" named="Реквизиты" user_id=$user.id can_edit=$can_modify}%
+    %{/if}%
+<p />
+
+
+
+
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1"  %{if $user.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+<span id="is_confirmed_confirmer">%{$confirmer_is_confirmed}%</span>
+%{if $can_confirm}%
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("change",function(){
+		if(	this.checked){
+			 state=1;
+		}else{
+			 state=0;
+		}
+		
+		$.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+%{/if}%
+<br />
+
+
+
+
+<input type="checkbox" name="is_active" id="is_active" value="1" %{if $user.is_active==1}% checked="checked"%{/if}% %{if $can_confirm_active==false}% disabled="disabled"%{/if}% /><label for="is_active">Карта активна</label>
+<span id="is_active_confirmer">%{$confirmer}%</span>
+%{if $can_confirm}%
+<script type="text/javascript">
+$(function(){
+	$("#is_active").bind("change",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		%{if $is_only}%
+		if(state==0){
+			if(window.confirm("ВНИМАНИЕ!\nВы снимаете утверждение активности единственной активной организации!\nВ результате этой операции Вы не сможете работать в программе ни под одной организацией!\nПродолжить?")){
+				if(window.confirm("Вы уверены?\nВ результате этой операции Вы не сможете работать в программе ни под одной организацией!")){
+					if(window.confirm("Вы точно уверены?")){
+						
+					}else $("#is_active").prop("checked", true);
+					
+				}else $("#is_active").prop("checked", true);
+			}else $("#is_active").prop("checked", true);
+			
+			if($("#is_active").prop("checked")) return;
+		}
+		%{/if}%
+		
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/ed_org.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_active_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#is_active_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+%{/if}%
+
+<p />
+
+
+%{if $can_edit}%
+<input type="submit" id="doEdit" name="doEdit" value="Сохранить и перейти к списку организаций" />
+<input type="submit" id="doEditStay" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='organizations.php';
+}else location.href='organizations.php';" />
+
+
+
+
+</form>
+
+<script type="text/javascript">
+$(function(){
+	var kind_update=0;
+	
+	
+	$("#doEdit").bind("click",function(){
+		kind_update=0;
+	});
+	
+	$("#doEditStay").bind("click",function(){
+		kind_update=1;
+	});
+	
+	
+	%{if $user.is_confirmed==0}%
+	
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		
+		
+		//контроль утверждения карты
+		if($("#is_confirmed").prop("checked")==false){
+			
+			if(window.confirm("Пожалуйста, утвердите заполнение карты организации, иначе изменения не будут сохранены:\n\nОК - заполнение будет утверждено, изменения будут сохранены\n\nОтмена - изменения не будут сохранены, заполнение карты будет утверждено автоматически.")){
+				$("#is_confirmed").prop("checked", true);
+				$("#is_confirmed").trigger("change");
+			}else{
+				
+				$.ajax({
+					async: false,
+					url: "/js/ed_org.php",
+					type: "POST",
+					data:{
+						"action":"confirm_auto",
+						"id":"%{$user.id}%",
+						"full_name":$("#full_name").val(),
+						"ur_or_fiz":$("#ur_or_fiz").val(),
+						"opf_id":$("#opf_id").val(),
+						"inn":$("#inn").val(),
+						"kpp":$("#kpp").val(),
+						"okpo":$("#okpo").val(),
+						/*"chief":$("#chief").val(),
+						"main_accountant":$("#main_accountant").val(),*/
+						"time_from_h":$("#time_from_h").val(),
+						"time_from_m":$("#time_from_m").val(),
+						"time_to_h":$("#time_to_h").val(),
+						"time_to_m":$("#time_to_m").val(),
+						"legal_address":$("#legal_address").val()
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					 
+					  
+					},
+					error: function(xhr, status){
+						//alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+				
+				if(kind_update==0){
+						location.href='organizations.php';						
+				}else{
+
+					location.href='ed_organization.php?action=1&id=%{$user.id}%';
+				}
+				
+				res=res&&false;
+			}
+				
+		}
+		
+		
+		return res;
+	});
+	%{/if}%
+	
+});
+</script>

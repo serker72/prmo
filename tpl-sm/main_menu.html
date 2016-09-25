@@ -1,0 +1,373 @@
+ 
+
+%{section name=rowsec loop=$menu}%%{/section}%
+%{if $smarty.section.rowsec.total>0}%
+
+
+
+<ul class="menu">
+%{section name=rowsec loop=$menu}%
+	%{section name=subsec loop=$menu[rowsec].subs}%%{/section}%
+     
+     %{if ($smarty.section.subsec.total==0 and ($menu[rowsec].item.url=="" or $menu[rowsec].item.url=="#")) or ($menu[rowsec].item.is_switch and !$menu[rowsec].item.has_change_base)  }%  
+    %{else}%
+    
+    
+    
+     <li %{if $menu[rowsec].item.is_pic==1  or $menu[rowsec].item.is_switch}% class="pic"%{else}% class="cat" %{/if}%>
+    
+    
+    <a href="%{$menu[rowsec].item.url}%" class=" %{if $menu[rowsec].item.is_pic==1}% pic %{/if}% %{if $menu[rowsec].item.is_messenger}% messenger_link %{/if}%   %{if $menu[rowsec].item.is_active}%active%{/if}%" %{if $menu[rowsec].item.is_pic==1}% style="background-image:url(%{$menu[rowsec].item.pic}%);" data-comment="%{$menu[rowsec].item.name|escape}%" %{/if}%>
+            
+             %{if $menu[rowsec].item.is_pic==1 or $menu[rowsec].item.is_switch}%
+            
+            %{else}%
+            <span class="menu-header %{if $menu[rowsec].item.is_active}%active%{/if}%">
+            %{$menu[rowsec].item.name}%
+            </span>
+            %{/if}%
+          </a> 
+    
+    
+    %{if $menu[rowsec].item.is_messages==1}%
+    <span id="total_count_messages" style="font-size:10px;">
+    %{if $menu[rowsec].item.count_of_messages>0}%(%{$menu[rowsec].item.count_of_messages}%)%{/if}%
+    </span>
+    <script type="text/javascript">
+    function CalcNewMessages(){
+	  if(_window_is_active)  $.ajax({
+		  async: true,
+		  url: "/js/checknew.php",
+		  type: "POST",
+		  data:{
+			  "action":"calc_new_messages"
+		  },
+		  beforeSend: function(){
+			 // $("#total_count_messages").html('<img src="/img/icon_wait.gif" width="16" height="16" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	if(data==0) $("#total_count_messages").empty();
+			else $("#total_count_messages").html(data);
+			 
+		  },
+		  error: function(xhr, status,error){
+			  
+			 // $("#total_count_messages").html(error);
+			// location.href="index.php";
+			 if(error.indexOf('Forbidden')!=-1){
+				location.href="index.php";
+			 }else $("#total_count_messages").html("err"); 
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	$(function(){
+		setInterval('CalcNewMessages()', 60000);
+	});
+    </script>
+    %{/if}%
+    
+    
+    
+    %{if $menu[rowsec].item.is_messenger==1}%
+    
+       <a href="%{$menu[rowsec].item.url}%" %{if $menu[rowsec].item.is_messenger}% class="messenger_link"%{/if}% ><span id="messenger_count_messages" style="font-size:10px;">
+    %{if $menu[rowsec].item.messenger_count_of_messages>0}%(%{$menu[rowsec].item.messenger_count_of_messages}%)%{/if}%
+    </span></a>
+    
+    
+    
+      <script type="text/javascript">
+	   var messenger_global_semafor=0; //глобальный семафор обновления кол-ва новых сообщений
+	   var messenger_xhr_global; //идентификатор запроса на обновление кол-ва новых сообщений
+	   var messenger_count_new_messages="%{$menu[rowsec].item.messenger_count_of_messages}%";
+	   function CalcNewMessenger(){
+		   if(!_window_is_active) return;
+		  
+		  if(messenger_global_semafor==0){
+			messenger_global_semafor=1; 
+			
+			//поптыка остановить предыдущий запрос
+			try{
+				messenger_xhr_global.abort();	
+			}catch(e){}
+			
+			messenger_xhr_global=$.ajax({
+				async: true,
+				url: "/js/checknew.php",
+				type: "POST",
+				data:{
+					"action":"calc_new_messenger"
+				},
+				beforeSend: function(){
+					//$("#messenger_count_messages").html('<img src="/img/icon_wait.gif" width="16" height="16" border="0" alt="идет проверка, подождите" />');
+					messenger_global_semafor=2;
+				},
+				success: function(data){
+				  if(messenger_global_semafor==2){
+					if(data==0){
+						 $("#messenger_count_messages").empty();
+						 $("#messenger_has_new_messages").hide();
+						 
+						 //остановить мигание
+						 MessengerBlinkStop();
+					}else{
+						 $("#messenger_count_messages").html(data);
+						 $("#messenger_has_new_messages").show();
+						 
+						 messenger_title_new=data+" *** Новые сообщения! *** ";
+						 //alert(messenger_window_state);
+						 
+						 if(messenger_window_state=='blur'){
+							 //начать мигание
+							// alert(messenger_title_new);
+							 
+							 try{
+								  window.clearInterval(messenger_refresh_title_int);
+							  }catch(ex){} 	
+							 
+							 messenger_refresh_title_int=setInterval('MessengerBlinkTitle()', 500);
+						 }else{
+							//остановить мигание
+							
+							MessengerBlinkStop();
+						 }
+						 
+					}
+					messenger_count_new_messages=(data);
+				  }
+				   
+				},
+				error: function(xhr, status,error){
+				  
+				},
+				complete: function(){
+					messenger_global_semafor=0; 
+				} 
+			});
+		  }
+		}
+	  
+	  $(function(){
+		
+		 $("a.messenger_link").bind("click", function(){
+			/*вызов месседжера
+			
+			*/
+			has_new_message_clear_selected_users=1;
+			//если у нас есть новые сообщения - то перекидываем к ним
+			//alert(messenger_count_new_messages);
+			
+			if(messenger_count_new_messages!="0") has_new_message_clear_selected_users=2;
+			
+			MessengerShow(1, has_new_message_clear_selected_users, 2);
+			
+			
+			return false; 
+		 });
+		 
+		 /*если сессия содержит состояние менеджера==1 или ==2 - запустить и развернуть автоматом*/
+		 %{if $smarty.session.messenger_state==1 or $smarty.session.messenger_state==2}%
+		 	MessengerShow(%{$smarty.session.messenger_state}%);
+		 %{/if}%
+		 
+		 setInterval('CalcNewMessenger()', 15000);
+		 
+		 
+		 //окно в фокусе
+		  $(window).bind("focus", function(){
+			  messenger_window_state='focus';
+			  MessengerBlinkStop();
+		  	  MessengerToggleReadMessages();
+			
+		  });
+		  
+		  //окно не в фокусе
+		  $(window).bind("blur", function(){
+			  messenger_window_state='blur';
+		  });
+
+		
+	  });
+	  </script>
+      %{/if}%  
+    
+   
+    
+     
+    
+    
+    
+    %{if $menu[rowsec].item.is_tasks==1}%
+   	<span id="total_count_tasks">
+     %{if $menu[rowsec].item.count_of_tasks>0}%(%{$menu[rowsec].item.count_of_tasks}%)%{/if}%
+     </span>
+     <script type="text/javascript">
+    function CalcNewTasks(){
+	  if(_window_is_active)   $.ajax({
+		  async: true,
+		  url: "/js/checknew.php",
+		  type: "POST",
+		  data:{
+			  "action":"total_count_tasks"
+		  },
+		  beforeSend: function(){
+			  $("#total_count_tasks").html('<img src="/img/icon_wait.gif" width="16" height="16" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	if(data==0) $("#total_count_tasks").empty();
+			else $("#total_count_tasks").html(data);
+			 
+		  },
+		  error: function(xhr, status){
+			 $("#total_count_tasks").html("");
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	$(function(){
+		setInterval('CalcNewTasks()', 60000);
+	});
+    </script>
+    %{/if}%
+    
+    
+        
+      
+        
+        
+      %{section name=subsec loop=$menu[rowsec].subs}%%{/section}%
+      %{if $smarty.section.subsec.total>0}%
+       <ul class="menu-sub" %{if $menu[rowsec].item.is_active}% style="display:block;"%{/if}%>
+      %{section name=subsec loop=$menu[rowsec].subs}%
+      	 
+        <li %{if $menu[rowsec].subs[subsec].item.is_pic==1}% class="pic"%{else}% class="cat  %{if $menu[rowsec].subs[subsec].item.is_active}%active%{/if}% "%{/if}%>
+       
+        
+        
+        <a href="%{$menu[rowsec].subs[subsec].item.url}%"   class=" %{if $menu[rowsec].subs[subsec].item.is_pic==1}% pic %{/if}% %{if $menu[rowsec].subs[subsec].item.is_messenger}% messenger_link %{/if}% %{if $menu[rowsec].subs[subsec].item.is_active}%active%{/if}%" %{if $menu[rowsec].subs[subsec].item.is_pic==1}% style="background-image:url(%{$menu[rowsec].subs[subsec].item.pic}%);" data-comment="%{$menu[rowsec].subs[subsec].item.name|escape}%" %{/if}% >%{if $menu[rowsec].subs[subsec].item.is_pic==1}%%{else}%
+    %{$menu[rowsec].subs[subsec].item.name}%
+    %{/if}%</a>
+        
+        
+        
+        
+        
+         %{if $menu[rowsec].subs[subsec].item.is_komplekts==1}%
+      
+     <span id="total_count_komplekts">
+     %{if $menu[rowsec].subs[subsec].item.count_of_komplekts>0}%(%{$menu[rowsec].subs[subsec].item.count_of_komplekts}%)%{/if}%
+     </span>
+     <script type="text/javascript">
+    function CalcNewKomplekts(){
+	 if(_window_is_active)    $.ajax({
+		  async: true,
+		  url: "/js/checknew.php",
+		  type: "POST",
+		  data:{
+			  "action":"total_count_komplekts"
+		  },
+		  beforeSend: function(){
+			 // $("#total_count_komplekts").html('<img src="/img/icon_wait.gif" width="16" height="16" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	if(data==0) $("#total_count_komplekts").empty();
+			else $("#total_count_komplekts").html(data);
+			 
+		  },
+		  error: function(xhr, status){
+			 $("#total_count_komplekts").html("");
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	$(function(){
+		setInterval('CalcNewKomplekts()', 60000);
+	});
+    </script>
+    %{/if}%
+    
+    
+    
+     %{if  $menu[rowsec].subs[subsec].item.is_tasks==1}%
+     <span id="total_count_tasks">
+     %{if $menu[rowsec].subs[subsec].item.count_of_tasks>0}%(%{ $menu[rowsec].subs[subsec].item.count_of_tasks}%)%{/if}%
+     </span>
+     <script type="text/javascript">
+    function CalcNewTasks(){
+	 if(_window_is_active)    $.ajax({
+		  async: true,
+		  url: "/js/checknew.php",
+		  type: "POST",
+		  data:{
+			  "action":"total_count_tasks"
+		  },
+		  beforeSend: function(){
+			  $("#total_count_tasks").html('<img src="/img/icon_wait.gif" width="16" height="16" border="0" alt="идет проверка, подождите" />');
+		  },
+		  success: function(data){
+		  	if(data==0) $("#total_count_tasks").empty();
+			else $("#total_count_tasks").html(data);
+			 
+		  },
+		  error: function(xhr, status){
+			 $("#total_count_tasks").html("");
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	$(function(){
+		setInterval('CalcNewTasks()', 60000);
+	});
+    </script>
+    %{/if}%
+    
+    
+    
+       
+    
+        </li>
+        
+        %{if $smarty.section.subsec.last}%
+        <div class="clear"></div>
+        %{/if}%
+        
+      %{/section}%
+      </ul>
+      %{/if}%
+    
+    
+     
+    </li>
+    	 %{if $menu[rowsec].item.has_close_tag==1  and  $menu[rowsec].item.is_pic==1 }% 
+
+          <br clear="all" />
+          %{/if}%
+               
+           
+   
+    
+    %{/if}%
+    
+       %{if $menu[rowsec].item.has_searchform_after==1 }%       
+        	<form class="search" id="search_form" action="search.php">
+        
+			<input type="text" name="data" placeholder="Поиск..." class="search-input" />
+		</form>
+        <div class="division">     
+     %{/if}% 
+     
+     %{if $smarty.section.rowsec.last}%
+     	</div> <!-- of .division -->
+     %{/if}%   
+%{/section}%
+</ul>
+%{/if}%

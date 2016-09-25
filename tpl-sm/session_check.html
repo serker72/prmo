@@ -1,0 +1,138 @@
+
+<div id="check_session_gialog" title="Истекает Ваш сеанс работы" style="display:none;">
+<img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+
+<div style="float:left; padding-top:5px; margin-bottom:10px; max-width:500px;">
+    <h2>Внимание! Истекает Ваш сеанс работы в программе!</h2>
+    <br>
+	До окончания работы остается <span style="color:red;" id="check_session_co"></span> секунд!<br>
+<br>
+	Для продолжения работы нажмите "Продолжить" и совершите какое-либо действие в программе.
+	 
+</div>
+
+</div>
+
+
+<script type="text/javascript">
+ var session_remains=60; var session_timer;
+ function SessionIncr(){
+					session_remains--;
+					if(	session_remains<0){
+						 session_remains=0;
+						location.reload();	 
+					}
+					
+					$("#check_session_co").html(session_remains); 
+				 } 
+ 
+function SessionCheck(){
+	 
+	 
+	 
+	 
+	 $.ajax({
+		  async: true,
+		  url: "/js/check_session.php",
+		  type: "GET",
+		  data:{
+			  "action":"check_session"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // console.log(data); 
+		  	 if((data>=0)){
+				 if(!$("#check_session_gialog").dialog("isOpen")){
+					  
+					  
+					  $("#check_session_gialog").dialog("open");
+					 
+					  
+					  
+					  function getAttention() {
+						if (window.closed) {
+						 // alert( "Окно закрыто, привлечь внимание к нему нельзя" );
+						  return;
+						}
+					
+						window.focus();
+						var i = 0;
+						var show = ['************', window.document.title];
+					
+						var focusTimer = setInterval(function() {
+						  if (window.closed) {
+							clearInterval(focusTimer);
+							return;
+						  }
+						  window.document.title = show[i++ % 2];
+						}, 1000);
+					
+						window.document.onmousemove = function() {
+						  clearInterval(focusTimer);
+						  window.document.title = show[1];
+						  window.document.onmousemove = null;
+						}
+						 
+					  }
+					  
+					  getAttention();
+					 //window.showModalDialog('top.html');
+				 }
+				
+				 
+				 $("#check_session_co").html(data);
+				 //запускать таймер приращения счетчика
+				 try{
+					 window.clearInterval(session_timer);
+				 }catch(e){
+					
+				 }
+				 session_remains=data;
+				 session_timer=window.setInterval("SessionIncr()",1000);
+			 }
+			 else if((data<0)){
+				  if( $("#check_session_gialog").dialog("isOpen"))  $("#check_session_gialog").dialog("close"); 
+				  $("#check_session_co").html(0);
+			 }else if(data==0){
+					location.reload(); 
+			 }
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	
+$(function(){
+	$("#check_session_gialog").dialog({
+		autoOpen: false,
+	 
+		modal: true,
+		width: 600,
+		
+		height: 220,
+		dialogClass: 'semi_auth_no',
+		
+		buttons:{
+			"Продолжить": function(){
+	
+						$("#check_session_gialog").dialog("close");
+				
+			}
+		}
+		 
+		
+	});
+	
+	
+	
+	
+	window.setInterval('SessionCheck()', 30000);
+});
+</script>

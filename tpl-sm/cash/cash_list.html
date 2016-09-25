@@ -1,0 +1,331 @@
+%{section name=rowsec loop=$items}%%{/section}%
+%{if $has_header}%
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+ 
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+	 /*$.ajax({
+		async: true,
+		url: "/js/annul.php",
+		type: "GET",
+		data:{
+			action: "try_annul",
+			kind: 13	
+		},
+		beforeSend: function() {
+		 
+		},
+		success: function(data) {
+			//alert(data);
+		},
+		error: function() {
+		 // alert("");
+		}
+	}); */
+});
+</script>
+
+
+%{include file="every_help_dialog.html" filename="cash.htm" prefix=$prefix description="реестр расхода наличных"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+%{$pages}%
+
+
+
+
+<br clear="all" />
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+
+ 
+
+ 
+
+<input type="hidden" name="from%{$prefix}%" value="0" />
+<input type="hidden" name="to_page%{$prefix}%" value="%{$to_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+     
+     <th scope="col" width="40">
+    Код 
+   
+    </th>
+    
+    <th scope="col" width="60">
+    Дата создания
+   
+    </th>
+    
+     <th scope="col" width="60">
+    Код затрат
+   
+    </th>
+    
+     <th scope="col" width="50">
+    Вид 
+   
+    </th>
+    
+    
+    <!--   <th scope="col" width="60">
+    Заданная дата
+   
+    </th>
+    -->
+  <!--  <th scope="col" width="60">
+    Заданный номер
+   
+    </th>
+    -->
+ 
+    <th scope="col" width="80" >Сумма расхода, руб.
+   
+    </th>
+   
+   
+  <!--  <th scope="col" width="100">
+    Контрагент
+    
+    </th>
+   -->
+    
+     <th scope="col" width="100">
+    Статус
+   
+    </th>
+    
+      <th scope="col" width="100">
+    Утверждение
+    затраты
+    </th>
+    
+       <th scope="col" width="100">
+    Утверждение
+    выдачи
+    </th>
+    
+    
+      
+  
+    
+     <th scope="col" width="*">
+    Примечания
+   
+    </th>
+    
+    
+      <th scope="col" width="80">
+    Сотр-к - пол-ль платежа
+   
+    </th>
+    
+    
+     <th scope="col" width="80">
+    Создал
+   
+    </th>
+    	
+   
+   
+   
+   
+    
+    
+   
+    
+  
+    
+   <th scope="col" width="24" >&nbsp;
+   
+   </th>
+    <th scope="col"  width="24">&nbsp;
+   
+   </th>
+</tr>
+
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%
+<tr align="center" valign="top" id="pay_item_row%{$prefix}%_%{$items[rowsec].id}%">
+%{/if}%	
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}%>%{$items[rowsec].code}%&nbsp;</td>
+    
+    
+     <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    
+      <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].code_code}%
+    
+    %{$items[rowsec].code_name}%
+    
+    </td>
+    
+    
+    <td width="50" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%> 
+    %{$items[rowsec].kind_name}%
+    %{if $items[rowsec].kind_id==2 or $items[rowsec].kind_id==3 or $items[rowsec].kind_id==4}%
+     по исходящим счетам:  
+    %{section loop=$items[rowsec].bills name=bsec}%
+    
+   	№&nbsp;<a href="ed_bill.php?action=1&id=%{$items[rowsec].bills[bsec].id}%" target="_blank">%{$items[rowsec].bills[bsec].code}%</a>%{if !$smarty.section.bsec.last}%,%{/if}%
+    %{/section}%
+    
+    %{/if}%
+    
+    </td>
+    
+     <!-- <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].given_pdate}%&nbsp;</td>
+     -->
+     
+    <!--
+     <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].given_no}%&nbsp;</td>
+     
+   -->
+       <td width="80" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].value}%
+    </td>
+   <!-- 
+      <td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </td>-->
+    
+    <td width="100" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}% id="pay_status%{$prefix}%_%{$items[rowsec].id}%">
+
+
+ 
+    <strong>%{$items[rowsec].status_name}%</strong>
+ 
+
+
+</td>
+    
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+    <div id="status_price%{$prefix}%_%{$items[rowsec].id}%">%{include file="cash/toggle_confirm.html" filename="cash.php" item=$items[rowsec] shorter=0}%</div>
+    
+    </td>
+   
+     <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+    <div id="status_shipping%{$prefix}%_%{$items[rowsec].id}%">%{include file="cash/toggle_confirm_given.html" filename="cash.php" item=$items[rowsec] shorter=0}%</div>
+    
+    
+    </td>
+    
+     
+   
+   
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% align="left">
+      <a href="#" class="reestr_short">
+   <small> %{section  name=notesec loop=$items[rowsec].notes}%
+    %{if $smarty.section.notesec.first}%
+    
+    %{$items[rowsec].notes[notesec].pdate}%
+     %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note|strip_tags|trim|truncate:30:"":false}%
+    %{/if}%
+     %{/section}%</small>
+     %{if $smarty.section.notesec.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a> 
+   
+   <div class="reestr_full reestr_hide">
+   <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    </div>
+    </td>
+   
+   
+    <td width="80" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].ru_name}%
+    </td>
+   
+    
+    <td width="80" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}% 
+    </td>
+    
+  
+    
+  
+    
+   
+    
+    <td width="24" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+   
+    
+      <a href="ed_cash.php?action=1&id=%{$items[rowsec].id}%"  class="reestr_edit reestr_right_button24" target="_blank"  data-comment="Подробно..." > </a>
+    
+	%{else}%
+  <a href="#" data-comment="Подробно..."  class="reestr_edit reestr_inactive reestr_right_button24" onClick="return false;"> </a>
+  
+    %{/if}%
+    
+    
+    %{if $items[rowsec].is_confirmed==1}%
+ %{if $can_print}%
+ 
+ 
+  <a class="reestr_print reestr_right_button24" href="ed_cash.php?action=1&id=%{$items[rowsec].id}%&print=1" target="_blank" data-comment="печать расхода наличных..."> </a>
+ 
+ %{else}%
+   <a class="reestr_print reestr_inactive reestr_right_button24" href="#" onclick="alert('У Вас недостаточно прав для печати расхода наличных.'); return false;" data-comment="печать расхода наличных..."> </a>
+ 
+ 
+ %{/if}%
+ 
+ %{else}%
+  <a class="reestr_print reestr_inactive reestr_right_button24" href="#"  onclick="alert('В данном режиме печать расхода наличных недоступна. Пожалуйста, утвердите расход наличных.'); return false;" data-comment="печать расхода наличных..."> </a>
+ 
+ 
+ %{/if}%
+    
+    </td>
+    
+     <td width="24" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{include file="cash/toggle_annul.html"}%
+    
+    </td>
+    
+%{if $has_header}%   
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>Расходов не найдено.</em><br />
+%{/if}%
+
+
+
+
+%{$pages}%
+%{/if}%

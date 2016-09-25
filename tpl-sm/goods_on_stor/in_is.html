@@ -1,0 +1,10 @@
+<p />
+%{section name=rowsec loop=$items}%%{/section}%
+
+<strong>Всего поступило по межскладу в %{$smarty.section.rowsec.total}% распоряжениях%{if $smarty.section.rowsec.total>0}%:<p />%{else}%.%{/if}%</strong>
+
+%{section name=rowsec loop=$items}%
+Распоряжение <a href="ed_is.php?action=1&id=%{$items[rowsec].id}%" target="_blank">№ %{$items[rowsec].id}%</a> от %{$items[rowsec].pdate}%: <strong>%{$items[rowsec].quantity}%</strong>
+<br />
+
+%{/section}%

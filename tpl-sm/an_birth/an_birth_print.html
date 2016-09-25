@@ -1,0 +1,74 @@
+%{if $do_it}% 
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;"> 
+
+<h1>Отчет Дни рождения</h1>
+ 
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:15px; white-space:nowrap;">
+<strong>Период:</strong>
+<br>
+
+
+ <strong>с:</strong> %{$pdate_1}% 
+ &nbsp;&nbsp;
+ <strong>по:</strong> %{$pdate_2}% <br>
+%{if $check_year}% учитывать год рождения %{/if}% 
+
+</div>
+
+
+ 
+ %{foreach name=u1 from=$our_suppliers item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Контрагент: </strong><br />
+%{foreach from=$our_suppliers item=item}%
+%{$item.code}% %{$item.full_name}%, %{$item.opf_name}%<br>
+			 
+				%{/foreach}%
+ 
+%{if $has_holdings}%
+  
+Включая субхолдинги и подчиненные предприятия
+ 
+%{/if}% 
+</div>
+%{/if}% 
+
+
+
+%{foreach name=u1 from=$our_users item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Сотрудник: </strong><br />
+%{foreach from=$our_users item=item}%
+%{$item.name_s}%, %{$item.position_s}%<br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}%
+ 
+ 
+  
+
+ 
+<br clear="all" />
+
+  
+
+
+
+
+ 
+%{include file="an_birth/table.html"}% 
+ 
+</body>
+</html>
+%{/if}%

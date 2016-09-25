@@ -1,0 +1,272 @@
+<form action="message_compose.php" method="post" enctype="multipart/form-data" id="form_message">
+
+<h2>Новое сообщение</h2>
+
+
+<table width="*" border="0" cellspacing="0" cellspacing="5">
+<tr align="left" valign="top">
+<td width="150">
+
+<label for="who_s">Кому:</label><br />
+%{if $has_admin}%<em>используйте <br>
+ctlr+щелчок мыши для множественного выбора</em><br>
+%{/if}%
+<select name="who_s[]" id="who_s" size="10" style="width:140px;" %{if $has_admin}%multiple="multiple"%{/if}%>
+%{section name=adrsec loop=$adr}%
+<option value="%{$adr[adrsec].id}%" %{if $adr[adrsec].id==0}%selected="selected"%{/if}%>%{$adr[adrsec].login|escape:"html"}%</option>
+%{/section}%
+</select>
+</td>
+<td width="250" valign="middle">
+<div id="description"></div>
+</td>
+</tr>
+</table>
+<p />
+
+<label for="topic_s">Тема:</label><br />
+<input type="text" size="100" maxlength="255" value="" id="topic_s" name="topic_s" style="width:550px;" />
+<p />
+
+<label for="txt_s">Текст сообщения:</label><br />
+<textarea id="txt_s" name="txt_s" cols="100" rows="20" style="width:550px;"></textarea>
+<p />
+
+
+
+
+	<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+    <script type="text/javascript">
+		var swfu;
+		function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		window.onload = function() {
+			var settings = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "swfupl-js/upload_file_message.php",
+				post_params: {"PHPSESSID" : "%{$session_id}%"
+				},
+				file_size_limit : "6 MB",
+				file_types : "*.*",
+				file_types_description : "Все файлы",
+				file_upload_limit : 1000,
+				file_queue_limit : 1,
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_text: '<span class="theFont">Выберите файл...</span>',
+				button_width: 130,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload2.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu = new SWFUpload(settings);
+			
+			
+			
+	     };
+	</script>
+    <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+
+<div id="uploaded_files">
+	
+</div>
+
+<strong>Приложите файл:</strong>
+
+
+
+<div class="fieldset flash" id="fsUploadProgress">
+			<span class="legend"></span>
+</div>
+<div id="divStatus"></div>
+<div>
+				<span id="spanButtonPlaceHolder"></span>
+                
+                <input id="btnCancel" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+				
+</div>
+<em>максимальный размер файла: 6M</em>  
+
+<p />
+
+
+<input type="submit" value="Отправить сообщение" id="send_s" name="send_s" style="width:250px; font-weight:bold;" />
+
+
+</form>
+<script type="text/javascript">
+/*$(function(){
+   $("#txt_s").ckeditor({
+	   customConfig : '/ckeditor/config_mini.js',
+	   skin : 'v2' 
+	});
+});*/
+</script>
+
+<script type="text/javascript">
+$(function(){
+	//обработчик выбора адресатов
+	
+	
+	
+	$("#who_s").bind("click",function(){
+		//alert($(this).val());
+		
+		$.each($("#who_s").val(), function(index, value){
+			
+			//сброс выбора
+			if(value==0){
+				//alert($("#who_s").val());
+				$.each($("#who_s option"), function(i, v){
+					v.selected=false;
+				});
+				$("#description").empty();	
+			}
+			
+			//множественный выбор
+			if(value==-1){
+				$.each($("#who_s option"), function(i, v){
+					if((v.value!=0)&&(v.value!=-1)&&(v.value!=-2)&&(v.value!=-3)) v.selected=true;
+					if(v.value==-1) v.selected=false;
+				});
+				$("#description").empty();	
+				
+			}
+			
+			//множественный выбор
+			if(value==-2){
+				$.each($("#who_s option"), function(i, v){
+					if((v.value!=0)&&(v.value!=-1)&&(v.value!=-2)&&(v.value!=-3)&&(v.text.substr(0,1)=="S")) v.selected=true;
+					//alert(v.text);
+					if(v.value==-2) v.selected=false;
+				});
+				$("#description").empty();	
+				
+			}
+			
+			//множественный выбор
+			if(value==-3){
+				$.each($("#who_s option"), function(i, v){
+					if((v.value!=0)&&(v.value!=-1)&&(v.value!=-2)&&(v.value!=-3)&&(v.text.substr(0,1)=="D")) v.selected=true;
+					if(v.value==-3) v.selected=false;
+				});
+				$("#description").empty();	
+				
+			}
+			
+			
+			
+			if((value!=0)&&(value!=-1)&&(value!=-2)&&(value!=-3)){
+			  $.each($("#who_s option"), function(i, v){
+				if((v.value!=0)&&(v.value!=-1)&&(v.value!=-2)&&(v.value!=-3)&&(v.selected)){
+				  $.ajax({
+					  
+					  async: true,
+					  url: "/js/messages.php",
+					  type: "POST",
+					 
+					  data: {
+						  action: "show_user_data",
+						  id: v.value
+						
+						},
+					  beforeSend: function(){
+						$("#description").empty();	
+					  },
+					  success: function(data){
+						 $("#description").html(data);	 
+					  },
+					  error: function(xhr, status){
+						  $("#description").empty();	
+					  }	 
+				  });
+			   
+			  	}
+			  
+			  });
+			}
+		});
+		
+	});
+	
+	//обработчик отправки сообщения
+	$("#form_message").bind("submit",function(){
+		can_send=true;
+		
+		
+		if(($("#who_s").val()==null)||
+			($("#who_s").val()==0)||
+			($("#who_s").val()==-1)||
+			($("#who_s").val()==-2)||
+			($("#who_s").val()==-3)||
+			($("#who_s").val()=='0,-1')){
+			can_send=can_send&&false;
+			alert("Выберите получателя!");
+			$("#who_s").focus();		
+			return false;
+		}
+		
+		if($("#txt_s").val().length<=3){
+			can_send=can_send&&false;
+			alert("Напишите текст сообщения!");
+			$("#txt_s").focus();
+			return false;
+		}
+		
+		return true;
+		
+		
+	});
+});
+</script>

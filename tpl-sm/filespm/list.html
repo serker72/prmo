@@ -1,0 +1,295 @@
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	
+});
+</script>
+
+
+%{include file="every_help_dialog.html" filename="files.htm" description="файловый реестр"  prefix="_pmfiles" style=""}%<br />
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+%{if $can_load}%
+<div class="common_block">
+<h3>Загрузите файл:</h3>
+
+<strong>Описание файла:</strong><br />
+<textarea id="txt4" cols="80" rows="5"></textarea><p />
+
+
+
+
+   
+   <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+    
+    <div id="uploader_block4">    
+        <div class="fieldset flash" id="fsUploadProgress4">
+                <span class="legend"></span>
+        </div>
+        <div id="divStatus4"></div>
+        <div>
+                        <span id="spanButtonPlaceHolder4"></span>
+                        
+                        <input id="btnCancel4" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+                        
+        </div>
+    </div>
+	
+  <em>максимальный размер файла: 192M</em>  
+    
+</div>
+
+	<script type="text/javascript">
+		var swfu3;
+		function AddCode4(id){
+			//alert(id);
+			$.ajax({
+				async: true,
+				url: "/js/%{$pagename}%",
+				type: "POST",
+				data:{
+					"action":"edit_txt",
+					"id":id,
+					"txt": $("#txt4").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 	location.href='files.php?tab_page=3';
+				   				},
+				error: function(xhr, status){
+					//alert("error!");
+					location.href='files.php?tab_page=3';
+				}	 
+			});	
+			
+		}
+		function Prepare2() {
+			var settings4 = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "%{$uploader_name}%",
+				post_params: {"PHPSESSID" : "%{$session_id}%",
+							  "%{$storage_name}%": "%{$storage_id}%"
+								
+				},
+				file_size_limit : "192 MB",
+				file_types : "*.*",
+				file_types_description : "Все файлы",
+				file_upload_limit : 1,
+				file_queue_limit : 1000,
+				custom_settings : {
+					progressTarget : "fsUploadProgress4",
+					cancelButtonId : "btnCancel4"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder4",
+				button_text: '<span class="theFont">Выберите и загрузите файл...</span>',
+				button_width: 199,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload3.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu4 = new SWFUpload(settings4);
+			
+			
+			
+	     }
+		// alert('zz');
+		 Prepare2();
+	</script>
+<p />
+%{/if}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form4">
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="*">Файл
+    </th>
+    <th scope="col" width="60">Размер
+    </th>
+	<th scope="col" width="100">Получить
+    </th>
+    <th scope="col" width="*">Кем загружен
+    </th>
+    <th scope="col" width="150">Описание
+    </th>    
+    <th scope="col" width="100">Дата
+    </th>
+    
+    %{if $can_delete}%
+    <th scope="col" width="24">Удалить
+    </th>
+    %{/if}%
+    
+</tr>
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="*" align="left"><a href="%{$loadname}%?id=%{$items[rowsec].id}%"><img src="/img/doc.gif" width="13" height="13" alt="" border="0" />%{$items[rowsec].orig_name}%</a></td>
+     <td width="60">
+    %{$items[rowsec].size|string_format:"%.3f&nbsp;МБ"}%
+    </td>
+    
+    <td width="100">
+    <input type="button" value="Получить" onclick="location.href='%{$loadname}%?id=%{$items[rowsec].id}%';" />
+    
+    </td>
+   
+    <td width="*"><a target="_blank" href="info.html?name=%{$items[rowsec].u_login}%">
+    %{if $items[rowsec].u_group_id==3}%%{$items[rowsec].u_name_s}%%{else}%%{$items[rowsec].u_name_s}%%{/if}% (%{$items[rowsec].u_login}%)</a></td>
+    <td width="150" align="left" id="more_inf3o_%{$items[rowsec].id}%" title="%{$items[rowsec].orig_name|escape}%|%{$items[rowsec].txt|escape}%">
+    
+    %{$items[rowsec].txt|truncate:80:"..."}%
+    
+     <script type="text/javascript">
+	$(function(){
+		$("#more_info3_%{$items[rowsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    
+    
+     %{if $can_edit}%
+     <br />
+	 
+     
+     <a href="#" id="edit_file4_%{$items[rowsec].id}%"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать..." title="редактировать..." border="0" /></a>
+     
+     
+      <script type="text/javascript">
+	  $(function(){
+		  $("#edit_file4_%{$items[rowsec].id}%").bind("click", function(){
+			  $("#file_id4").attr("value", "%{$items[rowsec].id}%");
+			  $("#file_txt4").val("%{$items[rowsec].txt|escape:"html"|regex_replace:"/[\n]/":"\\n"|regex_replace:"/[\r]/":"\\r"}%");
+			  
+			  $("#txt_dialog4").dialog("open");
+			  return false;
+		  });
+	   });
+	  </script>
+     %{/if}%
+    
+    </td>
+    <td width="100">
+    %{$items[rowsec].pdate}%
+    </td>
+    
+    %{if $can_delete}%
+     <td width="24">
+    
+     <a href="#" id="delete4_%{$items[rowsec].id}%"><img src="/img/icons/delete.png" width="24" height="24" alt="удалить..." title="удалить..." border="0" /></a>
+     <script type="text/javascript">
+	  $(function(){
+			$("#delete4_%{$items[rowsec].id}%").bind("click",function(){
+				if(window.confirm("Вы действительно хотите удалить файл %{$items[rowsec].orig_name|escape}%?")){
+					location.href="files.php?action=2&id=%{$items[rowsec].id}%&tab_page=3";	
+				}
+				return false;
+			});
+	  });
+	 </script>
+    </td>
+    %{/if}%
+  
+</tr>
+%{/section}%
+</tbody>
+</table>
+</form>
+
+
+%{if $can_edit}%
+<div id="txt_dialog4" title="Описание файла">
+<input type="hidden" id="file_id4" value="" />
+
+Описание файла:<br />
+<textarea id="file_txt4" cols="60" rows="7"></textarea><p />
+
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#txt_dialog4").dialog({
+    autoOpen: false,
+    modal: true,
+    width: 420,
+    height: 270,
+    buttons: {
+        "Готово": function() { 
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$pagename}%",
+			  type: "POST",
+			  data:{
+				  "action":"edit_txt_chk",
+				  "id": $("#file_id4").attr("value"),
+				  "txt": $("#file_txt4").val()
+			  },
+			  beforeSend: function(){
+					
+			  },
+			  success: function(data){
+				 alert("Описание файла отредактировано."); 
+				 location.reload();
+				
+			  },
+			  error: function(xhr, status){
+				  alert("Ошибка редактирования описания файла.");	
+			  }	 
+		  });
+			  
+		  $(this).dialog("close");
+		},
+		"Отмена":  function() { 
+			$(this).dialog("close"); 		
+		}
+      }
+    
+    });
+	
+});
+</script>
+%{/if}%
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>Файлов пока нет.</em><br />
+%{/if}%
+
+%{$pages}%

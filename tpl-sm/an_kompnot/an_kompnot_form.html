@@ -1,0 +1,67 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==3}%	
+	%{if $has_1}%
+	selected: 1
+	%{else}%
+	selected: 0
+	%{/if}%
+%{elseif $tab_page==2}%	
+	selected: 2
+%{/if}%	
+  
+  });
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+</style>
+
+<div id="tabs">
+  <ul>
+   %{if $has_1}%
+    <li><a href="#tabs-1">Невыполненные заявки</a></li>
+    %{/if}%
+     %{if $has_2}%
+   <li><a href="#tabs-3">Выполненные заявки</a></li>
+   
+   %{/if}%
+    %{if $has_admin}%
+    <li><a href="#tabs-2"><br />
+	Администрирование</a></li>
+    %{/if}%
+  </ul>
+  
+   %{if $has_1}%
+  <div id="tabs-1">
+    <p>
+    %{$log}%
+    
+    </p>
+  </div>
+  %{/if}%
+   %{if $has_2}%
+   <div id="tabs-3">
+    <p>
+  
+    %{$log2}%
+    
+    </p>
+  </div>
+ %{/if}%
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

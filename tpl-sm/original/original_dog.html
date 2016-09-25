@@ -1,0 +1,345 @@
+
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+ <link href="/js/select2/select2.css" rel="stylesheet"/>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	
+	$("#has_dog%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#has_no_dog%{$prefix}%").prop("checked",false);
+			
+		}else{
+			
+		}
+	});
+	
+	$("#has_no_dog%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#has_dog%{$prefix}%").prop("checked",false);
+			
+		}else{
+			
+		}
+	});
+	
+	
+	
+	$("#has_dog_in%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#has_no_dog_in%{$prefix}%").prop("checked",false);
+			
+		}else{
+			
+		}
+	});
+	
+	$("#has_no_dog_in%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#has_dog_in%{$prefix}%").prop("checked",false);
+			
+		}else{
+			
+		}
+	});
+	
+	
+	
+	$("#has_uch%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#has_no_uch%{$prefix}%").prop("checked",false);
+			
+		}else{
+			
+		}
+	});
+	
+	$("#has_no_uch%{$prefix}%").bind("change",function(){
+		if($(this).prop("checked")){
+			 $("#has_uch%{$prefix}%").prop("checked",false);
+			
+		}else{
+			
+		}
+	});
+	
+	 function SelectGo2(name){
+	 $("#"+name).select2(
+	 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_supplier_select2.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				 var data = new Array();
+				
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.full_name|escape:"html"}%'});
+				%{/foreach}%
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	SelectGo2("supplier_name%{$prefix}%");
+
+	
+});
+</script>
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="tab_page" value="%{$prefix}%" id="tab_page" />
+
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" id="print" />
+
+<div class="report_filter_right">
+
+	%{include file="every_help_dialog.html" filename="an_original_dog.htm" prefix=$prefix description="отчет оригиналы документов"  style="float:right;  margin-right:0px;" is_right=true}%
+    
+ <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+	<input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти" />
+</div>    
+
+    
+         	
+    <a href="original.php?doSub%{$prefix}%=1&has_no_dog%{$prefix}%=1&has_no_dog_in%{$prefix}%=1&has_no_uch%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры" ></a>
+
+
+    
+  %{if $can_print}%
+  
+   
+  
+  
+  <a href="#" id="print_table%{$prefix}%" class="reestr_print reestr_right_button24" data-comment="Печать..." ></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  $("#print_table%{$prefix}%").bind("click",function(){
+	  		
+			has_dog=''; has_dog_in='';
+			has_uch='';
+			has_no_dog=''; has_no_dog_in='';
+			has_no_uch='';
+			
+			if($("#has_dog%{$prefix}%").prop("checked")) has_dog='&has_dog%{$prefix}%=1';
+			
+			if($("#has_dog_in%{$prefix}%").prop("checked")) has_dog_in='&has_dog_in%{$prefix}%=1';
+			
+			if($("#has_uch%{$prefix}%").prop("checked")) has_uch='&has_uch%{$prefix}%=1';
+			
+			if($("#has_no_dog%{$prefix}%").prop("checked")) has_no_dog='&has_no_dog%{$prefix}%=1';
+			
+			if($("#has_no_dog_in%{$prefix}%").prop("checked")) has_no_dog_in='&has_no_dog_in%{$prefix}%=1';
+			
+			if($("#has_no_uch%{$prefix}%").prop("checked")) has_no_uch='&has_no_uch%{$prefix}%=1';
+			
+			
+		
+		 	 window.open('original.php?tab_page=%{$prefix}%&print='+'1'+'&supplier_name%{$prefix}%='+$("#supplier_name%{$prefix}%").val()+'&sortmode%{$prefix}%='+'%{$sortmode}%'+has_dog+has_uch+has_no_dog+has_no_uch+has_dog_in+has_no_dog_in, 'original','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 
+		
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;" style="float:right;  margin-right:10px;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..." ></a>
+ %{/if}%
+
+
+</div>
+
+
+
+<div class="report_filter_left">
+
+    
+	<div class="report_filter">
+    
+    <label for="supplier_name%{$prefix}%">Контрагент:</label><br />
+    <input name="supplier_name%{$prefix}%" id="supplier_name%{$prefix}%" size="15" maxlength="255" value="%{$supplier_name}%" style="width:145px;" />
+    
+    
+    
+    </div>
+    
+    
+    
+    <div class="report_filter">
+    
+    
+    
+    <div style="display:none;">
+    <input type="checkbox" name="has_dog%{$prefix}%" id="has_dog%{$prefix}%" value="1" %{if $has_dog==1}%checked="checked"%{/if}% /><label for="has_dog%{$prefix}%">Наличие оригинала исходящего договора</label>
+    
+    <br />
+    
+    <input type="checkbox" name="has_dog_in%{$prefix}%" id="has_dog_in%{$prefix}%" value="1" %{if $has_dog_in==1}%checked="checked"%{/if}% /><label for="has_dog_in%{$prefix}%">Наличие оригинала входящего договора</label>
+    
+    <br />
+    
+    <input type="checkbox" name="has_uch%{$prefix}%" id="has_uch%{$prefix}%" value="1" %{if $has_uch==1}%checked="checked"%{/if}% /><label for="has_uch%{$prefix}%">Наличие оригинала учредительных документов</label>
+    
+    <br />
+    </div>
+    
+    
+    <input type="checkbox" name="has_no_dog%{$prefix}%" id="has_no_dog%{$prefix}%" value="1" %{if $has_no_dog==1}%checked="checked"%{/if}% /><label for="has_no_dog%{$prefix}%">Отсутствие оригинала исходящего договора</label>
+    
+    <br />
+    
+    <input type="checkbox" name="has_no_dog_in%{$prefix}%" id="has_no_dog_in%{$prefix}%" value="1" %{if $has_no_dog_in==1}%checked="checked"%{/if}% /><label for="has_no_dog_in%{$prefix}%">Отсутствие оригинала входящего договора</label>
+    
+    <br />
+    
+    <input type="checkbox" name="has_no_uch%{$prefix}%" id="has_no_uch%{$prefix}%" value="1" %{if $has_no_uch==1}%checked="checked"%{/if}% /><label for="has_no_uch%{$prefix}%">Отсутствие оригинала учредительных документов</label>
+    
+    <br />
+
+	</div>
+
+ 
+
+</div>
+
+<br clear="all" />
+
+<div>
+<small>
+
+
+Фильтр  <strong>"Контрагент"</strong>. <br />
+
+
+
+Вы можете получить отчет по нескольким контрагентам.
+<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента.
+Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию.
+При необходимости отобрать в отчет документы по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов.
+
+
+</small>  
+  
+</div>
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		color:#666;	
+	}
+</style>
+
+<p />
+
+
+
+
+
+%{if $do_it}%
+<table width="*" border="1" cellspacing="0" cellpadding="3" class="blacktable">
+ <thead>
+  <tr align="center" valign="top">
+   
+    <th scope="col" width="100">Контрагент 
+    
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+     <th scope="col" width="60">Код контрагента
+    
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+   
+    <th scope="col" width="*">Нет оригиналов:</th>
+   
+ 
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+   <tr align="left" valign="top">
+    
+    
+    
+    
+     
+     <td width="100"><a href="supplier.php?action=1&id=%{$items[rowsec].id}%" target="_blank">%{$items[rowsec].full_name}%, %{$items[rowsec].opf_name}%</a> </td>
+     
+     <td width="100">  %{$items[rowsec].code}% </td>
+     
+   
+    
+    <td width="*">
+   
+   %{if $items[rowsec].is_customer==1}% 
+   %{if $items[rowsec].has_dog==0}%<strong>-исходящего договора </strong><br />
+	%{/if}%
+    
+   %{/if}% 
+    
+    %{if $items[rowsec].is_supplier==1}% 
+     %{if $items[rowsec].has_dog_in==0}%<strong>-входящего договора </strong><br />
+	%{/if}%
+    %{/if}% 
+    
+    %{if $items[rowsec].has_uch==0}%<strong> -учредительных документов </strong><br />
+	%{/if}%
+    
+  
+    </td>
+     
+     
+   
+     
+   </tr>
+   %{/section}%
+  </tbody>
+</table>
+
+<p />
+
+<strong>Итого: отcутствует документов: %{$count_of_docs}% по %{$count_of_suppliers}% контрагентам.</strong>
+
+%{/if}%    
+
+</form>

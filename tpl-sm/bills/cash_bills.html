@@ -1,0 +1,38 @@
+<script type="text/javascript">
+$(function(){
+	touchScroll('%{$fieldname}%_bills_list');
+});
+</script>
+
+<div id="%{$fieldname}%_bills_list" style="width:300px; height:130px; border:1px solid silver; overflow:auto;">
+<table width="100%" border="1" class="blacktable" cellpadding="1" cellspacing="0">
+<thead>
+<tr align="left" valign="top">
+	<th width="50">Счет</th>
+    <th width="50">Зад. № счета</th>
+    <th width="*">Контрагент</th>
+    <th width="50">Сумма, руб.</th>
+    <th width="24"></th>
+</tr>    
+</thead>
+<tbody>
+%{foreach from=$bills_to_cash item=item}%
+<tr align="left" valign="top">
+	<td width="50">%{$item.code}%</td>
+    <td width="50">%{$item.supplier_bill_no}%</td>
+    <td width="*">
+    %{$item.opf_name}% %{$item.supplier_name}%
+    </td>
+    <td width="50">%{$item.total_cost}%</td>
+    <td width="24">
+    <input type="checkbox" id="%{$fieldname}%bill_checked_%{$item.id}%" value="%{$item.id}%" %{if $item.id==$bill.id}% checked%{/if}% />
+    
+    </td>
+
+</tr>
+%{/foreach}%
+</tbody>
+</table>
+</div>
+
+

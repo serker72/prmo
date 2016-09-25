@@ -1,0 +1,89 @@
+<h4>«адолженность в руб. на дату проведени€ корректировки взаиморасчетов:</h4>
+
+<strong>“екуща€ задолженность на дату пров. корр-ки вз.р.:
+ 
+ <span id="current_debt_value">%{$bill.current_debt}%</span> руб.
+ 
+ <span id="current_debt_to">%{$bill.current_debt_to}%</span>
+ 
+ </strong>
+
+<p />
+
+<div style="float:left; margin-right:10px;">
+<label for="debt">«адолженность в руб. <br />
+на дату пров. корр-ки вз.р.:</label>
+<br />
+<input type="text" size="15" maxlength="100" name="debt" id="debt" value="%{$bill.debt|default:"0"}%" %{if !$can_modify}%disabled="disabled"%{/if}% />
+<br />
+</div>
+
+<div style="float:left; margin-right:10px;">
+<input type="radio" name="debt_id" id="debt_id2" value="2" %{if $bill.debt_id==2}% checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /> в пользу %{$org}%<br />
+<input type="radio" name="debt_id" id="debt_id1" value="1" %{if $bill.debt_id==1 or $bill.debt_id==false}% checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /> нулева€ задолженность<br />
+<input type="radio" name="debt_id" id="debt_id3" value="3" %{if $bill.debt_id==3}% checked="checked"%{/if}% %{if !$can_modify}%disabled="disabled"%{/if}% /> в пользу <span id="current_supplier">%{$current_supplier}%</span><br />
+</div>
+
+<p />
+
+<script type="text/javascript">
+ $(function(){
+	 $("#debt_id1").bind("change",function(){
+		if($(this).prop("checked")){
+			$("#debt").val(0);	
+		}
+	 });
+	 $("#debt").bind("change",function(){
+		 if(parseFloat($(this).val())==0){
+			$("#debt_id1").prop("checked",true); 
+		 }
+	 });
+	 
+	 function CalcDebt(){
+		//если мы сменили дату или п-ка - нужно получить:
+		//нового поставщика
+		//новый долг
+		//кому должны 
+		$("#current_supplier").html($("#supplier_id :selected").text());
+		$.ajax({
+              async: true,
+              url: "/js/invcalc.php",
+              type: "POST",
+              data:{
+                  "action":"find_debt",
+				  "supplier_id":  $("#supplier_id").val(),
+				  "invcalc_pdate":$("#invcalc_pdate").val(),
+				  "id":"%{$bill.id}%"
+              },
+              beforeSend: function(){
+                 $("#current_debt_value").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="0" />');
+				 $("#current_debt_to").html('<img src="/img/wait.gif" width="32" height="32" alt="" border="0" />');
+				    
+              },
+              success: function(data){
+                //alert(data);
+				if(parseFloat(data)>0){
+					$("#current_debt_to").html('(в пользу '+$('#org').val()+')');
+				}else if(parseFloat(data)<0){
+					$("#current_debt_to").html('(в пользу '+$("#supplier_id :selected").text()+')');
+				}else{
+					$("#current_debt_to").html('(нулевые обороты)');
+				}
+				
+				$("#current_debt_value").html(Math.abs(parseFloat(data)));
+                
+              },
+              error: function(xhr, status){
+                  //alert("ќшибка добавлени€ вопроса.");	
+              }	 
+          });
+	 }
+	 
+	 $("#supplier_id").bind("change",function(){
+		  CalcDebt();
+	 });
+	 $("#invcalc_pdate").bind("change",function(){
+		  CalcDebt();
+	 });
+ });
+</script>

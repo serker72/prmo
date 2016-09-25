@@ -1,0 +1,197 @@
+
+<table width="100%" border="1" cellpadding="2" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40" rowspan="2">№ вх. счета
+
+    </th>
+    
+    <th scope="col" width="40" rowspan="2">дата
+
+    </th>
+    
+    <th scope="col" width="40" rowspan="2">№ вх. сч. пост. 
+
+    </th>
+    
+    <th scope="col" width="40" rowspan="2">зад. № с/ф
+
+    </th>
+    
+    <th scope="col" width="60" rowspan="2">Сумма 
+
+    </th>
+    
+     <th scope="col" width="50" rowspan="2">Покупатель 
+
+    </th>
+    
+     <th scope="col" width="50" rowspan="2">Статус 
+
+    </th>
+    <th scope="col" width="*"  %{if !$view_full_version}%colspan="8"%{else}%colspan="12"%{/if}%>Позиции с +/- 
+
+    </th>
+     <th scope="col" width="60" rowspan="2">Создал 
+
+    </th>
+ 
+ 
+</tr>
+
+<tr align="center" valign="top"> 
+<th scope="col" width="20">№ п/п
+</th>   
+	<th scope="col" width="*">Номенклатура
+</th>
+	<th scope="col" width="20">Ед. изм.
+</th>
+	<th scope="col" width="40">Кол-во
+</th>
+	
+    %{if $view_full_version}%
+    <th scope="col" width="50">Цена без +/-
+	</th>
+    %{/if}%
+    <th scope="col" width="50">Цена c +/-
+	</th>
+    %{if $view_full_version}%
+    <th scope="col" width="50">+/- 
+	</th>
+   
+    <th scope="col" width="50">сумма +/-
+	</th>
+    <th scope="col" width="50">дисконт +/-
+	</th>
+    %{/if}%
+    <th scope="col" width="50">К выдаче 
+	</th>
+    
+    <th scope="col" width="50">Получено
+</th>
+
+ <th scope="col" width="20">Сохранено
+</th>
+	
+</tr>
+    
+  
+</tr>
+
+</thead>
+<tbody>
+
+
+%{section name=rowsec loop=$items}%
+%{section name=possec loop=$items[rowsec].subs}%%{/section}%
+<tr align="left" valign="top">
+	<td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    <a href="ed_bill.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">%{$items[rowsec].code}%</a>
+    
+    </td>
+ <td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    <td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    %{$items[rowsec].supplier_bill_no}%
+    
+    </td>
+    
+    <td width="40" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    %{section name=acsec loop=$items[rowsec].acc_nos}%
+    
+     <a href="ed_acc.php?action=1&id=%{$items[rowsec].acc_nos[acsec].id}%" target="_blank">%{$items[rowsec].acc_nos[acsec].given_no}%</a><br />
+
+    
+    %{/section}%
+    </td>
+   
+     <td width="60" align="left" rowspan="%{$smarty.section.possec.total}%" style="white-space:nowrap;">
+    %{$items[rowsec].total}%
+    
+    </td>
+    
+    <td width="50" rowspan="%{$smarty.section.possec.total}%" >
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">%{$items[rowsec].supplier_name}%, %{$items[rowsec].supplier_opf}%</a>
+    </td>
+    
+     <td width="50" align="left"  rowspan="%{$smarty.section.possec.total}%">
+    
+    %{if $items[rowsec].status_id==1}%
+    не утвержден
+    %{elseif $items[rowsec].status_id==2}%
+    утвержден
+    %{elseif $items[rowsec].status_id==3}%
+    аннулирован
+    %{elseif $items[rowsec].status_id==9}%
+    не выполнен
+    %{elseif $items[rowsec].status_id==10}%
+    выполнен
+    %{/if}%
+    
+    </td>
+    
+     
+     
+    %{section name=possec loop=$items[rowsec].subs}%
+    %{if $smarty.section.possec.index==0}%
+	%{include file="an_pm/an_pm_row.html"}%
+   %{/if}%
+	%{/section}%
+  
+     
+   
+     <td width="60" rowspan="%{$smarty.section.possec.total}%" class="small">
+    %{$items[rowsec].manager_name}% 
+    </td>
+   
+  
+</tr>
+%{section name=possec loop=$items[rowsec].subs}%
+	 %{if $smarty.section.possec.index>0}%   
+    <tr align="left" valign="top" id="" class="small">
+	%{include file="an_pm/an_pm_row.html"}%
+    </tr>
+    %{/if}%
+	%{/section}%
+
+%{/section}%
+<tr align="center" valign="top">
+<td>
+    <strong>Итог</strong>
+    </td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+     <td>&nbsp;</td>
+    
+    <td style="white-space:nowrap;">%{$total_summ}%</td>
+   
+    %{if $view_full_version}%
+     <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    %{/if}%
+    
+    <td style="white-space:nowrap;">%{*$total_quantity*}%</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+     <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td style="white-space:nowrap;">%{$total_pm}%</td>
+   
+    <td style="white-space:nowrap;">%{$total_marja}%</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+
+<div style=" ">
+<em>Все цены указаны в рублях РФ.</em>
+</div>
+
